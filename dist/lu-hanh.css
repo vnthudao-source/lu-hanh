@@ -1,4 +1,4 @@
-/*! Lữ Hành v8.8 · Làng Thanh Mộc · https://github.com/vnthudao-source/lu-hanh */
+/*! Lữ Hành v8.9 · Làng Thanh Mộc · https://github.com/vnthudao-source/lu-hanh */
 #lu-hanh{position:fixed;inset:0;z-index:2147483000;overflow:hidden;text-align:left;line-height:normal}
 body:has(#lu-hanh){overflow:hidden!important}
 #lu-hanh{color-scheme:dark;--paper:#eee9da;--gold:#d8b678;--muted:#a8b4a7;--line:#ffffff20}

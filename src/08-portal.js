@@ -41,7 +41,7 @@
       busy(go,true);
       try{
         if(tab==='register'&&val('#fPass')!==val('#fPass2'))throw Error('Mật khẩu nhập lại không khớp');
-        L.show({label:'Kết nối máy chủ Việt Nam'}).step(0,null,45);
+        L.show({label:'Kết nối máy chủ Việt Nam',bg:'tai_game'}).step(0,null,45);
         let r;
         if(tab==='login')r=await Net.call('login',{username:val('#fUser'),password:val('#fPass')});
         else if(tab==='register')r=await Net.call('register',{email:val('#fEmail'),username:val('#fUser'),password:val('#fPass')});
@@ -103,7 +103,7 @@
       el.querySelectorAll('[data-in]').forEach(i=>i.onchange=()=>set(i.dataset.in,+i.value));
       $('#cGo').onclick=async()=>{
         const g=$('#cGo');busy(g,true);
-        L.show({story:STORY,label:'Khởi tạo nhân vật'}).step(4,null,55);
+        L.show({story:STORY,label:'Khởi tạo nhân vật',bg:'tao_nv'}).step(4,null,55);
         try{
           const res=await Net.call('createChar',{name:$('#cName').value,gender:T.gender,stats:{...st}});
           L.step(55,'Chuẩn bị hành trang',92);
@@ -119,6 +119,9 @@
     const t=ts/1000,w=cv.clientWidth||600,h=Math.round(Math.max(250,Math.min(400,w*.56))),d=Math.min(2,devicePixelRatio||1);
     if(cv.width!==Math.round(w*d)||cv.height!==Math.round(h*d)){cv.width=Math.round(w*d);cv.height=Math.round(h*d);cv.style.height=h+'px';}
     const c=cv.getContext('2d');c.setTransform(d,0,0,d,0,0);
+    // ảnh nền căn lều từ Sheet hinh_anh (giao_dien:nen_leu), không có thì vẽ cảnh mặc định
+    const tp=LH_IMG.pic('giao_dien:nen_leu');
+    if(tp){const s=Math.max(w/tp.naturalWidth,h/tp.naturalHeight),iw=tp.naturalWidth*s,ih=tp.naturalHeight*s;c.drawImage(tp,(w-iw)/2,(h-ih)/2,iw,ih);}else{
     const sky=c.createLinearGradient(0,0,0,h*.6);sky.addColorStop(0,'#15202e');sky.addColorStop(.7,'#4f3a3c');sky.addColorStop(1,'#c27c4a');c.fillStyle=sky;c.fillRect(0,0,w,h);
     c.fillStyle='#fff6d0';for(let i=0;i<40;i++){const x=(i*97)%w,y=(i*53)%(h*.35);c.globalAlpha=.3+.3*Math.sin(t*2+i);c.fillRect(x,y,1.5,1.5);}c.globalAlpha=1;
     c.fillStyle='#ffe7b0';c.beginPath();c.arc(w*.82,h*.14,Math.min(w,h)*.045,0,Math.PI*2);c.fill();
@@ -139,6 +142,7 @@
       c.fillStyle='#c0392b';c.shadowColor='#ff9a5a';c.shadowBlur=14;c.beginPath();c.ellipse(lx,ly,7,9,0,0,Math.PI*2);c.fill();c.shadowBlur=0;c.fillStyle='#f3c14a';c.fillRect(lx-4,ly-11,8,3);c.fillRect(lx-4,ly+8,8,3);}
     for(const sx of [-1,1]){const px=tx+sx*(tw/2+18);c.strokeStyle='#5a3e1e';c.lineWidth=3;c.beginPath();c.moveTo(px,base+4);c.lineTo(px,base-th*.9);c.stroke();
       c.fillStyle=sx<0?'#b8342a':'#d9a33a';c.beginPath();c.moveTo(px,base-th*.9);c.quadraticCurveTo(px+sx*22,base-th*.86+Math.sin(t*3)*4,px+sx*40,base-th*.82+Math.sin(t*3+1)*6);c.lineTo(px,base-th*.74);c.fill();}
+    }
     // 5 ô chiếu
     const r=T.r,n=Math.max(5,r?r.max:5),A=getArt(),k=Math.min(h/300*1.35,w/n/52);T.slots=[];
     for(let i=0;i<n;i++){
@@ -169,7 +173,7 @@
   }
   async function enter(charId,claim,btn){
     busy(btn,true);
-    L.show({scene:true,label:'Tải nhân vật'}).step(0,null,45);
+    L.show({scene:true,label:'Tải nhân vật',bg:'vao_lang'}).step(0,null,45);
     try{
       const r=await Net.call('load',{charId});
       L.step(45,'Dựng làng Thanh Mộc',88);
@@ -184,7 +188,7 @@
   }
   (async()=>{
     // nối tiếp thanh tải của file khởi động (nếu có), rồi tới kết nối máy chủ và tải nhân vật
-    const from=L.visible?70:0;L.show({keep:from>0,label:'Kết nối máy chủ Việt Nam'}).step(from,'Kết nối máy chủ Việt Nam',from+(100-from)*.45);
+    const from=L.visible?70:0;L.show({keep:from>0,label:'Kết nối máy chủ Việt Nam',bg:'tai_game'}).step(from,'Kết nối máy chủ Việt Nam',from+(100-from)*.45);
     if(Net.online){try{const d=await Net.call('data');if(d.data&&d.data.vat_pham){Player.load(d.data);LH_IMG.set(d.data.hinh_anh);paintPortal();}}catch(e){note('Không tải được dữ liệu từ máy chủ, dùng dữ liệu mặc định');}}
     L.step(from+(100-from)*.45,Net.token?'Tải nhân vật':'Sẵn sàng',from+(100-from)*.92);
     if(Net.token)await chars();else auth('login');

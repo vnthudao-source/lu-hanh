@@ -1,4 +1,4 @@
-/*! Lữ Hành v8.8 · Chợ phiên · https://github.com/vnthudao-source/lu-hanh */
+/*! Lữ Hành v8.9 · Chợ phiên · https://github.com/vnthudao-source/lu-hanh */
 (function(){if(document.getElementById('chBody'))return;document.body.insertAdjacentHTML('beforeend',"<div id=\"cho-phien\">\n<svg style=\"position:absolute;width:0;height:0;overflow:hidden\" aria-hidden=\"true\"><defs>\n<symbol id=\"i-sword\" viewBox=\"0 0 32 32\"><path d=\"M9 23 25 7l1-5-5 1L5 19m1-3 10 10M4 28l5-5m-7 3 4 4\"/></symbol>\n<symbol id=\"i-bow\" viewBox=\"0 0 32 32\"><path d=\"M8 3c21 4 21 22 0 26L18 16 8 3Zm-5 13h25m-5-4 5 4-5 4\"/></symbol>\n<symbol id=\"i-crossbow\" viewBox=\"0 0 32 32\"><path d=\"M3 18h22M20 6c5 4 5 20 0 24M20 6l-8 12 8 12M25 18l4-2v4l-4-2M8 18v7h5\"/></symbol>\n<symbol id=\"i-staff\" viewBox=\"0 0 32 32\"><path d=\"m5 29 14-18m-2-2 5-7 7 5-5 7-7-5Zm6-6 1 8M4 5v5M2 7h5\"/></symbol>\n<symbol id=\"i-spear\" viewBox=\"0 0 32 32\"><path d=\"m4 29 17-19m-5 1 4-9 9-1-1 9-9 4m-5 0 5 5\"/></symbol>\n<symbol id=\"i-shield\" viewBox=\"0 0 32 32\"><path d=\"m16 2 12 5-1 12c-1 5-6 8-11 11C11 27 6 24 5 19L4 7 16 2Zm0 6v15M10 14h12\"/></symbol>\n<symbol id=\"i-punch\" viewBox=\"0 0 32 32\"><path d=\"m9 28-4-9V8c0-4 5-4 5 0V4c0-3 5-3 5 0v3c0-4 5-4 5 0v2c0-3 5-3 5 0v8l3-3c2-2 5 1 3 4l-7 10H9ZM10 8v7m5-8v8m5-6v6\"/></symbol>\n<symbol id=\"i-hat\" viewBox=\"0 0 32 32\"><path d=\"M2 22 16 5l14 17Zm7-8h14M5 22c4 3 18 3 22 0\"/></symbol>\n<symbol id=\"i-armor\" viewBox=\"0 0 32 32\"><path d=\"m11 3-7 4-2 8 7 3v11h14V18l7-3-2-8-7-4c0 7-10 7-10 0ZM9 18h14m-7-9v17\"/></symbol>\n<symbol id=\"i-pants\" viewBox=\"0 0 32 32\"><path d=\"M7 3h18l2 26h-9l-2-16-2 16H5L7 3Zm0 5h18\"/></symbol>\n<symbol id=\"i-gloves\" viewBox=\"0 0 32 32\"><path d=\"M10 29 6 17V9c0-3 4-3 4 0V5c0-3 4-3 4 0v5-6c0-3 4-3 4 0v7-4c0-3 4-3 4 0v10l4-4 3 3-8 13H10Z\"/></symbol>\n<symbol id=\"i-shoes\" viewBox=\"0 0 32 32\"><path d=\"M7 3h13v14l9 5v7H3V18h4V3Zm-3 21h24M12 8h6m-6 5h6\"/></symbol>\n<symbol id=\"i-wings\" viewBox=\"0 0 32 32\"><path d=\"M15 26C7 25 2 16 3 3l12 12m2 11c8-1 13-10 12-23L17 15M5 12l8 9m14-9-8 9\"/></symbol>\n<symbol id=\"i-mount\" viewBox=\"0 0 32 32\"><path d=\"M8 28v-9l6-7-1-8 5-2 2 6 8 5-3 6-8-2v11H8ZM4 28h19\"/></symbol>\n<symbol id=\"i-book\" viewBox=\"0 0 32 32\"><path d=\"M4 6c4-2 8-2 12 1 4-3 8-3 12-1v21c-4-2-8-2-12 1-4-3-8-3-12-1V6Zm12 1v21M8 11h4m8 0h4\"/></symbol>\n<symbol id=\"i-ore\" viewBox=\"0 0 32 32\"><path d=\"M5 22 9 9l9-5 9 9-3 13-12 2-7-6Zm4-13 7 7 11-3M16 16l-4 12\"/></symbol>\n<symbol id=\"i-lock\" viewBox=\"0 0 32 32\"><path d=\"M9 14v-4a7 7 0 0 1 14 0v4M6 14h20v15H6z\"/></symbol>\n<symbol id=\"i-pin\" viewBox=\"0 0 32 32\"><path d=\"M16 29s9-9 9-16a9 9 0 0 0-18 0c0 7 9 16 9 16Z\"/><circle cx=\"16\" cy=\"13\" r=\"3.5\"/></symbol>\n<symbol id=\"i-flame\" viewBox=\"0 0 32 32\"><path d=\"M17 2c2 8-4 9-2 14l6-7c1 6 8 9 5 16-3 9-21 7-21-4 0-6 7-9 12-19Z\"/></symbol>\n<symbol id=\"i-water\" viewBox=\"0 0 32 32\"><path d=\"M16 3c6 8 10 13 10 18a10 10 0 0 1-20 0c0-5 4-10 10-18Z\"/><path d=\"M11 21a5 5 0 0 0 5 5\"/></symbol>\n<symbol id=\"i-wood\" viewBox=\"0 0 32 32\"><path d=\"M6 26C6 12 14 5 27 5c0 13-7 21-21 21Zm0 0 13-13\"/></symbol>\n<symbol id=\"i-metal\" viewBox=\"0 0 32 32\"><path d=\"M3 24 7 14h18l4 10Zm6-10 2-6h10l2 6M16 14v10\"/></symbol>\n<symbol id=\"i-earth\" viewBox=\"0 0 32 32\"><path d=\"M2 27 12 9l6 9 4-5 8 14Z\"/><path d=\"m9 15 3 2 3-3\"/></symbol>\n<symbol id=\"i-heart\" viewBox=\"0 0 32 32\"><path d=\"M16 27S4 19 4 11a6 6 0 0 1 12-2 6 6 0 0 1 12 2c0 8-12 16-12 16Z\"/></symbol>\n<symbol id=\"i-orb\" viewBox=\"0 0 32 32\"><circle cx=\"16\" cy=\"17\" r=\"10\"/><path d=\"M11 15a5 5 0 0 1 5-5M16 2v3M27 6l-2 2M5 6l2 2\"/></symbol>\n<symbol id=\"i-speed\" viewBox=\"0 0 32 32\"><path d=\"M3 10h12M6 16h14M3 22h10M20 8l8 8-8 8\"/></symbol>\n<symbol id=\"i-reflect\" viewBox=\"0 0 32 32\"><path d=\"M5 11h20l-6-6M27 21H7l6 6\"/></symbol>\n<symbol id=\"i-feather\" viewBox=\"0 0 32 32\"><path d=\"M27 4C15 4 8 12 8 22l-4 6M8 22c8 0 15-4 17-12M12 18h8\"/></symbol>\n<symbol id=\"i-flag\" viewBox=\"0 0 32 32\"><path d=\"M7 29V4m0 2h17l-5 6 5 6H7\"/></symbol>\n<symbol id=\"i-talk\" viewBox=\"0 0 32 32\"><path d=\"M4 6h24v16H14l-7 6v-6H4Z\"/><path d=\"M10 14h0m6 0h0m6 0h0\"/></symbol>\n<symbol id=\"i-bridge\" viewBox=\"0 0 32 32\"><path d=\"M2 21h28M4 21c4-9 20-9 24 0M9 18v8m14-8v8M16 15v11\"/></symbol>\n<symbol id=\"i-deer\" viewBox=\"0 0 32 32\"><path d=\"M11 14 6 5m5 9 1-9m9 9 5-9m-5 9-1-9M11 14h10l-1 7-4 5-4-5Z\"/></symbol>\n<symbol id=\"i-lion\" viewBox=\"0 0 32 32\"><path d=\"M16 3l3 4 5-1-1 5 4 3-4 3 1 5-5-1-3 4-3-4-5 1 1-5-4-3 4-3-1-5 5 1Z\"/><circle cx=\"16\" cy=\"15\" r=\"5\"/></symbol>\n<symbol id=\"i-elephant\" viewBox=\"0 0 32 32\"><path d=\"M5 26V13a8 8 0 0 1 16 0v3c0 4 5 3 5 8v4M5 18H3m7 8v-5m8 5v-5M13 11h0\"/></symbol>\n<symbol id=\"i-croc\" viewBox=\"0 0 32 32\"><path d=\"M2 17h19l9-4v8l-9-4M7 14l2-3 2 3 2-3 2 3 2-3 2 3M8 17v5m8-5v5\"/></symbol>\n<symbol id=\"i-coin\" viewBox=\"0 0 32 32\"><circle cx=\"16\" cy=\"16\" r=\"12\"/><path d=\"M16 9v14M12 12h6a2 2 0 0 1 0 4h-4a2 2 0 0 0 0 4h6\"/></symbol>\n<symbol id=\"i-close\" viewBox=\"0 0 32 32\"><path d=\"M8 8l16 16M24 8 8 24\"/></symbol>\n<symbol id=\"i-eye\" viewBox=\"0 0 32 32\"><path d=\"M3 16s5-9 13-9 13 9 13 9-5 9-13 9S3 16 3 16Z\"/><circle cx=\"16\" cy=\"16\" r=\"4\"/></symbol>\n<symbol id=\"i-out\" viewBox=\"0 0 32 32\"><path d=\"M16 4v15m-6-6 6 6 6-6M5 26h22\"/></symbol>\n<symbol id=\"i-check\" viewBox=\"0 0 32 32\"><path d=\"m6 16 7 7 13-14\"/></symbol>\n<symbol id=\"i-next\" viewBox=\"0 0 32 32\"><path d=\"M6 16h20m-7-7 7 7-7 7\"/></symbol>\n<symbol id=\"i-pen\" viewBox=\"0 0 32 32\"><path d=\"m5 27 2-7L22 5l5 5-15 15Zm13-18 5 5\"/></symbol>\n<symbol id=\"i-user\" viewBox=\"0 0 32 32\"><circle cx=\"16\" cy=\"10\" r=\"6\"/><path d=\"M5 29c1-8 6-11 11-11s10 3 11 11\"/></symbol>\n<symbol id=\"i-hand2\" viewBox=\"0 0 32 32\"><path d=\"M10 28 6 18V9c0-3 4-3 4 0v6m0-7c0-3 4-3 4 0v7m8 13 4-10v-9c0-3-4-3-4 0v6m0-7c0-3-4-3-4 0v7\"/></symbol>\n<symbol id=\"i-thunder\" viewBox=\"0 0 32 32\"><path d=\"M19 2 6 18h8l-3 12 15-18h-9l2-10Z\"/></symbol><symbol id=\"i-wind\" viewBox=\"0 0 32 32\"><path d=\"M3 11h16a4 4 0 1 0-4-4M3 17h22a4 4 0 1 1-4 4M3 23h9\"/></symbol><symbol id=\"i-ice\" viewBox=\"0 0 32 32\"><path d=\"M16 3v26M4.7 9.5l22.6 13M4.7 22.5l22.6-13M12 5l4 4 4-4M12 27l4-4 4 4M5 14l4 2-4 2M27 14l-4 2 4 2\"/></symbol><symbol id=\"i-demon\" viewBox=\"0 0 32 32\"><path d=\"M5 4c1 5 3 7 6 8-1 2-2 4-2 7 0 6 3 10 7 10s7-4 7-10c0-3-1-5-2-7 3-1 5-3 6-8-3 2-6 3-9 3h-4c-3 0-6-1-9-3ZM11.5 18l4 1.5M20.5 18l-4 1.5M13 24h6\"/></symbol><symbol id=\"i-light\" viewBox=\"0 0 32 32\"><circle cx=\"16\" cy=\"16\" r=\"6\"/><path d=\"M16 2v5M16 25v5M2 16h5M25 16h5M6 6l3.5 3.5M22.5 22.5 26 26M6 26l3.5-3.5M22.5 9.5 26 6\"/></symbol><symbol id=\"i-spark\" viewBox=\"0 0 32 32\"><path d=\"m16 2 4 10 10 4-10 4-4 10-4-10-10-4 10-4L16 2Z\"/></symbol>\n<symbol id=\"i-whirl\" viewBox=\"0 0 32 32\"><path d=\"M16 4a12 12 0 1 1-12 12M16 10a6 6 0 1 1-6 6M4 16l-2-5m2 5 5-2\"/></symbol>\n<symbol id=\"i-tiger\" viewBox=\"0 0 32 32\"><path d=\"M6 10 4 4l6 3m16 3 2-6-6 3M6 10c0 10 4 16 10 16s10-6 10-16c-3-3-7-4-10-4S9 7 6 10Zm6 6h0m8 0h0m-7 5 3 2 3-2M16 9v4m-6-1 2 1m10-1-2 1\"/></symbol>\n<symbol id=\"i-anvil\" viewBox=\"0 0 32 32\"><path d=\"M3 10h20c0 4-3 6-7 6v4h4v4H10v-4h4v-4H8c-3 0-5-3-5-6Zm20 0 6-2v4l-6-2M24 3l-3 4m6-2-4 3\"/></symbol>\n<symbol id=\"i-bag\" viewBox=\"0 0 32 32\"><path d=\"M8 9c0-10 16-10 16 0M7 9h18l4 20H3L7 9Zm5 6h8v8h-8Z\"/></symbol>\n<symbol id=\"i-home\" viewBox=\"0 0 32 32\"><path d=\"m2 15 14-12 14 12M6 12v17h20V12M13 29V18h7v11\"/></symbol>\n<symbol id=\"i-save\" viewBox=\"0 0 32 32\"><path d=\"M4 3h21l4 5v21H3V3Zm5 0v9h13V3M9 29V18h14v11\"/></symbol>\n<symbol id=\"i-quest\" viewBox=\"0 0 32 32\"><path d=\"M7 3h19v23H7M7 3C1 3 1 10 7 10m0 16c-6 0-6 5 0 5h20M12 10h9m-9 6h9\"/></symbol>\n<symbol id=\"i-gear\" viewBox=\"0 0 32 32\"><path d=\"m12 3 8 0 1 5 5 1 3 7-4 4 1 5-7 4-4-3-5 1-5-6 2-5-2-5 6-5 1-3Z\"/><circle cx=\"16\" cy=\"16\" r=\"5\"/></symbol>\n</defs></svg>\n<header class=\"ch-head\"><div class=\"brand\"><svg class=\"mark\" viewBox=\"0 0 64 64\" aria-hidden=\"true\"><path d=\"M8 26 32 10l24 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M14 26h36v26H14z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3.5\"/><path d=\"M22 52V36h20v16M8 26h48\" stroke=\"currentColor\" stroke-width=\"3.5\" fill=\"none\"/></svg><div><b>Chợ phiên</b><small>Làng Thanh Mộc</small></div></div><div id=\"chUser\" class=\"user\"></div></header>\n<main id=\"chBody\" class=\"ch-body\"></main>\n<footer class=\"ch-foot\"><small id=\"chMode\"></small></footer>\n<div id=\"chToast\" role=\"status\"></div>\n</div>\n");})();
 ;/* ================= DỮ LIỆU MẶC ĐỊNH (giống hệt các file Google Sheet; khi nối Apps Script sẽ lấy bản trên Sheet) ================= */
 const GAME_DATA={
@@ -52,6 +52,7 @@ cau_hinh:[
  {khoa:'ma_ti_le_goc',gia_tri:2,ghi_chu:'Sách Ma công: % thu phục quái khi hạ (không áp dụng cho trùm)'},
  {khoa:'ma_phan_van_moi_menh_lenh',gia_tri:20,ghi_chu:'Sách Ma công: mỗi điểm Mệnh lệnh cộng thêm chừng này phần vạn tỉ lệ (20 = 0,2%)'},
  {khoa:'ma_toi_da',gia_tri:2,ghi_chu:'Số quái thu phục tối đa đi theo. Quái chết là mất hẳn'},
+ {khoa:'pham_chat_roi_toi_da',gia_tri:'p',ghi_chu:'Phẩm chất cao nhất rơi ra ở bản đồ này (n Thường, g Đẹp, p Hoàn hảo, l Huyền thoại, m Thần). Đồ cao hơn không rơi, phần thưởng nhiệm vụ cũng không vượt mức này'},
  {khoa:'link_cho_phien',gia_tri:'https://ikynagame.blogspot.com/p/cho-phien.html',ghi_chu:'Địa chỉ trang Chợ phiên (mua bán giữa người chơi, nhân vật đi theo)'}
 ],
 // cap = cấp hiện tại; ti_le = % thành công lên cấp kế; thất bại: cấp về ngẫu nhiên từ that_bai_tu đến that_bai_den (để trống = giữ nguyên)
@@ -153,12 +154,12 @@ quai:[
  ['ngu-tinh','Ngư Tinh',6000,40,40,110,40,80,280,120,2.2,.8,1000,.05,2,300,.8,.5,.12,.015,'10-30','than',20]
 ].map(([id,ten,mau,sat_thuong,toc_do,toc_chay,ban_kinh,cao,tam_danh,tam_gan,hoi_chieu,vung_tay,dong,day_lui,boss,hoi_sinh_giay,ti_le_dep,ti_le_hoan_hao,ti_le_huyen_thoai,ti_le_than,hong_ngoc,loai_sat_thuong,ti_le_x2])=>{const [ha,hb]=hong_ngoc.split('-').map(Number),v=x=>Math.round(x*10000);return {id,ten,mau,sat_thuong,toc_do,toc_chay,ban_kinh,cao,tam_danh,tam_gan,hoi_chieu_ms:Math.round(hoi_chieu*1000),vung_tay_ms:Math.round(vung_tay*1000),dong,day_lui_phan_tram:Math.round(day_lui*100),boss,hoi_sinh_giay,dep_phan_van:v(ti_le_dep),hoan_hao_phan_van:v(ti_le_hoan_hao),huyen_thoai_phan_van:v(ti_le_huyen_thoai),than_phan_van:v(ti_le_than),hong_ngoc_it:ha,hong_ngoc_nhieu:hb,loai_sat_thuong,ti_le_x2,kinh_nghiem:{deer:8,lion:20,elephant:50,croc:25,'chua-son-lam':300,'ngu-tinh':800}[id]||0};}),
 nhiem_vu:[
- ['q-huou','Săn hươu','Dân làng cần thịt hươu cho hội làng.','deer',5,200,0,'hat','g','co'],
- ['q-su-tu','Trừ sư tử','Sư tử bên Đông Ngạn hay vồ người đi rừng.','lion',3,500,0,'sword-iron','n','co'],
- ['q-ca-sau','Diệt cá sấu','Cá sấu rình ở bến sông, dân không dám lấy nước.','croc',3,500,0,'shoes-leather','g','co'],
- ['q-voi','Đuổi voi rừng','Voi rừng phá nương rẫy phía đông.','elephant',2,800,0,'armor-leather','g','co'],
- ['q-chua-son-lam','Hạ Chúa Sơn Lâm','Con hổ chúa ở rừng đông bắc đã giết nhiều thợ săn.','chua-son-lam',1,10000,10,'','','co'],
- ['q-ngu-tinh','Trừ Ngư Tinh','Ngư Tinh nổi lên ở đầm phía đông nam, dâng nước hại dân.','ngu-tinh',1,30000,30,'','','co']
+ ['q-huou','Săn hươu','Dân làng cần thịt hươu cho hội làng.','deer',5,200,0,'','','khong'],
+ ['q-su-tu','Trừ sư tử','Sư tử bên Đông Ngạn hay vồ người đi rừng.','lion',3,500,0,'','','khong'],
+ ['q-ca-sau','Diệt cá sấu','Cá sấu rình ở bến sông, dân không dám lấy nước.','croc',3,500,0,'','','khong'],
+ ['q-voi','Đuổi voi rừng','Voi rừng phá nương rẫy phía đông.','elephant',2,800,0,'','','khong'],
+ ['q-chua-son-lam','Hạ Chúa Sơn Lâm','Con hổ chúa ở rừng đông bắc đã giết nhiều thợ săn.','chua-son-lam',1,10000,0,'','','khong'],
+ ['q-ngu-tinh','Trừ Ngư Tinh','Ngư Tinh nổi lên ở đầm phía đông nam, dâng nước hại dân.','ngu-tinh',1,30000,0,'','','khong']
 ].map(([id,ten,mo_ta,muc_tieu,so_luong,thuong_dong,thuong_hong_ngoc,thuong_do,pham_chat_do,lap_lai])=>({id,ten,mo_ta,muc_tieu,so_luong,thuong_dong,thuong_hong_ngoc,thuong_do,pham_chat_do,lap_lai,thuong_kinh_nghiem:Math.round(thuong_dong/10)})),
 linh:[
  ['dan-binh','Dân binh','m',100,5,12,8,12,4,'spear,hat','Lính giáo rẻ, máu trâu'],
@@ -318,18 +319,18 @@ function LH_Core(A){
     },
     marketList(p){
       const a=auth(p.token),rows=A.rows('cho').filter(r=>r.loai==='do');
-      const view=r=>({id:r.id,item:JSON.parse(r.vat_pham||'null'),price:Number(r.gia),mine:r.nguoi_ban===a.id,seller:r.ten_nguoi_ban||''});
+      const view=r=>({id:r.id,item:JSON.parse(r.vat_pham||'null'),price:Number(r.gia),ruby:Number(r.hong_ngoc)||0,mine:r.nguoi_ban===a.id,seller:r.ten_nguoi_ban||''});
       return {open:rows.filter(r=>r.trang_thai==='mo').map(view),claim:claimSum(a.id).copper,claimRuby:claimSum(a.id).ruby};
     },
     // Ký gửi: lấy món đồ ra khỏi túi nhân vật trên máy chủ
     marketSell(p){
-      const a=auth(p.token),price=Math.floor(Number(p.price));
-      if(!(price>=1))fail('GIA_SAI');
+      const a=auth(p.token),price=Math.max(0,Math.floor(Number(p.price)||0)),ruby=Math.max(0,Math.floor(Number(p.ruby)||0));
+      if(!(price>=1)&&!(ruby>=1))fail('GIA_SAI');
       return A.lock(()=>{
         const c=ownChar(a,p.charId,'active'),st=stateOf(c),i=Math.floor(Number(p.i)),it=st.player.bag[i];
         if(!it||!Player.tradeable(it))fail('VAT_PHAM_SAI');
         st.player.bag[i]=null;storeState(c,st,st.player);
-        const fee=(cfg('phi_cho')||0)/100,r={id:'ch-'+A.uid(),loai:'do',nguoi_ban:a.id,nhan_vat_ban:c.id,ten_nguoi_ban:c.ten,vat_pham:JSON.stringify(it),gia:price,tien_nhan:Math.floor(price*(1-fee)),trang_thai:'mo',nguoi_mua:'',tao_luc:A.now(),ban_luc:0,da_nhan:0};
+        const fee=(cfg('phi_cho')||0)/100,r={id:'ch-'+A.uid(),loai:'do',nguoi_ban:a.id,nhan_vat_ban:c.id,ten_nguoi_ban:c.ten,vat_pham:JSON.stringify(it),gia:price,tien_nhan:Math.floor(price*(1-fee)),hong_ngoc:ruby,hong_ngoc_nhan:Math.floor(ruby*(1-fee)),trang_thai:'mo',nguoi_mua:'',tao_luc:A.now(),ban_luc:0,da_nhan:0};
         A.insert('cho',r);return {id:r.id,state:st.player};
       });
     },
@@ -348,11 +349,11 @@ function LH_Core(A){
       return A.lock(()=>{
         const c=ownChar(a,p.charId,'active'),r=A.rows('cho').find(x=>x.id===p.id);
         if(!r||r.trang_thai!=='mo')fail('DA_BAN');if(r.nguoi_ban===a.id)fail('DO_CUA_MINH');
-        const st=stateOf(c),price=Number(r.gia),it=Player.cleanItem(JSON.parse(r.vat_pham));
-        if(st.player.copper<price)fail('KHONG_DU_TIEN');if(!it)fail('VAT_PHAM_SAI');
-        Player.addItem(st.player,it);st.player.copper-=price;storeState(c,st,st.player);
+        const st=stateOf(c),price=Number(r.gia)||0,ruby=Number(r.hong_ngoc)||0,it=Player.cleanItem(JSON.parse(r.vat_pham));
+        if(st.player.copper<price)fail('KHONG_DU_TIEN');if(st.player.rubies<ruby)fail('KHONG_DU_HONG_NGOC');if(!it)fail('VAT_PHAM_SAI');
+        Player.addItem(st.player,it);st.player.copper-=price;st.player.rubies-=ruby;storeState(c,st,st.player);
         r.trang_thai='da_ban';r.nguoi_mua=p.charId;r.ban_luc=A.now();A.update('cho',r);
-        return {item:it,price,state:st.player};
+        return {item:it,price,ruby,state:st.player};
       });
     },
     // Nhận tiền bán hàng vào một nhân vật
@@ -595,15 +596,18 @@ const Player=(()=>{
     return it;
   }
   const BASE_DROP=()=>Object.keys(items).filter(k=>{const d=items[k];return !d.q&&d.slot&&d.slot!=='book'&&d.slot!=='mount';});
+  const dropCap=()=>{const q=String(CFG.pham_chat_roi_toi_da||'').trim();return RAR[q]?RAR[q].tier:99;};
   function rollDrop(monId,rng=Math.random){
     const M=MON[monId];if(!M)return {items:[],rubies:0};
-    const out=[],tries=M.boss===2?3:M.boss?2:1;
+    const out=[],tries=M.boss===2?3:M.boss?2:1,cap=dropCap(),R=q=>RAR[q]?RAR[q].tier<=cap:true;
+    // phẩm chất rơi cao nhất của bản đồ (cau_hinh: pham_chat_roi_toi_da); phẩm chất vượt mức thì không rơi
+    const dm=R('m')?M.drops.m:0,dl=R('l')?M.drops.l:0,dp=R('p')?M.drops.p:0,dg=R('g')?M.drops.g:0;
     for(let t=0;t<tries;t++){
       const x=rng();let acc=0;
-      if(x<(acc+=M.drops.m)){const pool=Object.keys(items).filter(k=>items[k].myth);if(pool.length)out.push(roll(pool[Math.floor(rng()*pool.length)],'m',rng));}
-      else if(x<(acc+=M.drops.l)){const pool=Object.keys(items).filter(k=>items[k].set);if(pool.length)out.push(roll(pool[Math.floor(rng()*pool.length)],'l',rng));}
-      else if(x<(acc+=M.drops.p)){const pool=BASE_DROP();out.push(roll(pool[Math.floor(rng()*pool.length)],'p',rng));}
-      else if(x<(acc+=M.drops.g)){const pool=BASE_DROP();out.push(roll(pool[Math.floor(rng()*pool.length)],'g',rng));}
+      if(x<(acc+=dm)){const pool=Object.keys(items).filter(k=>items[k].myth);if(pool.length)out.push(roll(pool[Math.floor(rng()*pool.length)],'m',rng));}
+      else if(x<(acc+=dl)){const pool=Object.keys(items).filter(k=>items[k].set);if(pool.length)out.push(roll(pool[Math.floor(rng()*pool.length)],'l',rng));}
+      else if(x<(acc+=dp)){const pool=BASE_DROP();out.push(roll(pool[Math.floor(rng()*pool.length)],'p',rng));}
+      else if(x<(acc+=dg)){const pool=BASE_DROP();out.push(roll(pool[Math.floor(rng()*pool.length)],'g',rng));}
     }
     const [a,b]=M.rubies;return {items:out,rubies:b>0?a+Math.floor(rng()*(b-a+1)):0};
   }
@@ -737,7 +741,7 @@ const Player=(()=>{
   function questProgress(s,monId){const out=[];for(const id of Object.keys(s.quests.active)){const Q=QUESTS[id];if(Q&&Q.target===monId&&s.quests.active[id]<Q.count){s.quests.active[id]++;out.push(id);}}return out;}
   function questTurnIn(s,id,rng=Math.random){
     const Q=QUESTS[id];if(!Q||s.quests.active[id]==null)throw Error('QUEST');if(s.quests.active[id]<Q.count)throw Error('QUEST_NOT_DONE');
-    let it=null;if(Q.item&&items[Q.item]){if(s.bag.indexOf(null)<0)throw Error('BAG_FULL');it=roll(Q.item,Q.itemQ||'n',rng);addItem(s,it);}
+    let it=null;if(Q.item&&items[Q.item]){if(s.bag.indexOf(null)<0)throw Error('BAG_FULL');let q=Q.itemQ||'n';if(RAR[q]&&RAR[q].tier>dropCap())q='p';it=roll(Q.item,q,rng);addItem(s,it);}
     s.copper+=Q.copper;s.rubies+=Q.rubies;delete s.quests.active[id];s.quests.done[id]=(s.quests.done[id]||0)+1;const up=gainExp(s,Q.exp);return {copper:Q.copper,rubies:Q.rubies,item:it,exp:Q.exp,up};
   }
   // Kinh nghiệm và cấp: điểm cần cho mỗi cấp tăng dần; lên cấp được điểm cộng vào 4 chỉ số
@@ -939,7 +943,7 @@ const Player=(()=>{
     ({do:paneMarket,ky:paneSell,linh:paneMercs,tien:paneClaim})[S.tab]();
   }
   const pane=()=>$('#chPane');
-  const card=(it,price,foot,attrs='')=>`<div class="card" ${attrs} style="--q:${qColor(it)}"><div class="ci" style="color:${tintOf(it)||'#e4cc8d'}">${icon(it.type)}${it.lv?`<b class="lv">+${it.lv}</b>`:''}</div><b class="nm" style="color:${qColor(it)}">${esc(Player.nameOf(it))}</b><small class="q" style="color:${qColor(it)}">${Player.rar(it).name}</small>${chips(it)}${price!=null?`<div class="pr">${coins(price)}</div>`:''}${foot||''}</div>`;
+  const card=(it,price,foot,attrs='')=>`<div class="card" ${attrs} style="--q:${qColor(it)}"><div class="ci" style="color:${tintOf(it)||'#e4cc8d'}">${icon(it.type)}${it.lv?`<b class="lv">+${it.lv}</b>`:''}</div><b class="nm" style="color:${qColor(it)}">${esc(Player.nameOf(it))}</b><small class="q" style="color:${qColor(it)}">${Player.rar(it).name}</small>${chips(it)}${price!=null?`<div class="pr">${Array.isArray(price)?(price[0]||!price[1]?coins(price[0]):'')+(price[1]?ruby(price[1]):''):coins(price)}</div>`:''}${foot||''}</div>`;
   async function paneMarket(){
     const p=pane();
     if(!S.market){p.innerHTML='<p class="hint">Đang tải hàng\u{2026}</p>';try{S.market=await Net.call('marketList');}catch(e){p.innerHTML=`<p class="hint">${esc(errMsg(e))}</p>`;return;}S.claim=S.market.claim;S.claimRuby=S.market.claimRuby||0;}
@@ -947,7 +951,7 @@ const Player=(()=>{
     const flt=[['all','Tất cả'],...Object.entries(Player.RAR).filter(([,r])=>r.trade).map(([k,r])=>[k,r.name])];
     const money=S.state?S.state.copper:0;
     p.innerHTML=`<div class="flt">${flt.map(([k,t])=>`<button data-f="${k}" class="${q===k?'on':''}" ${Player.RAR[k]?`style="color:${Player.RAR[k].color}"`:''}>${t}</button>`).join('')}<button id="reload" class="ghost">${svg('next')}Làm mới</button></div>`+
-      (list.length?`<div class="grid">${list.map(r=>card(r.it,r.price,r.mine?`<button data-cancel="${r.id}">${svg('out')}Lấy lại</button><small class="seller">Của bạn</small>`:`<button class="primary" data-buy="${r.id}"${!S.state||money<r.price?' disabled':''}>${svg('bag')}Mua</button><small class="seller">${esc(r.seller||'')}</small>`)).join('')}</div>`:`<div class="empty">${svg('coin')}<span>Chợ chưa có hàng.</span></div>`);
+      (list.length?`<div class="grid">${list.map(r=>card(r.it,[r.price,r.ruby||0],r.mine?`<button data-cancel="${r.id}">${svg('out')}Lấy lại</button><small class="seller">Của bạn</small>`:`<button class="primary" data-buy="${r.id}"${!S.state||money<r.price||(S.state.rubies||0)<(r.ruby||0)?' disabled':''}>${svg('bag')}Mua</button><small class="seller">${esc(r.seller||'')}</small>`)).join('')}</div>`:`<div class="empty">${svg('coin')}<span>Chợ chưa có hàng.</span></div>`);
     p.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{S.filter=b.dataset.f;paneMarket();});
     $('#reload').onclick=()=>{S.market=null;paneMarket();};
     p.querySelectorAll('[data-buy]').forEach(b=>b.onclick=async()=>{busy(b,true);try{const r=await Net.call('marketBuy',{charId:S.charId,id:b.dataset.buy});S.state=r.state;S.market=null;toast(svg('check')+`${esc(cur().name)} đã mua <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b>`);draw();}catch(e){toast(svg('close')+errMsg(e),true);busy(b,false);}});
@@ -961,12 +965,12 @@ const Player=(()=>{
     const sel=S.sel!=null?st.bag[S.sel]:null;
     p.innerHTML=`<p class="hint">Chỉ đồ ${tr} trong túi của ${esc(cur().name)} mới ký gửi được. Bán được, thương nhân giữ ${fee}%, tiền về mục Tiền bán hàng.</p>`+
       (own.length?`<div class="grid">${own.map(({it,i})=>card(it,null,`<button data-pick="${i}" class="${S.sel===i?'primary':''}">${svg('check')}${S.sel===i?'Đã chọn':'Chọn'}</button>`,S.sel===i?'data-on':'')).join('')}</div>`:`<div class="empty">${svg('bag')}<span>Túi không có đồ ký gửi được.</span></div>`)+
-      (sel?`<div class="sellbar"><span>Giá bán <b style="color:${qColor(sel)}">${esc(Player.nameOf(sel))}</b></span><label>Vàng<input id="pg" type="number" min="0" value="1"></label><label>Bạc<input id="ps" type="number" min="0" max="99" value="0"></label><label>Đồng<input id="pc" type="number" min="0" max="99" value="0"></label><button class="primary" id="sGo">${svg('coin')}Ký gửi</button></div>`:'');
+      (sel?`<div class="sellbar"><span>Giá bán <b style="color:${qColor(sel)}">${esc(Player.nameOf(sel))}</b></span><label>Vàng<input id="pg" type="number" min="0" value="1"></label><label>Bạc<input id="ps" type="number" min="0" max="99" value="0"></label><label>Đồng<input id="pc" type="number" min="0" max="99" value="0"></label><label class="rb">Hồng ngọc<input id="pr" type="number" min="0" value="0"></label><button class="primary" id="sGo">${svg('coin')}Ký gửi</button></div>`:'');
     p.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.pick);S.sel=S.sel===i?null:i;paneSell();});
     const go=$('#sGo');if(go)go.onclick=async()=>{
       const v=id=>Math.max(0,Math.floor(+$(id).value||0)),price=v('#pg')*10000+Math.min(99,v('#ps'))*100+Math.min(99,v('#pc'));
-      if(price<1)return toast(svg('close')+'Nhập giá bán',true);
-      busy(go,true);try{const r=await Net.call('marketSell',{charId:S.charId,i:S.sel,price});S.state=r.state;S.sel=null;S.market=null;toast(svg('check')+'Đã bày hàng ra chợ');draw();}catch(e){toast(svg('close')+errMsg(e),true);busy(go,false);}
+      const rb=v('#pr');if(price<1&&rb<1)return toast(svg('close')+'Nhập giá bán',true);
+      busy(go,true);try{const r=await Net.call('marketSell',{charId:S.charId,i:S.sel,price,ruby:rb});S.state=r.state;S.sel=null;S.market=null;toast(svg('check')+'Đã bày hàng ra chợ');draw();}catch(e){toast(svg('close')+errMsg(e),true);busy(go,false);}
     };
   }
   const statLine=s=>`<small class="stats">SM ${s.strength} \u{b7} NN ${s.agility} \u{b7} SK ${s.vitality} \u{b7} TT ${s.intelligence}</small>`;

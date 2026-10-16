@@ -48,7 +48,7 @@ window.startUI=(session)=>{
     return t+(d.slot==='mount'?` · gia cường: ${gainText(d)}`:` · gia cường: ${gainText(d)}/cấp`);
   }
   function itemInfo(it){
-    const d=info(it),R=Player.rar(it);let h=`<div class="sel-info"><b class="sel-name" style="color:${R.color}">${esc(Player.nameOf(it))}</b><small class="qtag" style="color:${R.color}">${R.name}${R.trade?' · bán được qua thương nhân':''}</small>${chips(it)}<small class="sel-desc">${desc(it)}</small>`;
+    const d=info(it),R=Player.rar(it);let h=`<div class="sel-info"><b class="sel-name" style="color:${R.color}">${esc(Player.nameOf(it))}</b><small class="qtag" style="color:${R.color}">${R.name}${R.trade?' · bán được qua thương nhân':''}</small>${d.gender&&d.gender!==p.gender?`<small class="qtag" style="color:#ffb0a0">${svg('lock')}Đồ của nhân vật ${d.gender==='f'?'nữ':'nam'}: ${p.gender==='f'?'nữ':'nam'} không mặc được</small>`:''}${chips(it)}<small class="sel-desc">${desc(it)}</small>`;
     if(d.set){const S=Player.SETS[d.set],n=Player.derive(p).sets.find(x=>x.id===d.set);h+=`<small class="set-desc"><b>Bộ ${esc(S.name)} · ${esc(S.hero)}</b> (${n?n.n:0}/9) · ${d.gender==='f'?'nhân vật nữ':'nhân vật nam'}<br>${[3,5,7].map(t=>`<span class="${n&&n.n>=t?'on':''}">${t} món: ${Object.entries(S.tiers[t]).map(([k,v])=>addLine(k,v)).join(', ')}</span>`).join('<br>')}<br><span class="${n&&n.n>=9?'on':''}">9 món: ${esc(S.fxText)}</span></small>`;}
     if(d.fxText&&!d.set)h+=`<small class="set-desc"><b>${Player.FX_NAMES[d.fx]||''}</b>: ${esc(d.fxText)}</small>`;
     return h+'</div>';
@@ -62,7 +62,8 @@ window.startUI=(session)=>{
     const act=Object.entries(p.quests.active);
     if(act.length){const [id,n]=act[0],Q=Player.QUESTS[id];return svg('quest')+`${esc(Q.name)} ${Math.min(n,Q.count)}/${Q.count}`+(act.length>1?` <small>+${act.length-1}</small>`:'');}
     if(!p.flags.river)return svg('bridge')+'Qua cầu sang Đông Ngạn';
-    return svg('quest')+'Gặp Lý trưởng nhận việc';
+    // còn việc chưa làm thì nhắc gặp Lý trưởng; làm hết rồi thì khung theo dõi biến mất cho gọn
+    return Object.values(Player.QUESTS).some(Q=>Q.repeat||!p.quests.done[Q.id])?svg('quest')+'Gặp Lý trưởng nhận việc':'';
   }
   function refresh(){
     const D=game.HD,S=D.tot;
@@ -77,7 +78,7 @@ window.startUI=(session)=>{
     const east=game.hero.x>(World.BRIDGE.x1+1)*World.T;
     $('#placeName').textContent=east?'Đông Ngạn':'Thanh Mộc';$('#placeCoord').textContent=Math.floor(game.hero.x/World.T)+', '+Math.floor(game.hero.y/World.T);
     $('#safeTag').hidden=!game.safe;
-    const q=questHtml();if($('#questTrack').innerHTML!==q)$('#questTrack').innerHTML=q;
+    const q=questHtml();if($('#questTrack').innerHTML!==q){$('#questTrack').innerHTML=q;$('#questTrack').hidden=!q;}
     const type=Player.stance(p).type;if(lastType!==type){$('#normalIcon').innerHTML=`<use href="#i-${type}"/>`;lastType=type;const W=Player.weapon(type);$('#skill-normal').title='Space · '+W.name;[['basic','1','Combo'],['intermediate','2','Diện rộng'],['advanced','3','Liên hoàn']].forEach(([id,k,n])=>{$('#skill-'+id).title=`${k} \u{b7} ${n} \u{b7} ${Player.skillCost(p,id)} mana`;});}
     const el=Player.element(p);$('#skill-normal').style.setProperty('--elem',el?EL[el].color:'#dfc480');
     const books=Object.keys(D.books),key=books.join();if(key!==lastBuffs){lastBuffs=key;$('#buffs').innerHTML=books.map(b=>`<span class="buff" style="color:${EL[b].color}" title="${EL[b].name}: ${elInfo(b)}">${svg(EL[b].icon)}</span>`).join('');}
@@ -192,12 +193,13 @@ window.startUI=(session)=>{
   /* ---------- Lý trưởng: bảng nhiệm vụ ---------- */
   function rewardChips(Q){const o=[];if(Q.copper)o.push(`<i class="ch">${coins(Q.copper)}</i>`);if(Q.rubies)o.push(`<i class="ch">${ruby(Q.rubies)}</i>`);if(Q.item&&Player.items[Q.item]){const it={type:Q.item,q:Q.itemQ};o.push(`<i class="ch" style="color:${qColor(it)}">${icon(Q.item)}${esc(Player.items[Q.item].name)} · ${Player.RAR[Q.itemQ||'n'].name}</i>`);}return o.join('');}
   function showQuestBoard(){
-    const rows=Object.values(Player.QUESTS).map(Q=>{
+    // việc làm một lần đã xong thì không hiện nữa
+    const rows=Object.values(Player.QUESTS).filter(Q=>Q.repeat||!p.quests.done[Q.id]||p.quests.active[Q.id]!=null).map(Q=>{
       const n=p.quests.active[Q.id],done=p.quests.done[Q.id]||0,M=Player.MON[Q.target],act=n!=null,ready=act&&n>=Q.count;
       const btn=ready?`<button class="primary" data-turnin="${Q.id}">${svg('check')}Trả việc</button>`:act?`<span class="qprog">${n}/${Q.count}</span>`:(!Q.repeat&&done)?`<span class="qprog">Đã xong</span>`:`<button data-accept="${Q.id}">${svg('next')}Nhận</button>`;
       return `<div class="qrow${act?' act':''}">${LH_IMG.icon('quai:'+Q.target,M&&['deer','lion','elephant','croc'].includes(Q.target)?Q.target:'flag')}<div><b>${esc(Q.name)}</b><small>${esc(Q.desc)} · ${M?esc(M.name):''} ×${Q.count}${done?` · đã làm ${done} lần`:''}</small><span class="chips">${rewardChips(Q)}</span></div>${btn}</div>`;
     }).join('');
-    openModal(ttl('quest','Lý trưởng giao việc'),`<small class="sel-desc">Nhận tối đa ${Player.MAX_ACTIVE_QUEST} việc cùng lúc. Xong việc quay về gặp Lý trưởng để nhận thưởng.</small><div class="quest-rows" style="margin-top:8px">${rows}</div>`,true);
+    openModal(ttl('quest','Lý trưởng giao việc'),`<small class="sel-desc">Nhận tối đa ${Player.MAX_ACTIVE_QUEST} việc cùng lúc. Xong việc quay về gặp Lý trưởng để nhận thưởng.</small><div class="quest-rows" style="margin-top:8px">${rows||`<div class="cho-note">${svg('check')}<span>Đã làm xong mọi việc của làng. Hãy ra Đông Ngạn săn quái, luyện cấp.</span></div>`}</div>`,true);
     document.querySelectorAll('[data-accept]').forEach(b=>b.onclick=()=>run(b,game.op({t:'qa',id:b.dataset.accept}).then(()=>showQuestBoard())));
     document.querySelectorAll('[data-turnin]').forEach(b=>b.onclick=()=>run(b,game.op({t:'qt',id:b.dataset.turnin}).then(r=>{game.message(svg('check')+'Nhận thưởng'+(r.copper?' '+coins(r.copper):'')+(r.rubies?' '+ruby(r.rubies):'')+(r.exp?' · +'+r.exp+' kinh nghiệm':'')+(r.item?` \u{00b7} <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b>`:''));if(r.up)game.levelUp(r.up);showQuestBoard();})));
   }
@@ -205,7 +207,7 @@ window.startUI=(session)=>{
   const statLine=st=>`<small class="sel-desc">Sức mạnh ${st.strength} · Nhanh nhẹn ${st.agility} · Sức khỏe ${st.vitality} · Trí tuệ ${st.intelligence}</small>`;
   const gearIcons=eq=>Player.slots.map(k=>eq&&eq[k]&&info(eq[k])?`<span title="${esc(Player.nameOf(eq[k]))}" style="color:${qColor(eq[k])}">${icon(eq[k].type)}</span>`:'').join('');
   function showMercBoard(tab='hire'){
-    const tabs=`<div class="shop-tabs"><button data-mt="hire" class="${tab==='hire'?'on':''}">${svg('user')}Thuê lính</button><button data-mt="mine" class="${tab==='mine'?'on':''}">${svg('flag')}Lính của tôi (${p.mercs.length}/${Player.MAX_MERC})</button></div><div class="purse">${coins(p.copper)}</div>`;
+    const tabs=`<div class="shop-tabs"><button data-mt="hire" class="${tab==='hire'?'on':''}">${svg('user')}Thuê lính</button><button data-mt="mine" class="${tab==='mine'?'on':''}">${svg('flag')}Lính của tôi (${p.mercs.length}/${Player.MAX_MERC})</button></div><div class="purse">${coins(p.copper)}${ruby(p.rubies||0)}</div>`;
     let body='';
     if(tab==='hire'){
       const c=Player.cmdInfo(p);

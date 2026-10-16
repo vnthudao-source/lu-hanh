@@ -287,7 +287,11 @@ npc,trainer,Người nuôi thú cưỡi,Hình dân làng trên bản đồ (thay
 npc,wizard,Đạo sĩ,Hình dân làng trên bản đồ (thay hình vẽ),,"PNG nền trong suốt, quay mặt sang phải, chân chạm đáy ảnh, cao khoảng 2 lần rộng"
 npc,merchant,Thương nhân,Hình dân làng trên bản đồ (thay hình vẽ),,"PNG nền trong suốt, quay mặt sang phải, chân chạm đáy ảnh, cao khoảng 2 lần rộng"
 giao_dien,logo,Logo Lữ Hành,"Màn hình chờ, cổng đăng nhập",,"PNG nền trong suốt, ngang khoảng 480×200"
-giao_dien,nen_cho,Nền màn hình chờ,"Màn hình chờ khi tải game, tạo nhân vật",,Ảnh ngang 1920×1080
+giao_dien,nen_cho,Màn hình chờ (loading screen) chung,"Mọi màn hình chờ, khi chưa có ảnh riêng bên dưới",,Ảnh ngang 1920×1080
+giao_dien,nen_cho_tai_game,Màn hình chờ lúc mở trang,Thanh tải 0–100% khi mở trang và kết nối máy chủ,,Ảnh ngang 1920×1080
+giao_dien,nen_cho_tao_nv,Màn hình chờ tạo nhân vật,Lời dẫn câu chuyện khi bấm khởi tạo nhân vật,,Ảnh ngang 1920×1080
+giao_dien,nen_cho_vao_lang,Màn hình chờ vào làng,"Khi bấm Vào làng, tải nhân vật và bản đồ",,Ảnh ngang 1920×1080
+giao_dien,nen_leu,Cảnh căn lều chọn nhân vật,Phía sau 5 ô nhân vật trước lều,,Ảnh ngang 1200×700
 giao_dien,nen_dang_nhap,Nền cổng đăng nhập,Phía sau khung đăng nhập và căn lều,,Ảnh ngang 1920×1080
 giao_dien,chan_dung_nam,Chân dung nhân vật nam,Ô chân dung góc trên trái,,Vuông 256×256
 giao_dien,chan_dung_nu,Chân dung nhân vật nữ,Ô chân dung góc trên trái,,Vuông 256×256

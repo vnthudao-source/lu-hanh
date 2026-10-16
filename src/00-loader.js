@@ -25,7 +25,6 @@ window.LH_Loader=window.LH_Loader||(()=>{
     if(!el){el=document.createElement('div');el.id='lh-loader';el.innerHTML='<canvas></canvas><div class="lh-in"><div class="lh-logo">L\u{1EEF} H\u{00E0}nh</div><div class="lh-sub">L\u{00E0}ng Thanh M\u{1ED9}c</div><p class="lh-story"></p><div class="lh-bar"><div class="lh-fill"></div></div><div class="lh-row"><span class="lh-lbl"></span><b class="lh-pct">0%</b></div><button class="lh-go" hidden>Ti\u{1EBF}p t\u{1EE5}c</button></div>';document.body.appendChild(el);}
     const P=pics();
     if(P['giao_dien:logo']){const lg=el.querySelector('.lh-logo');lg.innerHTML=`<img src="${P['giao_dien:logo'].replace(/"/g,'')}" alt="" referrerpolicy="no-referrer" style="max-width:240px;max-height:100px;object-fit:contain" onerror="this.parentNode.textContent='L\u{1EEF} H\u{00E0}nh'">`;}
-    if(P['giao_dien:nen_cho']){bgImg=new Image();bgImg.referrerPolicy='no-referrer';bgImg.src=P['giao_dien:nen_cho'];}
     fill=el.querySelector('.lh-fill');pctEl=el.querySelector('.lh-pct');lbl=el.querySelector('.lh-lbl');story=el.querySelector('.lh-story');goBtn=el.querySelector('.lh-go');cv=el.querySelector('canvas');
   }
   // Tranh làng lúc hoàng hôn: núi xa, lũy tre, nhà sàn có đèn, người cha đội nón đi trên đường đất
@@ -60,7 +59,11 @@ window.LH_Loader=window.LH_Loader||(()=>{
   }
   const L={
     show(opt={}){
-      mount();el.classList.remove('out');el.hidden=false;scene=!!opt.scene||!!opt.story;cv.style.display=scene?'':'none';
+      mount();el.classList.remove('out');el.hidden=false;
+      // ảnh nền màn hình chờ theo từng lúc (Sheet hinh_anh): nen_cho_tai_game, nen_cho_tao_nv, nen_cho_vao_lang; không có thì dùng nen_cho
+      const P=pics(),src=P['giao_dien:nen_cho_'+(opt.bg||'')]||P['giao_dien:nen_cho']||'';
+      if(src){if(!bgImg||bgImg.dataset.src!==src){bgImg=new Image();bgImg.referrerPolicy='no-referrer';bgImg.dataset.src=src;bgImg.src=src;}}else bgImg=null;
+      scene=!!opt.scene||!!opt.story||!!bgImg;cv.style.display=scene?'':'none';
       if(!opt.keep){shown=target=cap=0;}story.textContent='';goBtn.hidden=true;lbl.textContent=opt.label||'';
       if(opt.story){
         const words=String(opt.story).split(' ');let i=0;

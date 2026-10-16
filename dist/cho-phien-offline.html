@@ -1,4 +1,4 @@
-<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="game-version" content="v8.8"><title>Chợ phiên · thử ngoại tuyến</title><style>
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="game-version" content="v8.9"><title>Chợ phiên · thử ngoại tuyến</title><style>
 #cho-phien{position:fixed;inset:0;z-index:2147483000;overflow:auto;text-align:left;line-height:normal}
 body:has(#cho-phien){overflow:hidden!important}
 #cho-phien{color-scheme:dark;--ink:#efe6cf;--muted:#a8b4a7;--gold:#e3c27a;--line:#ffffff1f;--lac:#8c2f1d}
@@ -113,6 +113,7 @@ body:has(#cho-phien){overflow:hidden!important}
 #cho-phien .mgear .gi svg{width:16px;height:16px}
 #cho-phien .mgear .gi small{color:#d9d2bd}
 #cho-phien img.icon.pic{object-fit:contain}
+#cho-phien .sellbar label.rb{color:#ff9fb6}
 </style></head><body>
 <div id="cho-phien">
 <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true"><defs>
@@ -229,6 +230,7 @@ cau_hinh:[
  {khoa:'ma_ti_le_goc',gia_tri:2,ghi_chu:'Sách Ma công: % thu phục quái khi hạ (không áp dụng cho trùm)'},
  {khoa:'ma_phan_van_moi_menh_lenh',gia_tri:20,ghi_chu:'Sách Ma công: mỗi điểm Mệnh lệnh cộng thêm chừng này phần vạn tỉ lệ (20 = 0,2%)'},
  {khoa:'ma_toi_da',gia_tri:2,ghi_chu:'Số quái thu phục tối đa đi theo. Quái chết là mất hẳn'},
+ {khoa:'pham_chat_roi_toi_da',gia_tri:'p',ghi_chu:'Phẩm chất cao nhất rơi ra ở bản đồ này (n Thường, g Đẹp, p Hoàn hảo, l Huyền thoại, m Thần). Đồ cao hơn không rơi, phần thưởng nhiệm vụ cũng không vượt mức này'},
  {khoa:'link_cho_phien',gia_tri:'https://ikynagame.blogspot.com/p/cho-phien.html',ghi_chu:'Địa chỉ trang Chợ phiên (mua bán giữa người chơi, nhân vật đi theo)'}
 ],
 // cap = cấp hiện tại; ti_le = % thành công lên cấp kế; thất bại: cấp về ngẫu nhiên từ that_bai_tu đến that_bai_den (để trống = giữ nguyên)
@@ -330,12 +332,12 @@ quai:[
  ['ngu-tinh','Ngư Tinh',6000,40,40,110,40,80,280,120,2.2,.8,1000,.05,2,300,.8,.5,.12,.015,'10-30','than',20]
 ].map(([id,ten,mau,sat_thuong,toc_do,toc_chay,ban_kinh,cao,tam_danh,tam_gan,hoi_chieu,vung_tay,dong,day_lui,boss,hoi_sinh_giay,ti_le_dep,ti_le_hoan_hao,ti_le_huyen_thoai,ti_le_than,hong_ngoc,loai_sat_thuong,ti_le_x2])=>{const [ha,hb]=hong_ngoc.split('-').map(Number),v=x=>Math.round(x*10000);return {id,ten,mau,sat_thuong,toc_do,toc_chay,ban_kinh,cao,tam_danh,tam_gan,hoi_chieu_ms:Math.round(hoi_chieu*1000),vung_tay_ms:Math.round(vung_tay*1000),dong,day_lui_phan_tram:Math.round(day_lui*100),boss,hoi_sinh_giay,dep_phan_van:v(ti_le_dep),hoan_hao_phan_van:v(ti_le_hoan_hao),huyen_thoai_phan_van:v(ti_le_huyen_thoai),than_phan_van:v(ti_le_than),hong_ngoc_it:ha,hong_ngoc_nhieu:hb,loai_sat_thuong,ti_le_x2,kinh_nghiem:{deer:8,lion:20,elephant:50,croc:25,'chua-son-lam':300,'ngu-tinh':800}[id]||0};}),
 nhiem_vu:[
- ['q-huou','Săn hươu','Dân làng cần thịt hươu cho hội làng.','deer',5,200,0,'hat','g','co'],
- ['q-su-tu','Trừ sư tử','Sư tử bên Đông Ngạn hay vồ người đi rừng.','lion',3,500,0,'sword-iron','n','co'],
- ['q-ca-sau','Diệt cá sấu','Cá sấu rình ở bến sông, dân không dám lấy nước.','croc',3,500,0,'shoes-leather','g','co'],
- ['q-voi','Đuổi voi rừng','Voi rừng phá nương rẫy phía đông.','elephant',2,800,0,'armor-leather','g','co'],
- ['q-chua-son-lam','Hạ Chúa Sơn Lâm','Con hổ chúa ở rừng đông bắc đã giết nhiều thợ săn.','chua-son-lam',1,10000,10,'','','co'],
- ['q-ngu-tinh','Trừ Ngư Tinh','Ngư Tinh nổi lên ở đầm phía đông nam, dâng nước hại dân.','ngu-tinh',1,30000,30,'','','co']
+ ['q-huou','Săn hươu','Dân làng cần thịt hươu cho hội làng.','deer',5,200,0,'','','khong'],
+ ['q-su-tu','Trừ sư tử','Sư tử bên Đông Ngạn hay vồ người đi rừng.','lion',3,500,0,'','','khong'],
+ ['q-ca-sau','Diệt cá sấu','Cá sấu rình ở bến sông, dân không dám lấy nước.','croc',3,500,0,'','','khong'],
+ ['q-voi','Đuổi voi rừng','Voi rừng phá nương rẫy phía đông.','elephant',2,800,0,'','','khong'],
+ ['q-chua-son-lam','Hạ Chúa Sơn Lâm','Con hổ chúa ở rừng đông bắc đã giết nhiều thợ săn.','chua-son-lam',1,10000,0,'','','khong'],
+ ['q-ngu-tinh','Trừ Ngư Tinh','Ngư Tinh nổi lên ở đầm phía đông nam, dâng nước hại dân.','ngu-tinh',1,30000,0,'','','khong']
 ].map(([id,ten,mo_ta,muc_tieu,so_luong,thuong_dong,thuong_hong_ngoc,thuong_do,pham_chat_do,lap_lai])=>({id,ten,mo_ta,muc_tieu,so_luong,thuong_dong,thuong_hong_ngoc,thuong_do,pham_chat_do,lap_lai,thuong_kinh_nghiem:Math.round(thuong_dong/10)})),
 linh:[
  ['dan-binh','Dân binh','m',100,5,12,8,12,4,'spear,hat','Lính giáo rẻ, máu trâu'],
@@ -496,18 +498,18 @@ function LH_Core(A){
     },
     marketList(p){
       const a=auth(p.token),rows=A.rows('cho').filter(r=>r.loai==='do');
-      const view=r=>({id:r.id,item:JSON.parse(r.vat_pham||'null'),price:Number(r.gia),mine:r.nguoi_ban===a.id,seller:r.ten_nguoi_ban||''});
+      const view=r=>({id:r.id,item:JSON.parse(r.vat_pham||'null'),price:Number(r.gia),ruby:Number(r.hong_ngoc)||0,mine:r.nguoi_ban===a.id,seller:r.ten_nguoi_ban||''});
       return {open:rows.filter(r=>r.trang_thai==='mo').map(view),claim:claimSum(a.id).copper,claimRuby:claimSum(a.id).ruby};
     },
     // Ký gửi: lấy món đồ ra khỏi túi nhân vật trên máy chủ
     marketSell(p){
-      const a=auth(p.token),price=Math.floor(Number(p.price));
-      if(!(price>=1))fail('GIA_SAI');
+      const a=auth(p.token),price=Math.max(0,Math.floor(Number(p.price)||0)),ruby=Math.max(0,Math.floor(Number(p.ruby)||0));
+      if(!(price>=1)&&!(ruby>=1))fail('GIA_SAI');
       return A.lock(()=>{
         const c=ownChar(a,p.charId,'active'),st=stateOf(c),i=Math.floor(Number(p.i)),it=st.player.bag[i];
         if(!it||!Player.tradeable(it))fail('VAT_PHAM_SAI');
         st.player.bag[i]=null;storeState(c,st,st.player);
-        const fee=(cfg('phi_cho')||0)/100,r={id:'ch-'+A.uid(),loai:'do',nguoi_ban:a.id,nhan_vat_ban:c.id,ten_nguoi_ban:c.ten,vat_pham:JSON.stringify(it),gia:price,tien_nhan:Math.floor(price*(1-fee)),trang_thai:'mo',nguoi_mua:'',tao_luc:A.now(),ban_luc:0,da_nhan:0};
+        const fee=(cfg('phi_cho')||0)/100,r={id:'ch-'+A.uid(),loai:'do',nguoi_ban:a.id,nhan_vat_ban:c.id,ten_nguoi_ban:c.ten,vat_pham:JSON.stringify(it),gia:price,tien_nhan:Math.floor(price*(1-fee)),hong_ngoc:ruby,hong_ngoc_nhan:Math.floor(ruby*(1-fee)),trang_thai:'mo',nguoi_mua:'',tao_luc:A.now(),ban_luc:0,da_nhan:0};
         A.insert('cho',r);return {id:r.id,state:st.player};
       });
     },
@@ -526,11 +528,11 @@ function LH_Core(A){
       return A.lock(()=>{
         const c=ownChar(a,p.charId,'active'),r=A.rows('cho').find(x=>x.id===p.id);
         if(!r||r.trang_thai!=='mo')fail('DA_BAN');if(r.nguoi_ban===a.id)fail('DO_CUA_MINH');
-        const st=stateOf(c),price=Number(r.gia),it=Player.cleanItem(JSON.parse(r.vat_pham));
-        if(st.player.copper<price)fail('KHONG_DU_TIEN');if(!it)fail('VAT_PHAM_SAI');
-        Player.addItem(st.player,it);st.player.copper-=price;storeState(c,st,st.player);
+        const st=stateOf(c),price=Number(r.gia)||0,ruby=Number(r.hong_ngoc)||0,it=Player.cleanItem(JSON.parse(r.vat_pham));
+        if(st.player.copper<price)fail('KHONG_DU_TIEN');if(st.player.rubies<ruby)fail('KHONG_DU_HONG_NGOC');if(!it)fail('VAT_PHAM_SAI');
+        Player.addItem(st.player,it);st.player.copper-=price;st.player.rubies-=ruby;storeState(c,st,st.player);
         r.trang_thai='da_ban';r.nguoi_mua=p.charId;r.ban_luc=A.now();A.update('cho',r);
-        return {item:it,price,state:st.player};
+        return {item:it,price,ruby,state:st.player};
       });
     },
     // Nhận tiền bán hàng vào một nhân vật
@@ -776,15 +778,18 @@ const Player=(()=>{
     return it;
   }
   const BASE_DROP=()=>Object.keys(items).filter(k=>{const d=items[k];return !d.q&&d.slot&&d.slot!=='book'&&d.slot!=='mount';});
+  const dropCap=()=>{const q=String(CFG.pham_chat_roi_toi_da||'').trim();return RAR[q]?RAR[q].tier:99;};
   function rollDrop(monId,rng=Math.random){
     const M=MON[monId];if(!M)return {items:[],rubies:0};
-    const out=[],tries=M.boss===2?3:M.boss?2:1;
+    const out=[],tries=M.boss===2?3:M.boss?2:1,cap=dropCap(),R=q=>RAR[q]?RAR[q].tier<=cap:true;
+    // phẩm chất rơi cao nhất của bản đồ (cau_hinh: pham_chat_roi_toi_da); phẩm chất vượt mức thì không rơi
+    const dm=R('m')?M.drops.m:0,dl=R('l')?M.drops.l:0,dp=R('p')?M.drops.p:0,dg=R('g')?M.drops.g:0;
     for(let t=0;t<tries;t++){
       const x=rng();let acc=0;
-      if(x<(acc+=M.drops.m)){const pool=Object.keys(items).filter(k=>items[k].myth);if(pool.length)out.push(roll(pool[Math.floor(rng()*pool.length)],'m',rng));}
-      else if(x<(acc+=M.drops.l)){const pool=Object.keys(items).filter(k=>items[k].set);if(pool.length)out.push(roll(pool[Math.floor(rng()*pool.length)],'l',rng));}
-      else if(x<(acc+=M.drops.p)){const pool=BASE_DROP();out.push(roll(pool[Math.floor(rng()*pool.length)],'p',rng));}
-      else if(x<(acc+=M.drops.g)){const pool=BASE_DROP();out.push(roll(pool[Math.floor(rng()*pool.length)],'g',rng));}
+      if(x<(acc+=dm)){const pool=Object.keys(items).filter(k=>items[k].myth);if(pool.length)out.push(roll(pool[Math.floor(rng()*pool.length)],'m',rng));}
+      else if(x<(acc+=dl)){const pool=Object.keys(items).filter(k=>items[k].set);if(pool.length)out.push(roll(pool[Math.floor(rng()*pool.length)],'l',rng));}
+      else if(x<(acc+=dp)){const pool=BASE_DROP();out.push(roll(pool[Math.floor(rng()*pool.length)],'p',rng));}
+      else if(x<(acc+=dg)){const pool=BASE_DROP();out.push(roll(pool[Math.floor(rng()*pool.length)],'g',rng));}
     }
     const [a,b]=M.rubies;return {items:out,rubies:b>0?a+Math.floor(rng()*(b-a+1)):0};
   }
@@ -918,7 +923,7 @@ const Player=(()=>{
   function questProgress(s,monId){const out=[];for(const id of Object.keys(s.quests.active)){const Q=QUESTS[id];if(Q&&Q.target===monId&&s.quests.active[id]<Q.count){s.quests.active[id]++;out.push(id);}}return out;}
   function questTurnIn(s,id,rng=Math.random){
     const Q=QUESTS[id];if(!Q||s.quests.active[id]==null)throw Error('QUEST');if(s.quests.active[id]<Q.count)throw Error('QUEST_NOT_DONE');
-    let it=null;if(Q.item&&items[Q.item]){if(s.bag.indexOf(null)<0)throw Error('BAG_FULL');it=roll(Q.item,Q.itemQ||'n',rng);addItem(s,it);}
+    let it=null;if(Q.item&&items[Q.item]){if(s.bag.indexOf(null)<0)throw Error('BAG_FULL');let q=Q.itemQ||'n';if(RAR[q]&&RAR[q].tier>dropCap())q='p';it=roll(Q.item,q,rng);addItem(s,it);}
     s.copper+=Q.copper;s.rubies+=Q.rubies;delete s.quests.active[id];s.quests.done[id]=(s.quests.done[id]||0)+1;const up=gainExp(s,Q.exp);return {copper:Q.copper,rubies:Q.rubies,item:it,exp:Q.exp,up};
   }
   // Kinh nghiệm và cấp: điểm cần cho mỗi cấp tăng dần; lên cấp được điểm cộng vào 4 chỉ số
@@ -1121,7 +1126,7 @@ const Player=(()=>{
     ({do:paneMarket,ky:paneSell,linh:paneMercs,tien:paneClaim})[S.tab]();
   }
   const pane=()=>$('#chPane');
-  const card=(it,price,foot,attrs='')=>`<div class="card" ${attrs} style="--q:${qColor(it)}"><div class="ci" style="color:${tintOf(it)||'#e4cc8d'}">${icon(it.type)}${it.lv?`<b class="lv">+${it.lv}</b>`:''}</div><b class="nm" style="color:${qColor(it)}">${esc(Player.nameOf(it))}</b><small class="q" style="color:${qColor(it)}">${Player.rar(it).name}</small>${chips(it)}${price!=null?`<div class="pr">${coins(price)}</div>`:''}${foot||''}</div>`;
+  const card=(it,price,foot,attrs='')=>`<div class="card" ${attrs} style="--q:${qColor(it)}"><div class="ci" style="color:${tintOf(it)||'#e4cc8d'}">${icon(it.type)}${it.lv?`<b class="lv">+${it.lv}</b>`:''}</div><b class="nm" style="color:${qColor(it)}">${esc(Player.nameOf(it))}</b><small class="q" style="color:${qColor(it)}">${Player.rar(it).name}</small>${chips(it)}${price!=null?`<div class="pr">${Array.isArray(price)?(price[0]||!price[1]?coins(price[0]):'')+(price[1]?ruby(price[1]):''):coins(price)}</div>`:''}${foot||''}</div>`;
   async function paneMarket(){
     const p=pane();
     if(!S.market){p.innerHTML='<p class="hint">Đang tải hàng\u{2026}</p>';try{S.market=await Net.call('marketList');}catch(e){p.innerHTML=`<p class="hint">${esc(errMsg(e))}</p>`;return;}S.claim=S.market.claim;S.claimRuby=S.market.claimRuby||0;}
@@ -1129,7 +1134,7 @@ const Player=(()=>{
     const flt=[['all','Tất cả'],...Object.entries(Player.RAR).filter(([,r])=>r.trade).map(([k,r])=>[k,r.name])];
     const money=S.state?S.state.copper:0;
     p.innerHTML=`<div class="flt">${flt.map(([k,t])=>`<button data-f="${k}" class="${q===k?'on':''}" ${Player.RAR[k]?`style="color:${Player.RAR[k].color}"`:''}>${t}</button>`).join('')}<button id="reload" class="ghost">${svg('next')}Làm mới</button></div>`+
-      (list.length?`<div class="grid">${list.map(r=>card(r.it,r.price,r.mine?`<button data-cancel="${r.id}">${svg('out')}Lấy lại</button><small class="seller">Của bạn</small>`:`<button class="primary" data-buy="${r.id}"${!S.state||money<r.price?' disabled':''}>${svg('bag')}Mua</button><small class="seller">${esc(r.seller||'')}</small>`)).join('')}</div>`:`<div class="empty">${svg('coin')}<span>Chợ chưa có hàng.</span></div>`);
+      (list.length?`<div class="grid">${list.map(r=>card(r.it,[r.price,r.ruby||0],r.mine?`<button data-cancel="${r.id}">${svg('out')}Lấy lại</button><small class="seller">Của bạn</small>`:`<button class="primary" data-buy="${r.id}"${!S.state||money<r.price||(S.state.rubies||0)<(r.ruby||0)?' disabled':''}>${svg('bag')}Mua</button><small class="seller">${esc(r.seller||'')}</small>`)).join('')}</div>`:`<div class="empty">${svg('coin')}<span>Chợ chưa có hàng.</span></div>`);
     p.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{S.filter=b.dataset.f;paneMarket();});
     $('#reload').onclick=()=>{S.market=null;paneMarket();};
     p.querySelectorAll('[data-buy]').forEach(b=>b.onclick=async()=>{busy(b,true);try{const r=await Net.call('marketBuy',{charId:S.charId,id:b.dataset.buy});S.state=r.state;S.market=null;toast(svg('check')+`${esc(cur().name)} đã mua <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b>`);draw();}catch(e){toast(svg('close')+errMsg(e),true);busy(b,false);}});
@@ -1143,12 +1148,12 @@ const Player=(()=>{
     const sel=S.sel!=null?st.bag[S.sel]:null;
     p.innerHTML=`<p class="hint">Chỉ đồ ${tr} trong túi của ${esc(cur().name)} mới ký gửi được. Bán được, thương nhân giữ ${fee}%, tiền về mục Tiền bán hàng.</p>`+
       (own.length?`<div class="grid">${own.map(({it,i})=>card(it,null,`<button data-pick="${i}" class="${S.sel===i?'primary':''}">${svg('check')}${S.sel===i?'Đã chọn':'Chọn'}</button>`,S.sel===i?'data-on':'')).join('')}</div>`:`<div class="empty">${svg('bag')}<span>Túi không có đồ ký gửi được.</span></div>`)+
-      (sel?`<div class="sellbar"><span>Giá bán <b style="color:${qColor(sel)}">${esc(Player.nameOf(sel))}</b></span><label>Vàng<input id="pg" type="number" min="0" value="1"></label><label>Bạc<input id="ps" type="number" min="0" max="99" value="0"></label><label>Đồng<input id="pc" type="number" min="0" max="99" value="0"></label><button class="primary" id="sGo">${svg('coin')}Ký gửi</button></div>`:'');
+      (sel?`<div class="sellbar"><span>Giá bán <b style="color:${qColor(sel)}">${esc(Player.nameOf(sel))}</b></span><label>Vàng<input id="pg" type="number" min="0" value="1"></label><label>Bạc<input id="ps" type="number" min="0" max="99" value="0"></label><label>Đồng<input id="pc" type="number" min="0" max="99" value="0"></label><label class="rb">Hồng ngọc<input id="pr" type="number" min="0" value="0"></label><button class="primary" id="sGo">${svg('coin')}Ký gửi</button></div>`:'');
     p.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.pick);S.sel=S.sel===i?null:i;paneSell();});
     const go=$('#sGo');if(go)go.onclick=async()=>{
       const v=id=>Math.max(0,Math.floor(+$(id).value||0)),price=v('#pg')*10000+Math.min(99,v('#ps'))*100+Math.min(99,v('#pc'));
-      if(price<1)return toast(svg('close')+'Nhập giá bán',true);
-      busy(go,true);try{const r=await Net.call('marketSell',{charId:S.charId,i:S.sel,price});S.state=r.state;S.sel=null;S.market=null;toast(svg('check')+'Đã bày hàng ra chợ');draw();}catch(e){toast(svg('close')+errMsg(e),true);busy(go,false);}
+      const rb=v('#pr');if(price<1&&rb<1)return toast(svg('close')+'Nhập giá bán',true);
+      busy(go,true);try{const r=await Net.call('marketSell',{charId:S.charId,i:S.sel,price,ruby:rb});S.state=r.state;S.sel=null;S.market=null;toast(svg('check')+'Đã bày hàng ra chợ');draw();}catch(e){toast(svg('close')+errMsg(e),true);busy(go,false);}
     };
   }
   const statLine=s=>`<small class="stats">SM ${s.strength} \u{b7} NN ${s.agility} \u{b7} SK ${s.vitality} \u{b7} TT ${s.intelligence}</small>`;

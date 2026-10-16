@@ -1,4 +1,4 @@
-/*! Lữ Hành v8.8 · khởi động · https://github.com/vnthudao-source/lu-hanh */
+/*! Lữ Hành v8.9 · khởi động · https://github.com/vnthudao-source/lu-hanh */
 /* ================= MÀN HÌNH CHỜ: thanh tải 0\u{2013}100%, cảnh làng + lời dẫn truyện =================
    Dùng chung cho file khởi động (tải tài nguyên trang) và game (kết nối máy chủ, tải nhân vật, dựng bản đồ). */
 window.LH_Loader=window.LH_Loader||(()=>{
@@ -26,7 +26,6 @@ window.LH_Loader=window.LH_Loader||(()=>{
     if(!el){el=document.createElement('div');el.id='lh-loader';el.innerHTML='<canvas></canvas><div class="lh-in"><div class="lh-logo">L\u{1EEF} H\u{00E0}nh</div><div class="lh-sub">L\u{00E0}ng Thanh M\u{1ED9}c</div><p class="lh-story"></p><div class="lh-bar"><div class="lh-fill"></div></div><div class="lh-row"><span class="lh-lbl"></span><b class="lh-pct">0%</b></div><button class="lh-go" hidden>Ti\u{1EBF}p t\u{1EE5}c</button></div>';document.body.appendChild(el);}
     const P=pics();
     if(P['giao_dien:logo']){const lg=el.querySelector('.lh-logo');lg.innerHTML=`<img src="${P['giao_dien:logo'].replace(/"/g,'')}" alt="" referrerpolicy="no-referrer" style="max-width:240px;max-height:100px;object-fit:contain" onerror="this.parentNode.textContent='L\u{1EEF} H\u{00E0}nh'">`;}
-    if(P['giao_dien:nen_cho']){bgImg=new Image();bgImg.referrerPolicy='no-referrer';bgImg.src=P['giao_dien:nen_cho'];}
     fill=el.querySelector('.lh-fill');pctEl=el.querySelector('.lh-pct');lbl=el.querySelector('.lh-lbl');story=el.querySelector('.lh-story');goBtn=el.querySelector('.lh-go');cv=el.querySelector('canvas');
   }
   // Tranh làng lúc hoàng hôn: núi xa, lũy tre, nhà sàn có đèn, người cha đội nón đi trên đường đất
@@ -61,7 +60,11 @@ window.LH_Loader=window.LH_Loader||(()=>{
   }
   const L={
     show(opt={}){
-      mount();el.classList.remove('out');el.hidden=false;scene=!!opt.scene||!!opt.story;cv.style.display=scene?'':'none';
+      mount();el.classList.remove('out');el.hidden=false;
+      // ảnh nền màn hình chờ theo từng lúc (Sheet hinh_anh): nen_cho_tai_game, nen_cho_tao_nv, nen_cho_vao_lang; không có thì dùng nen_cho
+      const P=pics(),src=P['giao_dien:nen_cho_'+(opt.bg||'')]||P['giao_dien:nen_cho']||'';
+      if(src){if(!bgImg||bgImg.dataset.src!==src){bgImg=new Image();bgImg.referrerPolicy='no-referrer';bgImg.dataset.src=src;bgImg.src=src;}}else bgImg=null;
+      scene=!!opt.scene||!!opt.story||!!bgImg;cv.style.display=scene?'':'none';
       if(!opt.keep){shown=target=cap=0;}story.textContent='';goBtn.hidden=true;lbl.textContent=opt.label||'';
       if(opt.story){
         const words=String(opt.story).split(' ');let i=0;
@@ -88,8 +91,8 @@ window.LH_Loader=window.LH_Loader||(()=>{
 })();
 ;/* ================= KHỞI ĐỘNG: hiện màn hình chờ ngay, tải CSS + JS của game có đếm phần trăm ================= */
 (function(){
-  var me=document.currentScript,base=(me&&me.src||'').replace(/[^\/]*$/,''),FILES={"css":{"name":"lu-hanh.css","size":35351},"js":{"name":"lu-hanh.js","size":305069}};
-  var L=window.LH_Loader.show({label:'T\u{1EA3}i t\u{00E0}i nguy\u{00EA}n trang'});
+  var me=document.currentScript,base=(me&&me.src||'').replace(/[^\/]*$/,''),FILES={"css":{"name":"lu-hanh.css","size":35351},"js":{"name":"lu-hanh.js","size":311994}};
+  var L=window.LH_Loader.show({label:'T\u{1EA3}i t\u{00E0}i nguy\u{00EA}n trang',bg:'tai_game'});
   function plain(){var l=document.createElement('link');l.rel='stylesheet';l.href=base+FILES.css.name;document.head.appendChild(l);var s=document.createElement('script');s.src=base+FILES.js.name;s.charset='utf-8';document.head.appendChild(s);}
   async function get(f,from,to,label){
     var r=await fetch(base+f.name);if(!r.ok||!r.body)throw Error('fetch');

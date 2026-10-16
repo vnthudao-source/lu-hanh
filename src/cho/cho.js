@@ -54,7 +54,7 @@
     ({do:paneMarket,ky:paneSell,linh:paneMercs,tien:paneClaim})[S.tab]();
   }
   const pane=()=>$('#chPane');
-  const card=(it,price,foot,attrs='')=>`<div class="card" ${attrs} style="--q:${qColor(it)}"><div class="ci" style="color:${tintOf(it)||'#e4cc8d'}">${icon(it.type)}${it.lv?`<b class="lv">+${it.lv}</b>`:''}</div><b class="nm" style="color:${qColor(it)}">${esc(Player.nameOf(it))}</b><small class="q" style="color:${qColor(it)}">${Player.rar(it).name}</small>${chips(it)}${price!=null?`<div class="pr">${coins(price)}</div>`:''}${foot||''}</div>`;
+  const card=(it,price,foot,attrs='')=>`<div class="card" ${attrs} style="--q:${qColor(it)}"><div class="ci" style="color:${tintOf(it)||'#e4cc8d'}">${icon(it.type)}${it.lv?`<b class="lv">+${it.lv}</b>`:''}</div><b class="nm" style="color:${qColor(it)}">${esc(Player.nameOf(it))}</b><small class="q" style="color:${qColor(it)}">${Player.rar(it).name}</small>${chips(it)}${price!=null?`<div class="pr">${Array.isArray(price)?(price[0]||!price[1]?coins(price[0]):'')+(price[1]?ruby(price[1]):''):coins(price)}</div>`:''}${foot||''}</div>`;
   async function paneMarket(){
     const p=pane();
     if(!S.market){p.innerHTML='<p class="hint">Đang tải hàng…</p>';try{S.market=await Net.call('marketList');}catch(e){p.innerHTML=`<p class="hint">${esc(errMsg(e))}</p>`;return;}S.claim=S.market.claim;S.claimRuby=S.market.claimRuby||0;}
@@ -62,7 +62,7 @@
     const flt=[['all','Tất cả'],...Object.entries(Player.RAR).filter(([,r])=>r.trade).map(([k,r])=>[k,r.name])];
     const money=S.state?S.state.copper:0;
     p.innerHTML=`<div class="flt">${flt.map(([k,t])=>`<button data-f="${k}" class="${q===k?'on':''}" ${Player.RAR[k]?`style="color:${Player.RAR[k].color}"`:''}>${t}</button>`).join('')}<button id="reload" class="ghost">${svg('next')}Làm mới</button></div>`+
-      (list.length?`<div class="grid">${list.map(r=>card(r.it,r.price,r.mine?`<button data-cancel="${r.id}">${svg('out')}Lấy lại</button><small class="seller">Của bạn</small>`:`<button class="primary" data-buy="${r.id}"${!S.state||money<r.price?' disabled':''}>${svg('bag')}Mua</button><small class="seller">${esc(r.seller||'')}</small>`)).join('')}</div>`:`<div class="empty">${svg('coin')}<span>Chợ chưa có hàng.</span></div>`);
+      (list.length?`<div class="grid">${list.map(r=>card(r.it,[r.price,r.ruby||0],r.mine?`<button data-cancel="${r.id}">${svg('out')}Lấy lại</button><small class="seller">Của bạn</small>`:`<button class="primary" data-buy="${r.id}"${!S.state||money<r.price||(S.state.rubies||0)<(r.ruby||0)?' disabled':''}>${svg('bag')}Mua</button><small class="seller">${esc(r.seller||'')}</small>`)).join('')}</div>`:`<div class="empty">${svg('coin')}<span>Chợ chưa có hàng.</span></div>`);
     p.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{S.filter=b.dataset.f;paneMarket();});
     $('#reload').onclick=()=>{S.market=null;paneMarket();};
     p.querySelectorAll('[data-buy]').forEach(b=>b.onclick=async()=>{busy(b,true);try{const r=await Net.call('marketBuy',{charId:S.charId,id:b.dataset.buy});S.state=r.state;S.market=null;toast(svg('check')+`${esc(cur().name)} đã mua <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b>`);draw();}catch(e){toast(svg('close')+errMsg(e),true);busy(b,false);}});
@@ -76,12 +76,12 @@
     const sel=S.sel!=null?st.bag[S.sel]:null;
     p.innerHTML=`<p class="hint">Chỉ đồ ${tr} trong túi của ${esc(cur().name)} mới ký gửi được. Bán được, thương nhân giữ ${fee}%, tiền về mục Tiền bán hàng.</p>`+
       (own.length?`<div class="grid">${own.map(({it,i})=>card(it,null,`<button data-pick="${i}" class="${S.sel===i?'primary':''}">${svg('check')}${S.sel===i?'Đã chọn':'Chọn'}</button>`,S.sel===i?'data-on':'')).join('')}</div>`:`<div class="empty">${svg('bag')}<span>Túi không có đồ ký gửi được.</span></div>`)+
-      (sel?`<div class="sellbar"><span>Giá bán <b style="color:${qColor(sel)}">${esc(Player.nameOf(sel))}</b></span><label>Vàng<input id="pg" type="number" min="0" value="1"></label><label>Bạc<input id="ps" type="number" min="0" max="99" value="0"></label><label>Đồng<input id="pc" type="number" min="0" max="99" value="0"></label><button class="primary" id="sGo">${svg('coin')}Ký gửi</button></div>`:'');
+      (sel?`<div class="sellbar"><span>Giá bán <b style="color:${qColor(sel)}">${esc(Player.nameOf(sel))}</b></span><label>Vàng<input id="pg" type="number" min="0" value="1"></label><label>Bạc<input id="ps" type="number" min="0" max="99" value="0"></label><label>Đồng<input id="pc" type="number" min="0" max="99" value="0"></label><label class="rb">Hồng ngọc<input id="pr" type="number" min="0" value="0"></label><button class="primary" id="sGo">${svg('coin')}Ký gửi</button></div>`:'');
     p.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.pick);S.sel=S.sel===i?null:i;paneSell();});
     const go=$('#sGo');if(go)go.onclick=async()=>{
       const v=id=>Math.max(0,Math.floor(+$(id).value||0)),price=v('#pg')*10000+Math.min(99,v('#ps'))*100+Math.min(99,v('#pc'));
-      if(price<1)return toast(svg('close')+'Nhập giá bán',true);
-      busy(go,true);try{const r=await Net.call('marketSell',{charId:S.charId,i:S.sel,price});S.state=r.state;S.sel=null;S.market=null;toast(svg('check')+'Đã bày hàng ra chợ');draw();}catch(e){toast(svg('close')+errMsg(e),true);busy(go,false);}
+      const rb=v('#pr');if(price<1&&rb<1)return toast(svg('close')+'Nhập giá bán',true);
+      busy(go,true);try{const r=await Net.call('marketSell',{charId:S.charId,i:S.sel,price,ruby:rb});S.state=r.state;S.sel=null;S.market=null;toast(svg('check')+'Đã bày hàng ra chợ');draw();}catch(e){toast(svg('close')+errMsg(e),true);busy(go,false);}
     };
   }
   const statLine=s=>`<small class="stats">SM ${s.strength} · NN ${s.agility} · SK ${s.vitality} · TT ${s.intelligence}</small>`;
