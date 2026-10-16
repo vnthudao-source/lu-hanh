@@ -54,8 +54,10 @@ window.startUI=(session)=>{
     return h+'</div>';
   }
   const menu=$('#gameMenu');let lastExp='',lastFrame=-1,lastType='',selected=null,skillFocus=null,burstAt=-9,lastBuffs='',shopSel=null,enhSel=null,shopQ='n',previewWho=null,mercSel=null,lastGender='';
+  // bảng mở từ dân làng (cửa hàng, nhận việc, thuê lính, chợ): đóng bảng = rời cuộc nói chuyện → lưu
+  let npcPanel=false;
   function closeMenu(){menu.hidden=true;$('#settingsBtn').setAttribute('aria-expanded','false');}
-  function closeModal(){$('#overlay').hidden=true;shopSel=null;previewWho=null;$('#scene').focus();}
+  function closeModal(){if(npcPanel){npcPanel=false;game.checkpoint();}$('#overlay').hidden=true;shopSel=null;previewWho=null;$('#scene').focus();}
   function openModal(titleHtml,content,wide=false){game.stop();game.closeDialog();closeMenu();$('#modalCard').classList.toggle('wide',wide);$('#overlayTitle').innerHTML=titleHtml;const keep=$('#overlay').hidden?0:$('#modalCard').scrollTop;$('#overlayBody').innerHTML=content;$('#overlay').hidden=false;$('#modalCard').scrollTop=keep;}
   function questHtml(){
     const s=game.seen.length,total=World.npcs.length;if(s<total)return svg('talk')+`Gặp dân làng ${s}/${total}`;
@@ -255,6 +257,7 @@ window.startUI=(session)=>{
     openModal(ttl('quest','Nhiệm vụ'),`<div class="quest-rows">${act}${first||(act?'':`<div class="qdone">${svg('check')}<span>Đã xong việc làng. Gặp Lý trưởng nhận việc mới.</span></div>`)}</div>`);
   }
   function openPanel(n){
+    npcPanel=true;
     if(n.panel==='shop')return showShop(n.shop);
     if(n.panel==='quests')return showQuestBoard();
     if(n.panel==='mercs')return showMercBoard('hire');

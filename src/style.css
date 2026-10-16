@@ -128,7 +128,7 @@ button.primary:hover{background:linear-gradient(#b8533a,#8a3320)}
  .map-box{right:12px;top:12px;gap:5px}#minimap{width:120px;height:64px;border-width:4px}.map-meta{font-size:10px;padding:5px 7px}.quest-track{left:12px;top:12px;font-size:12px;padding:6px 8px;gap:5px}.quest-track svg{width:17px;height:17px}.hint{display:none}.touch-controls{display:block}
  .skill-wheel{transform:scale(.8);transform-origin:bottom right;right:6px;bottom:10px}
  #dialog{bottom:215px;left:50%;padding:14px;width:calc(100% - 24px)}#dialog p{font-size:13px}
- #toast{top:auto;bottom:250px}
+ #toast{top:6px;bottom:auto;padding:6px 11px;font-size:12px;gap:5px;max-width:calc(100% - 24px);white-space:nowrap;border-radius:9px;box-shadow:0 4px 14px #0006}#toast svg{width:15px;height:15px}
  .bag-layout{grid-template-columns:1fr;gap:8px}.equip-grid{gap:5px}.equipment-slot{aspect-ratio:2.4}.equipment-slot svg{width:22px;height:22px}
  .bag-grid{gap:4px}.bag-slot{padding:2px;border-radius:6px}.bag-slot svg{width:19px;height:19px}.skill-grid{gap:4px}.skill-slot{aspect-ratio:1.7}.skill-slot svg{width:18px;height:18px}
  #preview{width:80px;height:80px}.shop-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}.tile .ti svg{width:26px;height:26px}

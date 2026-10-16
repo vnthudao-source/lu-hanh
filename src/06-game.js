@@ -1121,7 +1121,7 @@ window.startGame=(session)=>{
     message(svg('heart')+'Uống nước giếng cổ · hồi đầy máu');keepLocal();window.GameUI?.refresh();
   }
   function interact(){if(!overlayEl.hidden)return;if(dialogNPC){nextLine();return;}const n=nearby();if(n){meet(n);return;}const w=nearWell();if(w)useWell(w);}
-  function endDialog(){if(!dialogNPC)return;seen.add(dialogNPC.id);dialogNPC=null;dialogEl.hidden=true;window.GameUI?.refresh();canvas.focus();}
+  function endDialog(save=true){if(!dialogNPC)return;seen.add(dialogNPC.id);dialogNPC=null;dialogEl.hidden=true;window.GameUI?.refresh();canvas.focus();if(save)checkpoint();}
   function nextLine(){if(!dialogNPC)return;if(page<dialogNPC.lines.length-1){page++;showLine();}else endDialog();}
   function goTo(pt){
     if(busy()||hero.dead)return;
@@ -1260,12 +1260,12 @@ window.startGame=(session)=>{
     if(k===' '){keys.add(' ');if(!e.repeat)cast('normal');return;}
     if(['1','2','3','4'].includes(k)){if(!e.repeat)cast(['basic','intermediate','advanced','mount'][Number(k)-1]);return;}
     if(k==='b'&&!e.repeat){window.GameUI?.showBag();return;}
-    if(k==='e'&&!e.repeat)interact();else if(k==='escape'){dialogNPC=null;dialogEl.hidden=true;}else keys.add(k);
+    if(k==='e'&&!e.repeat)interact();else if(k==='escape'){if(dialogNPC){dialogNPC=null;dialogEl.hidden=true;checkpoint();}}else keys.add(k);
   });
   document.addEventListener('keyup',e=>{const k=keyOf(e);keys.delete(k);if(k===' ')keys.delete(' ');if(!e.code)keys.clear();});
   window.addEventListener('blur',()=>{keys.clear();stopPad();holdAttack=false;});
   $('#next').onclick=nextLine;
-  $('#shopBtn').onclick=()=>{const n=dialogNPC;if(!n||!n.panel)return;endDialog();window.GameUI?.openPanel(n);};
+  $('#shopBtn').onclick=()=>{const n=dialogNPC;if(!n||!n.panel)return;endDialog(false);window.GameUI?.openPanel(n);};
   let padId=null;const pad=$('#pad');
   function padMove(e){if(e.pointerId!==padId)return;const r=pad.getBoundingClientRect(),dx=e.clientX-r.left-r.width/2,dy=e.clientY-r.top-r.height/2,d=Math.max(36,Math.hypot(dx,dy));joystick={x:dx/d,y:dy/d};$('.knob').style.transform=`translate(${joystick.x*31}px,${joystick.y*31}px)`;}
   function stopPad(){padId=null;joystick={x:0,y:0};$('.knob').style.transform='';}
@@ -1276,7 +1276,7 @@ window.startGame=(session)=>{
   document.addEventListener('visibilitychange',()=>{last=0;keys.clear();stopPad();holdAttack=false;if(document.hidden)keepLocal();});
   window.addEventListener('pagehide',()=>{keepLocal();});
   groundDraw();resize();syncMerc();requestAnimationFrame(loop);
-  window.mapGame={hero,player,camera,monsters,allies,get route(){return route;},get seen(){return [...seen];},get safe(){return safe;},get HD(){return HD;},now:()=>time,screenPoint,goTo,cast,message,activateBurst,svg,save,unsaved,op,refreshHD,syncMerc,
+  window.mapGame={hero,player,camera,monsters,allies,get route(){return route;},get seen(){return [...seen];},get safe(){return safe;},get HD(){return HD;},now:()=>time,screenPoint,goTo,cast,message,activateBurst,svg,save,unsaved,checkpoint,op,refreshHD,syncMerc,
     hammer(color){let n=0;const t=setInterval(()=>{burst(hero.x+hero.facing*14,hero.y-26,color||'#ffcf7a',6,140);if(color)fx.push({kind:'ring',x:hero.x,y:hero.y-20,r0:6,r1:46,color,age:0,life:.4,lw:3});else shake(2);if(++n>=3)clearInterval(t);},380);},
     levelUp,
     setHold(v){holdAttack=!!v;},

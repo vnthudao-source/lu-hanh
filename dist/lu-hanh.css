@@ -1,4 +1,4 @@
-/*! Lữ Hành v9.1 · Làng Thanh Mộc · https://github.com/vnthudao-source/lu-hanh */
+/*! Lữ Hành v9.2 · Làng Thanh Mộc · https://github.com/vnthudao-source/lu-hanh */
 #lu-hanh{position:fixed;inset:0;z-index:2147483000;overflow:hidden;text-align:left;line-height:normal}
 body:has(#lu-hanh){overflow:hidden!important}
 #lu-hanh{color-scheme:dark;--paper:#eee9da;--gold:#d8b678;--muted:#a8b4a7;--line:#ffffff20}
@@ -170,7 +170,8 @@ body:has(#lu-hanh){overflow:hidden!important}
 #lu-hanh .skill-wheel{transform:scale(.8);transform-origin:bottom right;right:6px;bottom:10px}
 #lu-hanh #dialog{bottom:215px;left:50%;padding:14px;width:calc(100% - 24px)}
 #lu-hanh #dialog p{font-size:13px}
-#lu-hanh #toast{top:auto;bottom:250px}
+#lu-hanh #toast{top:6px;bottom:auto;padding:6px 11px;font-size:12px;gap:5px;max-width:calc(100% - 24px);white-space:nowrap;border-radius:9px;box-shadow:0 4px 14px #0006}
+#lu-hanh #toast svg{width:15px;height:15px}
 #lu-hanh .bag-layout{grid-template-columns:1fr;gap:8px}
 #lu-hanh .equip-grid{gap:5px}
 #lu-hanh .equipment-slot{aspect-ratio:2.4}
