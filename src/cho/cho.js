@@ -8,6 +8,8 @@
   const tintOf=it=>{const d=info(it);return d?(d.element?Player.ELEMENTS[d.element].color:d.tint||null):null;};
   const icon=(type,color)=>{const d=Player.items[type],id=d?(d.icon||d.kind):type;return `<svg class="icon" aria-hidden="true"${color?` style="color:${color}"`:''}><use href="#i-${id}"/></svg>`;};
   const coins=c=>{const m=Player.money(c),o=[];if(m.gold)o.push(`<span class="coin gold"><i></i>${m.gold}</span>`);if(m.silver)o.push(`<span class="coin silver"><i></i>${m.silver}</span>`);if(m.copper||!o.length)o.push(`<span class="coin"><i></i>${m.copper}</span>`);return `<span class="money">${o.join('')}</span>`;};
+  const ruby=n=>`<span class="coin ruby"><i></i>${n}</span>`;
+  const price=(c,r)=>(c||!r?coins(c):'')+(r?ruby(r):'');
   const chip=(id,t,c)=>`<i class="ch"${c?` style="color:${c}"`:''}>${svg(id)}${t}</i>`;
   const chips=it=>{const s=Player.stat(it),o=[];if(s.atk)o.push(chip('sword','Công +'+s.atk));if(s.def)o.push(chip('shield','Thủ +'+s.def));if(s.speed)o.push(chip('speed','Tốc ×'+s.speed));for(const [k,v] of Object.entries(it.add||{})){const A=Player.ADD[k];if(A)o.push(`<i class="ch add">${A.name} +${v}${A.unit}</i>`);}const d=info(it);if(d&&d.fxText)o.push(`<i class="ch fx">${esc(d.fxText)}</i>`);return `<span class="chips">${o.join('')}</span>`;};
   const ERR={MONEY:'Không đủ tiền',BAG_FULL:'Túi đồ đã đầy'};
@@ -32,7 +34,7 @@
   }
   async function boot(){
     let r;try{r=await Net.call('chars');}catch(e){Net.setToken('');return login();}
-    S.acc=r.account;S.chars=r.chars;S.max=r.max;S.claim=r.claim;
+    S.acc=r.account;S.chars=r.chars;S.max=r.max;S.claim=r.claim;S.claimRuby=r.claimRuby||0;
     $('#chUser').innerHTML=`<b>${esc(S.acc.username)}</b><button id="chOut">Đăng xuất</button>`;
     $('#chOut').onclick=async()=>{try{await Net.call('logout');}catch(e){}Net.setToken('');S.charId=null;login();};
     const act=S.chars.filter(c=>c.status==='active');
@@ -45,7 +47,7 @@
   function draw(){
     const act=S.chars.filter(c=>c.status==='active'),c=cur(),st=S.state;
     const picker=act.length?`<div class="who"><span class="lbl">Nhân vật giao dịch</span><div class="who-list">${act.map(x=>`<button data-char="${x.id}" class="${x.id===S.charId?'on':''}"><b>${esc(x.name)}</b><small>${x.gender==='f'?'Nữ':'Nam'}</small></button>`).join('')}</div>${st?`<div class="purse">${coins(st.copper)}<span class="bagc">${svg('bag')}${st.bag.filter(Boolean).length}/${st.bag.length}</span><span class="bagc">${svg('user')}${st.mercs.length}/${Player.MAX_MERC}</span></div>`:''}</div>`:`<div class="empty">${svg('user')}<span>Tài khoản chưa có nhân vật nào đang hoạt động.</span></div>`;
-    const tabs=[['do','coin','Hàng hóa'],['ky','bag','Ký gửi'],['linh','user','Nhân vật đi theo'],['tien','check','Tiền bán hàng'+(S.claim?' <i class="dot"></i>':'')]];
+    const tabs=[['do','coin','Hàng hóa'],['ky','bag','Ký gửi'],['linh','user','Nhân vật đi theo'],['tien','check','Tiền bán hàng'+(S.claim||S.claimRuby?' <i class="dot"></i>':'')]];
     view.innerHTML=picker+`<nav class="tabs">${tabs.map(([k,ic,t])=>`<button data-tab="${k}" class="${S.tab===k?'on':''}">${svg(ic)}<span>${t}</span></button>`).join('')}</nav><section id="chPane"></section>`;
     view.querySelectorAll('[data-char]').forEach(b=>b.onclick=async()=>{S.charId=b.dataset.char;S.sel=null;await loadChar();draw();});
     view.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{S.tab=b.dataset.tab;S.sel=null;draw();});
@@ -55,7 +57,7 @@
   const card=(it,price,foot,attrs='')=>`<div class="card" ${attrs} style="--q:${qColor(it)}"><div class="ci" style="color:${tintOf(it)||'#e4cc8d'}">${icon(it.type)}${it.lv?`<b class="lv">+${it.lv}</b>`:''}</div><b class="nm" style="color:${qColor(it)}">${esc(Player.nameOf(it))}</b><small class="q" style="color:${qColor(it)}">${Player.rar(it).name}</small>${chips(it)}${price!=null?`<div class="pr">${coins(price)}</div>`:''}${foot||''}</div>`;
   async function paneMarket(){
     const p=pane();
-    if(!S.market){p.innerHTML='<p class="hint">Đang tải hàng…</p>';try{S.market=await Net.call('marketList');}catch(e){p.innerHTML=`<p class="hint">${esc(errMsg(e))}</p>`;return;}S.claim=S.market.claim;}
+    if(!S.market){p.innerHTML='<p class="hint">Đang tải hàng…</p>';try{S.market=await Net.call('marketList');}catch(e){p.innerHTML=`<p class="hint">${esc(errMsg(e))}</p>`;return;}S.claim=S.market.claim;S.claimRuby=S.market.claimRuby||0;}
     const q=S.filter,list=S.market.open.map(r=>({...r,it:Player.cleanItem(r.item)})).filter(r=>r.it&&(q==='all'||Player.qOf(r.it)===q));
     const flt=[['all','Tất cả'],...Object.entries(Player.RAR).filter(([,r])=>r.trade).map(([k,r])=>[k,r.name])];
     const money=S.state?S.state.copper:0;
@@ -87,23 +89,26 @@
   async function paneMercs(){
     const p=pane();
     if(!S.mercs){p.innerHTML='<p class="hint">Đang tải…</p>';try{S.mercs=(await Net.call('mercList')).list;}catch(e){S.mercs=[];}}
-    const st=S.state,full=st&&st.mercs.length>=Player.MAX_MERC,money=st?st.copper:0;
-    const list=S.mercs.length?S.mercs.map(m=>`<div class="row"><span class="g">${m.gender==='f'?'Nữ':'Nam'}</span><div><b>${esc(m.name)}</b><span class="gear">${gear(m.equipment)}</span>${statLine(m.stats)}</div><div class="end">${coins(m.price)}<button class="primary" data-mbuy="${m.id}"${!st||full||money<m.price?' disabled':''}>${svg('user')}Mua về đi theo</button></div></div>`).join(''):`<div class="empty">${svg('user')}<span>Chưa có ai cho thuê nhân vật.</span></div>`;
-    const mine=S.chars.filter(c=>c.id!==S.charId).map(c=>`<div class="row mine"><span class="g">${c.gender==='f'?'Nữ':'Nam'}</span><div><b>${esc(c.name)}</b>${statLine(c.stats)}${c.status==='merc'?`<small class="tag">Đang cho thuê · ${coins(c.price)}</small>`:''}</div><div class="end">${c.status==='merc'?`<button data-mcancel="${c.id}">Hủy cho thuê</button>`:`<div class="price-in"><label>Vàng<input data-mg="${c.id}" type="number" min="0" value="2"></label><label>Bạc<input data-ms="${c.id}" type="number" min="0" max="99" value="0"></label></div><button data-mreg="${c.id}">Cho thuê</button>`}</div></div>`).join('');
-    p.innerHTML=`<p class="hint">Mua nhân vật của người chơi khác về làm lính đi theo ${st?esc(cur().name):''} (${st?st.mercs.length:0}/${Player.MAX_MERC}). Lính mua về thuộc về bạn, cần 10 Mệnh lệnh để dẫn theo.</p><div class="rows">${list}</div>
+    const st=S.state,full=st&&st.mercs.length>=Player.MAX_MERC,money=st?st.copper:0,rubies=st?st.rubies:0;
+    const look=m=>{const k=m.look||{},a=k.main;const eq=Player.slots.map(s=>m.equipment&&m.equipment[s]&&info(m.equipment[s])?m.equipment[s]:null).filter(Boolean);
+      return `<div class="mlook"><span class="mlv">Lv. ${k.level||m.level||1}</span>${a?`<small class="stats">Sức mạnh ${a.str} · Nhanh nhẹn ${a.agi} · Sức khỏe ${a.vit} · Trí tuệ ${a.int}${k.dmg?` · Sát thương ${k.dmg[0]}–${k.dmg[1]}`:''}${k.hp?` · Máu ${k.hp}`:''}</small>`:statLine(m.stats)}
+        <div class="mgear">${eq.length?eq.map(it=>`<span class="gi" title="${esc(Player.nameOf(it))}" style="color:${qColor(it)}">${icon(it.type)}<small>${esc(Player.nameOf(it))}</small></span>`).join(''):'<small class="stats">Chưa mặc đồ</small>'}</div></div>`;};
+    const list=S.mercs.length?S.mercs.map(m=>`<div class="row merc"><span class="g">${m.gender==='f'?'Nữ':'Nam'}</span><div><b>${esc(m.name)}</b>${look(m)}</div><div class="end">${price(m.price,m.ruby)}<button class="primary" data-mbuy="${m.id}"${!st||full||money<m.price||rubies<(m.ruby||0)?' disabled':''}>${svg('user')}Mua về đi theo</button></div></div>`).join(''):`<div class="empty">${svg('user')}<span>Chưa có ai cho thuê nhân vật.</span></div>`;
+    const mine=S.chars.filter(c=>c.id!==S.charId).map(c=>`<div class="row mine"><span class="g">${c.gender==='f'?'Nữ':'Nam'}</span><div><b>${esc(c.name)}</b>${statLine(c.stats)}${c.status==='merc'?`<small class="tag">Đang cho thuê · ${price(c.price,c.ruby)}</small>`:''}</div><div class="end">${c.status==='merc'?`<button data-mcancel="${c.id}">Hủy cho thuê</button>`:`<div class="price-in"><label>Vàng<input data-mg="${c.id}" type="number" min="0" value="2"></label><label>Bạc<input data-ms="${c.id}" type="number" min="0" max="99" value="0"></label><label>Hồng ngọc<input data-mr="${c.id}" type="number" min="0" value="0"></label></div><button data-mreg="${c.id}">Cho thuê</button>`}</div></div>`).join('');
+    p.innerHTML=`<p class="hint">Mua nhân vật của người chơi khác về làm lính đi theo ${st?esc(cur().name):''} (${st?st.mercs.length:0}/${Player.MAX_MERC}). Lính mua về thuộc về bạn và ra trận cùng (tối đa ${Player.MAX_MERC} lính).</p><div class="rows">${list}</div>
       <h3>Cho thuê nhân vật của tôi</h3><p class="hint">Nhân vật đang cho thuê không vào game được. Có người mua thì nhân vật thuộc về họ, bạn nhận tiền (trừ ${Player.CFG.phi_cho||0}% phí). Không cho thuê được nhân vật đang chọn giao dịch.</p><div class="rows">${mine||'<div class="empty"><span>Không có nhân vật nào khác.</span></div>'}</div>`;
     p.querySelectorAll('[data-mbuy]').forEach(b=>b.onclick=async()=>{busy(b,true);try{const r=await Net.call('mercBuy',{charId:S.charId,targetId:b.dataset.mbuy});S.state=r.state;S.mercs=null;toast(svg('check')+`${esc(r.name)} sẽ đi theo ${esc(cur().name)}`);draw();}catch(e){toast(svg('close')+errMsg(e),true);busy(b,false);}});
-    p.querySelectorAll('[data-mreg]').forEach(b=>b.onclick=async()=>{const id=b.dataset.mreg,g=+p.querySelector(`[data-mg="${id}"]`).value||0,s=+p.querySelector(`[data-ms="${id}"]`).value||0,price=Math.max(0,Math.floor(g))*10000+Math.min(99,Math.max(0,Math.floor(s)))*100;busy(b,true);try{await Net.call('mercRegister',{charId:id,price});await boot();toast(svg('check')+'Đã đăng cho thuê');}catch(e){toast(svg('close')+errMsg(e),true);busy(b,false);}});
+    p.querySelectorAll('[data-mreg]').forEach(b=>b.onclick=async()=>{const id=b.dataset.mreg,g=+p.querySelector(`[data-mg="${id}"]`).value||0,s=+p.querySelector(`[data-ms="${id}"]`).value||0,r=Math.max(0,Math.floor(+p.querySelector(`[data-mr="${id}"]`).value||0)),pr=Math.max(0,Math.floor(g))*10000+Math.min(99,Math.max(0,Math.floor(s)))*100;busy(b,true);try{await Net.call('mercRegister',{charId:id,price:pr,ruby:r});await boot();toast(svg('check')+'Đã đăng cho thuê');}catch(e){toast(svg('close')+errMsg(e),true);busy(b,false);}});
     p.querySelectorAll('[data-mcancel]').forEach(b=>b.onclick=async()=>{busy(b,true);try{await Net.call('mercCancel',{charId:b.dataset.mcancel});await boot();toast(svg('check')+'Đã hủy cho thuê');}catch(e){toast(svg('close')+errMsg(e),true);busy(b,false);}});
   }
   function paneClaim(){
     const p=pane(),c=cur();
-    p.innerHTML=`<div class="claim">${svg('coin')}<div><span>Tiền bán hàng đang chờ</span><b>${coins(S.claim)}</b></div>${S.claim&&c?`<button class="primary" id="cGo">Nhận vào ${esc(c.name)}</button>`:''}</div><p class="hint">Gồm tiền bán đồ ký gửi và tiền bán nhân vật cho thuê, đã trừ phí thương nhân.</p>`;
-    const go=$('#cGo');if(go)go.onclick=async()=>{busy(go,true);try{const r=await Net.call('claim',{charId:S.charId});S.state=r.state;S.claim=0;toast(svg('check')+'Đã nhận '+coins(r.amount));draw();}catch(e){toast(svg('close')+errMsg(e),true);busy(go,false);}};
+    p.innerHTML=`<div class="claim">${svg('coin')}<div><span>Tiền bán hàng đang chờ</span><b>${price(S.claim,S.claimRuby)}</b></div>${(S.claim||S.claimRuby)&&c?`<button class="primary" id="cGo">Nhận vào ${esc(c.name)}</button>`:''}</div><p class="hint">Gồm tiền bán đồ ký gửi và tiền bán nhân vật cho thuê, đã trừ phí thương nhân.</p>`;
+    const go=$('#cGo');if(go)go.onclick=async()=>{busy(go,true);try{const r=await Net.call('claim',{charId:S.charId});S.state=r.state;S.claim=0;S.claimRuby=0;toast(svg('check')+'Đã nhận '+price(r.amount,r.ruby));draw();}catch(e){toast(svg('close')+errMsg(e),true);busy(go,false);}};
   }
   // ---------- khởi động ----------
   const g=gameUrl();if(g)$('#chBack').href=g;else $('#chBack').hidden=true;
-  $('#chMode').textContent=Net.online?'':'Chế độ ngoại tuyến · dữ liệu lưu trên trình duyệt này';
+  $('#chMode').textContent=Net.online?'Máy chủ Việt Nam':'Chế độ ngoại tuyến · dữ liệu lưu trên trình duyệt này';
   (async()=>{
     if(Net.online){try{const d=await Net.call('data');if(d.data&&d.data.vat_pham)Player.load(d.data);}catch(e){}}
     if(Net.token)await boot();else login();

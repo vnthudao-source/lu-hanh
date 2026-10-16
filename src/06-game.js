@@ -686,11 +686,17 @@ window.startGame=(session)=>{
     }
   }
   /* ---------- Đồng bộ với máy chủ: gom lệnh, gửi kèm cách sắp xếp đồ, nhận lại trạng thái chuẩn ---------- */
-  const sync={queue:[],busy:false,timer:null,at:0,fail:0};
+  /* Đồng bộ kiểu "hiện trước, lưu sau":
+     - Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm: máy người chơi tính ngay bằng cùng luật + cùng chuỗi ngẫu nhiên với máy chủ,
+       hiện kết quả liền, rồi gom lệnh gửi lên máy chủ. Máy chủ tính lại y hệt và lưu; trạng thái máy chủ luôn là chuẩn.
+     - Lệnh chưa được máy chủ xác nhận nằm trong `pending`; mỗi lần nhận trạng thái mới thì áp lại các lệnh đó lên trên. */
+  const sync={queue:[],busy:false,timer:null,at:0,fail:0},pending=[];
   function schedule(ms){const at=Date.now()+ms;if(sync.timer&&sync.at<=at)return;clearTimeout(sync.timer);sync.at=at;sync.timer=setTimeout(()=>{sync.timer=null;flush();},ms);}
-  function queueOp(o,delay=0){return new Promise((resolve,reject)=>{sync.queue.push({op:o,resolve,reject});schedule(delay);});}
+  function queueOp(o,delay=0,ent=null){return new Promise((resolve,reject)=>{sync.queue.push({op:o,resolve,reject,ent});schedule(delay);});}
   function adopt(S){
-    const R=Player.merge(S,player);
+    const before=JSON.parse(JSON.stringify(player));
+    let R=Player.merge(S,before);
+    if(pending.length){for(const p of pending){try{Player.applyOp(R,p.op,{},Date.now());}catch(e){}}R=Player.merge(R,before);}
     for(const k of Object.keys(player))if(!(k in R))delete player[k];
     Object.assign(player,R);refreshHD();syncMerc();window.GameUI?.refresh();
   }
@@ -699,14 +705,25 @@ window.startGame=(session)=>{
     sync.busy=true;const batch=sync.queue.splice(0);nextSave=time+60;
     try{
       const r=await Net.call('play',{charId:session.charId,save:Player.serialize(player,hero,seen),ops:batch.map(b=>b.op)});
-      sync.fail=0;adopt(r.state);batch.forEach((b,i)=>b.resolve(r.results[i]||{ok:false,error:'LOI'}));return true;
+      sync.fail=0;
+      for(const b of batch)if(b.ent){const i=pending.indexOf(b.ent);if(i>=0)pending.splice(i,1);}
+      adopt(r.state);
+      batch.forEach((b,i)=>{const res=r.results[i]||{ok:false,error:'LOI'};if(b.ent&&!res.ok)message(svg('close')+'Máy chủ không nhận lệnh, đã đồng bộ lại');b.resolve(res);});return true;
     }catch(e){
-      sync.fail++;const keep=batch.filter(b=>b.op.t==='kill'&&sync.fail<6&&e.message==='Failed to fetch');
-      batch.filter(b=>!keep.includes(b)).forEach(b=>b.reject(e));sync.queue.unshift(...keep);if(keep.length)schedule(3000*sync.fail);
+      sync.fail++;const keep=batch.filter(b=>(b.op.t==='kill'||b.ent)&&sync.fail<6&&e.message==='Failed to fetch');
+      batch.filter(b=>!keep.includes(b)).forEach(b=>{if(b.ent){const i=pending.indexOf(b.ent);if(i>=0)pending.splice(i,1);}b.reject(e);});sync.queue.unshift(...keep);if(keep.length)schedule(3000*sync.fail);
       message(svg('close')+netMsg(e));return false;
     }finally{sync.busy=false;if(sync.queue.length&&!sync.timer)schedule(200);}
   }
-  const op=o=>queueOp(o,0).then(r=>{if(!r.ok)throw Error(r.error);return r;});
+  const op=o=>{
+    if(Player.PREDICT.has(o.t)){
+      let r;try{r=Player.applyOp(player,o,{},Date.now());}catch(e){return Promise.reject(e);}
+      const ent={op:o};pending.push(ent);refreshHD();syncMerc();window.GameUI?.refresh();
+      queueOp(o,400,ent).catch(()=>{});
+      return Promise.resolve({ok:true,...r});
+    }
+    return queueOp(o,0).then(r=>{if(!r.ok)throw Error(r.error);return r;});
+  };
   function moveVector(){const x=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0)+joystick.x,y=(keys.has('s')||keys.has('arrowdown')?1:0)-(keys.has('w')||keys.has('arrowup')?1:0)+joystick.y;return {x,y,len:Math.hypot(x,y)};}
   function chooseAim(st,d){
     const mv=moveVector();
@@ -1145,17 +1162,28 @@ window.startGame=(session)=>{
   function loop(ms){const dt=Math.min(.04,(ms-(last||ms))/1000);last=ms;time=ms/1000;update(dt);render();requestAnimationFrame(loop);}
 
   /* ---------- Điều khiển ---------- */
+  // Chế độ chân dung: chỉ mượn bộ vẽ nhân vật (căn lều chọn nhân vật, chợ cho thuê), không chạy game
+  if(session.portrait){
+    safe=false;
+    return {draw(c,who,x,y,k,t,el,opts={}){
+      time=t;const st=Player.stance(who),fake={x,y,facing:opts.facing||1,moving:false,walk:0,aim:{x:1,y:0},hurt:-9,blockUntil:0,barrierUntil:0,dead:0,name:'',attack:null,mountAct:null};
+      c.save();c.translate(x,y);c.scale(k,k);c.translate(-x,-y);drawHero(c,fake,st,el||null,t,{label:false,who});c.restore();
+    },seat:eq=>seatOf(eq)};
+  }
   canvas.addEventListener('pointerdown',e=>{if(e.button&&e.button!==0)return;e.preventDefault();const r=canvas.getBoundingClientRect(),pt=screenPoint(e.clientX-r.left,e.clientY-r.top);if(e.pointerType==='mouse')mouseAim={x:pt.x,y:pt.y,t:time};goTo(pt);});
   canvas.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;const r=canvas.getBoundingClientRect(),pt=screenPoint(e.clientX-r.left,e.clientY-r.top);mouseAim={x:pt.x,y:pt.y,t:time};});
+  // Đọc vị trí phím (e.code) thay vì ký tự: bộ gõ tiếng Việt biến W thành ư, D thành đ… làm nhận sai nút
+  const KEYMAP={KeyW:'w',KeyA:'a',KeyS:'s',KeyD:'d',ArrowUp:'arrowup',ArrowDown:'arrowdown',ArrowLeft:'arrowleft',ArrowRight:'arrowright',KeyE:'e',KeyB:'b',Escape:'escape',Space:' ',Digit1:'1',Digit2:'2',Digit3:'3',Digit4:'4',Numpad1:'1',Numpad2:'2',Numpad3:'3',Numpad4:'4'};
+  const keyOf=e=>KEYMAP[e.code]||(e.key&&e.key.length===1?e.key.toLowerCase():String(e.key||'').toLowerCase());
   document.addEventListener('keydown',e=>{
-    if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;const k=e.key.toLowerCase();
+    if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;const k=keyOf(e);
     if(['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright','e','escape',' ','1','2','3','4','b'].includes(k))e.preventDefault();
     if(k===' '){keys.add(' ');if(!e.repeat)cast('normal');return;}
     if(['1','2','3','4'].includes(k)){if(!e.repeat)cast(['basic','intermediate','advanced','mount'][Number(k)-1]);return;}
     if(k==='b'&&!e.repeat){window.GameUI?.showBag();return;}
     if(k==='e'&&!e.repeat)interact();else if(k==='escape'){dialogNPC=null;dialogEl.hidden=true;}else keys.add(k);
   });
-  document.addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));
+  document.addEventListener('keyup',e=>{const k=keyOf(e);keys.delete(k);if(k===' ')keys.delete(' ');if(!e.code)keys.clear();});
   window.addEventListener('blur',()=>{keys.clear();stopPad();holdAttack=false;});
   $('#next').onclick=nextLine;
   $('#shopBtn').onclick=()=>{const n=dialogNPC;if(!n||!n.panel)return;endDialog();window.GameUI?.openPanel(n);};

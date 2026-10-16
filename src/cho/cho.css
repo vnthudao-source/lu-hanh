@@ -71,3 +71,11 @@ h3{margin:8px 0 0;font:17px Georgia,serif;color:var(--gold)}
 #chToast.on{opacity:1;transform:translateX(-50%)}#chToast.bad{border-color:#ff9f8f88}#chToast svg{width:18px;height:18px}
 [hidden]{display:none!important}
 @media(max-width:560px){.tabs span{font-size:11px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.brand b{font-size:20px}.row .end{width:100%;justify-content:space-between}}
+
+.coin.ruby i{border-radius:3px;transform:rotate(45deg);background:#e35979}
+.mlook{display:flex;flex-direction:column;gap:4px;margin-top:3px}
+.mlook .mlv{align-self:flex-start;padding:1px 7px;border-radius:7px;border:1px solid #9fe8a866;color:#9fe8a8;font-size:11.5px;font-weight:700}
+.mgear{display:flex;flex-wrap:wrap;gap:4px 8px}
+.mgear .gi{display:inline-flex;align-items:center;gap:3px;font-size:11px}
+.mgear .gi svg{width:16px;height:16px}
+.mgear .gi small{color:#d9d2bd}

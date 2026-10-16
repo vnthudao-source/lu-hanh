@@ -14,14 +14,9 @@ Webgame nhập vai phiêu lưu, phong cách làng Việt xưa. Chạy trên Blog
 
 ## Đưa lên Blogspot
 
-Dán nội dung `blogspot/nhung-vao-blogspot.html` vào bài viết ở chế độ HTML. Đoạn này nạp game từ:
+Dán nội dung `blogspot/nhung-vao-blogspot.html` vào bài viết ở chế độ HTML. Đoạn này nạp `dist/lu-hanh-boot.js` (vài KB): hiện màn hình chờ ngay, rồi tải `lu-hanh.css` + `lu-hanh.js` có đếm phần trăm.
 
-```
-https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@ban-8.2/dist/lu-hanh.js
-https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@ban-8.2/dist/lu-hanh.css
-```
-
-Dòng `window.LH_API=''` là chỗ dán URL Web App (đuôi `/exec`). Để trống thì game chạy ngoại tuyến, lưu trên trình duyệt.
+`window.LH_API` là URL Web App (đuôi `/exec`), đã điền sẵn máy chủ Việt Nam. Để trống thì game chạy ngoại tuyến, lưu trên trình duyệt (`dist/lu-hanh-offline.html` để thử).
 
 ## Chợ phiên (trang riêng)
 
@@ -43,12 +38,16 @@ Từ v8, tiền, đồ rơi, gia cường, mua bán, nhiệm vụ, lính đều 
 - Tối đa 4 lính, đi theo cùng lúc nếu đủ Mệnh lệnh. Lính gục về làng chờ, nhân vật về làng thì nhập đội lại. Điểm lên cấp cộng được vào Mệnh lệnh.
 - Thợ rèn gia cường vũ khí, giáp; Người nuôi thú cưỡi gia cường thú; Đạo sĩ luyện sách (máy chủ kiểm tra).
 
+## Phản hồi tức thì (v8.3)
+
+Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay trên máy người chơi bằng cùng luật (`05-player.js`) và cùng chuỗi ngẫu nhiên `rs` với máy chủ, hiện kết quả liền rồi gửi lên máy chủ. Máy chủ tính lại y hệt và lưu; trạng thái máy chủ luôn là chuẩn.
+
 ## Ra bản mới
 
 1. Sửa trong `src/` (và `VERSION`).
 2. `node tools/build.mjs`
-3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-8.3`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
-4. Trên Blogspot đổi `@ban-8.2` thành `@ban-8.3` ở 2 chỗ.
+3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-8.4`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
+4. Trên Blogspot đổi `@ban-8.3` thành `@ban-8.4` (trang game và trang Chợ phiên).
 5. Nếu `Code.gs` đổi: dán lại vào Apps Script, Triển khai → Quản lý triển khai → Sửa → Phiên bản mới (giữ nguyên URL).
 
 ## Dữ liệu trong Sheet

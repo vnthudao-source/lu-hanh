@@ -1,4 +1,4 @@
-/*! Lữ Hành v8.2 · Chợ phiên · https://github.com/vnthudao-source/lu-hanh */
+/*! Lữ Hành v8.3 · Chợ phiên · https://github.com/vnthudao-source/lu-hanh */
 (function(){if(document.getElementById('chBody'))return;document.body.insertAdjacentHTML('beforeend',"<div id=\"cho-phien\">\n<svg style=\"position:absolute;width:0;height:0;overflow:hidden\" aria-hidden=\"true\"><defs>\n<symbol id=\"i-sword\" viewBox=\"0 0 32 32\"><path d=\"M9 23 25 7l1-5-5 1L5 19m1-3 10 10M4 28l5-5m-7 3 4 4\"/></symbol>\n<symbol id=\"i-bow\" viewBox=\"0 0 32 32\"><path d=\"M8 3c21 4 21 22 0 26L18 16 8 3Zm-5 13h25m-5-4 5 4-5 4\"/></symbol>\n<symbol id=\"i-crossbow\" viewBox=\"0 0 32 32\"><path d=\"M3 18h22M20 6c5 4 5 20 0 24M20 6l-8 12 8 12M25 18l4-2v4l-4-2M8 18v7h5\"/></symbol>\n<symbol id=\"i-staff\" viewBox=\"0 0 32 32\"><path d=\"m5 29 14-18m-2-2 5-7 7 5-5 7-7-5Zm6-6 1 8M4 5v5M2 7h5\"/></symbol>\n<symbol id=\"i-spear\" viewBox=\"0 0 32 32\"><path d=\"m4 29 17-19m-5 1 4-9 9-1-1 9-9 4m-5 0 5 5\"/></symbol>\n<symbol id=\"i-shield\" viewBox=\"0 0 32 32\"><path d=\"m16 2 12 5-1 12c-1 5-6 8-11 11C11 27 6 24 5 19L4 7 16 2Zm0 6v15M10 14h12\"/></symbol>\n<symbol id=\"i-punch\" viewBox=\"0 0 32 32\"><path d=\"m9 28-4-9V8c0-4 5-4 5 0V4c0-3 5-3 5 0v3c0-4 5-4 5 0v2c0-3 5-3 5 0v8l3-3c2-2 5 1 3 4l-7 10H9ZM10 8v7m5-8v8m5-6v6\"/></symbol>\n<symbol id=\"i-hat\" viewBox=\"0 0 32 32\"><path d=\"M2 22 16 5l14 17Zm7-8h14M5 22c4 3 18 3 22 0\"/></symbol>\n<symbol id=\"i-armor\" viewBox=\"0 0 32 32\"><path d=\"m11 3-7 4-2 8 7 3v11h14V18l7-3-2-8-7-4c0 7-10 7-10 0ZM9 18h14m-7-9v17\"/></symbol>\n<symbol id=\"i-pants\" viewBox=\"0 0 32 32\"><path d=\"M7 3h18l2 26h-9l-2-16-2 16H5L7 3Zm0 5h18\"/></symbol>\n<symbol id=\"i-gloves\" viewBox=\"0 0 32 32\"><path d=\"M10 29 6 17V9c0-3 4-3 4 0V5c0-3 4-3 4 0v5-6c0-3 4-3 4 0v7-4c0-3 4-3 4 0v10l4-4 3 3-8 13H10Z\"/></symbol>\n<symbol id=\"i-shoes\" viewBox=\"0 0 32 32\"><path d=\"M7 3h13v14l9 5v7H3V18h4V3Zm-3 21h24M12 8h6m-6 5h6\"/></symbol>\n<symbol id=\"i-wings\" viewBox=\"0 0 32 32\"><path d=\"M15 26C7 25 2 16 3 3l12 12m2 11c8-1 13-10 12-23L17 15M5 12l8 9m14-9-8 9\"/></symbol>\n<symbol id=\"i-mount\" viewBox=\"0 0 32 32\"><path d=\"M8 28v-9l6-7-1-8 5-2 2 6 8 5-3 6-8-2v11H8ZM4 28h19\"/></symbol>\n<symbol id=\"i-book\" viewBox=\"0 0 32 32\"><path d=\"M4 6c4-2 8-2 12 1 4-3 8-3 12-1v21c-4-2-8-2-12 1-4-3-8-3-12-1V6Zm12 1v21M8 11h4m8 0h4\"/></symbol>\n<symbol id=\"i-ore\" viewBox=\"0 0 32 32\"><path d=\"M5 22 9 9l9-5 9 9-3 13-12 2-7-6Zm4-13 7 7 11-3M16 16l-4 12\"/></symbol>\n<symbol id=\"i-lock\" viewBox=\"0 0 32 32\"><path d=\"M9 14v-4a7 7 0 0 1 14 0v4M6 14h20v15H6z\"/></symbol>\n<symbol id=\"i-pin\" viewBox=\"0 0 32 32\"><path d=\"M16 29s9-9 9-16a9 9 0 0 0-18 0c0 7 9 16 9 16Z\"/><circle cx=\"16\" cy=\"13\" r=\"3.5\"/></symbol>\n<symbol id=\"i-flame\" viewBox=\"0 0 32 32\"><path d=\"M17 2c2 8-4 9-2 14l6-7c1 6 8 9 5 16-3 9-21 7-21-4 0-6 7-9 12-19Z\"/></symbol>\n<symbol id=\"i-water\" viewBox=\"0 0 32 32\"><path d=\"M16 3c6 8 10 13 10 18a10 10 0 0 1-20 0c0-5 4-10 10-18Z\"/><path d=\"M11 21a5 5 0 0 0 5 5\"/></symbol>\n<symbol id=\"i-wood\" viewBox=\"0 0 32 32\"><path d=\"M6 26C6 12 14 5 27 5c0 13-7 21-21 21Zm0 0 13-13\"/></symbol>\n<symbol id=\"i-metal\" viewBox=\"0 0 32 32\"><path d=\"M3 24 7 14h18l4 10Zm6-10 2-6h10l2 6M16 14v10\"/></symbol>\n<symbol id=\"i-earth\" viewBox=\"0 0 32 32\"><path d=\"M2 27 12 9l6 9 4-5 8 14Z\"/><path d=\"m9 15 3 2 3-3\"/></symbol>\n<symbol id=\"i-heart\" viewBox=\"0 0 32 32\"><path d=\"M16 27S4 19 4 11a6 6 0 0 1 12-2 6 6 0 0 1 12 2c0 8-12 16-12 16Z\"/></symbol>\n<symbol id=\"i-orb\" viewBox=\"0 0 32 32\"><circle cx=\"16\" cy=\"17\" r=\"10\"/><path d=\"M11 15a5 5 0 0 1 5-5M16 2v3M27 6l-2 2M5 6l2 2\"/></symbol>\n<symbol id=\"i-speed\" viewBox=\"0 0 32 32\"><path d=\"M3 10h12M6 16h14M3 22h10M20 8l8 8-8 8\"/></symbol>\n<symbol id=\"i-reflect\" viewBox=\"0 0 32 32\"><path d=\"M5 11h20l-6-6M27 21H7l6 6\"/></symbol>\n<symbol id=\"i-feather\" viewBox=\"0 0 32 32\"><path d=\"M27 4C15 4 8 12 8 22l-4 6M8 22c8 0 15-4 17-12M12 18h8\"/></symbol>\n<symbol id=\"i-flag\" viewBox=\"0 0 32 32\"><path d=\"M7 29V4m0 2h17l-5 6 5 6H7\"/></symbol>\n<symbol id=\"i-talk\" viewBox=\"0 0 32 32\"><path d=\"M4 6h24v16H14l-7 6v-6H4Z\"/><path d=\"M10 14h0m6 0h0m6 0h0\"/></symbol>\n<symbol id=\"i-bridge\" viewBox=\"0 0 32 32\"><path d=\"M2 21h28M4 21c4-9 20-9 24 0M9 18v8m14-8v8M16 15v11\"/></symbol>\n<symbol id=\"i-deer\" viewBox=\"0 0 32 32\"><path d=\"M11 14 6 5m5 9 1-9m9 9 5-9m-5 9-1-9M11 14h10l-1 7-4 5-4-5Z\"/></symbol>\n<symbol id=\"i-lion\" viewBox=\"0 0 32 32\"><path d=\"M16 3l3 4 5-1-1 5 4 3-4 3 1 5-5-1-3 4-3-4-5 1 1-5-4-3 4-3-1-5 5 1Z\"/><circle cx=\"16\" cy=\"15\" r=\"5\"/></symbol>\n<symbol id=\"i-elephant\" viewBox=\"0 0 32 32\"><path d=\"M5 26V13a8 8 0 0 1 16 0v3c0 4 5 3 5 8v4M5 18H3m7 8v-5m8 5v-5M13 11h0\"/></symbol>\n<symbol id=\"i-croc\" viewBox=\"0 0 32 32\"><path d=\"M2 17h19l9-4v8l-9-4M7 14l2-3 2 3 2-3 2 3 2-3 2 3M8 17v5m8-5v5\"/></symbol>\n<symbol id=\"i-coin\" viewBox=\"0 0 32 32\"><circle cx=\"16\" cy=\"16\" r=\"12\"/><path d=\"M16 9v14M12 12h6a2 2 0 0 1 0 4h-4a2 2 0 0 0 0 4h6\"/></symbol>\n<symbol id=\"i-close\" viewBox=\"0 0 32 32\"><path d=\"M8 8l16 16M24 8 8 24\"/></symbol>\n<symbol id=\"i-eye\" viewBox=\"0 0 32 32\"><path d=\"M3 16s5-9 13-9 13 9 13 9-5 9-13 9S3 16 3 16Z\"/><circle cx=\"16\" cy=\"16\" r=\"4\"/></symbol>\n<symbol id=\"i-out\" viewBox=\"0 0 32 32\"><path d=\"M16 4v15m-6-6 6 6 6-6M5 26h22\"/></symbol>\n<symbol id=\"i-check\" viewBox=\"0 0 32 32\"><path d=\"m6 16 7 7 13-14\"/></symbol>\n<symbol id=\"i-next\" viewBox=\"0 0 32 32\"><path d=\"M6 16h20m-7-7 7 7-7 7\"/></symbol>\n<symbol id=\"i-pen\" viewBox=\"0 0 32 32\"><path d=\"m5 27 2-7L22 5l5 5-15 15Zm13-18 5 5\"/></symbol>\n<symbol id=\"i-user\" viewBox=\"0 0 32 32\"><circle cx=\"16\" cy=\"10\" r=\"6\"/><path d=\"M5 29c1-8 6-11 11-11s10 3 11 11\"/></symbol>\n<symbol id=\"i-hand2\" viewBox=\"0 0 32 32\"><path d=\"M10 28 6 18V9c0-3 4-3 4 0v6m0-7c0-3 4-3 4 0v7m8 13 4-10v-9c0-3-4-3-4 0v6m0-7c0-3-4-3-4 0v7\"/></symbol>\n<symbol id=\"i-thunder\" viewBox=\"0 0 32 32\"><path d=\"M19 2 6 18h8l-3 12 15-18h-9l2-10Z\"/></symbol><symbol id=\"i-wind\" viewBox=\"0 0 32 32\"><path d=\"M3 11h16a4 4 0 1 0-4-4M3 17h22a4 4 0 1 1-4 4M3 23h9\"/></symbol><symbol id=\"i-ice\" viewBox=\"0 0 32 32\"><path d=\"M16 3v26M4.7 9.5l22.6 13M4.7 22.5l22.6-13M12 5l4 4 4-4M12 27l4-4 4 4M5 14l4 2-4 2M27 14l-4 2 4 2\"/></symbol><symbol id=\"i-demon\" viewBox=\"0 0 32 32\"><path d=\"M5 4c1 5 3 7 6 8-1 2-2 4-2 7 0 6 3 10 7 10s7-4 7-10c0-3-1-5-2-7 3-1 5-3 6-8-3 2-6 3-9 3h-4c-3 0-6-1-9-3ZM11.5 18l4 1.5M20.5 18l-4 1.5M13 24h6\"/></symbol><symbol id=\"i-light\" viewBox=\"0 0 32 32\"><circle cx=\"16\" cy=\"16\" r=\"6\"/><path d=\"M16 2v5M16 25v5M2 16h5M25 16h5M6 6l3.5 3.5M22.5 22.5 26 26M6 26l3.5-3.5M22.5 9.5 26 6\"/></symbol><symbol id=\"i-spark\" viewBox=\"0 0 32 32\"><path d=\"m16 2 4 10 10 4-10 4-4 10-4-10-10-4 10-4L16 2Z\"/></symbol>\n<symbol id=\"i-whirl\" viewBox=\"0 0 32 32\"><path d=\"M16 4a12 12 0 1 1-12 12M16 10a6 6 0 1 1-6 6M4 16l-2-5m2 5 5-2\"/></symbol>\n<symbol id=\"i-tiger\" viewBox=\"0 0 32 32\"><path d=\"M6 10 4 4l6 3m16 3 2-6-6 3M6 10c0 10 4 16 10 16s10-6 10-16c-3-3-7-4-10-4S9 7 6 10Zm6 6h0m8 0h0m-7 5 3 2 3-2M16 9v4m-6-1 2 1m10-1-2 1\"/></symbol>\n<symbol id=\"i-anvil\" viewBox=\"0 0 32 32\"><path d=\"M3 10h20c0 4-3 6-7 6v4h4v4H10v-4h4v-4H8c-3 0-5-3-5-6Zm20 0 6-2v4l-6-2M24 3l-3 4m6-2-4 3\"/></symbol>\n<symbol id=\"i-bag\" viewBox=\"0 0 32 32\"><path d=\"M8 9c0-10 16-10 16 0M7 9h18l4 20H3L7 9Zm5 6h8v8h-8Z\"/></symbol>\n<symbol id=\"i-home\" viewBox=\"0 0 32 32\"><path d=\"m2 15 14-12 14 12M6 12v17h20V12M13 29V18h7v11\"/></symbol>\n<symbol id=\"i-save\" viewBox=\"0 0 32 32\"><path d=\"M4 3h21l4 5v21H3V3Zm5 0v9h13V3M9 29V18h14v11\"/></symbol>\n<symbol id=\"i-quest\" viewBox=\"0 0 32 32\"><path d=\"M7 3h19v23H7M7 3C1 3 1 10 7 10m0 16c-6 0-6 5 0 5h20M12 10h9m-9 6h9\"/></symbol>\n<symbol id=\"i-gear\" viewBox=\"0 0 32 32\"><path d=\"m12 3 8 0 1 5 5 1 3 7-4 4 1 5-7 4-4-3-5 1-5-6 2-5-2-5 6-5 1-3Z\"/><circle cx=\"16\" cy=\"16\" r=\"5\"/></symbol>\n</defs></svg>\n<header class=\"ch-head\"><div class=\"brand\"><svg class=\"mark\" viewBox=\"0 0 64 64\" aria-hidden=\"true\"><path d=\"M8 26 32 10l24 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M14 26h36v26H14z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3.5\"/><path d=\"M22 52V36h20v16M8 26h48\" stroke=\"currentColor\" stroke-width=\"3.5\" fill=\"none\"/></svg><div><b>Chợ phiên</b><small>Làng Thanh Mộc</small></div></div><div id=\"chUser\" class=\"user\"></div></header>\n<main id=\"chBody\" class=\"ch-body\"></main>\n<footer class=\"ch-foot\"><a id=\"chBack\" class=\"link\" href=\"#\">\u{2190} Về làng</a><small id=\"chMode\"></small></footer>\n<div id=\"chToast\" role=\"status\"></div>\n</div>\n");})();
 ;/* ================= DỮ LIỆU MẶC ĐỊNH (giống hệt các file Google Sheet; khi nối Apps Script sẽ lấy bản trên Sheet) ================= */
 const GAME_DATA={
@@ -180,7 +180,7 @@ function LH_Core(A){
     if(status&&c.trang_thai!==status)fail('SAI_TRANG_THAI');
     return c;
   }
-  const charView=c=>({id:c.id,name:c.ten,gender:c.gioi_tinh,stats:{strength:+c.suc_manh,agility:+c.nhanh_nhen,vitality:+c.suc_khoe,intelligence:+c.tri_tue},status:c.trang_thai,level:+c.cap||1,price:+c.gia_danh_thue||0,created:+c.tao_luc});
+  const charView=c=>({id:c.id,name:c.ten,gender:c.gioi_tinh,stats:{strength:+c.suc_manh,agility:+c.nhanh_nhen,vitality:+c.suc_khoe,intelligence:+c.tri_tue},status:c.trang_thai,level:+c.cap||1,price:+c.gia_danh_thue||0,ruby:+c.gia_hong_ngoc||0,created:+c.tao_luc});
   function newToken(a){a.token=A.uid()+A.uid();a.token_het_han=A.now()+TOKEN_DAYS*864e5;A.update('tai_khoan',a);return a.token;}
   // Trạng thái nhân vật lưu trên máy chủ (cột luu): {v, player, pos, seen, srv}
   function stateOf(c){
@@ -196,6 +196,12 @@ function LH_Core(A){
     const j=JSON.stringify(save);if(j.length>45000)fail('DU_LIEU_QUA_LON');
     c.luu=j;c.cap=player.level;c.kinh_nghiem=player.exp;c.cap_nhat=A.now();A.update('nhan_vat',c);st.save=save;
   }
+  // Dáng vẻ nhân vật (cho căn lều chọn nhân vật và chợ cho thuê): cấp, đồ đang mặc, hào quang sách, số lính, chỉ số
+  function lookOf(c){
+    try{const p=stateOf(c).player,D=Player.derive(p),ab=p.activeBook!=null?p.skillSlots[p.activeBook]:p.skillSlots.find(Boolean);
+      return {level:p.level,equipment:p.equipment,el:ab&&Player.info(ab)?Player.info(ab).element:null,mercs:p.mercs.length,pets:(p.pets||[]).length,main:D.main,dmg:[D.tot.dmgMin,D.tot.dmgMax],hp:D.tot.hp,def:D.tot.def};}catch(e){return null;}
+  }
+  const claimSum=acc=>pendingClaims(acc).reduce((s,r)=>({copper:s.copper+Number(r.tien_nhan||0),ruby:s.ruby+Number(r.hong_ngoc_nhan||0)}),{copper:0,ruby:0});
   function pendingClaims(acc){return A.rows('cho').filter(r=>r.trang_thai==='da_ban'&&r.nguoi_ban===acc&&String(r.da_nhan)!=='1');}
   const H={
     ping:()=>({msg:'Lữ Hành API'}),
@@ -237,9 +243,9 @@ function LH_Core(A){
       return {token:newToken(a),account:pub(a)};
     },
     chars(p){
-      const a=auth(p.token),list=A.rows('nhan_vat').filter(c=>c.tai_khoan===a.id&&(c.trang_thai==='active'||c.trang_thai==='merc')).map(charView);
-      const claim=pendingClaims(a.id).reduce((s,r)=>s+Number(r.tien_nhan||0),0);
-      return {account:pub(a),chars:list,max:cfg('so_nhan_vat_toi_da')||5,claim};
+      const a=auth(p.token),list=A.rows('nhan_vat').filter(c=>c.tai_khoan===a.id&&(c.trang_thai==='active'||c.trang_thai==='merc')).map(c=>({...charView(c),look:lookOf(c)}));
+      const cs=claimSum(a.id);
+      return {account:pub(a),chars:list,max:cfg('so_nhan_vat_toi_da')||5,claim:cs.copper,claimRuby:cs.ruby};
     },
     createChar(p){
       const a=auth(p.token),name=String(p.name||'').trim().replace(/\s+/g,' '),gender=p.gender==='f'?'f':'m',st=p.stats||{};
@@ -272,14 +278,14 @@ function LH_Core(A){
     },
     save(p){return H.play({...p,ops:[]});},
     mercRegister(p){
-      const a=auth(p.token),c=ownChar(a,p.charId,'active'),price=Math.floor(Number(p.price));
-      if(!(price>=100))fail('GIA_SAI');
-      c.trang_thai='merc';c.gia_danh_thue=price;c.cap_nhat=A.now();A.update('nhan_vat',c);return {char:charView(c)};
+      const a=auth(p.token),c=ownChar(a,p.charId,'active'),price=Math.max(0,Math.floor(Number(p.price)||0)),ruby=Math.max(0,Math.floor(Number(p.ruby)||0));
+      if(!(price>=100)&&!(ruby>=1))fail('GIA_SAI');
+      c.trang_thai='merc';c.gia_danh_thue=price;c.gia_hong_ngoc=ruby;c.cap_nhat=A.now();A.update('nhan_vat',c);return {char:charView(c)};
     },
-    mercCancel(p){const a=auth(p.token),c=ownChar(a,p.charId,'merc');c.trang_thai='active';c.gia_danh_thue=0;A.update('nhan_vat',c);return {char:charView(c)};},
+    mercCancel(p){const a=auth(p.token),c=ownChar(a,p.charId,'merc');c.trang_thai='active';c.gia_danh_thue=0;c.gia_hong_ngoc=0;A.update('nhan_vat',c);return {char:charView(c)};},
     mercList(p){
       const a=auth(p.token);
-      return {list:A.rows('nhan_vat').filter(c=>c.trang_thai==='merc'&&c.tai_khoan!==a.id).map(c=>{let eq={};try{eq=(JSON.parse(c.luu||'{}').player||{}).equipment||{};}catch(e){}return {...charView(c),equipment:eq};})};
+      return {list:A.rows('nhan_vat').filter(c=>c.trang_thai==='merc'&&c.tai_khoan!==a.id).map(c=>{let eq={};try{eq=(JSON.parse(c.luu||'{}').player||{}).equipment||{};}catch(e){}return {...charView(c),equipment:eq,look:lookOf(c)};})};
     },
     mercBuy(p){
       const a=auth(p.token);
@@ -287,19 +293,19 @@ function LH_Core(A){
         const b=ownChar(a,p.charId,'active'),t=A.rows('nhan_vat').find(c=>c.id===p.targetId);
         if(!t||t.trang_thai!=='merc'||t.tai_khoan===a.id)fail('LINH_KHONG_CON');
         let eq={};try{eq=(JSON.parse(t.luu||'{}').player||{}).equipment||{};}catch(e){}
-        const price=Number(t.gia_danh_thue),fee=(cfg('phi_cho')||0)/100,st=stateOf(b);
-        if(st.player.copper<price)fail('KHONG_DU_TIEN');if(st.player.mercs.length>=Player.MAX_MERC)fail('DU_LINH');
+        const price=Number(t.gia_danh_thue)||0,ruby=Number(t.gia_hong_ngoc)||0,fee=(cfg('phi_cho')||0)/100,st=stateOf(b);
+        if(st.player.copper<price)fail('KHONG_DU_TIEN');if(st.player.rubies<ruby)fail('KHONG_DU_HONG_NGOC');if(st.player.mercs.length>=Player.MAX_MERC)fail('DU_LINH');
         Player.addMerc(st.player,{name:t.ten,gender:t.gioi_tinh,stats:charView(t).stats,equipment:eq,src:'player',from:t.id,cmd:10});
-        st.player.copper-=price;storeState(b,st,st.player);
+        st.player.copper-=price;st.player.rubies-=ruby;storeState(b,st,st.player);
         t.trang_thai='sold';t.nguoi_mua=p.charId;t.cap_nhat=A.now();A.update('nhan_vat',t);
-        A.insert('cho',{id:'ch-'+A.uid(),loai:'linh',nguoi_ban:t.tai_khoan,nhan_vat_ban:t.id,vat_pham:'',gia:price,tien_nhan:Math.floor(price*(1-fee)),trang_thai:'da_ban',nguoi_mua:p.charId,tao_luc:A.now(),ban_luc:A.now(),da_nhan:0});
-        return {name:t.ten,price,state:st.player};
+        A.insert('cho',{id:'ch-'+A.uid(),loai:'linh',nguoi_ban:t.tai_khoan,nhan_vat_ban:t.id,vat_pham:'',gia:price,tien_nhan:Math.floor(price*(1-fee)),hong_ngoc:ruby,hong_ngoc_nhan:Math.floor(ruby*(1-fee)),trang_thai:'da_ban',nguoi_mua:p.charId,tao_luc:A.now(),ban_luc:A.now(),da_nhan:0});
+        return {name:t.ten,price,ruby,state:st.player};
       });
     },
     marketList(p){
       const a=auth(p.token),rows=A.rows('cho').filter(r=>r.loai==='do');
       const view=r=>({id:r.id,item:JSON.parse(r.vat_pham||'null'),price:Number(r.gia),mine:r.nguoi_ban===a.id,seller:r.ten_nguoi_ban||''});
-      return {open:rows.filter(r=>r.trang_thai==='mo').map(view),claim:pendingClaims(a.id).reduce((s,r)=>s+Number(r.tien_nhan||0),0)};
+      return {open:rows.filter(r=>r.trang_thai==='mo').map(view),claim:claimSum(a.id).copper,claimRuby:claimSum(a.id).ruby};
     },
     // Ký gửi: lấy món đồ ra khỏi túi nhân vật trên máy chủ
     marketSell(p){
@@ -339,9 +345,9 @@ function LH_Core(A){
     claim(p){
       const a=auth(p.token);
       return A.lock(()=>{
-        const c=ownChar(a,p.charId,'active'),st=stateOf(c);let sum=0;
-        for(const r of pendingClaims(a.id)){sum+=Number(r.tien_nhan||0);r.da_nhan=1;A.update('cho',r);}
-        st.player.copper+=sum;storeState(c,st,st.player);return {amount:sum,state:st.player};
+        const c=ownChar(a,p.charId,'active'),st=stateOf(c);let sum=0,rsum=0;
+        for(const r of pendingClaims(a.id)){sum+=Number(r.tien_nhan||0);rsum+=Number(r.hong_ngoc_nhan||0);r.da_nhan=1;A.update('cho',r);}
+        st.player.copper+=sum;st.player.rubies+=rsum;storeState(c,st,st.player);return {amount:sum,ruby:rsum,state:st.player};
       });
     }
   };
@@ -385,7 +391,7 @@ const Net={
     return r;
   }
 };
-const NET_ERR={PHIEN_HET_HAN:'Phiên đăng nhập hết hạn, hãy đăng nhập lại',TEN_DANG_NHAP_SAI:'Tên đăng nhập 3\u{2013}20 ký tự: chữ thường, số, dấu _',EMAIL_SAI:'Email không hợp lệ',MAT_KHAU_NGAN:'Mật khẩu tối thiểu 6 ký tự',TEN_DANG_NHAP_DA_CO:'Tên đăng nhập đã có người dùng',EMAIL_DA_CO:'Email đã được đăng ký',SAI_DANG_NHAP:'Sai tên đăng nhập hoặc mật khẩu',KHONG_THAY_EMAIL:'Không có tài khoản dùng email này',MA_SAI:'Mã khôi phục sai hoặc hết hạn',TEN_NHAN_VAT_SAI:'Tên nhân vật 2\u{2013}16 ký tự, chỉ chữ và số',DIEM_SAI:'Phải chia đủ số điểm',DU_NHAN_VAT:'Tài khoản đã đủ số nhân vật',TEN_DA_CO:'Tên nhân vật đã có người dùng',KHONG_THAY_NHAN_VAT:'Không tìm thấy nhân vật',SAI_TRANG_THAI:'Nhân vật đang đi đánh thuê',GIA_SAI:'Giá không hợp lệ',LINH_KHONG_CON:'Lính này đã có người thuê',DA_BAN:'Món này đã được bán',DO_CUA_MINH:'Đây là đồ bạn ký gửi',KHONG_HUY_DUOC:'Không hủy được',DU_LIEU_QUA_LON:'Dữ liệu lưu quá lớn',KHONG_DU_TIEN:'Nhân vật không đủ tiền',DU_LINH:'Nhân vật đã đủ lính',BAG_FULL:'Túi đồ đã đầy',VAT_PHAM_SAI:'Món đồ không hợp lệ',NHANH_QUA:'Quái chưa kịp hồi sinh',KHONG_CO_LENH:'Máy chủ chưa cập nhật bản mới'};
+const NET_ERR={PHIEN_HET_HAN:'Phiên đăng nhập hết hạn, hãy đăng nhập lại',TEN_DANG_NHAP_SAI:'Tên đăng nhập 3\u{2013}20 ký tự: chữ thường, số, dấu _',EMAIL_SAI:'Email không hợp lệ',MAT_KHAU_NGAN:'Mật khẩu tối thiểu 6 ký tự',TEN_DANG_NHAP_DA_CO:'Tên đăng nhập đã có người dùng',EMAIL_DA_CO:'Email đã được đăng ký',SAI_DANG_NHAP:'Sai tên đăng nhập hoặc mật khẩu',KHONG_THAY_EMAIL:'Không có tài khoản dùng email này',MA_SAI:'Mã khôi phục sai hoặc hết hạn',TEN_NHAN_VAT_SAI:'Tên nhân vật 2\u{2013}16 ký tự, chỉ chữ và số',DIEM_SAI:'Phải chia đủ số điểm',DU_NHAN_VAT:'Tài khoản đã đủ số nhân vật',TEN_DA_CO:'Tên nhân vật đã có người dùng',KHONG_THAY_NHAN_VAT:'Không tìm thấy nhân vật',SAI_TRANG_THAI:'Nhân vật đang đi đánh thuê',GIA_SAI:'Giá không hợp lệ',LINH_KHONG_CON:'Lính này đã có người thuê',DA_BAN:'Món này đã được bán',DO_CUA_MINH:'Đây là đồ bạn ký gửi',KHONG_HUY_DUOC:'Không hủy được',DU_LIEU_QUA_LON:'Dữ liệu lưu quá lớn',KHONG_DU_TIEN:'Nhân vật không đủ tiền',DU_LINH:'Nhân vật đã đủ lính',BAG_FULL:'Túi đồ đã đầy',VAT_PHAM_SAI:'Món đồ không hợp lệ',NHANH_QUA:'Quái chưa kịp hồi sinh',KHONG_DU_HONG_NGOC:'Nhân vật không đủ hồng ngọc',KHONG_CO_LENH:'Máy chủ chưa cập nhật bản mới'};
 const netMsg=e=>NET_ERR[e&&e.message]||(e&&e.message==='Failed to fetch'?'Không kết nối được máy chủ':'Lỗi: '+(e&&e.message||e));
 
 ;/* ================= LUẬT CHƠI: chỉ số, trang bị, phẩm chất, bộ đồ, gia cường, nhiệm vụ, lính đánh thuê ================= */
@@ -473,11 +479,15 @@ const Player=(()=>{
     if(d.slot==='mount'){const G=mountGain(lv);return {atk:Math.round((d.atk||0)*m)+G.atk,def:Math.round((d.def||0)*m)+G.def,speed:r2(d.speed+G.speed),hp:G.hp,mp:G.mp};}
     return {atk:Math.round((d.atk||0)*m)+(g.atk||0)*lv,def:Math.round((d.def||0)*m)+(g.def||0)*lv,speed:d.speed?r2(d.speed+(g.speed||0)*lv):0,hp:0,mp:0};
   }
-  const uid=t=>'it-'+String(t).replace(/[^a-z0-9]/gi,'').slice(0,12)+'-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7);
+  const rnd36=rng=>(Math.floor(rng()*4294967296)>>>0).toString(36);
+  const uid=(t,rng=Math.random)=>'it-'+String(t).replace(/[^a-z0-9]/gi,'').slice(0,12)+'-'+rnd36(rng)+rnd36(rng);
+  // Chuỗi ngẫu nhiên dùng chung giữa máy người chơi và máy chủ (mulberry32, trạng thái s.rs do máy chủ giữ):
+  // máy người chơi tính trước kết quả mua/gia cường/nhiệm vụ để hiện ngay, máy chủ tính lại y hệt rồi lưu
+  function seqRng(s){return ()=>{let t=(s.rs=(s.rs+0x6D2B79F5)|0);t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296;};}
   // Sinh món đồ với phẩm chất + dòng thuộc tính ngẫu nhiên
   function roll(type,q='n',rng=Math.random){
     const d=items[type];if(!d)throw Error('ITEM');
-    const it={uid:uid(type),type};if(!d.q&&q!=='n')it.q=q;
+    const it={uid:uid(type,rng),type};if(!d.q&&q!=='n')it.q=q;
     const R=RAR[d.q||q]||{lines:0,tier:0};
     if(d.slot&&d.slot!=='book'&&R.lines){
       const keys=Object.keys(ADD).filter(k=>ADD[k].ranges[R.tier]);it.add={};
@@ -520,7 +530,7 @@ const Player=(()=>{
     const st=Object.fromEntries(STAT_KEYS.map(k=>[k,Math.max(0,Math.floor(num(ch&&ch.stats&&ch.stats[k],12)))]));st.command=num(CFG.menh_lenh_goc,10);
     const s={name:(ch&&ch.name)||'Lữ khách',gender:ch&&ch.gender==='f'?'f':'m',level:1,exp:0,points:0,alloc:Object.fromEntries([...STAT_KEYS,'command'].map(k=>[k,0])),stats:st,hp:1e9,mana:1e9,passive:0,copper:num(CFG.tien_thu_nghiem,0),rubies:num(CFG.hong_ngoc_thu_nghiem,0),
       flags:{river:false,hunted:false,kills:{},wells:{}},equipment:Object.fromEntries(slots.map(k=>[k,k==='right'?{uid:'training-sword',type:'sword'}:null])),bag,skillSlots:Array(SKILL_SLOTS).fill(null),activeBook:null,cooldowns:{},
-      quests:{active:{},done:{}},mercs:[],pets:[]};
+      quests:{active:{},done:{}},mercs:[],pets:[],rs:(Math.random()*2147483647)|0};
     const D=derive(s);s.hp=D.tot.hp;s.mana=D.tot.mp;return s;
   }
   // Tính toàn bộ chỉ số: 5 chỉ số lớn + chỉ số nhỏ (base + phần cộng thêm từ đồ, bộ, sách)
@@ -553,10 +563,9 @@ const Player=(()=>{
     return {main,add:A,tot,fx,books,bfx,sets,mount,dmgMul:books.fire?1+num(CFG.hoa_sat_thuong,25)/100:1};
   }
   const mountCmd=eq=>eq&&eq.mount&&info(eq.mount)?info(eq.mount).cmd||5:0;
-  // Mệnh lệnh lính đang đi theo chiếm (thú lính cưỡi không tính vào Mệnh lệnh của người chơi)
-  function mercCmd(s){return (s.mercs||[]).reduce((a,m)=>a+(m.on?num(m.cmd,5):0),0);}
-  // Bật lính đi theo nếu còn đủ Mệnh lệnh; trả về true/false
-  function fitFollow(s,m){return mercCmd(s)+num(m.cmd,5)+mountCmd(s.equipment)<=derive(s).main.cmd;}
+  // Lính đi theo không tốn Mệnh lệnh: cả 4 lính cùng ra trận (Mệnh lệnh dùng cho thú cưỡi và sách Ma công)
+  function mercCmd(s){return 0;}
+  function fitFollow(s,m){return m.hpFrac===undefined||m.hpFrac>0;}
   function stash(bag,list,prefer){const b=bag.slice();for(const it of list){const i=prefer!=null&&b[prefer]===null?prefer:b.indexOf(null);if(i<0)throw Error('BAG_FULL');b[i]=it;prefer=null;}return b;}
   function targets(s,item){
     const d=info(item);if(!d||!d.slot||d.slot==='book')return [];
@@ -605,7 +614,7 @@ const Player=(()=>{
   function element(s){const b=s.activeBook!=null?s.skillSlots[s.activeBook]:null;return b&&info(b)?info(b).element:null;}
   function money(c){return {gold:Math.floor(c/10000),silver:Math.floor(c/100)%100,copper:c%100};}
   function shopPrice(type,q='n'){const d=items[type];if(!d)return 0;let row=null;for(const k in SHOPS){row=SHOPS[k].find(r=>r.id===type)||row;}const p=row&&row.price?row.price:d.price;return Math.round(p*(q==='g'?num(CFG.he_so_gia_do_dep,250)/100:1));}
-  function buy(s,type,q='n'){const d=items[type];if(!d||!d.price||d.q)throw Error('ITEM');const price=shopPrice(type,q);if(s.copper<price)throw Error('MONEY');const i=s.bag.indexOf(null);if(i<0)throw Error('BAG_FULL');s.copper-=price;s.bag[i]=roll(type,q);return i;}
+  function buy(s,type,q='n',rng=Math.random){const d=items[type];if(!d||!d.price||d.q)throw Error('ITEM');const price=shopPrice(type,q);if(s.copper<price)throw Error('MONEY');const i=s.bag.indexOf(null);if(i<0)throw Error('BAG_FULL');s.copper-=price;s.bag[i]=roll(type,q,rng);return i;}
   function sell(s,index){const it=s.bag[index];if(!it)throw Error('SLOT');const v=sellPrice(it);s.copper+=v;s.bag[index]=null;return v;}
   function addItem(s,it){const i=s.bag.indexOf(null);if(i<0)throw Error('BAG_FULL');s.bag[i]=it;return i;}
   function cast(s,id,now,D){
@@ -641,16 +650,16 @@ const Player=(()=>{
   const STAT_OF={str:'strength',agi:'agility',vit:'vitality',int:'intelligence',cmd:'command'};
   function spendPoints(s,k,n){const key=STAT_OF[k]||k;n=Math.floor(num(n,1));if(![...STAT_KEYS,'command'].includes(key)||!(n>=1))throw Error('STAT');if((s.points||0)<n)throw Error('POINTS');s.points-=n;s.alloc[key]=(s.alloc[key]||0)+n;}
   // Lính đánh thuê
-  function makeMerc(o){
-    const m={mid:'mc-'+Math.random().toString(36).slice(2,9),src:o.src||'npc',tpl:o.tpl||'',from:o.from||'',name:String(o.name||'Lính').slice(0,20),gender:o.gender==='f'?'f':'m',cmd:num(o.cmd,10),
+  function makeMerc(o,rng=Math.random){
+    const m={mid:'mc-'+rnd36(rng),src:o.src||'npc',tpl:o.tpl||'',from:o.from||'',name:String(o.name||'Lính').slice(0,20),gender:o.gender==='f'?'f':'m',cmd:num(o.cmd,10),
       stats:{strength:num(o.stats&&o.stats.strength,10),agility:num(o.stats&&o.stats.agility,10),vitality:num(o.stats&&o.stats.vitality,10),intelligence:num(o.stats&&o.stats.intelligence,10),command:0},equipment:Object.fromEntries(slots.map(k=>[k,null])),hpFrac:1};
     const eq=o.equipment||{};for(const k of slots){const it=cleanItem(eq[k]);if(it)m.equipment[k]=it;}
     return m;
   }
-  function hireNpc(s,id){
+  function hireNpc(s,id,rng=Math.random){
     const T=MERCS[id];if(!T)throw Error('MERC');if(s.mercs.length>=MAX_MERC)throw Error('MERC_FULL');if(s.copper<T.price)throw Error('MONEY');
-    const m=makeMerc({src:'npc',tpl:id,name:T.name,gender:T.gender,cmd:T.cmd,stats:T.stats});
-    let hand=0;for(const g of T.gear){const d=items[g];if(!d)continue;const it=roll(g,'n');if(d.slot==='hand'){const sl=d.grip==='two'?'right':hand++?'left':'right';m.equipment[sl]=it;}else if(d.slot!=='mount')m.equipment[d.slot]=it;}
+    const m=makeMerc({src:'npc',tpl:id,name:T.name,gender:T.gender,cmd:T.cmd,stats:T.stats},rng);
+    let hand=0;for(const g of T.gear){const d=items[g];if(!d)continue;const it=roll(g,'n',rng);if(d.slot==='hand'){const sl=d.grip==='two'?'right':hand++?'left':'right';m.equipment[sl]=it;}else if(d.slot!=='mount')m.equipment[d.slot]=it;}
     s.copper-=T.price;m.on=fitFollow(s,m);s.mercs.push(m);return m;
   }
   function addMerc(s,o){if(s.mercs.length>=MAX_MERC)throw Error('MERC_FULL');const m=makeMerc(o);m.on=fitFollow(s,m);s.mercs.push(m);return m;}
@@ -658,7 +667,7 @@ const Player=(()=>{
   function setFollow(s,i,on){
     const m=s.mercs[i];if(!m)throw Error('MERC');
     if(!on){m.on=false;return;}
-    if(m.on)return;if(!(m.hpFrac>0))throw Error('MERC_DOWN');if(!fitFollow(s,m))throw Error('CMD');m.on=true;
+    if(m.on)return;if(!(m.hpFrac>0))throw Error('MERC_DOWN');m.on=true;
   }
   const mercProxy=(s,m)=>({equipment:m.equipment,bag:s.bag,gender:m.gender,stats:m.stats,isMerc:true});
   function mercEquip(s,i,bagIndex,slot){const m=s.mercs[i];if(!m)throw Error('MERC');const P=mercProxy(s,m);equip(P,bagIndex,slot);s.bag=P.bag;}
@@ -678,6 +687,7 @@ const Player=(()=>{
     const valid=i=>{const it=cleanItem(i);if(!it||used.has(it.uid))return null;used.add(it.uid);return it;};
     s.level=Math.floor(n(p.level,1,maxLevel(),1));s.exp=Math.floor(n(p.exp,0,expNeed(s.level),0));s.points=Math.floor(n(p.points,0,99999,0));s.passive=n(p.passive,0,100,0);
     for(const k of [...STAT_KEYS,'command'])s.alloc[k]=Math.floor(n(p.alloc&&p.alloc[k],0,99999,0));
+    if(Number.isFinite(+p.rs))s.rs=(+p.rs)|0;
     s.copper=Math.floor(n(p.copper,0,Number.MAX_SAFE_INTEGER,0));s.rubies=Math.floor(n(p.rubies,0,Number.MAX_SAFE_INTEGER,0));
     s.stats.command=Math.floor(n(p.stats&&p.stats.command,0,999,s.stats.command));
     if(p.flags){s.flags.river=!!p.flags.river;s.flags.hunted=!!p.flags.hunted;if(p.flags.wells&&typeof p.flags.wells==='object')for(const [k,v] of Object.entries(p.flags.wells))if(/^gieng-\d+$/.test(k)&&Number.isFinite(+v))s.flags.wells[k]=+v;for(const [k,v] of Object.entries(p.flags.kills||{}))if(MON[k])s.flags.kills[k]=Math.floor(n(v,0,1e9,0));}
@@ -698,7 +708,7 @@ const Player=(()=>{
     if(Number.isInteger(p.activeMerc)&&s.mercs[p.activeMerc])s.mercs[p.activeMerc].on=true; // bản cũ: 1 lính
     if(Array.isArray(p.pets))s.pets=p.pets.filter(x=>x&&MON[x.type]&&!MON[x.type].boss&&typeof x.pid==='string').slice(0,petMax()).map(x=>({pid:x.pid.slice(0,30),type:x.type,hpFrac:n(x.hpFrac,0,1,1)}));
     const D=derive(s);
-    {let left=D.main.cmd-mountCmd(s.equipment);for(const m of s.mercs)if(m.on){if(num(m.cmd,5)<=left)left-=num(m.cmd,5);else m.on=false;}}s.hp=n(p.hp,1,D.tot.hp,D.tot.hp);s.mana=n(p.mana,0,D.tot.mp,D.tot.mp);
+s.hp=n(p.hp,1,D.tot.hp,D.tot.hp);s.mana=n(p.mana,0,D.tot.mp,D.tot.mp);
     return s;
   }
   function restore(save,ch,canStand,npcIds){
@@ -732,8 +742,9 @@ const Player=(()=>{
   }
   // Các lệnh làm thay đổi tiền/đồ, chạy trên máy chủ (và trên trình duyệt ở chế độ ngoại tuyến)
   const KILL_LIMIT=id=>MON[id].boss?1:3;
+  const PREDICT=new Set(['buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff']);
   function applyOp(s,op,srv,now=Date.now(),rng=Math.random){
-    const t=op&&op.t;
+    const t=op&&op.t;if(PREDICT.has(t))rng=seqRng(s);
     if(t==='kill'){
       const M=MON[op.mon];if(!M)throw Error('MON');
       srv.kills=srv.kills||{};const win=Math.max(5,M.respawn)*1000,log=(srv.kills[op.mon]||[]).filter(x=>now-x<win);
@@ -748,13 +759,13 @@ const Player=(()=>{
       let pet=null;if(!M.boss&&(s.pets=s.pets||[]).length<petMax()){const D=derive(s);if(D.bfx.demon>=0){const ch=num(CFG.ma_ti_le_goc,2)+D.main.cmd*num(CFG.ma_phan_van_moi_menh_lenh,20)/100+num(CFG.sach_ti_le_cap,1)*D.bfx.demon;if(rng()*100<ch){pet={pid:'pet-'+Math.random().toString(36).slice(2,9),type:op.mon,hpFrac:1};s.pets.push(pet);}}}
       return {mon:op.mon,copper:M.copper,rubies:drop.rubies,items,lost,done,bonus,exp:M.exp,up,level:s.level,pet};
     }
-    if(t==='buy'){const i=buy(s,String(op.type),op.q==='g'?'g':'n');return {i,item:s.bag[i]};}
+    if(t==='buy'){const i=buy(s,String(op.type),op.q==='g'?'g':'n',rng);return {i,item:s.bag[i]};}
     if(t==='sell'){const i=Math.floor(op.i),it=s.bag[i];const v=sell(s,i);return {v,item:it};}
     if(t==='enh'){const bag=op.where==='bag',key=bag?Math.floor(op.key):String(op.key);if(!bag&&!slots.includes(key))throw Error('SLOT');const r=enhance(s,{where:bag?'bag':'equipment',key},rng,op.shop);return {...r,item:bag?s.bag[key]:s.equipment[key]};}
     if(t==='enhSk'){const key=Math.floor(op.key);if(!(key>=0&&key<SKILL_SLOTS))throw Error('SLOT');const r=enhance(s,{where:'skill',key},rng,op.shop||'wizard');return {...r,item:s.skillSlots[key]};}
     if(t==='qa'){questAccept(s,String(op.id));return {};}
     if(t==='qt'){return questTurnIn(s,String(op.id),rng);}
-    if(t==='hire'){const m=hireNpc(s,String(op.id));return {mid:m.mid,name:m.name};}
+    if(t==='hire'){const m=hireNpc(s,String(op.id),rng);return {mid:m.mid,name:m.name};}
     if(t==='petOff'){const i=(s.pets||[]).findIndex(x=>x.pid===op.pid);if(i<0)throw Error('PET');const x=s.pets.splice(i,1)[0];return {type:x.type};}
     if(t==='pt'){spendPoints(s,String(op.k),op.n);return {k:op.k,points:s.points};}
     if(t==='dismiss'){const i=Math.floor(op.i),m=s.mercs[i];dismissMerc(s,i);return {name:m?m.name:''};}
@@ -762,7 +773,7 @@ const Player=(()=>{
   }
   load(typeof GAME_DATA!=='undefined'?GAME_DATA:{});
   return {VERSION,BAG_SIZE,SKILL_SLOTS,MAX_LV,MAX_MERC,MAX_ACTIVE_QUEST,ELEMENTS,BEASTS,GROUPS,FX_NAMES,STAT_KEYS,CFG,RAR,ADD,SHOPS,SETS,MON,QUESTS,MERCS,items,slots,skills,
-    load,info,kind,setFollow,fitFollow,mercCmd,petMax,SHOP_ENH,expNeed,maxLevel,gainExp,spendPoints,mountGain,bookStat,mountCmd,qOf,rar,nameOf,stat,canEnhance,tradeable,gainOf,enhRate,enhCost,enhance,roll,rollDrop,create,derive,targets,equip,unequip,stance,isTwo,pairOk,setSkill,unsetSkill,toggleBook,element,money,shopPrice,buy,sell,sellPrice,addItem,cast,
+    load,info,kind,PREDICT,seqRng,setFollow,fitFollow,mercCmd,petMax,SHOP_ENH,expNeed,maxLevel,gainExp,spendPoints,mountGain,bookStat,mountCmd,qOf,rar,nameOf,stat,canEnhance,tradeable,gainOf,enhRate,enhCost,enhance,roll,rollDrop,create,derive,targets,equip,unequip,stance,isTwo,pairOk,setSkill,unsetSkill,toggleBook,element,money,shopPrice,buy,sell,sellPrice,addItem,cast,
     questAccept,questProgress,questTurnIn,hireNpc,addMerc,mercEquip,mercUnequip,dismissMerc,makeMerc,cleanItem,serialize,restore,restorePlayer,merge,applyOp,allItems};
 })();
 
@@ -776,6 +787,8 @@ const Player=(()=>{
   const tintOf=it=>{const d=info(it);return d?(d.element?Player.ELEMENTS[d.element].color:d.tint||null):null;};
   const icon=(type,color)=>{const d=Player.items[type],id=d?(d.icon||d.kind):type;return `<svg class="icon" aria-hidden="true"${color?` style="color:${color}"`:''}><use href="#i-${id}"/></svg>`;};
   const coins=c=>{const m=Player.money(c),o=[];if(m.gold)o.push(`<span class="coin gold"><i></i>${m.gold}</span>`);if(m.silver)o.push(`<span class="coin silver"><i></i>${m.silver}</span>`);if(m.copper||!o.length)o.push(`<span class="coin"><i></i>${m.copper}</span>`);return `<span class="money">${o.join('')}</span>`;};
+  const ruby=n=>`<span class="coin ruby"><i></i>${n}</span>`;
+  const price=(c,r)=>(c||!r?coins(c):'')+(r?ruby(r):'');
   const chip=(id,t,c)=>`<i class="ch"${c?` style="color:${c}"`:''}>${svg(id)}${t}</i>`;
   const chips=it=>{const s=Player.stat(it),o=[];if(s.atk)o.push(chip('sword','Công +'+s.atk));if(s.def)o.push(chip('shield','Thủ +'+s.def));if(s.speed)o.push(chip('speed','Tốc \u{d7}'+s.speed));for(const [k,v] of Object.entries(it.add||{})){const A=Player.ADD[k];if(A)o.push(`<i class="ch add">${A.name} +${v}${A.unit}</i>`);}const d=info(it);if(d&&d.fxText)o.push(`<i class="ch fx">${esc(d.fxText)}</i>`);return `<span class="chips">${o.join('')}</span>`;};
   const ERR={MONEY:'Không đủ tiền',BAG_FULL:'Túi đồ đã đầy'};
@@ -800,7 +813,7 @@ const Player=(()=>{
   }
   async function boot(){
     let r;try{r=await Net.call('chars');}catch(e){Net.setToken('');return login();}
-    S.acc=r.account;S.chars=r.chars;S.max=r.max;S.claim=r.claim;
+    S.acc=r.account;S.chars=r.chars;S.max=r.max;S.claim=r.claim;S.claimRuby=r.claimRuby||0;
     $('#chUser').innerHTML=`<b>${esc(S.acc.username)}</b><button id="chOut">Đăng xuất</button>`;
     $('#chOut').onclick=async()=>{try{await Net.call('logout');}catch(e){}Net.setToken('');S.charId=null;login();};
     const act=S.chars.filter(c=>c.status==='active');
@@ -813,7 +826,7 @@ const Player=(()=>{
   function draw(){
     const act=S.chars.filter(c=>c.status==='active'),c=cur(),st=S.state;
     const picker=act.length?`<div class="who"><span class="lbl">Nhân vật giao dịch</span><div class="who-list">${act.map(x=>`<button data-char="${x.id}" class="${x.id===S.charId?'on':''}"><b>${esc(x.name)}</b><small>${x.gender==='f'?'Nữ':'Nam'}</small></button>`).join('')}</div>${st?`<div class="purse">${coins(st.copper)}<span class="bagc">${svg('bag')}${st.bag.filter(Boolean).length}/${st.bag.length}</span><span class="bagc">${svg('user')}${st.mercs.length}/${Player.MAX_MERC}</span></div>`:''}</div>`:`<div class="empty">${svg('user')}<span>Tài khoản chưa có nhân vật nào đang hoạt động.</span></div>`;
-    const tabs=[['do','coin','Hàng hóa'],['ky','bag','Ký gửi'],['linh','user','Nhân vật đi theo'],['tien','check','Tiền bán hàng'+(S.claim?' <i class="dot"></i>':'')]];
+    const tabs=[['do','coin','Hàng hóa'],['ky','bag','Ký gửi'],['linh','user','Nhân vật đi theo'],['tien','check','Tiền bán hàng'+(S.claim||S.claimRuby?' <i class="dot"></i>':'')]];
     view.innerHTML=picker+`<nav class="tabs">${tabs.map(([k,ic,t])=>`<button data-tab="${k}" class="${S.tab===k?'on':''}">${svg(ic)}<span>${t}</span></button>`).join('')}</nav><section id="chPane"></section>`;
     view.querySelectorAll('[data-char]').forEach(b=>b.onclick=async()=>{S.charId=b.dataset.char;S.sel=null;await loadChar();draw();});
     view.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{S.tab=b.dataset.tab;S.sel=null;draw();});
@@ -823,7 +836,7 @@ const Player=(()=>{
   const card=(it,price,foot,attrs='')=>`<div class="card" ${attrs} style="--q:${qColor(it)}"><div class="ci" style="color:${tintOf(it)||'#e4cc8d'}">${icon(it.type)}${it.lv?`<b class="lv">+${it.lv}</b>`:''}</div><b class="nm" style="color:${qColor(it)}">${esc(Player.nameOf(it))}</b><small class="q" style="color:${qColor(it)}">${Player.rar(it).name}</small>${chips(it)}${price!=null?`<div class="pr">${coins(price)}</div>`:''}${foot||''}</div>`;
   async function paneMarket(){
     const p=pane();
-    if(!S.market){p.innerHTML='<p class="hint">Đang tải hàng\u{2026}</p>';try{S.market=await Net.call('marketList');}catch(e){p.innerHTML=`<p class="hint">${esc(errMsg(e))}</p>`;return;}S.claim=S.market.claim;}
+    if(!S.market){p.innerHTML='<p class="hint">Đang tải hàng\u{2026}</p>';try{S.market=await Net.call('marketList');}catch(e){p.innerHTML=`<p class="hint">${esc(errMsg(e))}</p>`;return;}S.claim=S.market.claim;S.claimRuby=S.market.claimRuby||0;}
     const q=S.filter,list=S.market.open.map(r=>({...r,it:Player.cleanItem(r.item)})).filter(r=>r.it&&(q==='all'||Player.qOf(r.it)===q));
     const flt=[['all','Tất cả'],...Object.entries(Player.RAR).filter(([,r])=>r.trade).map(([k,r])=>[k,r.name])];
     const money=S.state?S.state.copper:0;
@@ -855,23 +868,26 @@ const Player=(()=>{
   async function paneMercs(){
     const p=pane();
     if(!S.mercs){p.innerHTML='<p class="hint">Đang tải\u{2026}</p>';try{S.mercs=(await Net.call('mercList')).list;}catch(e){S.mercs=[];}}
-    const st=S.state,full=st&&st.mercs.length>=Player.MAX_MERC,money=st?st.copper:0;
-    const list=S.mercs.length?S.mercs.map(m=>`<div class="row"><span class="g">${m.gender==='f'?'Nữ':'Nam'}</span><div><b>${esc(m.name)}</b><span class="gear">${gear(m.equipment)}</span>${statLine(m.stats)}</div><div class="end">${coins(m.price)}<button class="primary" data-mbuy="${m.id}"${!st||full||money<m.price?' disabled':''}>${svg('user')}Mua về đi theo</button></div></div>`).join(''):`<div class="empty">${svg('user')}<span>Chưa có ai cho thuê nhân vật.</span></div>`;
-    const mine=S.chars.filter(c=>c.id!==S.charId).map(c=>`<div class="row mine"><span class="g">${c.gender==='f'?'Nữ':'Nam'}</span><div><b>${esc(c.name)}</b>${statLine(c.stats)}${c.status==='merc'?`<small class="tag">Đang cho thuê \u{b7} ${coins(c.price)}</small>`:''}</div><div class="end">${c.status==='merc'?`<button data-mcancel="${c.id}">Hủy cho thuê</button>`:`<div class="price-in"><label>Vàng<input data-mg="${c.id}" type="number" min="0" value="2"></label><label>Bạc<input data-ms="${c.id}" type="number" min="0" max="99" value="0"></label></div><button data-mreg="${c.id}">Cho thuê</button>`}</div></div>`).join('');
-    p.innerHTML=`<p class="hint">Mua nhân vật của người chơi khác về làm lính đi theo ${st?esc(cur().name):''} (${st?st.mercs.length:0}/${Player.MAX_MERC}). Lính mua về thuộc về bạn, cần 10 Mệnh lệnh để dẫn theo.</p><div class="rows">${list}</div>
+    const st=S.state,full=st&&st.mercs.length>=Player.MAX_MERC,money=st?st.copper:0,rubies=st?st.rubies:0;
+    const look=m=>{const k=m.look||{},a=k.main;const eq=Player.slots.map(s=>m.equipment&&m.equipment[s]&&info(m.equipment[s])?m.equipment[s]:null).filter(Boolean);
+      return `<div class="mlook"><span class="mlv">Lv. ${k.level||m.level||1}</span>${a?`<small class="stats">Sức mạnh ${a.str} \u{b7} Nhanh nhẹn ${a.agi} \u{b7} Sức khỏe ${a.vit} \u{b7} Trí tuệ ${a.int}${k.dmg?` \u{b7} Sát thương ${k.dmg[0]}\u{2013}${k.dmg[1]}`:''}${k.hp?` \u{b7} Máu ${k.hp}`:''}</small>`:statLine(m.stats)}
+        <div class="mgear">${eq.length?eq.map(it=>`<span class="gi" title="${esc(Player.nameOf(it))}" style="color:${qColor(it)}">${icon(it.type)}<small>${esc(Player.nameOf(it))}</small></span>`).join(''):'<small class="stats">Chưa mặc đồ</small>'}</div></div>`;};
+    const list=S.mercs.length?S.mercs.map(m=>`<div class="row merc"><span class="g">${m.gender==='f'?'Nữ':'Nam'}</span><div><b>${esc(m.name)}</b>${look(m)}</div><div class="end">${price(m.price,m.ruby)}<button class="primary" data-mbuy="${m.id}"${!st||full||money<m.price||rubies<(m.ruby||0)?' disabled':''}>${svg('user')}Mua về đi theo</button></div></div>`).join(''):`<div class="empty">${svg('user')}<span>Chưa có ai cho thuê nhân vật.</span></div>`;
+    const mine=S.chars.filter(c=>c.id!==S.charId).map(c=>`<div class="row mine"><span class="g">${c.gender==='f'?'Nữ':'Nam'}</span><div><b>${esc(c.name)}</b>${statLine(c.stats)}${c.status==='merc'?`<small class="tag">Đang cho thuê \u{b7} ${price(c.price,c.ruby)}</small>`:''}</div><div class="end">${c.status==='merc'?`<button data-mcancel="${c.id}">Hủy cho thuê</button>`:`<div class="price-in"><label>Vàng<input data-mg="${c.id}" type="number" min="0" value="2"></label><label>Bạc<input data-ms="${c.id}" type="number" min="0" max="99" value="0"></label><label>Hồng ngọc<input data-mr="${c.id}" type="number" min="0" value="0"></label></div><button data-mreg="${c.id}">Cho thuê</button>`}</div></div>`).join('');
+    p.innerHTML=`<p class="hint">Mua nhân vật của người chơi khác về làm lính đi theo ${st?esc(cur().name):''} (${st?st.mercs.length:0}/${Player.MAX_MERC}). Lính mua về thuộc về bạn và ra trận cùng (tối đa ${Player.MAX_MERC} lính).</p><div class="rows">${list}</div>
       <h3>Cho thuê nhân vật của tôi</h3><p class="hint">Nhân vật đang cho thuê không vào game được. Có người mua thì nhân vật thuộc về họ, bạn nhận tiền (trừ ${Player.CFG.phi_cho||0}% phí). Không cho thuê được nhân vật đang chọn giao dịch.</p><div class="rows">${mine||'<div class="empty"><span>Không có nhân vật nào khác.</span></div>'}</div>`;
     p.querySelectorAll('[data-mbuy]').forEach(b=>b.onclick=async()=>{busy(b,true);try{const r=await Net.call('mercBuy',{charId:S.charId,targetId:b.dataset.mbuy});S.state=r.state;S.mercs=null;toast(svg('check')+`${esc(r.name)} sẽ đi theo ${esc(cur().name)}`);draw();}catch(e){toast(svg('close')+errMsg(e),true);busy(b,false);}});
-    p.querySelectorAll('[data-mreg]').forEach(b=>b.onclick=async()=>{const id=b.dataset.mreg,g=+p.querySelector(`[data-mg="${id}"]`).value||0,s=+p.querySelector(`[data-ms="${id}"]`).value||0,price=Math.max(0,Math.floor(g))*10000+Math.min(99,Math.max(0,Math.floor(s)))*100;busy(b,true);try{await Net.call('mercRegister',{charId:id,price});await boot();toast(svg('check')+'Đã đăng cho thuê');}catch(e){toast(svg('close')+errMsg(e),true);busy(b,false);}});
+    p.querySelectorAll('[data-mreg]').forEach(b=>b.onclick=async()=>{const id=b.dataset.mreg,g=+p.querySelector(`[data-mg="${id}"]`).value||0,s=+p.querySelector(`[data-ms="${id}"]`).value||0,r=Math.max(0,Math.floor(+p.querySelector(`[data-mr="${id}"]`).value||0)),pr=Math.max(0,Math.floor(g))*10000+Math.min(99,Math.max(0,Math.floor(s)))*100;busy(b,true);try{await Net.call('mercRegister',{charId:id,price:pr,ruby:r});await boot();toast(svg('check')+'Đã đăng cho thuê');}catch(e){toast(svg('close')+errMsg(e),true);busy(b,false);}});
     p.querySelectorAll('[data-mcancel]').forEach(b=>b.onclick=async()=>{busy(b,true);try{await Net.call('mercCancel',{charId:b.dataset.mcancel});await boot();toast(svg('check')+'Đã hủy cho thuê');}catch(e){toast(svg('close')+errMsg(e),true);busy(b,false);}});
   }
   function paneClaim(){
     const p=pane(),c=cur();
-    p.innerHTML=`<div class="claim">${svg('coin')}<div><span>Tiền bán hàng đang chờ</span><b>${coins(S.claim)}</b></div>${S.claim&&c?`<button class="primary" id="cGo">Nhận vào ${esc(c.name)}</button>`:''}</div><p class="hint">Gồm tiền bán đồ ký gửi và tiền bán nhân vật cho thuê, đã trừ phí thương nhân.</p>`;
-    const go=$('#cGo');if(go)go.onclick=async()=>{busy(go,true);try{const r=await Net.call('claim',{charId:S.charId});S.state=r.state;S.claim=0;toast(svg('check')+'Đã nhận '+coins(r.amount));draw();}catch(e){toast(svg('close')+errMsg(e),true);busy(go,false);}};
+    p.innerHTML=`<div class="claim">${svg('coin')}<div><span>Tiền bán hàng đang chờ</span><b>${price(S.claim,S.claimRuby)}</b></div>${(S.claim||S.claimRuby)&&c?`<button class="primary" id="cGo">Nhận vào ${esc(c.name)}</button>`:''}</div><p class="hint">Gồm tiền bán đồ ký gửi và tiền bán nhân vật cho thuê, đã trừ phí thương nhân.</p>`;
+    const go=$('#cGo');if(go)go.onclick=async()=>{busy(go,true);try{const r=await Net.call('claim',{charId:S.charId});S.state=r.state;S.claim=0;S.claimRuby=0;toast(svg('check')+'Đã nhận '+price(r.amount,r.ruby));draw();}catch(e){toast(svg('close')+errMsg(e),true);busy(go,false);}};
   }
   // ---------- khởi động ----------
   const g=gameUrl();if(g)$('#chBack').href=g;else $('#chBack').hidden=true;
-  $('#chMode').textContent=Net.online?'':'Chế độ ngoại tuyến \u{b7} dữ liệu lưu trên trình duyệt này';
+  $('#chMode').textContent=Net.online?'Máy chủ Việt Nam':'Chế độ ngoại tuyến \u{b7} dữ liệu lưu trên trình duyệt này';
   (async()=>{
     if(Net.online){try{const d=await Net.call('data');if(d.data&&d.data.vat_pham)Player.load(d.data);}catch(e){}}
     if(Net.token)await boot();else login();
