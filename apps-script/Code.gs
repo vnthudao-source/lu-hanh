@@ -7,6 +7,7 @@
    3. Triển khai → Tùy chọn triển khai mới → Loại: Ứng dụng web → Thực thi với tư cách: Tôi → Ai có quyền truy cập: Bất kỳ ai → Triển khai.
    4. Sao chép URL ứng dụng web (đuôi /exec), dán vào dòng const LH_API='' trong code game trên Blogspot.
    Sửa số liệu trong các file Sheet xong, chạy hàm xoaBoNhoDem để game nhận ngay (nếu không, tối đa 10 phút).
+   v8.8: doGet nhận lệnh nhỏ qua ?p= (dự phòng cho trình duyệt điện thoại không gửi POST được).
    v8.5: thêm cột token_cu (tai_khoan): mỗi tài khoản chỉ đăng nhập một thiết bị, đăng nhập nơi khác thì thiết bị cũ bị đẩy ra. Tự thêm khi chạy.
    v8.4: thêm tab vu_khi (trong file vat_pham): sát thương, tầm đánh, tốc đánh, mana của 6 loại vũ khí; file mới "LH · Hình ảnh" (tab hinh_anh): dán link ảnh Drive để thay biểu tượng, đồ, quái, NPC. Chạy caiDat một lần.
    v8.3: thêm cột gia_hong_ngoc (nhan_vat), hong_ngoc, hong_ngoc_nhan (cho): cho thuê nhân vật bằng hồng ngọc. Tự thêm khi chạy.
@@ -76,7 +77,11 @@ function doPost(e){
   let p={};try{p=JSON.parse(e.postData.contents);}catch(err){}
   return ContentService.createTextOutput(JSON.stringify(LH.handle(p.action,p))).setMimeType(ContentService.MimeType.JSON);
 }
-function doGet(){return ContentService.createTextOutput(JSON.stringify(LH.handle('ping',{}))).setMimeType(ContentService.MimeType.JSON);}
+// GET: không tham số = kiểm tra máy chủ; ?p={...} = lệnh nhỏ (đường dự phòng khi trình duyệt không POST được)
+function doGet(e){
+  const q=e&&e.parameter&&e.parameter.p;let p={};if(q){try{p=JSON.parse(q);}catch(err){}}
+  return ContentService.createTextOutput(JSON.stringify(q?LH.handle(p.action,p):LH.handle('ping',{}))).setMimeType(ContentService.MimeType.JSON);
+}
 function xoaBoNhoDem(){CacheService.getScriptCache().remove('lh-data');}
 // Đổ dữ liệu mặc định vào các tab còn trống, tạo bảng người chơi (chạy một lần sau khi dán code)
 function caiDat(){
