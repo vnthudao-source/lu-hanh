@@ -24,7 +24,6 @@
   }
   paintPortal();
   $('#netMode').textContent=Net.online?'Máy chủ Việt Nam':'Chế độ ngoại tuyến · dữ liệu lưu trên trình duyệt này';
-  const choUrl=()=>String(window.LH_CHO||Player.CFG.link_cho_phien||'').trim();
   function auth(tab='login'){
     stopTent();card.classList.remove('wide');
     const tabs=[['login','Đăng nhập'],['register','Đăng ký'],['forgot','Quên tài khoản']];
@@ -67,8 +66,7 @@
     box.innerHTML=`<div class="phead"><b>${esc(r.account.username)}</b><span class="srv">Máy chủ Việt Nam</span><button id="pOut">Đăng xuất</button></div>
       <div class="tent-wrap"><canvas id="tentCv" aria-label="Căn lều nhân vật"></canvas></div>
       <div id="tentInfo" class="tent-info"></div>
-      ${r.claim||r.claimRuby?`<p class="hint2 ok">Có ${r.claim?money(r.claim):''}${r.claim&&r.claimRuby?' và ':''}${r.claimRuby?r.claimRuby+' hồng ngọc':''} tiền bán hàng đang chờ, nhận ở Chợ phiên.</p>`:''}
-      ${choUrl()?`<a class="cho-go" href="${esc(choUrl())}" target="_blank" rel="noopener">Ra Chợ phiên</a>`:''}`;
+      ${r.claim||r.claimRuby?`<p class="hint2 ok">Có ${r.claim?money(r.claim):''}${r.claim&&r.claimRuby?' và ':''}${r.claimRuby?r.claimRuby+' hồng ngọc':''} tiền bán hàng đang chờ, nhận ở Chợ phiên.</p>`:''}`;
     $('#pOut').onclick=async()=>{try{await Net.call('logout');}catch(e){}Net.setToken('');auth('login');};
     T.cv=$('#tentCv');T.cv.onpointerdown=e=>{const b=T.cv.getBoundingClientRect(),x=e.clientX-b.left,y=e.clientY-b.top;const s=T.slots.find(s=>Math.abs(x-s.x)<s.w/2&&y>s.top&&y<s.y+18);if(!s)return;
       T.sel=s.i;const c=r.chars[s.i];T.mode=c?'view':'create';if(!c)T.st=null;info();};
@@ -179,7 +177,9 @@
       await LH_Local.push(charId);
       const r=await Net.call('load',{charId});
       L.step(45,'Dựng làng Thanh Mộc',88);
-      const R=Player.restore(r.save,r.char,World.canStand,World.npcs.map(n=>n.id));
+      // dựng bản đồ nhân vật đang đứng (bản đồ chưa có trong game thì tải gói dữ liệu; lỗi thì về làng)
+      const mid=(r.save&&r.save.pos&&r.save.pos.map)||World.DEFAULT,got=await World.enter(mid);
+      const R=Player.restore(got===mid?r.save:{...r.save,pos:null},r.char,World.canStand,null);
       await new Promise(ok=>setTimeout(ok,60));
       stopTent();root.hidden=true;document.body.classList.add('in-game');document.getElementById('lu-hanh')?.classList.add('in-game');
       window.startGame({charId,player:R.player,pos:R.pos,seen:R.seen});

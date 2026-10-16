@@ -80,12 +80,18 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 - Thông báo (đã lưu, thu phục quái…) trên điện thoại hiện một dòng ở chính giữa phía trên, như bản máy tính.
 - Thêm mốc lưu: rời cuộc nói chuyện với bất kỳ dân làng nào (bấm Xong ở lời thoại, hoặc đóng bảng cửa hàng / nhận việc / thuê lính / chợ mở từ dân làng).
 
+## Bản 9.3
+
+- **Giao dịch giữa người chơi chuyển vào game, qua Thương nhân** (cuối làng): bày bán / mua đồ ký gửi, thuê nhân vật của người chơi khác, cho thuê nhân vật khác của mình, nhận tiền bán hàng. Trước mỗi giao dịch game lưu hết phần chơi trên máy rồi mới gửi lệnh. Trong lúc chờ máy chủ cả bảng bị khóa (bấm nhanh không dồn lệnh); mua phải chạm 2 lần. Trang Chợ phiên chỉ còn báo "đã dời vào làng".
+- **Máy chủ nhẹ hơn:** mỗi lệnh chỉ đọc đúng dòng cần (tìm theo cột), không đọc cả bảng người chơi/chợ. Lệnh ghi có mã `rid`: gửi lại (rớt mạng, đổi GET/POST) thì máy chủ trả kết quả cũ, không làm hai lần. Cho thuê / hủy cho thuê chạy trong khóa (vá lỗi có thể nhân đôi đồ). Hàm `donCho` (lịch 3 giờ sáng hằng ngày, tạo khi chạy `caiDat`) chuyển hàng đã hủy / đã bán và nhận tiền sang tab `cho_cu`.
+- **Bộ bản đồ dùng chung:** bản đồ là dữ liệu (`maps/*.json`, xem `maps/README.md`); Thanh Mộc nằm sẵn trong game, bản đồ khác chỉ tải khi bước qua cổng. Vị trí lưu kèm mã bản đồ; gục hoặc "Về làng" ở bản đồ khác thì về Thanh Mộc.
+
 ## Ra bản mới
 
 1. Sửa trong `src/` (và `VERSION`).
 2. `node tools/build.mjs`
-3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-9.3`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
-4. Trên Blogspot đổi `@ban-9.2` thành `@ban-9.3` (trang game và trang Chợ phiên).
+3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-9.4`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
+4. Trên Blogspot đổi `@ban-9.3` thành `@ban-9.4` (trang game và trang Chợ phiên).
 5. Nếu `Code.gs` đổi: dán lại vào Apps Script, Triển khai → Quản lý triển khai → Sửa → Phiên bản mới (giữ nguyên URL).
 
 ## Dữ liệu trong Sheet

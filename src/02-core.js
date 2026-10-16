@@ -1,5 +1,5 @@
 /* ================= LÕI MÁY CHỦ (dùng chung cho Apps Script và chế độ ngoại tuyến) =================
-   adapter cần có: rows(bang) · insert(bang,obj) · update(bang,obj) · mail(to,tieuDe,noiDung) · hash(chuoi) · now() · uid() · staticData() · lock(fn) · rules() (nạp luật chơi)
+   adapter cần có: rows(bang) · find(bang,cot,giaTri) · where(bang,cot,giaTri) (tùy chọn: chỉ đọc đúng dòng cần, không đọc cả bảng) · insert(bang,obj) · update(bang,obj) · mail(to,tieuDe,noiDung) · hash(chuoi) · now() · uid() · staticData() · lock(fn) · rules() (nạp luật chơi)
    Bảng: tai_khoan · nhan_vat · cho
    v8: máy chủ giữ tiền, hồng ngọc, đồ của từng nhân vật. Trình duyệt chỉ gửi: sắp xếp đồ, máu/mana, vị trí và các lệnh (hạ quái, mua, bán, gia cường, nhiệm vụ, thuê lính). */
 function LH_Core(A){
@@ -8,15 +8,18 @@ function LH_Core(A){
   const lower=s=>String(s||'').trim().toLowerCase();
   const cfg=k=>{const r=(A.staticData().cau_hinh||[]).find(x=>x.khoa===k);return r?Number(r.gia_tri):null;};
   const pub=a=>({id:a.id,username:a.username,email:a.email});
+  // Tìm dòng theo một cột: máy chủ thật chỉ đọc đúng các dòng khớp (nhanh khi bảng lớn), máy giả thì lọc cả bảng
+  const find=(t,k,v)=>{v=String(v==null?'':v);if(!v)return null;return (A.find?A.find(t,k,v):A.rows(t).find(x=>String(x[k])===v))||null;};
+  const where=(t,k,v)=>{v=String(v==null?'':v);if(!v)return [];return A.where?A.where(t,k,v):A.rows(t).filter(x=>String(x[k])===v);};
   function auth(token){
-    const a=A.rows('tai_khoan').find(x=>x.token&&x.token===token);
+    const a=token?find('tai_khoan','token',token):null;
     // Mỗi tài khoản chỉ một thiết bị: đăng nhập nơi khác thì phiên cũ bị đẩy ra
-    if(!a){if(token&&A.rows('tai_khoan').some(x=>x.token_cu&&x.token_cu===token))fail('DANG_NHAP_NOI_KHAC');fail('PHIEN_HET_HAN');}
+    if(!a){if(token&&find('tai_khoan','token_cu',token))fail('DANG_NHAP_NOI_KHAC');fail('PHIEN_HET_HAN');}
     if(Number(a.token_het_han)<A.now())fail('PHIEN_HET_HAN');
     return a;
   }
   function ownChar(a,id,status){
-    const c=A.rows('nhan_vat').find(x=>x.id===id);
+    const c=find('nhan_vat','id',id);
     if(!c||c.tai_khoan!==a.id)fail('KHONG_THAY_NHAN_VAT');
     if(status&&c.trang_thai!==status)fail('SAI_TRANG_THAI');
     return c;
@@ -32,7 +35,7 @@ function LH_Core(A){
   }
   function storeState(c,st,player,soft){
     soft=soft||{};
-    const okPos=v=>v&&Number.isFinite(+v.x)&&Number.isFinite(+v.y)?{x:+v.x,y:+v.y}:null;
+    const okPos=v=>v&&Number.isFinite(+v.x)&&Number.isFinite(+v.y)?{x:+v.x,y:+v.y,...(typeof v.map==='string'&&/^[a-z0-9-]{1,40}$/.test(v.map)?{map:v.map}:{})}:null;
     const save={v:Player.VERSION,player,pos:soft.pos!==undefined?okPos(soft.pos):(st.save.pos||null),seen:Array.isArray(soft.seen)?soft.seen.slice(0,60).map(String):(st.save.seen||[]),srv:st.save.srv||{}};
     const j=JSON.stringify(save);if(j.length>45000)fail('DU_LIEU_QUA_LON');
     c.luu=j;c.cap=player.level;c.kinh_nghiem=player.exp;c.cap_nhat=A.now();A.update('nhan_vat',c);st.save=save;
@@ -43,7 +46,7 @@ function LH_Core(A){
       return {level:p.level,equipment:p.equipment,el:ab&&Player.info(ab)?Player.info(ab).element:null,mercs:p.mercs.length,pets:(p.pets||[]).length,main:D.main,dmg:[D.tot.dmgMin,D.tot.dmgMax],hp:D.tot.hp,def:D.tot.def};}catch(e){return null;}
   }
   const claimSum=acc=>pendingClaims(acc).reduce((s,r)=>({copper:s.copper+Number(r.tien_nhan||0),ruby:s.ruby+Number(r.hong_ngoc_nhan||0)}),{copper:0,ruby:0});
-  function pendingClaims(acc){return A.rows('cho').filter(r=>r.trang_thai==='da_ban'&&r.nguoi_ban===acc&&String(r.da_nhan)!=='1');}
+  function pendingClaims(acc){return where('cho','nguoi_ban',acc).filter(r=>r.trang_thai==='da_ban'&&String(r.da_nhan)!=='1');}
   const H={
     ping:()=>({msg:'Lữ Hành API'}),
     // kiểm tra phiên còn giữ (game gọi định kỳ): bị đăng nhập nơi khác thì báo DANG_NHAP_NOI_KHAC
@@ -55,9 +58,8 @@ function LH_Core(A){
       if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))fail('EMAIL_SAI');
       if(pw.length<6)fail('MAT_KHAU_NGAN');
       return A.lock(()=>{
-        const all=A.rows('tai_khoan');
-        if(all.some(a=>a.username===username))fail('TEN_DANG_NHAP_DA_CO');
-        if(all.some(a=>a.email===email))fail('EMAIL_DA_CO');
+        if(find('tai_khoan','username',username))fail('TEN_DANG_NHAP_DA_CO');
+        if(find('tai_khoan','email',email))fail('EMAIL_DA_CO');
         const salt=A.uid(),a={id:'tk-'+A.uid(),username,email,muoi:salt,mat_khau:A.hash(salt+pw),tao_luc:A.now(),token:'',token_het_han:0,ma_khoi_phuc:'',ma_het_han:0};
         A.insert('tai_khoan',a);
         return {token:newToken(a),account:pub(a)};
@@ -65,13 +67,13 @@ function LH_Core(A){
     },
     login(p){
       const key=lower(p.username),pw=String(p.password||'');
-      const a=A.rows('tai_khoan').find(x=>x.username===key||x.email===key);
+      const a=find('tai_khoan','username',key)||find('tai_khoan','email',key);
       if(!a||A.hash(a.muoi+pw)!==a.mat_khau)fail('SAI_DANG_NHAP');
       return {token:newToken(a),account:pub(a)};
     },
     logout(p){const a=auth(p.token);a.token='';a.token_cu='';a.token_het_han=0;A.update('tai_khoan',a);return {};},
     forgot(p){
-      const email=lower(p.email),a=A.rows('tai_khoan').find(x=>x.email===email);
+      const email=lower(p.email),a=find('tai_khoan','email',email);
       if(!a)fail('KHONG_THAY_EMAIL');
       const code=String(100000+Math.floor(Math.random()*900000));
       a.ma_khoi_phuc=code;a.ma_het_han=A.now()+RESET_MIN*6e4;A.update('tai_khoan',a);
@@ -79,14 +81,14 @@ function LH_Core(A){
       return {sent:true,devCode:A.devMail?code:undefined,username:A.devMail?a.username:undefined};
     },
     reset(p){
-      const email=lower(p.email),a=A.rows('tai_khoan').find(x=>x.email===email);
+      const email=lower(p.email),a=find('tai_khoan','email',email);
       if(!a||!a.ma_khoi_phuc||String(a.ma_khoi_phuc)!==String(p.code).trim()||Number(a.ma_het_han)<A.now())fail('MA_SAI');
       if(String(p.password||'').length<6)fail('MAT_KHAU_NGAN');
       a.muoi=A.uid();a.mat_khau=A.hash(a.muoi+p.password);a.ma_khoi_phuc='';a.ma_het_han=0;
       return {token:newToken(a),account:pub(a)};
     },
     chars(p){
-      const a=auth(p.token),list=A.rows('nhan_vat').filter(c=>c.tai_khoan===a.id&&(c.trang_thai==='active'||c.trang_thai==='merc')).map(c=>({...charView(c),look:lookOf(c)}));
+      const a=auth(p.token),list=where('nhan_vat','tai_khoan',a.id).filter(c=>(c.trang_thai==='active'||c.trang_thai==='merc')).map(c=>({...charView(c),look:lookOf(c)}));
       const cs=claimSum(a.id);
       return {account:pub(a),chars:list,max:cfg('so_nhan_vat_toi_da')||5,claim:cs.copper,claimRuby:cs.ruby};
     },
@@ -97,9 +99,9 @@ function LH_Core(A){
       if(vals.some(v=>!Number.isInteger(v)||v<0))fail('DIEM_SAI');
       if(vals.reduce((s,v)=>s+v,0)!==(cfg('diem_khoi_tao')||50))fail('DIEM_SAI');
       return A.lock(()=>{
-        const all=A.rows('nhan_vat'),max=cfg('so_nhan_vat_toi_da')||5;
-        if(all.filter(c=>c.tai_khoan===a.id&&(c.trang_thai==='active'||c.trang_thai==='merc')).length>=max)fail('DU_NHAN_VAT');
-        if(all.some(c=>c.ten_khoa===lower(name)&&c.trang_thai!=='deleted'))fail('TEN_DA_CO');
+        const max=cfg('so_nhan_vat_toi_da')||5;
+        if(where('nhan_vat','tai_khoan',a.id).filter(c=>c.trang_thai==='active'||c.trang_thai==='merc').length>=max)fail('DU_NHAN_VAT');
+        if(where('nhan_vat','ten_khoa',lower(name)).some(c=>c.trang_thai!=='deleted'))fail('TEN_DA_CO');
         const c={id:'nv-'+A.uid(),tai_khoan:a.id,ten:name,ten_khoa:lower(name),gioi_tinh:gender,suc_manh:vals[0],nhanh_nhen:vals[1],suc_khoe:vals[2],tri_tue:vals[3],trang_thai:'active',gia_danh_thue:0,nguoi_mua:'',luu:'',tao_luc:A.now(),cap_nhat:A.now()};
         A.insert('nhan_vat',c);return {char:charView(c)};
       });
@@ -131,20 +133,22 @@ function LH_Core(A){
       });
     },
     save(p){return H.play({...p,ops:[]});},
+    // Cho thuê / hủy cho thuê: đọc và ghi dòng nhân vật trong khóa (không ghi đè phần lưu mới hơn của lệnh khác)
     mercRegister(p){
-      const a=auth(p.token),c=ownChar(a,p.charId,'active'),price=Math.max(0,Math.floor(Number(p.price)||0)),ruby=Math.max(0,Math.floor(Number(p.ruby)||0));
+      const a=auth(p.token),price=Math.max(0,Math.floor(Number(p.price)||0)),ruby=Math.max(0,Math.floor(Number(p.ruby)||0));
       if(!(price>=100)&&!(ruby>=1))fail('GIA_SAI');
-      c.trang_thai='merc';c.gia_danh_thue=price;c.gia_hong_ngoc=ruby;c.cap_nhat=A.now();A.update('nhan_vat',c);return {char:charView(c)};
+      if(p.playing&&p.playing===p.charId)fail('DANG_CHOI');
+      return A.lock(()=>{const c=ownChar(a,p.charId,'active');c.trang_thai='merc';c.gia_danh_thue=price;c.gia_hong_ngoc=ruby;c.cap_nhat=A.now();A.update('nhan_vat',c);return {char:charView(c)};});
     },
-    mercCancel(p){const a=auth(p.token),c=ownChar(a,p.charId,'merc');c.trang_thai='active';c.gia_danh_thue=0;c.gia_hong_ngoc=0;A.update('nhan_vat',c);return {char:charView(c)};},
+    mercCancel(p){const a=auth(p.token);return A.lock(()=>{const c=ownChar(a,p.charId,'merc');c.trang_thai='active';c.gia_danh_thue=0;c.gia_hong_ngoc=0;A.update('nhan_vat',c);return {char:charView(c)};});},
     mercList(p){
       const a=auth(p.token);
-      return {list:A.rows('nhan_vat').filter(c=>c.trang_thai==='merc'&&c.tai_khoan!==a.id).map(c=>{let eq={};try{eq=(JSON.parse(c.luu||'{}').player||{}).equipment||{};}catch(e){}return {...charView(c),equipment:eq,look:lookOf(c)};})};
+      return {list:where('nhan_vat','trang_thai','merc').filter(c=>c.tai_khoan!==a.id).map(c=>{let eq={};try{eq=(JSON.parse(c.luu||'{}').player||{}).equipment||{};}catch(e){}return {...charView(c),equipment:eq,look:lookOf(c)};})};
     },
     mercBuy(p){
       const a=auth(p.token);
       return A.lock(()=>{
-        const b=ownChar(a,p.charId,'active'),t=A.rows('nhan_vat').find(c=>c.id===p.targetId);
+        const b=ownChar(a,p.charId,'active'),t=find('nhan_vat','id',p.targetId);
         if(!t||t.trang_thai!=='merc'||t.tai_khoan===a.id)fail('LINH_KHONG_CON');
         let eq={};try{eq=(JSON.parse(t.luu||'{}').player||{}).equipment||{};}catch(e){}
         const price=Number(t.gia_danh_thue)||0,ruby=Number(t.gia_hong_ngoc)||0,fee=(cfg('phi_cho')||0)/100,st=stateOf(b);
@@ -157,7 +161,7 @@ function LH_Core(A){
       });
     },
     marketList(p){
-      const a=auth(p.token),rows=A.rows('cho').filter(r=>r.loai==='do');
+      const a=auth(p.token),rows=where('cho','trang_thai','mo').filter(r=>r.loai==='do');
       const view=r=>({id:r.id,item:JSON.parse(r.vat_pham||'null'),price:Number(r.gia),ruby:Number(r.hong_ngoc)||0,mine:r.nguoi_ban===a.id,seller:r.ten_nguoi_ban||''});
       return {open:rows.filter(r=>r.trang_thai==='mo').map(view),claim:claimSum(a.id).copper,claimRuby:claimSum(a.id).ruby};
     },
@@ -166,7 +170,7 @@ function LH_Core(A){
       const a=auth(p.token),price=Math.max(0,Math.floor(Number(p.price)||0)),ruby=Math.max(0,Math.floor(Number(p.ruby)||0));
       if(!(price>=1)&&!(ruby>=1))fail('GIA_SAI');
       return A.lock(()=>{
-        const c=ownChar(a,p.charId,'active'),st=stateOf(c),i=Math.floor(Number(p.i)),it=st.player.bag[i];
+        const c=ownChar(a,p.charId,'active'),st=stateOf(c),i=p.uid?st.player.bag.findIndex(x=>x&&x.uid===String(p.uid)):Math.floor(Number(p.i)),it=st.player.bag[i];
         if(!it||!Player.tradeable(it))fail('VAT_PHAM_SAI');
         st.player.bag[i]=null;storeState(c,st,st.player);
         const fee=(cfg('phi_cho')||0)/100,r={id:'ch-'+A.uid(),loai:'do',nguoi_ban:a.id,nhan_vat_ban:c.id,ten_nguoi_ban:c.ten,vat_pham:JSON.stringify(it),gia:price,tien_nhan:Math.floor(price*(1-fee)),hong_ngoc:ruby,hong_ngoc_nhan:Math.floor(ruby*(1-fee)),trang_thai:'mo',nguoi_mua:'',tao_luc:A.now(),ban_luc:0,da_nhan:0};
@@ -177,7 +181,7 @@ function LH_Core(A){
     marketCancel(p){
       const a=auth(p.token);
       return A.lock(()=>{
-        const r=A.rows('cho').find(x=>x.id===p.id);if(!r||r.nguoi_ban!==a.id||r.trang_thai!=='mo')fail('KHONG_HUY_DUOC');
+        const r=find('cho','id',p.id);if(!r||r.nguoi_ban!==a.id||r.trang_thai!=='mo')fail('KHONG_HUY_DUOC');
         const c=ownChar(a,r.nhan_vat_ban,'active'),st=stateOf(c),it=Player.cleanItem(JSON.parse(r.vat_pham));
         if(it)Player.addItem(st.player,it);storeState(c,st,st.player);
         r.trang_thai='huy';A.update('cho',r);return {charId:c.id,state:st.player};
@@ -186,7 +190,7 @@ function LH_Core(A){
     marketBuy(p){
       const a=auth(p.token);
       return A.lock(()=>{
-        const c=ownChar(a,p.charId,'active'),r=A.rows('cho').find(x=>x.id===p.id);
+        const c=ownChar(a,p.charId,'active'),r=find('cho','id',p.id);
         if(!r||r.trang_thai!=='mo')fail('DA_BAN');if(r.nguoi_ban===a.id)fail('DO_CUA_MINH');
         const st=stateOf(c),price=Number(r.gia)||0,ruby=Number(r.hong_ngoc)||0,it=Player.cleanItem(JSON.parse(r.vat_pham));
         if(st.player.copper<price)fail('KHONG_DU_TIEN');if(st.player.rubies<ruby)fail('KHONG_DU_HONG_NGOC');if(!it)fail('VAT_PHAM_SAI');

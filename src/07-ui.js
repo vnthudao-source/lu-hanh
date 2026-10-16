@@ -16,6 +16,8 @@ window.startUI=(session)=>{
   const fail=err=>game.message(svg('close')+(ERR[err.message]||netMsg(err)));
   // Chạy lệnh máy chủ: khóa nút trong lúc chờ, báo lỗi nếu có
   const run=(btn,pr,after)=>{if(btn){btn.disabled=true;btn.classList.add('busy');}return pr.then(()=>refresh(),e=>{fail(e);if(btn){btn.disabled=false;btn.classList.remove('busy');}after&&after();});};
+  // dân làng Thanh Mộc (việc đầu tiên: gặp đủ dân làng), dù nhân vật đang ở bản đồ khác
+  const villagers=()=>((typeof LH_MAPS!=='undefined'&&LH_MAPS[World.DEFAULT])||{npcs:[]}).npcs;
   const ttl=(id,text)=>`${svg(id)}<b>${text}</b>`;
   const addLine=(k,v)=>{const A=Player.ADD[k];return A?`${A.name} +${v}${A.unit}`:'';};
   // Chỉ số món đồ: icon + chữ ngắn + số (đã tính phẩm chất và cấp gia cường) + dòng thuộc tính phụ
@@ -58,9 +60,9 @@ window.startUI=(session)=>{
   let npcPanel=false;
   function closeMenu(){menu.hidden=true;$('#settingsBtn').setAttribute('aria-expanded','false');}
   function closeModal(){if(npcPanel){npcPanel=false;game.checkpoint();}$('#overlay').hidden=true;shopSel=null;previewWho=null;$('#scene').focus();}
-  function openModal(titleHtml,content,wide=false){game.stop();game.closeDialog();closeMenu();$('#modalCard').classList.toggle('wide',wide);$('#overlayTitle').innerHTML=titleHtml;const keep=$('#overlay').hidden?0:$('#modalCard').scrollTop;$('#overlayBody').innerHTML=content;$('#overlay').hidden=false;$('#modalCard').scrollTop=keep;}
+  function openModal(titleHtml,content,wide=false){delete $('#modalCard').dataset.mk;game.stop();game.closeDialog();closeMenu();$('#modalCard').classList.toggle('wide',wide);$('#overlayTitle').innerHTML=titleHtml;const keep=$('#overlay').hidden?0:$('#modalCard').scrollTop;$('#overlayBody').innerHTML=content;$('#overlay').hidden=false;$('#modalCard').scrollTop=keep;}
   function questHtml(){
-    const s=game.seen.length,total=World.npcs.length;if(s<total)return svg('talk')+`Gặp dân làng ${s}/${total}`;
+    const V=villagers(),s=V.filter(n=>game.seen.includes(n.id)).length,total=V.length;if(s<total)return svg('talk')+`Gặp dân làng ${s}/${total}`;
     const act=Object.entries(p.quests.active);
     if(act.length){const [id,n]=act[0],Q=Player.QUESTS[id];return svg('quest')+`${esc(Q.name)} ${Math.min(n,Q.count)}/${Q.count}`+(act.length>1?` <small>+${act.length-1}</small>`:'');}
     if(!p.flags.river)return svg('bridge')+'Qua cầu sang Đông Ngạn';
@@ -77,8 +79,7 @@ window.startUI=(session)=>{
     $('#manaFill').style.width=(p.mana/S.mp*100)+'%';$('#manaText').textContent=Math.floor(p.mana)+' / '+S.mp;
     $('#passiveFill').style.width=p.passive+'%';$('#passiveText').textContent='★ '+Math.floor(p.passive)+'%';
     $('#skill-normal').classList.toggle('charged',p.passive>=100);
-    const east=game.hero.x>(World.BRIDGE.x1+1)*World.T;
-    $('#placeName').textContent=east?'Đông Ngạn':'Thanh Mộc';$('#placeCoord').textContent=Math.floor(game.hero.x/World.T)+', '+Math.floor(game.hero.y/World.T);
+    $('#placeName').textContent=World.zoneAt(game.hero.x,game.hero.y);$('#placeCoord').textContent=Math.floor(game.hero.x/World.T)+', '+Math.floor(game.hero.y/World.T);
     $('#safeTag').hidden=!game.safe;
     const q=questHtml();if($('#questTrack').innerHTML!==q){$('#questTrack').innerHTML=q;$('#questTrack').hidden=!q;}
     const type=Player.stance(p).type;if(lastType!==type){$('#normalIcon').innerHTML=`<use href="#i-${type}"/>`;lastType=type;const W=Player.weapon(type);$('#skill-normal').title='Space · '+W.name;[['basic','1','Combo'],['intermediate','2','Diện rộng'],['advanced','3','Liên hoàn']].forEach(([id,k,n])=>{$('#skill-'+id).title=`${k} \u{b7} ${n} \u{b7} ${Player.skillCost(p,id)} mana`;});}
@@ -214,7 +215,7 @@ window.startUI=(session)=>{
     if(tab==='hire'){
       const c=Player.cmdInfo(p);
       const npc=Object.values(Player.MERCS).map(M=>`<div class="mrow"><span class="mg">${M.gender==='f'?'Nữ':'Nam'}</span><div><b>${esc(M.name)}</b><small class="sel-desc">${esc(M.desc||'')}</small>${statLine(M.stats)}<small class="need${M.cmd>c.free?' no':''}">${svg('flag')}Đi theo cần ${M.cmd} Mệnh lệnh / còn ${c.free}${M.cmd>c.free?' · thuê xong để nghỉ':''}</small></div><button data-hire="${M.id}"${p.copper<M.price?' disabled':''}>${coins(M.price)}Thuê</button></div>`).join('');
-      body=`<h4 class="sec">Lính trong vùng</h4>${npc}<div class="cho-note">${svg('user')}<span>Muốn có nhân vật của người chơi khác đi theo? Mua ở <b>Chợ phiên</b>.</span>${choBtn()}</div>`;
+      body=`<h4 class="sec">Lính trong vùng</h4>${npc}<div class="cho-note">${svg('user')}<span>Muốn thuê nhân vật của người chơi khác? Gặp <b>Thương nhân</b> ở cuối làng.</span></div>`;
     }else{
       const m=mercSel!=null?p.mercs[mercSel]:null;
       const c=Player.cmdInfo(p),pct=x=>Math.max(0,Math.min(100,x/Math.max(1,c.total)*100)).toFixed(1)+'%';
@@ -241,19 +242,79 @@ window.startUI=(session)=>{
       document.querySelectorAll('.mgear [data-bag]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.bag),it=p.bag[i];if(!it)return;const m=p.mercs[mercSel],t=Player.targets({equipment:m.equipment,gender:m.gender,isMerc:true},it);if(!t.length)return fail(Error(info(it).gender?'GENDER':'SLOT'));try{Player.mercEquip(p,mercSel,i,t.includes('right')&&!m.equipment.right?'right':t[0]);game.syncMerc();showMercBoard('mine');}catch(e){fail(e);}});
     }
   }
-  /* ---------- Thương nhân: mua bán giữa người chơi diễn ra ở trang Chợ phiên riêng ---------- */
-  const choUrl=()=>String(window.LH_CHO||Player.CFG.link_cho_phien||'').trim();
-  const choBtn=()=>choUrl()?`<a class="cho-go" href="${esc(choUrl())}" target="_blank" rel="noopener">${svg('next')}Ra Chợ phiên</a>`:'';
-  function showMarket(){
-    openModal(ttl('coin','Thương nhân'),`<div class="cho-card">${svg('coin')}<div><b>Chợ phiên</b><p>Mua bán đồ <b style="color:${Player.RAR.p.color}">${Player.RAR.p.name}</b>, <b style="color:${Player.RAR.m.color}">${Player.RAR.m.name}</b> với người chơi khác, thuê hoặc mua nhân vật của người khác về đi theo, nhận tiền bán hàng.</p><p class="sel-desc">Đồ trong túi và tiền của nhân vật được giữ trên máy chủ, ra chợ đăng nhập cùng tài khoản là thấy ngay.</p></div></div>${choBtn()||'<small class="sel-desc">Chưa có địa chỉ Chợ phiên (khóa link_cho_phien trong Sheet cấu hình).</small>'}`);
+  /* ---------- Thương nhân: trung gian mua bán giữa người chơi (đồ ký gửi, nhân vật cho thuê, tiền bán hàng) ----------
+     Mọi lệnh ở đây chạy trên máy chủ: trước khi gửi, game lưu hết phần chơi trên máy (game.server), sau đó nhận lại túi đồ, tiền chuẩn. */
+  const MK={tab:'buy',list:null,mercs:null,chars:null,claim:0,claimRuby:0,filter:'all',sel:null,pick:null,busy:false};
+  const price2=(c,r)=>(c||!r?coins(c):'')+(r?ruby(r):'');
+  function mkTile(attr,it,priceHtml,go,goTxt,off,sel,foot){
+    return `<button class="tile${off?' off':''}${sel?' sel':''}" ${attr} title="${esc(desc(it))}" style="${Player.qOf(it)!=='n'?`border-color:${qColor(it)}`:''}"><span class="ti" style="color:${tintOf(it)||'#e4cc8d'}">${icon(it.type)}</span>${lvb(it)}<b class="nm" style="color:${qColor(it)}">${esc(Player.nameOf(it))}</b>${chips(it)}${priceHtml?`<span class="price">${priceHtml}</span>`:''}${foot||''}<span class="go">${svg(go)}${goTxt}</span></button>`;
+  }
+  // Gọi máy chủ: khóa cả bảng trong lúc chờ (bấm nhanh không dồn lệnh)
+  async function mkRun(fn){
+    if(MK.busy)return;MK.busy=true;const card=$('#modalCard');card.classList.add('mk-wait');card.querySelectorAll('button:not(#closeOverlay),input').forEach(x=>x.disabled=true);
+    try{await fn();}catch(e){fail(e);}finally{MK.busy=false;card.classList.remove('mk-wait');if(!$('#overlay').hidden&&$('#modalCard').dataset.mk)showMarket(MK.tab,true);}
+  }
+  async function mkLoad(force){
+    if(MK.tab==='buy'&&(force||!MK.list)){const r=await Net.call('marketList');MK.list=r.open;MK.claim=r.claim;MK.claimRuby=r.claimRuby||0;}
+    if(MK.tab==='merc'&&(force||!MK.mercs)){const [m,c]=await Promise.all([Net.call('mercList'),Net.call('chars')]);MK.mercs=m.list;MK.chars=c.chars;MK.claim=c.claim;MK.claimRuby=c.claimRuby||0;}
+    if(MK.tab==='money'&&force){const r=await Net.call('marketList');MK.list=r.open;MK.claim=r.claim;MK.claimRuby=r.claimRuby||0;}
+  }
+  function showMarket(tab,quiet){
+    if(tab)MK.tab=tab;if(!quiet){MK.sel=null;MK.pick=null;}
+    const need=(MK.tab==='buy'&&!MK.list)||(MK.tab==='merc'&&!MK.mercs)||(MK.tab==='money'&&MK.list==null);
+    const fee=Player.CFG.phi_cho||0,tabs=[['buy','coin','Hàng'],['sell','bag','Ký gửi'],['merc','user','Lính người chơi'],['money','check','Tiền bán'+(MK.claim||MK.claimRuby?' <i class="mk-dot"></i>':'')]];
+    let body='';
+    if(need)body=`<div class="shop-empty">${svg('coin')}<span>Đang hỏi thương nhân…</span></div>`;
+    else if(MK.tab==='buy'){
+      const q=MK.filter,flt=[['all','Tất cả'],...Object.entries(Player.RAR).filter(([,r])=>r.trade).map(([k,r])=>[k,r.name])];
+      const list=MK.list.map(r=>({...r,it:Player.cleanItem(r.item)})).filter(r=>r.it&&(q==='all'||Player.qOf(r.it)===q));
+      body=`<div class="qbar">${flt.map(([k,t])=>`<button data-mf="${k}" class="${q===k?'on':''}" ${Player.RAR[k]?`style="color:${Player.RAR[k].color}"`:''}>${t}</button>`).join('')}<button data-mreload class="ghost">${svg('next')}Làm mới</button></div>`+
+        (list.length?`<div class="shop-grid">${list.map(r=>r.mine?mkTile(`data-mcancel="${r.id}"`,r.it,price2(r.price,r.ruby),'out','Lấy lại',false,MK.sel===r.id,'<small class="mk-own">Của bạn</small>'):mkTile(`data-mbuy="${r.id}"`,r.it,price2(r.price,r.ruby),'bag','Mua',p.copper<r.price||p.rubies<(r.ruby||0)||p.bag.indexOf(null)<0,MK.sel===r.id,`<small class="mk-own">${esc(r.seller||'')}</small>`)).join('')}</div>`:`<div class="shop-empty">${svg('coin')}<span>Chưa có hàng ký gửi</span></div>`);
+    }
+    else if(MK.tab==='sell'){
+      const own=p.bag.map((it,i)=>it&&Player.tradeable(it)?{it,i}:null).filter(Boolean),sel=MK.pick?p.bag.find(x=>x&&x.uid===MK.pick):null;
+      const tr=Object.values(Player.RAR).filter(r=>r.trade).map(r=>`<b style="color:${r.color}">${r.name}</b>`).join(', ');
+      body=`<p class="mk-hint">Đồ ${tr} trong túi. Bán được, thương nhân giữ ${fee}%, tiền về mục Tiền bán.</p>`+
+        (own.length?`<div class="shop-grid">${own.map(({it})=>mkTile(`data-mpick="${it.uid}"`,it,'','check','Chọn',false,MK.pick===it.uid)).join('')}</div>`:`<div class="shop-empty">${svg('bag')}<span>Túi không có đồ ký gửi được</span></div>`)+
+        (sel?`<div class="mk-bar"><b style="color:${qColor(sel)}">${esc(Player.nameOf(sel))}</b><label>Vàng<input id="mkG" type="number" min="0" value="1" inputmode="numeric"></label><label>Bạc<input id="mkS" type="number" min="0" max="99" value="0" inputmode="numeric"></label><label>Hồng ngọc<input id="mkR" type="number" min="0" value="0" inputmode="numeric"></label><button class="primary" id="mkSell">${svg('coin')}Ký gửi</button></div>`:'');
+    }
+    else if(MK.tab==='merc'){
+      const full=p.mercs.length>=Player.MAX_MERC;
+      const lst=MK.mercs.length?MK.mercs.map(m=>{const k=m.look||{};return `<div class="mk-row"><span class="mk-g">${m.gender==='f'?'Nữ':'Nam'}</span><div><b>${esc(m.name)}</b><small>Lv. ${k.level||m.level||1}${k.dmg?` · Sát thương ${k.dmg[0]}–${k.dmg[1]}`:''}${k.hp?` · Máu ${k.hp}`:''}</small></div><div class="mk-end">${price2(m.price,m.ruby)}<button class="primary${MK.sel===m.id?' sel':''}" data-mhire="${m.id}"${full||p.copper<m.price||p.rubies<(m.ruby||0)?' disabled':''}>${svg('user')}${MK.sel===m.id?'Chạm lần nữa':'Thuê'}</button></div></div>`;}).join(''):`<div class="shop-empty">${svg('user')}<span>Chưa ai cho thuê nhân vật</span></div>`;
+      const mine=(MK.chars||[]).filter(c=>c.id!==session.charId).map(c=>`<div class="mk-row"><span class="mk-g">${c.gender==='f'?'Nữ':'Nam'}</span><div><b>${esc(c.name)}</b><small>Lv. ${c.level||1}${c.status==='merc'?' · đang cho thuê '+price2(c.price,c.ruby):''}</small></div><div class="mk-end">${c.status==='merc'?`<button data-mstop="${c.id}">Hủy cho thuê</button>`:`<label>Vàng<input data-mg="${c.id}" type="number" min="0" value="2" inputmode="numeric"></label><label>Hồng ngọc<input data-mr="${c.id}" type="number" min="0" value="0" inputmode="numeric"></label><button data-mreg="${c.id}">Cho thuê</button>`}</div></div>`).join('');
+      body=`<p class="mk-hint">Thuê nhân vật của người chơi khác về làm lính đi theo (${p.mercs.length}/${Player.MAX_MERC}).</p><div class="mk-rows">${lst}</div><h4 class="mk-h">Nhân vật khác của tôi</h4><p class="mk-hint">Đang cho thuê thì không vào game được. Có người thuê: nhân vật thuộc về họ, bạn nhận tiền (trừ ${fee}%).</p><div class="mk-rows">${mine||`<div class="shop-empty"><span>Không có nhân vật nào khác</span></div>`}</div>`;
+    }
+    else body=`<div class="mk-claim">${svg('coin')}<div><span>Tiền bán hàng đang chờ</span><b>${price2(MK.claim,MK.claimRuby)}</b></div>${MK.claim||MK.claimRuby?`<button class="primary" id="mkClaim">Nhận</button>`:''}</div><p class="mk-hint">Gồm tiền bán đồ ký gửi và tiền cho thuê nhân vật, đã trừ phí thương nhân.</p>`;
+    openModal(`<div class="shop-tabs">${tabs.map(([k,ic,t])=>`<button data-mtab="${k}" class="${MK.tab===k?'on':''}">${svg(ic)}<span>${t}</span></button>`).join('')}</div><div class="purse">${coins(p.copper)}${ruby(p.rubies)}</div>`,`<div class="shop-sub">${svg('coin')}Thương nhân · mua bán với người chơi${MK.tab==='buy'||MK.tab==='merc'?' · chạm 2 lần để mua':''}</div>${body}`,true);
+    $('#modalCard').dataset.mk='1';
+    if(need){mkRun(()=>mkLoad(false));return;}
+    const Q=s=>document.querySelectorAll(s);
+    Q('[data-mtab]').forEach(b=>b.onclick=()=>showMarket(b.dataset.mtab));
+    Q('[data-mf]').forEach(b=>b.onclick=()=>{MK.filter=b.dataset.mf;showMarket(null,true);});
+    Q('[data-mreload]').forEach(b=>b.onclick=()=>mkRun(()=>mkLoad(true)));
+    Q('[data-mbuy]').forEach(b=>b.onclick=()=>{const id=b.dataset.mbuy;if(MK.sel!==id){MK.sel=id;showMarket(null,true);return;}
+      mkRun(async()=>{try{const r=await game.server('marketBuy',{id});MK.list=MK.list.filter(x=>x.id!==id);MK.sel=null;game.message(svg('check')+`Đã mua <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b>`);}catch(e){if(e.message==='DA_BAN'){MK.list=MK.list.filter(x=>x.id!==id);MK.sel=null;}throw e;}});});
+    Q('[data-mcancel]').forEach(b=>b.onclick=()=>{const id=b.dataset.mcancel;if(MK.sel!==id){MK.sel=id;showMarket(null,true);return;}
+      mkRun(async()=>{await game.server('marketCancel',{id});MK.list=MK.list.filter(x=>x.id!==id);MK.sel=null;game.message(svg('check')+'Đã lấy lại món đồ');});});
+    Q('[data-mpick]').forEach(b=>b.onclick=()=>{MK.pick=MK.pick===b.dataset.mpick?null:b.dataset.mpick;showMarket(null,true);});
+    const sg=$('#mkSell');if(sg)sg.onclick=()=>{const v=id=>Math.max(0,Math.floor(+$(id).value||0)),pr=v('#mkG')*10000+Math.min(99,v('#mkS'))*100,rb=v('#mkR');
+      if(pr<1&&rb<1){game.message(svg('close')+'Nhập giá bán');return;}const uid=MK.pick,it=p.bag.find(x=>x&&x.uid===uid);
+      mkRun(async()=>{const r=await game.server('marketSell',{uid,price:pr,ruby:rb});if(MK.list&&it)MK.list.unshift({id:r.id,item:it,price:pr,ruby:rb,mine:true,seller:p.name});MK.pick=null;game.message(svg('check')+'Đã bày hàng');});};
+    Q('[data-mhire]').forEach(b=>b.onclick=()=>{const id=b.dataset.mhire;if(MK.sel!==id){MK.sel=id;showMarket(null,true);return;}
+      mkRun(async()=>{const r=await game.server('mercBuy',{targetId:id});MK.mercs=MK.mercs.filter(x=>x.id!==id);MK.sel=null;game.message(svg('user')+esc(r.name)+' đi theo bạn');});});
+    Q('[data-mreg]').forEach(b=>b.onclick=()=>{const id=b.dataset.mreg,g=Math.max(0,Math.floor(+document.querySelector(`[data-mg="${id}"]`).value||0)),r=Math.max(0,Math.floor(+document.querySelector(`[data-mr="${id}"]`).value||0));
+      mkRun(async()=>{const x=await Net.call('mercRegister',{charId:id,price:g*10000,ruby:r,playing:session.charId});MK.chars=MK.chars.map(c=>c.id===id?{...c,...x.char}:c);game.message(svg('check')+'Đã đăng cho thuê');});});
+    Q('[data-mstop]').forEach(b=>b.onclick=()=>{const id=b.dataset.mstop;mkRun(async()=>{const x=await Net.call('mercCancel',{charId:id});MK.chars=MK.chars.map(c=>c.id===id?{...c,...x.char}:c);game.message(svg('check')+'Đã hủy cho thuê');});});
+    const cg=$('#mkClaim');if(cg)cg.onclick=()=>mkRun(async()=>{const r=await game.server('claim',{});MK.claim=0;MK.claimRuby=0;game.message(svg('coin')+'Đã nhận '+price2(r.amount,r.ruby));});
+    if(MK.tab==='money'&&MK.list!=null&&!quiet)mkRun(()=>mkLoad(true));
   }
   function showQuests(){
     const s=game.seen,k=p.flags.kills,row=(id,label,html)=>`<div class="qrow">${svg(id)}<div><b>${label}</b><span class="chips">${html}</span></div></div>`;
-    const met=World.npcs.map(n=>chip(s.includes(n.id)?'check':'user',esc(n.name),s.includes(n.id)?'#9fe8a8':'')).join('');
+    const V=villagers(),metN=V.filter(n=>s.includes(n.id)).length,met=V.map(n=>chip(s.includes(n.id)?'check':'user',esc(n.name),s.includes(n.id)?'#9fe8a8':'')).join('');
     const names={deer:'Hươu',lion:'Sư tử',elephant:'Voi',croc:'Cá sấu'};
     const hunt=Object.keys(names).map(t=>chip(t,names[t]+' '+(k[t]||0),k[t]?'#9fe8a8':'')).join('');
     const act=Object.entries(p.quests.active).map(([id,n])=>{const Q=Player.QUESTS[id];return row('quest',esc(Q.name)+` (${Math.min(n,Q.count)}/${Q.count})`,rewardChips(Q));}).join('');
-    const first=(s.length<World.npcs.length?row('talk',`Gặp dân làng (${s.length}/${World.npcs.length})`,met):'')+(p.flags.river?'':row('bridge','Qua cầu sang Đông Ngạn',chip('next','Chưa qua')))+(p.flags.hunted?'':row('bow','Săn mỗi loài một con · thưởng 1 bạc',hunt));
+    const first=(metN<V.length?row('talk',`Gặp dân làng (${metN}/${V.length})`,met):'')+(p.flags.river?'':row('bridge','Qua cầu sang Đông Ngạn',chip('next','Chưa qua')))+(p.flags.hunted?'':row('bow','Săn mỗi loài một con · thưởng 1 bạc',hunt));
     openModal(ttl('quest','Nhiệm vụ'),`<div class="quest-rows">${act}${first||(act?'':`<div class="qdone">${svg('check')}<span>Đã xong việc làng. Gặp Lý trưởng nhận việc mới.</span></div>`)}</div>`);
   }
   function openPanel(n){
@@ -261,7 +322,7 @@ window.startUI=(session)=>{
     if(n.panel==='shop')return showShop(n.shop);
     if(n.panel==='quests')return showQuestBoard();
     if(n.panel==='mercs')return showMercBoard('hire');
-    if(n.panel==='market')return showMarket();
+    if(n.panel==='market'){MK.list=null;MK.mercs=null;return showMarket('buy');}
   }
   async function save(){closeMenu();const ok=await game.save();game.message(ok?svg('save')+'Đã lưu':svg('close')+'Không lưu được');}
   $('#avatarBtn').onclick=showAttributes;

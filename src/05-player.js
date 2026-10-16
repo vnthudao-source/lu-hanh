@@ -297,7 +297,7 @@ const Player=(()=>{
     if(i.add&&typeof i.add==='object'){const a={};for(const [k,v] of Object.entries(i.add))if(ADD[k]&&Number.isFinite(+v))a[k]=Math.max(0,Math.min(999,+v));if(Object.keys(a).length)it.add=a;}
     return it;
   }
-  function serialize(s,pos,seen){return {v:VERSION,player:s,pos:{x:pos.x,y:pos.y},seen:[...seen]};}
+  function serialize(s,pos,seen){return {v:VERSION,player:s,pos:{x:pos.x,y:pos.y,...(pos.map?{map:pos.map}:{})},seen:[...seen]};}
   function restorePlayer(p,ch){
     const s=create(ch),n=(v,a,b,f)=>typeof v==='number'&&Number.isFinite(v)?Math.max(a,Math.min(b,v)):f,used=new Set();
     const valid=i=>{const it=cleanItem(i);if(!it||used.has(it.uid))return null;used.add(it.uid);return it;};
@@ -332,7 +332,7 @@ const Player=(()=>{
   function restore(save,ch,canStand,npcIds){
     if(!save||!save.player)return {player:create(ch),pos:null,seen:[]};
     const s=restorePlayer(save.player,ch),pos=save.pos;
-    return {player:s,pos:pos&&canStand&&canStand(pos.x,pos.y)?{x:pos.x,y:pos.y}:null,seen:Array.isArray(save.seen)?save.seen.filter(v=>(npcIds||[]).includes(v)):[]};
+    return {player:s,pos:pos&&canStand&&canStand(pos.x,pos.y)?{x:pos.x,y:pos.y,...(typeof pos.map==='string'?{map:pos.map}:{})}:null,seen:Array.isArray(save.seen)?save.seen.filter(v=>npcIds?npcIds.includes(v):typeof v==='string'&&/^[a-z0-9-]{1,40}$/.test(v)):[]};
   }
   /* ---------- v8: máy chủ quyết định tiền, đồ, gia cường ----------
      merge(S,C): S = trạng thái máy chủ (đồ nào tồn tại, tiền, hồng ngọc, nhiệm vụ),

@@ -1,6 +1,7 @@
 /* ================= KHỞI ĐỘNG: hiện màn hình chờ ngay, tải CSS + JS của game có đếm phần trăm ================= */
 (function(){
   var me=document.currentScript,base=(me&&me.src||'').replace(/[^\/]*$/,''),FILES=@@FILES@@;
+  window.LH_BASE=window.LH_BASE||base;
   var L=window.LH_Loader.show({label:'T\u{1EA3}i t\u{00E0}i nguy\u{00EA}n trang',bg:'tai_game'});
   function plain(){var l=document.createElement('link');l.rel='stylesheet';l.href=base+FILES.css.name;document.head.appendChild(l);var s=document.createElement('script');s.src=base+FILES.js.name;s.charset='utf-8';document.head.appendChild(s);}
   async function get(f,from,to,label){
