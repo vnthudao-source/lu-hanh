@@ -107,7 +107,8 @@
     const go=$('#cGo');if(go)go.onclick=async()=>{busy(go,true);try{const r=await Net.call('claim',{charId:S.charId});S.state=r.state;S.claim=0;S.claimRuby=0;toast(svg('check')+'Đã nhận '+price(r.amount,r.ruby));draw();}catch(e){toast(svg('close')+errMsg(e),true);busy(go,false);}};
   }
   // ---------- khởi động ----------
-  const g=gameUrl();if(g)$('#chBack').href=g;else $('#chBack').hidden=true;
+  // tài khoản đăng nhập ở thiết bị khác: thoát về khung đăng nhập
+  window.addEventListener('lh-kicked',e=>{if(e.detail!=='DANG_NHAP_NOI_KHAC')return;Net.setToken('');S.charId=null;login();const m=$('#lMsg');if(m)m.textContent=NET_ERR.DANG_NHAP_NOI_KHAC+'. Đăng nhập lại để tiếp tục.';});
   $('#chMode').textContent=Net.online?'Máy chủ Việt Nam':'Chế độ ngoại tuyến · dữ liệu lưu trên trình duyệt này';
   (async()=>{
     if(Net.online){try{const d=await Net.call('data');if(d.data&&d.data.vat_pham){Player.load(d.data);LH_IMG.set(d.data.hinh_anh);}}catch(e){}}

@@ -1,4 +1,4 @@
-/*! Lữ Hành v8.4 · Chợ phiên · https://github.com/vnthudao-source/lu-hanh */
+/*! Lữ Hành v8.5 · Chợ phiên · https://github.com/vnthudao-source/lu-hanh */
 #cho-phien{position:fixed;inset:0;z-index:2147483000;overflow:auto;text-align:left;line-height:normal}
 body:has(#cho-phien){overflow:hidden!important}
 #cho-phien{color-scheme:dark;--ink:#efe6cf;--muted:#a8b4a7;--gold:#e3c27a;--line:#ffffff1f;--lac:#8c2f1d}
@@ -24,7 +24,7 @@ body:has(#cho-phien){overflow:hidden!important}
 #cho-phien .user b{color:#f3dfae;font-size:13px}
 #cho-phien .user button{padding:6px 10px;font-size:12px}
 #cho-phien .ch-body{max-width:960px;margin:0 auto;padding:14px 16px 90px;display:flex;flex-direction:column;gap:12px}
-#cho-phien .ch-foot{max-width:960px;margin:0 auto;padding:0 16px 24px;display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--muted);font-size:11px}
+#cho-phien .ch-foot{max-width:960px;margin:0 auto;padding:0 16px 24px;display:flex;justify-content:center;align-items:center;gap:8px;color:var(--muted);font-size:11px}
 #cho-phien .link{color:var(--gold);text-decoration:none;font-weight:600}
 #cho-phien .hint{margin:0;color:var(--muted);font-size:12.5px;line-height:1.5}
 #cho-phien .ch-login{max-width:380px;width:100%;margin:30px auto 0;display:flex;flex-direction:column;gap:10px;padding:20px;border:1px solid #ab956a66;border-radius:18px;background:#1a2b21}

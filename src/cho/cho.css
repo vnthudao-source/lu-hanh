@@ -17,7 +17,7 @@ input{padding:9px 10px;border:1px solid #79907177;background:#0d1a13;color:#fff;
 .brand b{display:block;font:24px Georgia,serif;color:var(--gold);line-height:1}.brand small{color:var(--muted);font-size:11px}
 .user{display:flex;align-items:center;gap:8px}.user b{color:#f3dfae;font-size:13px}.user button{padding:6px 10px;font-size:12px}
 .ch-body{max-width:960px;margin:0 auto;padding:14px 16px 90px;display:flex;flex-direction:column;gap:12px}
-.ch-foot{max-width:960px;margin:0 auto;padding:0 16px 24px;display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--muted);font-size:11px}
+.ch-foot{max-width:960px;margin:0 auto;padding:0 16px 24px;display:flex;justify-content:center;align-items:center;gap:8px;color:var(--muted);font-size:11px}
 .link{color:var(--gold);text-decoration:none;font-weight:600}
 .hint{margin:0;color:var(--muted);font-size:12.5px;line-height:1.5}
 .ch-login{max-width:380px;width:100%;margin:30px auto 0;display:flex;flex-direction:column;gap:10px;padding:20px;border:1px solid #ab956a66;border-radius:18px;background:#1a2b21}

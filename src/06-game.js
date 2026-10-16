@@ -1169,7 +1169,7 @@ window.startGame=(session)=>{
     drawHero(c,fake,st,who?null:el,time,{label:false,who:who||undefined});c.restore();
   }
   function activateBurst(el){if(!el)return;const C=EL[el];fx.push({kind:'ring',x:hero.x,y:hero.y-10,r0:8,r1:90,color:C.color,age:0,life:.6,lw:5});burst(hero.x,hero.y-26,C.color,26,200);burst(hero.x,hero.y-26,C.glow,12,120);}
-  function loop(ms){const dt=Math.min(.04,(ms-(last||ms))/1000);last=ms;time=ms/1000;update(dt);render();requestAnimationFrame(loop);}
+  function loop(ms){if(window.LH_KICKED)return;const dt=Math.min(.04,(ms-(last||ms))/1000);last=ms;time=ms/1000;update(dt);render();requestAnimationFrame(loop);}
 
   /* ---------- Điều khiển ---------- */
   // Chế độ chân dung: chỉ mượn bộ vẽ nhân vật (căn lều chọn nhân vật, chợ cho thuê), không chạy game
@@ -1186,6 +1186,7 @@ window.startGame=(session)=>{
   const KEYMAP={KeyW:'w',KeyA:'a',KeyS:'s',KeyD:'d',ArrowUp:'arrowup',ArrowDown:'arrowdown',ArrowLeft:'arrowleft',ArrowRight:'arrowright',KeyE:'e',KeyB:'b',Escape:'escape',Space:' ',Digit1:'1',Digit2:'2',Digit3:'3',Digit4:'4',Numpad1:'1',Numpad2:'2',Numpad3:'3',Numpad4:'4'};
   const keyOf=e=>KEYMAP[e.code]||(e.key&&e.key.length===1?e.key.toLowerCase():String(e.key||'').toLowerCase());
   document.addEventListener('keydown',e=>{
+    if(window.LH_KICKED)return;
     if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;const k=keyOf(e);
     if(['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright','e','escape',' ','1','2','3','4','b'].includes(k))e.preventDefault();
     if(k===' '){keys.add(' ');if(!e.repeat)cast('normal');return;}

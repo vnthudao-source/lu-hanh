@@ -1,4 +1,12 @@
 /* ================= CỔNG VÀO: đăng nhập · đăng ký · quên tài khoản · căn lều chọn và tạo nhân vật ================= */
+// Khung game vừa đúng phần nhìn thấy của màn hình: trên điện thoại trừ thanh địa chỉ / thanh công cụ của trình duyệt
+(()=>{
+  const el=document.getElementById('lu-hanh');if(!el)return;
+  const fit=()=>{const vv=window.visualViewport,h=Math.round(Math.min(innerHeight,vv?vv.height*vv.scale:innerHeight));el.style.setProperty('--app-h',h+'px');el.style.height=h+'px';el.style.bottom='auto';if(scrollY)scrollTo(0,0);};
+  fit();addEventListener('resize',fit);addEventListener('orientationchange',()=>setTimeout(fit,350));if(window.visualViewport)visualViewport.addEventListener('resize',fit);
+  // trang Blogspot không cuộn được phía sau khung game (trình duyệt cũ không hiểu :has)
+  document.documentElement.style.overflow='hidden';document.body.style.overflow='hidden';
+})();
 (()=>{
   const $=s=>document.querySelector(s),root=$('#portal'),box=$('#portalBody'),card=$('.portal-card'),L=window.LH_Loader;
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

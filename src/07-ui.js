@@ -273,6 +273,16 @@ window.startUI=(session)=>{
   });
   document.addEventListener('pointerdown',evt=>{if(!menu.hidden&&!menu.contains(evt.target)&&!$('#settingsBtn').contains(evt.target))closeMenu();});
   document.addEventListener('keydown',evt=>{if(evt.key==='Escape'){closeMenu();closeModal();}});
+  /* ---------- Một tài khoản một thiết bị: kiểm tra phiên định kỳ, bị đăng nhập nơi khác thì dừng game ---------- */
+  window.addEventListener('lh-kicked',e=>{
+    if(window.LH_KICKED)return;window.LH_KICKED=true;try{closeModal();game.closeDialog();}catch(err){}
+    const other=e.detail==='DANG_NHAP_NOI_KHAC';Net.setToken('');
+    const box=document.createElement('div');box.className='kicked';
+    box.innerHTML=`<div class="kicked-card">${svg(other?'user':'lock')}<b>${other?'Tài khoản đang được dùng ở thiết bị khác':'Phiên đăng nhập đã hết hạn'}</b><small>${other?'Mỗi tài khoản chỉ chơi trên một thiết bị. Phiên ở đây đã dừng, tiến trình đã lưu tới lần đồng bộ gần nhất.':'Đăng nhập lại để chơi tiếp.'}</small><button class="primary big-btn" id="kickedGo">Đăng nhập lại</button></div>`;
+    document.getElementById('lu-hanh').appendChild(box);box.querySelector('#kickedGo').onclick=()=>location.reload();
+  });
+  const alive=()=>{if(!window.LH_KICKED&&Net.token&&document.visibilityState==='visible')Net.call('alive').catch(()=>{});};
+  setInterval(alive,20000);document.addEventListener('visibilitychange',alive);
   window.GameUI={refresh,showAttributes,openPanel,showShop:(id,tab)=>{shopSel=null;showShop(id,tab);},showQuestBoard,showMercBoard,showMarket,showQuests,save,previewElem,previewWho:()=>previewWho,previewBurst:()=>burstAt,
     showBag:()=>{if($('#overlay').hidden){selected=null;skillFocus=null;renderBag();}else closeModal();},
     frame(time,st){

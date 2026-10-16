@@ -58,7 +58,7 @@ pham_chat:[
  {ma:'n',ten:'Thường',mau:'#e8e6df',he_so:100,so_dong:0,bac:0,giao_dich:'khong',mua_duoc:'co'},
  {ma:'g',ten:'Đẹp',mau:'#ffd54a',he_so:110,so_dong:1,bac:1,giao_dich:'khong',mua_duoc:'co'},
  {ma:'p',ten:'Hoàn hảo',mau:'#5aa9ff',he_so:125,so_dong:2,bac:2,giao_dich:'co',mua_duoc:'khong'},
- {ma:'l',ten:'Huyền thoại',mau:'#c8823e',he_so:150,so_dong:3,bac:3,giao_dich:'khong',mua_duoc:'khong'},
+ {ma:'l',ten:'Huyền thoại',mau:'#c8823e',he_so:150,so_dong:3,bac:3,giao_dich:'co',mua_duoc:'khong'},
  {ma:'m',ten:'Thần',mau:'#ff6fb5',he_so:200,so_dong:4,bac:4,giao_dich:'co',mua_duoc:'khong'}
 ],
 thuoc_tinh:[

@@ -47,7 +47,7 @@ const World=(()=>{
     {id:'guide',role:'guide',panel:'mercs',name:'Người dẫn đường',x:27.3*T,y:14.4*T,lines:['Qua sông chỉ có cây cầu này.','Sư tử, cá sấu dữ. Voi chỉ nổi giận khi bị đánh.','Đi một mình nguy hiểm, ta có lính đánh thuê cho thuê.']},
     {id:'trainer',role:'trainer',shop:'trainer',panel:'shop',name:'Người nuôi thú cưỡi',x:18.8*T,y:21.7*T,lines:['Ngựa, hổ, voi… con nào ở đây cũng đã thuần.','Mỗi loài có một ngón nghề riêng: ngựa đá hậu, hổ vồ mồi, voi dày xéo.']},
     {id:'wizard',role:'wizard',shop:'wizard',panel:'shop',name:'Đạo sĩ',x:17.4*T,y:10.3*T,lines:['Ngũ hành: Hỏa, Thủy, Thổ, Kim, Mộc. Bí truyền: Lôi, Phong, Băng, Ánh sáng, Ma công.','Gắn nhiều sách cùng lúc, chỉ số cộng dồn. Ta luyện sách cho mạnh thêm.']},
-    {id:'merchant',role:'merchant',panel:'market',name:'Thương nhân',x:9.6*T,y:24.4*T,lines:['Ta buôn bán khắp các làng.','Đồ Hoàn hảo và đồ Thần, ta bán hộ cho người chơi khác.','Bán được ta giữ một ít tiền công.']}
+    {id:'merchant',role:'merchant',panel:'market',name:'Thương nhân',x:9.6*T,y:24.4*T,lines:['Ta buôn bán khắp các làng.','Đồ Hoàn hảo, Huyền thoại và đồ Thần, ta bán hộ cho người chơi khác.','Bán được ta giữ một ít tiền công.']}
   ];
   npcs.forEach(n=>Object.assign(n,{hx:n.x,hy:n.y,facing:n.role==='guide'||n.role==='smith'?1:-1,moving:false,walk:0,dir:1,pause:0,turnAt:0,phase:Math.random()}));
   const spawn={x:16*T,y:16*T};

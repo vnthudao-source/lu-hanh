@@ -10,7 +10,9 @@ function LH_Core(A){
   const pub=a=>({id:a.id,username:a.username,email:a.email});
   function auth(token){
     const a=A.rows('tai_khoan').find(x=>x.token&&x.token===token);
-    if(!a||Number(a.token_het_han)<A.now())fail('PHIEN_HET_HAN');
+    // Mỗi tài khoản chỉ một thiết bị: đăng nhập nơi khác thì phiên cũ bị đẩy ra
+    if(!a){if(token&&A.rows('tai_khoan').some(x=>x.token_cu&&x.token_cu===token))fail('DANG_NHAP_NOI_KHAC');fail('PHIEN_HET_HAN');}
+    if(Number(a.token_het_han)<A.now())fail('PHIEN_HET_HAN');
     return a;
   }
   function ownChar(a,id,status){
@@ -20,7 +22,7 @@ function LH_Core(A){
     return c;
   }
   const charView=c=>({id:c.id,name:c.ten,gender:c.gioi_tinh,stats:{strength:+c.suc_manh,agility:+c.nhanh_nhen,vitality:+c.suc_khoe,intelligence:+c.tri_tue},status:c.trang_thai,level:+c.cap||1,price:+c.gia_danh_thue||0,ruby:+c.gia_hong_ngoc||0,created:+c.tao_luc});
-  function newToken(a){a.token=A.uid()+A.uid();a.token_het_han=A.now()+TOKEN_DAYS*864e5;A.update('tai_khoan',a);return a.token;}
+  function newToken(a){a.token_cu=a.token&&Number(a.token_het_han)>A.now()?a.token:'';a.token=A.uid()+A.uid();a.token_het_han=A.now()+TOKEN_DAYS*864e5;A.update('tai_khoan',a);return a.token;}
   // Trạng thái nhân vật lưu trên máy chủ (cột luu): {v, player, pos, seen, srv}
   function stateOf(c){
     A.rules&&A.rules();
@@ -44,6 +46,8 @@ function LH_Core(A){
   function pendingClaims(acc){return A.rows('cho').filter(r=>r.trang_thai==='da_ban'&&r.nguoi_ban===acc&&String(r.da_nhan)!=='1');}
   const H={
     ping:()=>({msg:'Lữ Hành API'}),
+    // kiểm tra phiên còn giữ (game gọi định kỳ): bị đăng nhập nơi khác thì báo DANG_NHAP_NOI_KHAC
+    alive(p){auth(p.token);return {};},
     data:()=>({data:A.staticData()}),
     register(p){
       const username=lower(p.username),email=lower(p.email),pw=String(p.password||'');
@@ -65,7 +69,7 @@ function LH_Core(A){
       if(!a||A.hash(a.muoi+pw)!==a.mat_khau)fail('SAI_DANG_NHAP');
       return {token:newToken(a),account:pub(a)};
     },
-    logout(p){const a=auth(p.token);a.token='';a.token_het_han=0;A.update('tai_khoan',a);return {};},
+    logout(p){const a=auth(p.token);a.token='';a.token_cu='';a.token_het_han=0;A.update('tai_khoan',a);return {};},
     forgot(p){
       const email=lower(p.email),a=A.rows('tai_khoan').find(x=>x.email===email);
       if(!a)fail('KHONG_THAY_EMAIL');
