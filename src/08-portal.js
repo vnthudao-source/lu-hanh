@@ -58,7 +58,8 @@
   function stopTent(){cancelAnimationFrame(T.raf);T.raf=0;}
   const whoOf=c=>c.look&&c.look.equipment?{gender:c.gender,equipment:c.look.equipment,stats:c.stats}:Player.create({name:c.name,gender:c.gender,stats:c.stats});
   async function chars(selId){
-    let r;try{r=await Net.call('chars');}catch(e){Net.setToken('');note(netMsg(e));return auth('login');}
+    // phần chơi còn giữ trên máy (lần trước chưa kịp lưu): gửi trước để lều hiện đúng cấp, tiền
+    let r;try{r=await Net.call('chars');let n=0;for(const c of r.list||r.chars||[])if(c&&c.id&&LH_Local.get(c.id)){await LH_Local.push(c.id).catch(()=>{});n++;}if(n)r=await Net.call('chars');}catch(e){Net.setToken('');note(netMsg(e));return auth('login');}
     T.r=r;T.mode='view';
     if(selId){const i=r.chars.findIndex(c=>c.id===selId);if(i>=0)T.sel=i;}
     if(T.sel>=Math.max(r.max,1))T.sel=0;
@@ -175,6 +176,7 @@
     busy(btn,true);
     L.show({scene:true,label:'Tải nhân vật',bg:'vao_lang'}).step(0,null,45);
     try{
+      await LH_Local.push(charId);
       const r=await Net.call('load',{charId});
       L.step(45,'Dựng làng Thanh Mộc',88);
       const R=Player.restore(r.save,r.char,World.canStand,World.npcs.map(n=>n.id));

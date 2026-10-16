@@ -280,7 +280,7 @@ window.startUI=(session)=>{
     if(window.LH_KICKED)return;window.LH_KICKED=true;try{closeModal();game.closeDialog();}catch(err){}
     const other=e.detail==='DANG_NHAP_NOI_KHAC';Net.setToken('');
     const box=document.createElement('div');box.className='kicked';
-    box.innerHTML=`<div class="kicked-card">${svg(other?'user':'lock')}<b>${other?'Tài khoản đang được dùng ở thiết bị khác':'Phiên đăng nhập đã hết hạn'}</b><small>${other?'Mỗi tài khoản chỉ chơi trên một thiết bị. Phiên ở đây đã dừng, tiến trình đã lưu tới lần đồng bộ gần nhất.':'Đăng nhập lại để chơi tiếp.'}</small><button class="primary big-btn" id="kickedGo">Đăng nhập lại</button></div>`;
+    box.innerHTML=`<div class="kicked-card">${svg(other?'user':'lock')}<b>${other?'Tài khoản đang được dùng ở thiết bị khác':'Phiên đăng nhập đã hết hạn'}</b><small>${other?'Mỗi tài khoản chỉ chơi trên một thiết bị. Phiên ở đây đã dừng. Phần chơi chưa lưu vẫn giữ trên máy này, sẽ gửi khi bạn vào lại.':'Đăng nhập lại để chơi tiếp.'}</small><button class="primary big-btn" id="kickedGo">Đăng nhập lại</button></div>`;
     document.getElementById('lu-hanh').appendChild(box);box.querySelector('#kickedGo').onclick=()=>location.reload();
   });
   const alive=()=>{if(!window.LH_KICKED&&Net.token&&document.visibilityState==='visible')Net.call('alive').catch(()=>{});};
@@ -288,7 +288,7 @@ window.startUI=(session)=>{
   window.GameUI={refresh,showAttributes,openPanel,showShop:(id,tab)=>{shopSel=null;showShop(id,tab);},showQuestBoard,showMercBoard,showMarket,showQuests,save,previewElem,previewWho:()=>previewWho,previewBurst:()=>burstAt,
     showBag:()=>{if($('#overlay').hidden){selected=null;skillFocus=null;renderBag();}else closeModal();},
     frame(time,st){
-      if(time-lastFrame<.1)return;lastFrame=time;refresh();const now=Date.now();
+      if(time-lastFrame<.1)return;lastFrame=time;refresh();$('#settingsBtn').classList.toggle('dirty',game.unsaved());$('#saveBtn').classList.toggle('dirty',game.unsaved());const now=Date.now();
       for(const [id,skill] of Object.entries(Player.skills)){const remaining=Math.max(0,(p.cooldowns[id]||0)-now),span=$('#skill-'+id+' .cooldown');if(!span)continue;span.style.setProperty('--progress',Math.min(100,remaining/skill.cooldown*100)+'%');span.textContent=remaining>0&&id!=='normal'?String(Math.ceil(remaining/1000)):'';}
       const bb=$('#bossBar');if(st&&st.boss){bb.hidden=false;bb.classList.toggle('final',st.boss.final);if(bb.dataset.t!==st.boss.type){bb.dataset.t=st.boss.type;bb.title=st.boss.name;$('#bossIc').innerHTML=LH_IMG.icon('quai:'+st.boss.type,st.boss.type==='ngu-tinh'?'water':'tiger');}$('#bossFill').style.width=Math.max(0,st.boss.hp/st.boss.max*100)+'%';$('#bossHp').textContent=Math.max(0,Math.ceil(st.boss.hp));}else bb.hidden=true;
     }};

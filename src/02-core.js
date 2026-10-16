@@ -113,8 +113,19 @@ function LH_Core(A){
       const a=auth(p.token);
       return A.lock(()=>{
         const c=ownChar(a,p.charId,'active'),st=stateOf(c),C=p.save&&p.save.player;
-        const R=C?Player.merge(st.player,C):st.player,srv=st.save.srv=st.save.srv||{},now=A.now();
-        const results=(Array.isArray(p.ops)?p.ops.slice(0,60):[]).map(op=>{try{return {ok:true,...Player.applyOp(R,op,srv,now)};}catch(e){return {ok:false,error:String(e.message||e)};}});
+        let R=C?Player.merge(st.player,C):st.player;const srv=st.save.srv=st.save.srv||{},now=A.now(),ops=Array.isArray(p.ops)?p.ops.slice(0,600):[];
+        // Lệnh chơi được gom trên máy người chơi rồi gửi một lần (về làng, qua cầu, gặp thương nhân, bấm Lưu).
+        // Gói đã nhận rồi (mạng rớt lúc chờ trả lời, gửi lại) thì không tính lần hai.
+        const bid=String(p.bid||'').slice(0,40),dup=!!bid&&(srv.bids||[]).includes(bid);
+        // Thời điểm từng lệnh theo đồng hồ máy chủ: không sớm hơn lần lưu trước, không muộn hơn lúc này
+        const skew=Number.isFinite(+p.sentAt)&&+p.sentAt>0?now-(+p.sentAt):0;let prev=Math.max(+srv.lastAt||0,now-864e5);
+        const results=dup?ops.map(()=>({ok:true,dup:true})):ops.map(op=>{
+          let at=Number.isFinite(+(op&&op.at))?+op.at+skew:now;at=Math.min(now,Math.max(prev,at));prev=at;
+          try{if(op&&op.lay)R=Player.relayout(R,op.lay);return {ok:true,...Player.applyOp(R,op,srv,at)};}catch(e){return {ok:false,error:String(e.message||e)};}
+        });
+        if(!dup&&ops.length&&C)R=Player.merge(R,C);
+        if(bid&&!dup)srv.bids=[...(srv.bids||[]),bid].slice(-8);
+        srv.lastAt=now;
         storeState(c,st,R,{pos:p.save&&p.save.pos,seen:p.save&&p.save.seen});
         return {state:R,results,savedAt:c.cap_nhat};
       });

@@ -237,8 +237,19 @@ function LH_Core(A){
       const a=auth(p.token);
       return A.lock(()=>{
         const c=ownChar(a,p.charId,'active'),st=stateOf(c),C=p.save&&p.save.player;
-        const R=C?Player.merge(st.player,C):st.player,srv=st.save.srv=st.save.srv||{},now=A.now();
-        const results=(Array.isArray(p.ops)?p.ops.slice(0,60):[]).map(op=>{try{return {ok:true,...Player.applyOp(R,op,srv,now)};}catch(e){return {ok:false,error:String(e.message||e)};}});
+        let R=C?Player.merge(st.player,C):st.player;const srv=st.save.srv=st.save.srv||{},now=A.now(),ops=Array.isArray(p.ops)?p.ops.slice(0,600):[];
+        // Lệnh chơi được gom trên máy người chơi rồi gửi một lần (về làng, qua cầu, gặp thương nhân, bấm Lưu).
+        // Gói đã nhận rồi (mạng rớt lúc chờ trả lời, gửi lại) thì không tính lần hai.
+        const bid=String(p.bid||'').slice(0,40),dup=!!bid&&(srv.bids||[]).includes(bid);
+        // Thời điểm từng lệnh theo đồng hồ máy chủ: không sớm hơn lần lưu trước, không muộn hơn lúc này
+        const skew=Number.isFinite(+p.sentAt)&&+p.sentAt>0?now-(+p.sentAt):0;let prev=Math.max(+srv.lastAt||0,now-864e5);
+        const results=dup?ops.map(()=>({ok:true,dup:true})):ops.map(op=>{
+          let at=Number.isFinite(+(op&&op.at))?+op.at+skew:now;at=Math.min(now,Math.max(prev,at));prev=at;
+          try{if(op&&op.lay)R=Player.relayout(R,op.lay);return {ok:true,...Player.applyOp(R,op,srv,at)};}catch(e){return {ok:false,error:String(e.message||e)};}
+        });
+        if(!dup&&ops.length&&C)R=Player.merge(R,C);
+        if(bid&&!dup)srv.bids=[...(srv.bids||[]),bid].slice(-8);
+        srv.lastAt=now;
         storeState(c,st,R,{pos:p.save&&p.save.pos,seen:p.save&&p.save.seen});
         return {state:R,results,savedAt:c.cap_nhat};
       });
@@ -662,6 +673,12 @@ const Player=(()=>{
                  C = trạng thái máy người chơi (chỉ được sắp xếp đồ đang có + máu, mana, giếng…).
      Người chơi không thể tự sinh đồ hay tiền: món nào không có trên máy chủ thì bị bỏ, món mới trên máy chủ tự vào túi. */
   const allItems=s=>[...(s.bag||[]),...Object.values(s.equipment||{}),...(s.skillSlots||[]),...(s.mercs||[]).flatMap(m=>Object.values(m.equipment||{}))].filter(it=>it&&typeof it.uid==='string');
+  // Sắp xếp đồ của người chơi lúc ra lệnh (chỉ mã đồ): b túi, e trang bị, s ô sách, m trang bị lính, a sách đang dùng
+  function layout(s){const u=x=>x&&x.uid||null,eq=E=>Object.fromEntries(slots.map(k=>[k,u(E&&E[k])]));return {b:(s.bag||[]).map(u),e:eq(s.equipment),s:(s.skillSlots||[]).map(u),m:Object.fromEntries((s.mercs||[]).map(m=>[m.mid,eq(m.equipment)])),a:s.activeBook};}
+  function relayout(S,L){
+    if(!L||typeof L!=='object')return S;const it=u=>typeof u==='string'?{uid:u}:null,eq=E=>Object.fromEntries(slots.map(k=>[k,it(E&&E[k])]));
+    return merge(S,{...S,bag:(Array.isArray(L.b)?L.b:[]).map(it),equipment:eq(L.e),skillSlots:(Array.isArray(L.s)?L.s:[]).map(it),activeBook:L.a,mercs:(S.mercs||[]).map(m=>({...m,equipment:eq(L.m&&L.m[m.mid])}))});
+  }
   function merge(S,C){
     const chOf={name:S.name,gender:S.gender,stats:S.stats};
     const soft={hp:C&&C.hp,mana:C&&C.mana,passive:C&&C.passive,cooldowns:C&&C.cooldowns,flags:{...S.flags,river:!!(S.flags&&S.flags.river)||!!(C&&C.flags&&C.flags.river),wells:(C&&C.flags&&C.flags.wells)||(S.flags&&S.flags.wells)||{}}};
@@ -714,6 +731,6 @@ const Player=(()=>{
   }
   load(typeof GAME_DATA!=='undefined'?GAME_DATA:{});
   return {VERSION,BAG_SIZE,SKILL_SLOTS,MAX_LV,MAX_MERC,MAX_ACTIVE_QUEST,ELEMENTS,BEASTS,GROUPS,FX_NAMES,STAT_KEYS,CFG,RAR,ADD,SHOPS,SETS,MON,QUESTS,MERCS,items,slots,skills,
-    load,info,kind,weapon,skillCost,cmdInfo,WEAPONS,PREDICT,seqRng,setFollow,fitFollow,mercCmd,petMax,SHOP_ENH,expNeed,maxLevel,gainExp,spendPoints,mountGain,bookStat,mountCmd,qOf,rar,nameOf,stat,canEnhance,tradeable,gainOf,enhRate,enhCost,enhance,roll,rollDrop,create,derive,targets,equip,unequip,stance,isTwo,pairOk,setSkill,unsetSkill,toggleBook,element,money,shopPrice,buy,sell,sellPrice,addItem,cast,
+    layout,relayout,load,info,kind,weapon,skillCost,cmdInfo,WEAPONS,PREDICT,seqRng,setFollow,fitFollow,mercCmd,petMax,SHOP_ENH,expNeed,maxLevel,gainExp,spendPoints,mountGain,bookStat,mountCmd,qOf,rar,nameOf,stat,canEnhance,tradeable,gainOf,enhRate,enhCost,enhance,roll,rollDrop,create,derive,targets,equip,unequip,stance,isTwo,pairOk,setSkill,unsetSkill,toggleBook,element,money,shopPrice,buy,sell,sellPrice,addItem,cast,
     questAccept,questProgress,questTurnIn,hireNpc,addMerc,mercEquip,mercUnequip,dismissMerc,makeMerc,cleanItem,serialize,restore,restorePlayer,merge,applyOp,allItems};
 })();

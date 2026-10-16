@@ -63,12 +63,19 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 - Ảnh màn hình chờ, cảnh căn lều: chạy `kiemTra` để thêm các dòng `giao_dien:nen_cho_*`, `nen_leu` vào file Hình ảnh.
 - Vẽ lại người: mặt có mắt mũi miệng, viền và bóng, song kiếm cầm hai thanh rõ ràng.
 
+## Bản 9.0: lưu theo mốc
+
+- Mọi việc trong game (hạ quái, mua bán, gia cường, nhiệm vụ, thuê lính, cộng điểm, xếp đồ, vị trí) tính và ghi ngay trên máy (localStorage, khóa `lh-local-<mã nhân vật>`), không gửi máy chủ liên tục.
+- Chỉ gửi lên máy chủ rồi tải lại túi đồ, tiền, nhân vật ở các mốc: về làng (vào vùng an toàn), qua cầu (mỗi chiều), gặp Thương nhân, bấm Lưu, đổi nhân vật. Không tự làm mới theo giờ.
+- Còn lệnh chưa lưu: nút menu có chấm cam. Tắt trang khi chưa lưu: lần sau vào game hoặc Chợ phiên, phần còn giữ trên máy được gửi trước khi tải nhân vật.
+- Máy chủ (`play`) tính lại từng lệnh theo thời điểm ra lệnh (không sớm hơn lần lưu trước) và cách xếp đồ lúc đó (`lay`), mỗi gói tối đa 600 lệnh, gói gửi lại do rớt mạng (`bid`) không tính hai lần.
+
 ## Ra bản mới
 
 1. Sửa trong `src/` (và `VERSION`).
 2. `node tools/build.mjs`
-3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-9.0`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
-4. Trên Blogspot đổi `@ban-8.9` thành `@ban-9.0` (trang game và trang Chợ phiên).
+3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-9.1`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
+4. Trên Blogspot đổi `@ban-9.0` thành `@ban-9.1` (trang game và trang Chợ phiên).
 5. Nếu `Code.gs` đổi: dán lại vào Apps Script, Triển khai → Quản lý triển khai → Sửa → Phiên bản mới (giữ nguyên URL).
 
 ## Dữ liệu trong Sheet

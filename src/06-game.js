@@ -24,7 +24,7 @@ window.startGame=(session)=>{
   const SK={normal:{mul:1,dur:1,cycles:1},basic:{mul:.85,dur:.7,cycles:3},intermediate:{mul:1.15,dur:1.2,cycles:1,multi:3,nova:130},advanced:{mul:.75,dur:.55,cycles:5,nova:160,finale:2}};
   const NPC_IDS=World.npcs.map(n=>n.id);
   let width=0,height=0,scale=1,route=[],targetNPC=null,targetWell=null,dialogNPC=null,page=0,last=0,time=0,toastTimer,joystick={x:0,y:0},holdAttack=false,mouseAim=null,shakeAmp=0,manaWarnAt=-9;
-  let lastAllyKey='',safe=World.isSafe(hero.x),HD=Player.derive(player,{safe}),hdAt=-1,nextSave=60;
+  let lastAllyKey='',safe=World.isSafe(hero.x),HD=Player.derive(player,{safe}),hdAt=-1,bridgeSide=null;
   const ground=document.createElement('canvas'),miniGround=document.createElement('canvas');
   hero.name=player.name;
   const $=s=>document.querySelector(s),clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,t)=>a+(b-a)*t,seg=(p,a,b)=>clamp((p-a)/(b-a),0,1),E=t=>t<.5?2*t*t:1-((-2*t+2)**2)/2;
@@ -734,14 +734,20 @@ window.startGame=(session)=>{
       ctx.restore();
     }
   }
-  /* ---------- Đồng bộ với máy chủ: gom lệnh, gửi kèm cách sắp xếp đồ, nhận lại trạng thái chuẩn ---------- */
-  /* Đồng bộ kiểu "hiện trước, lưu sau":
-     - Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm: máy người chơi tính ngay bằng cùng luật + cùng chuỗi ngẫu nhiên với máy chủ,
-       hiện kết quả liền, rồi gom lệnh gửi lên máy chủ. Máy chủ tính lại y hệt và lưu; trạng thái máy chủ luôn là chuẩn.
-     - Lệnh chưa được máy chủ xác nhận nằm trong `pending`; mỗi lần nhận trạng thái mới thì áp lại các lệnh đó lên trên. */
-  const sync={queue:[],busy:false,timer:null,at:0,fail:0},pending=[];
-  function schedule(ms){const at=Date.now()+ms;if(sync.timer&&sync.at<=at)return;clearTimeout(sync.timer);sync.at=at;sync.timer=setTimeout(()=>{sync.timer=null;flush();},ms);}
-  function queueOp(o,delay=0,ent=null){return new Promise((resolve,reject)=>{sync.queue.push({op:o,resolve,reject,ent});schedule(delay);});}
+  /* ---------- Lưu tiến trình: chơi trên máy, chỉ gửi lên máy chủ ở các mốc ----------
+     - Mọi lệnh (giết quái, mua bán, gia cường, nhiệm vụ, thuê lính, cộng điểm…) tính ngay trên máy bằng cùng luật + cùng chuỗi ngẫu nhiên với máy chủ,
+       rồi xếp hàng và ghi vào bộ nhớ trình duyệt (localStorage) cùng trạng thái nhân vật. Tắt trang giữa chừng vẫn còn, lần vào sau gửi tiếp.
+     - Chỉ gửi lên máy chủ và tải lại túi đồ, tiền, nhân vật khi: về làng, qua cầu, gặp Thương nhân, bấm Lưu, ra lều. Không tự làm mới.
+     - Máy chủ tính lại y hệt (theo thời điểm và cách xếp đồ lúc ra lệnh) rồi lưu; trạng thái máy chủ là chuẩn. */
+  const CHUNK=500,sync={queue:[],busy:null,sig:'',lastLay:null,at:-99,keptAt:0},pending=[];let inflight=null,sent=[];
+  const record=()=>({save:Player.serialize(player,hero,seen),inflight,ops:sync.queue.map(b=>b.op),t:Date.now()});
+  function keepLocal(){sync.keptAt=time;LH_Local.set(session.charId,record());}
+  const unsaved=()=>!!(sync.queue.length||inflight);
+  function queueOp(o,L=Player.layout(player)){
+    const sig=JSON.stringify(L);o.at=Date.now();
+    if(!sync.queue.length||sig!==sync.sig){o.lay=L;sync.sig=sig;}
+    const b={op:o,ent:null};sync.queue.push(b);keepLocal();return b;
+  }
   function adopt(S){
     const before=JSON.parse(JSON.stringify(player));
     let R=Player.merge(S,before);
@@ -749,29 +755,43 @@ window.startGame=(session)=>{
     for(const k of Object.keys(player))if(!(k in R))delete player[k];
     Object.assign(player,R);refreshHD();syncMerc();window.GameUI?.refresh();
   }
-  async function flush(){
-    if(sync.busy){schedule(300);return false;}
-    sync.busy=true;const batch=sync.queue.splice(0);nextSave=time+60;
-    try{
-      const r=await Net.call('play',{charId:session.charId,save:Player.serialize(player,hero,seen),ops:batch.map(b=>b.op)});
-      sync.fail=0;
-      for(const b of batch)if(b.ent){const i=pending.indexOf(b.ent);if(i>=0)pending.splice(i,1);}
-      adopt(r.state);
-      batch.forEach((b,i)=>{const res=r.results[i]||{ok:false,error:'LOI'};if(b.ent&&!res.ok)message(svg('close')+'Máy chủ không nhận lệnh, đã đồng bộ lại');b.resolve(res);});return true;
-    }catch(e){
-      sync.fail++;const keep=batch.filter(b=>(b.op.t==='kill'||b.ent)&&sync.fail<6&&e.message==='Failed to fetch');
-      batch.filter(b=>!keep.includes(b)).forEach(b=>{if(b.ent){const i=pending.indexOf(b.ent);if(i>=0)pending.splice(i,1);}b.reject(e);});sync.queue.unshift(...keep);if(keep.length)schedule(3000*sync.fail);
-      message(svg('close')+netMsg(e));return false;
-    }finally{sync.busy=false;if(sync.queue.length&&!sync.timer)schedule(200);}
+  // Gửi hết hàng chờ (mỗi gói tối đa 500 lệnh), nhận lại trạng thái chuẩn
+  function flush(){
+    if(window.LH_KICKED)return Promise.resolve(false);
+    if(sync.busy)return sync.busy.then(()=>flush());
+    sync.busy=(async()=>{
+      try{
+        do{
+          if(!inflight){
+            sent=sync.queue.splice(0,CHUNK);const ops=sent.map(b=>b.op);
+            if(ops.length&&!ops[0].lay&&sync.lastLay)ops[0]={...ops[0],lay:sync.lastLay};
+            for(const o of ops)if(o.lay)sync.lastLay=o.lay;
+            inflight={bid:Date.now().toString(36)+Math.random().toString(36).slice(2,8),ops};
+          }
+          keepLocal();
+          const r=await Net.call('play',{charId:session.charId,bid:inflight.bid,sentAt:Date.now(),save:Player.serialize(player,hero,seen),ops:inflight.ops});
+          inflight=null;
+          for(const b of sent)if(b.ent){const i=pending.indexOf(b.ent);if(i>=0)pending.splice(i,1);}
+          adopt(r.state);
+          const bad=(r.results||[]).filter(x=>!x.ok).length;if(bad)message(svg('close')+'Máy chủ không nhận '+bad+' lệnh, đã đồng bộ lại');
+          sent=[];
+        }while(sync.queue.length>=CHUNK);
+        sync.at=time;if(!unsaved())LH_Local.clear(session.charId);else keepLocal();return true;
+      }catch(e){keepLocal();message(svg('close')+netMsg(e)+' · tiến trình vẫn giữ trên máy');return false;}
+      finally{sync.busy=null;window.GameUI?.refresh();}
+    })();
+    return sync.busy;
   }
-  const op=(o,delay=400)=>{
+  // Mốc lưu tự động (về làng, qua cầu, gặp Thương nhân): vừa lưu xong mà chưa chơi gì thêm thì bỏ qua
+  function checkpoint(){if(!unsaved()&&time-sync.at<20)return;flush().then(ok=>{if(ok)message(svg('save')+'Đã lưu');});}
+  const op=(o)=>{
     if(Player.PREDICT.has(o.t)){
-      let r;try{r=Player.applyOp(player,o,{},Date.now());}catch(e){return Promise.reject(e);}
-      const ent={op:o};pending.push(ent);refreshHD();syncMerc();window.GameUI?.refresh();
-      queueOp(o,delay,ent).catch(()=>{});
+      const L=Player.layout(player);let r;try{r=Player.applyOp(player,o,{},Date.now());}catch(e){return Promise.reject(e);}
+      const b=queueOp(o,L);
+      b.ent={op:o};pending.push(b.ent);refreshHD();syncMerc();window.GameUI?.refresh();
       return Promise.resolve({ok:true,...r});
     }
-    return queueOp(o,0).then(r=>{if(!r.ok)throw Error(r.error);return r;});
+    queueOp(o);return flush().then(()=>({ok:true}));
   };
   function moveVector(){const x=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0)+joystick.x,y=(keys.has('s')||keys.has('arrowdown')?1:0)-(keys.has('w')||keys.has('arrowup')?1:0)+joystick.y;return {x,y,len:Math.hypot(x,y)};}
   function chooseAim(st,d){
@@ -964,14 +984,14 @@ window.startGame=(session)=>{
     e.hp-=d;e.hurt=time;floater(e.x,e.y-(e.pet?MON[e.type].h+12:62),'-'+d,'#ffb0a0',13);
     if(e.hp<=0){
       e.hp=0;e.data.hpFrac=0;const i=allies.indexOf(e);if(i>=0)allies.splice(i,1);burst(e.x,e.y-20,'#cfcfcf',18,150);
-      if(e.pet){message(svg('close')+e.name+' đã chết · không hồi sinh');queueOp({t:'petOff',pid:e.key},0).catch(()=>{});}
-      else{message(svg('user')+e.name+' gục · về làng chờ');save();}
+      if(e.pet){message(svg('close')+e.name+' đã chết · không hồi sinh');op({t:'petOff',pid:e.key}).catch(()=>{});}
+      else{message(svg('user')+e.name+' gục · về làng chờ');keepLocal();}
     }
   }
   // Về làng: lính gục đứng chờ ở làng nhập đội lại
   function reviveAtVillage(){
     const back=player.mercs.filter(m=>m.hpFrac===0);if(!back.length)return;
-    back.forEach(m=>m.hpFrac=1);syncMerc();message(svg('user')+back.map(m=>m.name).join(', ')+' nhập đội lại');save();
+    back.forEach(m=>m.hpFrac=1);syncMerc();message(svg('user')+back.map(m=>m.name).join(', ')+' nhập đội lại');keepLocal();
   }
   /* ---------- Quái vật và trùm ---------- */
   function pickTarget(m){
@@ -1071,7 +1091,7 @@ window.startGame=(session)=>{
   const PANEL_BTN={shop:'Mua bán',quests:'Nhận việc',mercs:'Thuê lính',market:'Chợ'};
   function nearby(){let best=null,bd=92;for(const n of World.npcs){const d=Math.hypot(n.x-hero.x,n.y-hero.y);if(d<bd){bd=d;best=n;}}return best;}
   function meet(n){
-    route=[];targetNPC=null;
+    route=[];targetNPC=null;if(n.id==='merchant')checkpoint();
     if(!seen.has(n.id)){keys.clear();joystick={x:0,y:0};holdAttack=false;dialogNPC=n;page=0;dialogEl.hidden=false;showLine();return;}
     window.GameUI?.openPanel(n);
   }
@@ -1090,7 +1110,7 @@ window.startGame=(session)=>{
     const S=HD.tot,gain=Math.max(0,Math.round(S.hp-player.hp));player.hp=S.hp;
     player.flags.wells[o.id]=Date.now()+(Number(Player.CFG.gieng_hoi_giay)||300)*1000;
     hero.facing=o.x<hero.x?-1:1;floater(hero.x,hero.y-70-seatH(),'+'+gain,'#7fe0b0',16);burst(o.x,o.y-30,'#9fdcff',26,170);burst(hero.x,hero.y-30,'#9fe8a8',16,120);
-    message(svg('heart')+'Uống nước giếng cổ · hồi đầy máu');nextSave=Math.min(nextSave,time+2);window.GameUI?.refresh();
+    message(svg('heart')+'Uống nước giếng cổ · hồi đầy máu');keepLocal();window.GameUI?.refresh();
   }
   function interact(){if(!overlayEl.hidden)return;if(dialogNPC){nextLine();return;}const n=nearby();if(n){meet(n);return;}const w=nearWell();if(w)useWell(w);}
   function endDialog(){if(!dialogNPC)return;seen.add(dialogNPC.id);dialogNPC=null;dialogEl.hidden=true;window.GameUI?.refresh();canvas.focus();}
@@ -1112,13 +1132,14 @@ window.startGame=(session)=>{
   function screenPoint(x,y){return {x:x/scale+camera.x,y:y/scale+camera.y};}
   const save=()=>flush();
   function update(dt){
-    const nowSafe=World.isSafe(hero.x);if(nowSafe!==safe){safe=nowSafe;hero.mountAct=null;refreshHD();window.GameUI?.refresh();if(safe)message(svg('shield')+'Vào vùng an toàn');}
+    const nowSafe=World.isSafe(hero.x);if(nowSafe!==safe){safe=nowSafe;hero.mountAct=null;refreshHD();window.GameUI?.refresh();if(safe){message(svg('shield')+'Vào vùng an toàn');checkpoint();}}
     if(time-hdAt>.25){hdAt=time;refreshHD();const k=allyKey();if(k!==lastAllyKey){lastAllyKey=k;syncMerc();}if(safe)reviveAtVillage();}
     const S=HD.tot;
     if(!hero.dead){player.mana=Math.min(S.mp,player.mana+S.mpReg*dt);player.hp=Math.min(S.hp,player.hp+(S.hpReg+(HD.fx.heal?S.hp*HD.fx.heal/100:0))*dt);}
     player.hp=Math.min(player.hp,S.hp);player.mana=Math.min(player.mana,S.mp);
     if(HD.fx.shield&&time>hero.shieldAt){hero.shieldAt=time+10;hero.shieldHp=Math.round(S.hp*HD.fx.shield/100);}else if(!HD.fx.shield)hero.shieldHp=0;
-    if(time>nextSave)save();
+    if(time-sync.keptAt>3)keepLocal();
+    {const B=World.BRIDGE,sd=hero.x<B.x0*T?'w':hero.x>(B.x1+1)*T?'e':bridgeSide;if(sd!==bridgeSide){const was=bridgeSide;bridgeSide=sd;if(was)checkpoint();}}
     updateNPCs(dt);updateProjectiles(dt);updateMonsters(dt);updateAllies(dt);updateStrikes();updateVillage(dt);updateEffects(dt);
     const a=hero.attack;
     if(a){const p=(time-a.start)/a.dur;while(a.hitIdx<a.cycles&&p>=(a.hitIdx+a.hit)/a.cycles){resolveAttack(a,a.hitIdx);a.hitIdx++;}if(p>=1)hero.attack=null;}
@@ -1244,10 +1265,10 @@ window.startGame=(session)=>{
   pad.addEventListener('pointermove',padMove);
   pad.addEventListener('pointerup',e=>{if(e.pointerId===padId)stopPad();});pad.addEventListener('pointercancel',e=>{if(e.pointerId===padId)stopPad();});pad.addEventListener('lostpointercapture',e=>{if(e.pointerId===padId)stopPad();});
   window.addEventListener('resize',resize);
-  document.addEventListener('visibilitychange',()=>{last=0;keys.clear();stopPad();holdAttack=false;if(document.hidden)save();});
-  window.addEventListener('pagehide',()=>{save();});
+  document.addEventListener('visibilitychange',()=>{last=0;keys.clear();stopPad();holdAttack=false;if(document.hidden)keepLocal();});
+  window.addEventListener('pagehide',()=>{keepLocal();});
   groundDraw();resize();syncMerc();requestAnimationFrame(loop);
-  window.mapGame={hero,player,camera,monsters,allies,get route(){return route;},get seen(){return [...seen];},get safe(){return safe;},get HD(){return HD;},now:()=>time,screenPoint,goTo,cast,message,activateBurst,svg,save,op,refreshHD,syncMerc,
+  window.mapGame={hero,player,camera,monsters,allies,get route(){return route;},get seen(){return [...seen];},get safe(){return safe;},get HD(){return HD;},now:()=>time,screenPoint,goTo,cast,message,activateBurst,svg,save,unsaved,op,refreshHD,syncMerc,
     hammer(color){let n=0;const t=setInterval(()=>{burst(hero.x+hero.facing*14,hero.y-26,color||'#ffcf7a',6,140);if(color)fx.push({kind:'ring',x:hero.x,y:hero.y-20,r0:6,r1:46,color,age:0,life:.4,lw:3});else shake(2);if(++n>=3)clearInterval(t);},380);},
     levelUp,
     setHold(v){holdAttack=!!v;},

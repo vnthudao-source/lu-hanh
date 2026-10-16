@@ -42,7 +42,7 @@
     if(S.charId)await loadChar();else S.state=null;
     draw();
   }
-  async function loadChar(){try{const r=await Net.call('load',{charId:S.charId});S.state=r.save.player;}catch(e){S.state=null;toast(svg('close')+errMsg(e),true);}}
+  async function loadChar(){try{await LH_Local.push(S.charId);const r=await Net.call('load',{charId:S.charId});S.state=r.save.player;}catch(e){S.state=null;toast(svg('close')+errMsg(e),true);}}
   // ---------- giao diện ----------
   function draw(){
     const act=S.chars.filter(c=>c.status==='active'),c=cur(),st=S.state;

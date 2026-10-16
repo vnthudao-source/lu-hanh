@@ -1,5 +1,5 @@
-/*! Lữ Hành v8.9 · Làng Thanh Mộc · https://github.com/vnthudao-source/lu-hanh */
-(function(){if(document.getElementById('portal'))return;document.body.insertAdjacentHTML('beforeend',"<div id=\"lu-hanh\">\n<svg style=\"position:absolute;width:0;height:0;overflow:hidden\" aria-hidden=\"true\"><defs>\n<symbol id=\"i-sword\" viewBox=\"0 0 32 32\"><path d=\"M9 23 25 7l1-5-5 1L5 19m1-3 10 10M4 28l5-5m-7 3 4 4\"/></symbol>\n<symbol id=\"i-bow\" viewBox=\"0 0 32 32\"><path d=\"M8 3c21 4 21 22 0 26L18 16 8 3Zm-5 13h25m-5-4 5 4-5 4\"/></symbol>\n<symbol id=\"i-crossbow\" viewBox=\"0 0 32 32\"><path d=\"M3 18h22M20 6c5 4 5 20 0 24M20 6l-8 12 8 12M25 18l4-2v4l-4-2M8 18v7h5\"/></symbol>\n<symbol id=\"i-staff\" viewBox=\"0 0 32 32\"><path d=\"m5 29 14-18m-2-2 5-7 7 5-5 7-7-5Zm6-6 1 8M4 5v5M2 7h5\"/></symbol>\n<symbol id=\"i-spear\" viewBox=\"0 0 32 32\"><path d=\"m4 29 17-19m-5 1 4-9 9-1-1 9-9 4m-5 0 5 5\"/></symbol>\n<symbol id=\"i-shield\" viewBox=\"0 0 32 32\"><path d=\"m16 2 12 5-1 12c-1 5-6 8-11 11C11 27 6 24 5 19L4 7 16 2Zm0 6v15M10 14h12\"/></symbol>\n<symbol id=\"i-punch\" viewBox=\"0 0 32 32\"><path d=\"m9 28-4-9V8c0-4 5-4 5 0V4c0-3 5-3 5 0v3c0-4 5-4 5 0v2c0-3 5-3 5 0v8l3-3c2-2 5 1 3 4l-7 10H9ZM10 8v7m5-8v8m5-6v6\"/></symbol>\n<symbol id=\"i-hat\" viewBox=\"0 0 32 32\"><path d=\"M2 22 16 5l14 17Zm7-8h14M5 22c4 3 18 3 22 0\"/></symbol>\n<symbol id=\"i-armor\" viewBox=\"0 0 32 32\"><path d=\"m11 3-7 4-2 8 7 3v11h14V18l7-3-2-8-7-4c0 7-10 7-10 0ZM9 18h14m-7-9v17\"/></symbol>\n<symbol id=\"i-pants\" viewBox=\"0 0 32 32\"><path d=\"M7 3h18l2 26h-9l-2-16-2 16H5L7 3Zm0 5h18\"/></symbol>\n<symbol id=\"i-gloves\" viewBox=\"0 0 32 32\"><path d=\"M10 29 6 17V9c0-3 4-3 4 0V5c0-3 4-3 4 0v5-6c0-3 4-3 4 0v7-4c0-3 4-3 4 0v10l4-4 3 3-8 13H10Z\"/></symbol>\n<symbol id=\"i-shoes\" viewBox=\"0 0 32 32\"><path d=\"M7 3h13v14l9 5v7H3V18h4V3Zm-3 21h24M12 8h6m-6 5h6\"/></symbol>\n<symbol id=\"i-wings\" viewBox=\"0 0 32 32\"><path d=\"M15 26C7 25 2 16 3 3l12 12m2 11c8-1 13-10 12-23L17 15M5 12l8 9m14-9-8 9\"/></symbol>\n<symbol id=\"i-mount\" viewBox=\"0 0 32 32\"><path d=\"M8 28v-9l6-7-1-8 5-2 2 6 8 5-3 6-8-2v11H8ZM4 28h19\"/></symbol>\n<symbol id=\"i-book\" viewBox=\"0 0 32 32\"><path d=\"M4 6c4-2 8-2 12 1 4-3 8-3 12-1v21c-4-2-8-2-12 1-4-3-8-3-12-1V6Zm12 1v21M8 11h4m8 0h4\"/></symbol>\n<symbol id=\"i-ore\" viewBox=\"0 0 32 32\"><path d=\"M5 22 9 9l9-5 9 9-3 13-12 2-7-6Zm4-13 7 7 11-3M16 16l-4 12\"/></symbol>\n<symbol id=\"i-lock\" viewBox=\"0 0 32 32\"><path d=\"M9 14v-4a7 7 0 0 1 14 0v4M6 14h20v15H6z\"/></symbol>\n<symbol id=\"i-pin\" viewBox=\"0 0 32 32\"><path d=\"M16 29s9-9 9-16a9 9 0 0 0-18 0c0 7 9 16 9 16Z\"/><circle cx=\"16\" cy=\"13\" r=\"3.5\"/></symbol>\n<symbol id=\"i-flame\" viewBox=\"0 0 32 32\"><path d=\"M17 2c2 8-4 9-2 14l6-7c1 6 8 9 5 16-3 9-21 7-21-4 0-6 7-9 12-19Z\"/></symbol>\n<symbol id=\"i-water\" viewBox=\"0 0 32 32\"><path d=\"M16 3c6 8 10 13 10 18a10 10 0 0 1-20 0c0-5 4-10 10-18Z\"/><path d=\"M11 21a5 5 0 0 0 5 5\"/></symbol>\n<symbol id=\"i-wood\" viewBox=\"0 0 32 32\"><path d=\"M6 26C6 12 14 5 27 5c0 13-7 21-21 21Zm0 0 13-13\"/></symbol>\n<symbol id=\"i-metal\" viewBox=\"0 0 32 32\"><path d=\"M3 24 7 14h18l4 10Zm6-10 2-6h10l2 6M16 14v10\"/></symbol>\n<symbol id=\"i-earth\" viewBox=\"0 0 32 32\"><path d=\"M2 27 12 9l6 9 4-5 8 14Z\"/><path d=\"m9 15 3 2 3-3\"/></symbol>\n<symbol id=\"i-heart\" viewBox=\"0 0 32 32\"><path d=\"M16 27S4 19 4 11a6 6 0 0 1 12-2 6 6 0 0 1 12 2c0 8-12 16-12 16Z\"/></symbol>\n<symbol id=\"i-orb\" viewBox=\"0 0 32 32\"><circle cx=\"16\" cy=\"17\" r=\"10\"/><path d=\"M11 15a5 5 0 0 1 5-5M16 2v3M27 6l-2 2M5 6l2 2\"/></symbol>\n<symbol id=\"i-speed\" viewBox=\"0 0 32 32\"><path d=\"M3 10h12M6 16h14M3 22h10M20 8l8 8-8 8\"/></symbol>\n<symbol id=\"i-reflect\" viewBox=\"0 0 32 32\"><path d=\"M5 11h20l-6-6M27 21H7l6 6\"/></symbol>\n<symbol id=\"i-feather\" viewBox=\"0 0 32 32\"><path d=\"M27 4C15 4 8 12 8 22l-4 6M8 22c8 0 15-4 17-12M12 18h8\"/></symbol>\n<symbol id=\"i-flag\" viewBox=\"0 0 32 32\"><path d=\"M7 29V4m0 2h17l-5 6 5 6H7\"/></symbol>\n<symbol id=\"i-talk\" viewBox=\"0 0 32 32\"><path d=\"M4 6h24v16H14l-7 6v-6H4Z\"/><path d=\"M10 14h0m6 0h0m6 0h0\"/></symbol>\n<symbol id=\"i-bridge\" viewBox=\"0 0 32 32\"><path d=\"M2 21h28M4 21c4-9 20-9 24 0M9 18v8m14-8v8M16 15v11\"/></symbol>\n<symbol id=\"i-deer\" viewBox=\"0 0 32 32\"><path d=\"M11 14 6 5m5 9 1-9m9 9 5-9m-5 9-1-9M11 14h10l-1 7-4 5-4-5Z\"/></symbol>\n<symbol id=\"i-lion\" viewBox=\"0 0 32 32\"><path d=\"M16 3l3 4 5-1-1 5 4 3-4 3 1 5-5-1-3 4-3-4-5 1 1-5-4-3 4-3-1-5 5 1Z\"/><circle cx=\"16\" cy=\"15\" r=\"5\"/></symbol>\n<symbol id=\"i-elephant\" viewBox=\"0 0 32 32\"><path d=\"M5 26V13a8 8 0 0 1 16 0v3c0 4 5 3 5 8v4M5 18H3m7 8v-5m8 5v-5M13 11h0\"/></symbol>\n<symbol id=\"i-croc\" viewBox=\"0 0 32 32\"><path d=\"M2 17h19l9-4v8l-9-4M7 14l2-3 2 3 2-3 2 3 2-3 2 3M8 17v5m8-5v5\"/></symbol>\n<symbol id=\"i-coin\" viewBox=\"0 0 32 32\"><circle cx=\"16\" cy=\"16\" r=\"12\"/><path d=\"M16 9v14M12 12h6a2 2 0 0 1 0 4h-4a2 2 0 0 0 0 4h6\"/></symbol>\n<symbol id=\"i-close\" viewBox=\"0 0 32 32\"><path d=\"M8 8l16 16M24 8 8 24\"/></symbol>\n<symbol id=\"i-eye\" viewBox=\"0 0 32 32\"><path d=\"M3 16s5-9 13-9 13 9 13 9-5 9-13 9S3 16 3 16Z\"/><circle cx=\"16\" cy=\"16\" r=\"4\"/></symbol>\n<symbol id=\"i-out\" viewBox=\"0 0 32 32\"><path d=\"M16 4v15m-6-6 6 6 6-6M5 26h22\"/></symbol>\n<symbol id=\"i-check\" viewBox=\"0 0 32 32\"><path d=\"m6 16 7 7 13-14\"/></symbol>\n<symbol id=\"i-next\" viewBox=\"0 0 32 32\"><path d=\"M6 16h20m-7-7 7 7-7 7\"/></symbol>\n<symbol id=\"i-pen\" viewBox=\"0 0 32 32\"><path d=\"m5 27 2-7L22 5l5 5-15 15Zm13-18 5 5\"/></symbol>\n<symbol id=\"i-user\" viewBox=\"0 0 32 32\"><circle cx=\"16\" cy=\"10\" r=\"6\"/><path d=\"M5 29c1-8 6-11 11-11s10 3 11 11\"/></symbol>\n<symbol id=\"i-hand2\" viewBox=\"0 0 32 32\"><path d=\"M10 28 6 18V9c0-3 4-3 4 0v6m0-7c0-3 4-3 4 0v7m8 13 4-10v-9c0-3-4-3-4 0v6m0-7c0-3-4-3-4 0v7\"/></symbol>\n<symbol id=\"i-thunder\" viewBox=\"0 0 32 32\"><path d=\"M19 2 6 18h8l-3 12 15-18h-9l2-10Z\"/></symbol><symbol id=\"i-wind\" viewBox=\"0 0 32 32\"><path d=\"M3 11h16a4 4 0 1 0-4-4M3 17h22a4 4 0 1 1-4 4M3 23h9\"/></symbol><symbol id=\"i-ice\" viewBox=\"0 0 32 32\"><path d=\"M16 3v26M4.7 9.5l22.6 13M4.7 22.5l22.6-13M12 5l4 4 4-4M12 27l4-4 4 4M5 14l4 2-4 2M27 14l-4 2 4 2\"/></symbol><symbol id=\"i-demon\" viewBox=\"0 0 32 32\"><path d=\"M5 4c1 5 3 7 6 8-1 2-2 4-2 7 0 6 3 10 7 10s7-4 7-10c0-3-1-5-2-7 3-1 5-3 6-8-3 2-6 3-9 3h-4c-3 0-6-1-9-3ZM11.5 18l4 1.5M20.5 18l-4 1.5M13 24h6\"/></symbol><symbol id=\"i-light\" viewBox=\"0 0 32 32\"><circle cx=\"16\" cy=\"16\" r=\"6\"/><path d=\"M16 2v5M16 25v5M2 16h5M25 16h5M6 6l3.5 3.5M22.5 22.5 26 26M6 26l3.5-3.5M22.5 9.5 26 6\"/></symbol><symbol id=\"i-spark\" viewBox=\"0 0 32 32\"><path d=\"m16 2 4 10 10 4-10 4-4 10-4-10-10-4 10-4L16 2Z\"/></symbol>\n<symbol id=\"i-whirl\" viewBox=\"0 0 32 32\"><path d=\"M16 4a12 12 0 1 1-12 12M16 10a6 6 0 1 1-6 6M4 16l-2-5m2 5 5-2\"/></symbol>\n<symbol id=\"i-tiger\" viewBox=\"0 0 32 32\"><path d=\"M6 10 4 4l6 3m16 3 2-6-6 3M6 10c0 10 4 16 10 16s10-6 10-16c-3-3-7-4-10-4S9 7 6 10Zm6 6h0m8 0h0m-7 5 3 2 3-2M16 9v4m-6-1 2 1m10-1-2 1\"/></symbol>\n<symbol id=\"i-anvil\" viewBox=\"0 0 32 32\"><path d=\"M3 10h20c0 4-3 6-7 6v4h4v4H10v-4h4v-4H8c-3 0-5-3-5-6Zm20 0 6-2v4l-6-2M24 3l-3 4m6-2-4 3\"/></symbol>\n<symbol id=\"i-bag\" viewBox=\"0 0 32 32\"><path d=\"M8 9c0-10 16-10 16 0M7 9h18l4 20H3L7 9Zm5 6h8v8h-8Z\"/></symbol>\n<symbol id=\"i-home\" viewBox=\"0 0 32 32\"><path d=\"m2 15 14-12 14 12M6 12v17h20V12M13 29V18h7v11\"/></symbol>\n<symbol id=\"i-save\" viewBox=\"0 0 32 32\"><path d=\"M4 3h21l4 5v21H3V3Zm5 0v9h13V3M9 29V18h14v11\"/></symbol>\n<symbol id=\"i-quest\" viewBox=\"0 0 32 32\"><path d=\"M7 3h19v23H7M7 3C1 3 1 10 7 10m0 16c-6 0-6 5 0 5h20M12 10h9m-9 6h9\"/></symbol>\n<symbol id=\"i-gear\" viewBox=\"0 0 32 32\"><path d=\"m12 3 8 0 1 5 5 1 3 7-4 4 1 5-7 4-4-3-5 1-5-6 2-5-2-5 6-5 1-3Z\"/><circle cx=\"16\" cy=\"16\" r=\"5\"/></symbol>\n</defs></svg>\n<header><div class=\"profile\"><button id=\"avatarBtn\" class=\"avatar\" aria-label=\"Thuộc tính nhân vật\"><svg viewBox=\"0 0 64 64\" class=\"portrait\" aria-hidden=\"true\"><path fill=\"#d9ad80\" d=\"M10 64v-8c0-21 44-21 44 0v8Z\"/><path fill=\"#dfbf91\" d=\"M25 32h14v17H25z\"/><ellipse id=\"pfHair\" fill=\"#2a2622\" cx=\"20\" cy=\"34\" rx=\"7\" ry=\"13\" style=\"display:none\"/><path id=\"pfYem\" fill=\"#c0392b\" d=\"M32 44l10 10-10 10-10-10Z\" style=\"display:none\"/><ellipse fill=\"#e4c69b\" cx=\"32\" cy=\"25\" rx=\"15\" ry=\"18\"/><path fill=\"#2a2622\" d=\"M16 26V14C16-2 52-3 48 19L33 13l-17 13Z\"/></svg><svg class=\"exp-ring\" viewBox=\"0 0 100 100\" aria-hidden=\"true\"><circle class=\"exp-bg\" cx=\"50\" cy=\"50\" r=\"46\" pathLength=\"100\"/><circle id=\"expArc\" class=\"exp-fg\" cx=\"50\" cy=\"50\" r=\"46\" pathLength=\"100\" stroke-dasharray=\"0 100\"/></svg><b id=\"levelBadge\" class=\"level\">Lv. 1</b><i id=\"ptDot\" class=\"pt-dot\" hidden>+</i></button><div class=\"player-info\"><strong id=\"playerName\" class=\"player-name\">Lữ khách</strong><div class=\"bars\"><div class=\"bar\" aria-label=\"Máu\"><div id=\"hpFill\" class=\"bar-fill hp\"></div><small id=\"hpText\">100 / 100</small></div><div class=\"bar\" aria-label=\"Mana\"><div id=\"manaFill\" class=\"bar-fill mana\"></div><small id=\"manaText\">80 / 80</small></div><div class=\"bar\" aria-label=\"Nội tại\"><div id=\"passiveFill\" class=\"bar-fill passive\" style=\"width:0\"></div><small id=\"passiveText\">0%</small></div></div><div id=\"buffs\" class=\"buffs\"></div></div></div><div class=\"top-right\"><div id=\"bossBar\" class=\"boss-mini\" hidden><span id=\"bossIc\" class=\"bi\"></span><span class=\"bm\"><span class=\"bm-bar\"><span id=\"bossFill\" class=\"bm-fill\"></span></span><small id=\"bossHp\"></small></span></div><span class=\"version\">v8.9</span><button id=\"settingsBtn\" aria-label=\"Menu\" aria-expanded=\"false\"><svg class=\"icon\"><use href=\"#i-gear\"/></svg></button><nav id=\"gameMenu\" class=\"menu\" hidden><button id=\"bagBtn\"><svg class=\"icon\"><use href=\"#i-bag\"/></svg>Túi đồ</button><button id=\"questBtn\"><svg class=\"icon\"><use href=\"#i-quest\"/></svg>Nhiệm vụ</button><button id=\"saveBtn\"><svg class=\"icon\"><use href=\"#i-save\"/></svg>Lưu</button><button id=\"homeBtn\"><svg class=\"icon\"><use href=\"#i-home\"/></svg>Về làng</button><button id=\"switchBtn\"><svg class=\"icon\"><use href=\"#i-user\"/></svg>Đổi nhân vật</button></nav></div></header>\n<div id=\"portal\" class=\"portal\"><div class=\"portal-card\"><div class=\"plogo\"><b>Lữ Hành</b><small>Làng Thanh Mộc \u{b7} v8.9</small></div><div id=\"portalBody\"></div><p id=\"portalMsg\"></p><small id=\"netMode\" class=\"netmode\"></small></div></div>\n<main class=\"layout\"><canvas id=\"scene\" tabindex=\"0\" aria-label=\"Bản đồ\"></canvas><div id=\"questTrack\" class=\"quest-track floating\"></div><div class=\"map-box\"><canvas id=\"minimap\" width=\"240\" height=\"128\" aria-label=\"Bản đồ thu nhỏ\"></canvas><div class=\"map-meta\"><svg class=\"icon\" aria-hidden=\"true\"><use href=\"#i-pin\"/></svg><span id=\"placeName\">Thanh Mộc</span><span id=\"placeCoord\" class=\"coord\"></span><span id=\"safeTag\" class=\"safe\" hidden>An toàn</span></div></div><div class=\"hint\"><b>WASD</b>di chuyển <b>Space</b>đánh <b>1</b>combo <b>2</b>diện rộng <b>3</b>liên hoàn <b>4</b>thú cưỡi <b>E</b>nói chuyện <b>B</b>túi đồ</div><div class=\"skill-wheel\"><button id=\"skill-normal\" data-skill=\"normal\" class=\"skill normal\" title=\"Space\"><svg id=\"normalIcon\" class=\"icon\"><use href=\"#i-sword\"/></svg><small class=\"key\">Đánh</small><span class=\"cooldown\"></span></button><button id=\"skill-basic\" data-skill=\"basic\" class=\"skill basic\" title=\"1 \u{b7} Combo \u{b7} 10 mana\"><svg class=\"icon\"><use href=\"#i-spark\"/></svg><small class=\"key\">Combo</small><span class=\"cooldown\"></span></button><button id=\"skill-intermediate\" data-skill=\"intermediate\" class=\"skill intermediate\" title=\"2 \u{b7} Diện rộng \u{b7} 18 mana\"><svg class=\"icon\"><use href=\"#i-whirl\"/></svg><small class=\"key\">Diện rộng</small><span class=\"cooldown\"></span></button><button id=\"skill-advanced\" data-skill=\"advanced\" class=\"skill advanced\" title=\"3 \u{b7} Liên hoàn \u{b7} 28 mana\"><svg class=\"icon\"><use href=\"#i-flame\"/></svg><small class=\"key\">Liên hoàn</small><span class=\"cooldown\"></span></button><button id=\"skill-mount\" data-skill=\"mount\" class=\"skill mount\" title=\"4 \u{b7} Thú cưỡi\" hidden><svg id=\"mountIcon\" class=\"icon\"><use href=\"#i-mount\"/></svg><small id=\"mountName\" class=\"key\">Thú cưỡi</small><span class=\"cooldown\"></span></button></div><div class=\"touch-controls\"><div id=\"pad\" class=\"pad\" aria-label=\"Cần điều khiển\"><div class=\"knob\"></div></div></div><section id=\"dialog\" hidden aria-live=\"polite\"><h2 id=\"speaker\"></h2><p id=\"line\"></p><div class=\"actions\"><span id=\"page\" class=\"dots\"></span><span><button id=\"shopBtn\" hidden><svg class=\"icon\"><use href=\"#i-bag\"/></svg><span id=\"shopLabel\">Mua bán</span></button><button id=\"next\"><svg class=\"icon\"><use href=\"#i-next\"/></svg>Tiếp</button></span></div></section><div id=\"toast\" role=\"status\"></div></main><div id=\"overlay\" class=\"overlay\" hidden><section id=\"modalCard\" class=\"card\"><div class=\"card-head\"><div id=\"overlayTitle\" class=\"ttl\"></div><button id=\"closeOverlay\" class=\"close-modal\" aria-label=\"Đóng\"><svg class=\"icon\"><use href=\"#i-close\"/></svg></button></div><div id=\"overlayBody\"></div></section></div>\n</div>\n");})();
+/*! Lữ Hành v9.0 · Làng Thanh Mộc · https://github.com/vnthudao-source/lu-hanh */
+(function(){if(document.getElementById('portal'))return;document.body.insertAdjacentHTML('beforeend',"<div id=\"lu-hanh\">\n<svg style=\"position:absolute;width:0;height:0;overflow:hidden\" aria-hidden=\"true\"><defs>\n<symbol id=\"i-sword\" viewBox=\"0 0 32 32\"><path d=\"M9 23 25 7l1-5-5 1L5 19m1-3 10 10M4 28l5-5m-7 3 4 4\"/></symbol>\n<symbol id=\"i-bow\" viewBox=\"0 0 32 32\"><path d=\"M8 3c21 4 21 22 0 26L18 16 8 3Zm-5 13h25m-5-4 5 4-5 4\"/></symbol>\n<symbol id=\"i-crossbow\" viewBox=\"0 0 32 32\"><path d=\"M3 18h22M20 6c5 4 5 20 0 24M20 6l-8 12 8 12M25 18l4-2v4l-4-2M8 18v7h5\"/></symbol>\n<symbol id=\"i-staff\" viewBox=\"0 0 32 32\"><path d=\"m5 29 14-18m-2-2 5-7 7 5-5 7-7-5Zm6-6 1 8M4 5v5M2 7h5\"/></symbol>\n<symbol id=\"i-spear\" viewBox=\"0 0 32 32\"><path d=\"m4 29 17-19m-5 1 4-9 9-1-1 9-9 4m-5 0 5 5\"/></symbol>\n<symbol id=\"i-shield\" viewBox=\"0 0 32 32\"><path d=\"m16 2 12 5-1 12c-1 5-6 8-11 11C11 27 6 24 5 19L4 7 16 2Zm0 6v15M10 14h12\"/></symbol>\n<symbol id=\"i-punch\" viewBox=\"0 0 32 32\"><path d=\"m9 28-4-9V8c0-4 5-4 5 0V4c0-3 5-3 5 0v3c0-4 5-4 5 0v2c0-3 5-3 5 0v8l3-3c2-2 5 1 3 4l-7 10H9ZM10 8v7m5-8v8m5-6v6\"/></symbol>\n<symbol id=\"i-hat\" viewBox=\"0 0 32 32\"><path d=\"M2 22 16 5l14 17Zm7-8h14M5 22c4 3 18 3 22 0\"/></symbol>\n<symbol id=\"i-armor\" viewBox=\"0 0 32 32\"><path d=\"m11 3-7 4-2 8 7 3v11h14V18l7-3-2-8-7-4c0 7-10 7-10 0ZM9 18h14m-7-9v17\"/></symbol>\n<symbol id=\"i-pants\" viewBox=\"0 0 32 32\"><path d=\"M7 3h18l2 26h-9l-2-16-2 16H5L7 3Zm0 5h18\"/></symbol>\n<symbol id=\"i-gloves\" viewBox=\"0 0 32 32\"><path d=\"M10 29 6 17V9c0-3 4-3 4 0V5c0-3 4-3 4 0v5-6c0-3 4-3 4 0v7-4c0-3 4-3 4 0v10l4-4 3 3-8 13H10Z\"/></symbol>\n<symbol id=\"i-shoes\" viewBox=\"0 0 32 32\"><path d=\"M7 3h13v14l9 5v7H3V18h4V3Zm-3 21h24M12 8h6m-6 5h6\"/></symbol>\n<symbol id=\"i-wings\" viewBox=\"0 0 32 32\"><path d=\"M15 26C7 25 2 16 3 3l12 12m2 11c8-1 13-10 12-23L17 15M5 12l8 9m14-9-8 9\"/></symbol>\n<symbol id=\"i-mount\" viewBox=\"0 0 32 32\"><path d=\"M8 28v-9l6-7-1-8 5-2 2 6 8 5-3 6-8-2v11H8ZM4 28h19\"/></symbol>\n<symbol id=\"i-book\" viewBox=\"0 0 32 32\"><path d=\"M4 6c4-2 8-2 12 1 4-3 8-3 12-1v21c-4-2-8-2-12 1-4-3-8-3-12-1V6Zm12 1v21M8 11h4m8 0h4\"/></symbol>\n<symbol id=\"i-ore\" viewBox=\"0 0 32 32\"><path d=\"M5 22 9 9l9-5 9 9-3 13-12 2-7-6Zm4-13 7 7 11-3M16 16l-4 12\"/></symbol>\n<symbol id=\"i-lock\" viewBox=\"0 0 32 32\"><path d=\"M9 14v-4a7 7 0 0 1 14 0v4M6 14h20v15H6z\"/></symbol>\n<symbol id=\"i-pin\" viewBox=\"0 0 32 32\"><path d=\"M16 29s9-9 9-16a9 9 0 0 0-18 0c0 7 9 16 9 16Z\"/><circle cx=\"16\" cy=\"13\" r=\"3.5\"/></symbol>\n<symbol id=\"i-flame\" viewBox=\"0 0 32 32\"><path d=\"M17 2c2 8-4 9-2 14l6-7c1 6 8 9 5 16-3 9-21 7-21-4 0-6 7-9 12-19Z\"/></symbol>\n<symbol id=\"i-water\" viewBox=\"0 0 32 32\"><path d=\"M16 3c6 8 10 13 10 18a10 10 0 0 1-20 0c0-5 4-10 10-18Z\"/><path d=\"M11 21a5 5 0 0 0 5 5\"/></symbol>\n<symbol id=\"i-wood\" viewBox=\"0 0 32 32\"><path d=\"M6 26C6 12 14 5 27 5c0 13-7 21-21 21Zm0 0 13-13\"/></symbol>\n<symbol id=\"i-metal\" viewBox=\"0 0 32 32\"><path d=\"M3 24 7 14h18l4 10Zm6-10 2-6h10l2 6M16 14v10\"/></symbol>\n<symbol id=\"i-earth\" viewBox=\"0 0 32 32\"><path d=\"M2 27 12 9l6 9 4-5 8 14Z\"/><path d=\"m9 15 3 2 3-3\"/></symbol>\n<symbol id=\"i-heart\" viewBox=\"0 0 32 32\"><path d=\"M16 27S4 19 4 11a6 6 0 0 1 12-2 6 6 0 0 1 12 2c0 8-12 16-12 16Z\"/></symbol>\n<symbol id=\"i-orb\" viewBox=\"0 0 32 32\"><circle cx=\"16\" cy=\"17\" r=\"10\"/><path d=\"M11 15a5 5 0 0 1 5-5M16 2v3M27 6l-2 2M5 6l2 2\"/></symbol>\n<symbol id=\"i-speed\" viewBox=\"0 0 32 32\"><path d=\"M3 10h12M6 16h14M3 22h10M20 8l8 8-8 8\"/></symbol>\n<symbol id=\"i-reflect\" viewBox=\"0 0 32 32\"><path d=\"M5 11h20l-6-6M27 21H7l6 6\"/></symbol>\n<symbol id=\"i-feather\" viewBox=\"0 0 32 32\"><path d=\"M27 4C15 4 8 12 8 22l-4 6M8 22c8 0 15-4 17-12M12 18h8\"/></symbol>\n<symbol id=\"i-flag\" viewBox=\"0 0 32 32\"><path d=\"M7 29V4m0 2h17l-5 6 5 6H7\"/></symbol>\n<symbol id=\"i-talk\" viewBox=\"0 0 32 32\"><path d=\"M4 6h24v16H14l-7 6v-6H4Z\"/><path d=\"M10 14h0m6 0h0m6 0h0\"/></symbol>\n<symbol id=\"i-bridge\" viewBox=\"0 0 32 32\"><path d=\"M2 21h28M4 21c4-9 20-9 24 0M9 18v8m14-8v8M16 15v11\"/></symbol>\n<symbol id=\"i-deer\" viewBox=\"0 0 32 32\"><path d=\"M11 14 6 5m5 9 1-9m9 9 5-9m-5 9-1-9M11 14h10l-1 7-4 5-4-5Z\"/></symbol>\n<symbol id=\"i-lion\" viewBox=\"0 0 32 32\"><path d=\"M16 3l3 4 5-1-1 5 4 3-4 3 1 5-5-1-3 4-3-4-5 1 1-5-4-3 4-3-1-5 5 1Z\"/><circle cx=\"16\" cy=\"15\" r=\"5\"/></symbol>\n<symbol id=\"i-elephant\" viewBox=\"0 0 32 32\"><path d=\"M5 26V13a8 8 0 0 1 16 0v3c0 4 5 3 5 8v4M5 18H3m7 8v-5m8 5v-5M13 11h0\"/></symbol>\n<symbol id=\"i-croc\" viewBox=\"0 0 32 32\"><path d=\"M2 17h19l9-4v8l-9-4M7 14l2-3 2 3 2-3 2 3 2-3 2 3M8 17v5m8-5v5\"/></symbol>\n<symbol id=\"i-coin\" viewBox=\"0 0 32 32\"><circle cx=\"16\" cy=\"16\" r=\"12\"/><path d=\"M16 9v14M12 12h6a2 2 0 0 1 0 4h-4a2 2 0 0 0 0 4h6\"/></symbol>\n<symbol id=\"i-close\" viewBox=\"0 0 32 32\"><path d=\"M8 8l16 16M24 8 8 24\"/></symbol>\n<symbol id=\"i-eye\" viewBox=\"0 0 32 32\"><path d=\"M3 16s5-9 13-9 13 9 13 9-5 9-13 9S3 16 3 16Z\"/><circle cx=\"16\" cy=\"16\" r=\"4\"/></symbol>\n<symbol id=\"i-out\" viewBox=\"0 0 32 32\"><path d=\"M16 4v15m-6-6 6 6 6-6M5 26h22\"/></symbol>\n<symbol id=\"i-check\" viewBox=\"0 0 32 32\"><path d=\"m6 16 7 7 13-14\"/></symbol>\n<symbol id=\"i-next\" viewBox=\"0 0 32 32\"><path d=\"M6 16h20m-7-7 7 7-7 7\"/></symbol>\n<symbol id=\"i-pen\" viewBox=\"0 0 32 32\"><path d=\"m5 27 2-7L22 5l5 5-15 15Zm13-18 5 5\"/></symbol>\n<symbol id=\"i-user\" viewBox=\"0 0 32 32\"><circle cx=\"16\" cy=\"10\" r=\"6\"/><path d=\"M5 29c1-8 6-11 11-11s10 3 11 11\"/></symbol>\n<symbol id=\"i-hand2\" viewBox=\"0 0 32 32\"><path d=\"M10 28 6 18V9c0-3 4-3 4 0v6m0-7c0-3 4-3 4 0v7m8 13 4-10v-9c0-3-4-3-4 0v6m0-7c0-3-4-3-4 0v7\"/></symbol>\n<symbol id=\"i-thunder\" viewBox=\"0 0 32 32\"><path d=\"M19 2 6 18h8l-3 12 15-18h-9l2-10Z\"/></symbol><symbol id=\"i-wind\" viewBox=\"0 0 32 32\"><path d=\"M3 11h16a4 4 0 1 0-4-4M3 17h22a4 4 0 1 1-4 4M3 23h9\"/></symbol><symbol id=\"i-ice\" viewBox=\"0 0 32 32\"><path d=\"M16 3v26M4.7 9.5l22.6 13M4.7 22.5l22.6-13M12 5l4 4 4-4M12 27l4-4 4 4M5 14l4 2-4 2M27 14l-4 2 4 2\"/></symbol><symbol id=\"i-demon\" viewBox=\"0 0 32 32\"><path d=\"M5 4c1 5 3 7 6 8-1 2-2 4-2 7 0 6 3 10 7 10s7-4 7-10c0-3-1-5-2-7 3-1 5-3 6-8-3 2-6 3-9 3h-4c-3 0-6-1-9-3ZM11.5 18l4 1.5M20.5 18l-4 1.5M13 24h6\"/></symbol><symbol id=\"i-light\" viewBox=\"0 0 32 32\"><circle cx=\"16\" cy=\"16\" r=\"6\"/><path d=\"M16 2v5M16 25v5M2 16h5M25 16h5M6 6l3.5 3.5M22.5 22.5 26 26M6 26l3.5-3.5M22.5 9.5 26 6\"/></symbol><symbol id=\"i-spark\" viewBox=\"0 0 32 32\"><path d=\"m16 2 4 10 10 4-10 4-4 10-4-10-10-4 10-4L16 2Z\"/></symbol>\n<symbol id=\"i-whirl\" viewBox=\"0 0 32 32\"><path d=\"M16 4a12 12 0 1 1-12 12M16 10a6 6 0 1 1-6 6M4 16l-2-5m2 5 5-2\"/></symbol>\n<symbol id=\"i-tiger\" viewBox=\"0 0 32 32\"><path d=\"M6 10 4 4l6 3m16 3 2-6-6 3M6 10c0 10 4 16 10 16s10-6 10-16c-3-3-7-4-10-4S9 7 6 10Zm6 6h0m8 0h0m-7 5 3 2 3-2M16 9v4m-6-1 2 1m10-1-2 1\"/></symbol>\n<symbol id=\"i-anvil\" viewBox=\"0 0 32 32\"><path d=\"M3 10h20c0 4-3 6-7 6v4h4v4H10v-4h4v-4H8c-3 0-5-3-5-6Zm20 0 6-2v4l-6-2M24 3l-3 4m6-2-4 3\"/></symbol>\n<symbol id=\"i-bag\" viewBox=\"0 0 32 32\"><path d=\"M8 9c0-10 16-10 16 0M7 9h18l4 20H3L7 9Zm5 6h8v8h-8Z\"/></symbol>\n<symbol id=\"i-home\" viewBox=\"0 0 32 32\"><path d=\"m2 15 14-12 14 12M6 12v17h20V12M13 29V18h7v11\"/></symbol>\n<symbol id=\"i-save\" viewBox=\"0 0 32 32\"><path d=\"M4 3h21l4 5v21H3V3Zm5 0v9h13V3M9 29V18h14v11\"/></symbol>\n<symbol id=\"i-quest\" viewBox=\"0 0 32 32\"><path d=\"M7 3h19v23H7M7 3C1 3 1 10 7 10m0 16c-6 0-6 5 0 5h20M12 10h9m-9 6h9\"/></symbol>\n<symbol id=\"i-gear\" viewBox=\"0 0 32 32\"><path d=\"m12 3 8 0 1 5 5 1 3 7-4 4 1 5-7 4-4-3-5 1-5-6 2-5-2-5 6-5 1-3Z\"/><circle cx=\"16\" cy=\"16\" r=\"5\"/></symbol>\n</defs></svg>\n<header><div class=\"profile\"><button id=\"avatarBtn\" class=\"avatar\" aria-label=\"Thuộc tính nhân vật\"><svg viewBox=\"0 0 64 64\" class=\"portrait\" aria-hidden=\"true\"><path fill=\"#d9ad80\" d=\"M10 64v-8c0-21 44-21 44 0v8Z\"/><path fill=\"#dfbf91\" d=\"M25 32h14v17H25z\"/><ellipse id=\"pfHair\" fill=\"#2a2622\" cx=\"20\" cy=\"34\" rx=\"7\" ry=\"13\" style=\"display:none\"/><path id=\"pfYem\" fill=\"#c0392b\" d=\"M32 44l10 10-10 10-10-10Z\" style=\"display:none\"/><ellipse fill=\"#e4c69b\" cx=\"32\" cy=\"25\" rx=\"15\" ry=\"18\"/><path fill=\"#2a2622\" d=\"M16 26V14C16-2 52-3 48 19L33 13l-17 13Z\"/></svg><svg class=\"exp-ring\" viewBox=\"0 0 100 100\" aria-hidden=\"true\"><circle class=\"exp-bg\" cx=\"50\" cy=\"50\" r=\"46\" pathLength=\"100\"/><circle id=\"expArc\" class=\"exp-fg\" cx=\"50\" cy=\"50\" r=\"46\" pathLength=\"100\" stroke-dasharray=\"0 100\"/></svg><b id=\"levelBadge\" class=\"level\">Lv. 1</b><i id=\"ptDot\" class=\"pt-dot\" hidden>+</i></button><div class=\"player-info\"><strong id=\"playerName\" class=\"player-name\">Lữ khách</strong><div class=\"bars\"><div class=\"bar\" aria-label=\"Máu\"><div id=\"hpFill\" class=\"bar-fill hp\"></div><small id=\"hpText\">100 / 100</small></div><div class=\"bar\" aria-label=\"Mana\"><div id=\"manaFill\" class=\"bar-fill mana\"></div><small id=\"manaText\">80 / 80</small></div><div class=\"bar\" aria-label=\"Nội tại\"><div id=\"passiveFill\" class=\"bar-fill passive\" style=\"width:0\"></div><small id=\"passiveText\">0%</small></div></div><div id=\"buffs\" class=\"buffs\"></div></div></div><div class=\"top-right\"><div id=\"bossBar\" class=\"boss-mini\" hidden><span id=\"bossIc\" class=\"bi\"></span><span class=\"bm\"><span class=\"bm-bar\"><span id=\"bossFill\" class=\"bm-fill\"></span></span><small id=\"bossHp\"></small></span></div><span class=\"version\">v9.0</span><button id=\"settingsBtn\" aria-label=\"Menu\" aria-expanded=\"false\"><svg class=\"icon\"><use href=\"#i-gear\"/></svg></button><nav id=\"gameMenu\" class=\"menu\" hidden><button id=\"bagBtn\"><svg class=\"icon\"><use href=\"#i-bag\"/></svg>Túi đồ</button><button id=\"questBtn\"><svg class=\"icon\"><use href=\"#i-quest\"/></svg>Nhiệm vụ</button><button id=\"saveBtn\"><svg class=\"icon\"><use href=\"#i-save\"/></svg>Lưu</button><button id=\"homeBtn\"><svg class=\"icon\"><use href=\"#i-home\"/></svg>Về làng</button><button id=\"switchBtn\"><svg class=\"icon\"><use href=\"#i-user\"/></svg>Đổi nhân vật</button></nav></div></header>\n<div id=\"portal\" class=\"portal\"><div class=\"portal-card\"><div class=\"plogo\"><b>Lữ Hành</b><small>Làng Thanh Mộc \u{b7} v9.0</small></div><div id=\"portalBody\"></div><p id=\"portalMsg\"></p><small id=\"netMode\" class=\"netmode\"></small></div></div>\n<main class=\"layout\"><canvas id=\"scene\" tabindex=\"0\" aria-label=\"Bản đồ\"></canvas><div id=\"questTrack\" class=\"quest-track floating\"></div><div class=\"map-box\"><canvas id=\"minimap\" width=\"240\" height=\"128\" aria-label=\"Bản đồ thu nhỏ\"></canvas><div class=\"map-meta\"><svg class=\"icon\" aria-hidden=\"true\"><use href=\"#i-pin\"/></svg><span id=\"placeName\">Thanh Mộc</span><span id=\"placeCoord\" class=\"coord\"></span><span id=\"safeTag\" class=\"safe\" hidden>An toàn</span></div></div><div class=\"hint\"><b>WASD</b>di chuyển <b>Space</b>đánh <b>1</b>combo <b>2</b>diện rộng <b>3</b>liên hoàn <b>4</b>thú cưỡi <b>E</b>nói chuyện <b>B</b>túi đồ</div><div class=\"skill-wheel\"><button id=\"skill-normal\" data-skill=\"normal\" class=\"skill normal\" title=\"Space\"><svg id=\"normalIcon\" class=\"icon\"><use href=\"#i-sword\"/></svg><small class=\"key\">Đánh</small><span class=\"cooldown\"></span></button><button id=\"skill-basic\" data-skill=\"basic\" class=\"skill basic\" title=\"1 \u{b7} Combo \u{b7} 10 mana\"><svg class=\"icon\"><use href=\"#i-spark\"/></svg><small class=\"key\">Combo</small><span class=\"cooldown\"></span></button><button id=\"skill-intermediate\" data-skill=\"intermediate\" class=\"skill intermediate\" title=\"2 \u{b7} Diện rộng \u{b7} 18 mana\"><svg class=\"icon\"><use href=\"#i-whirl\"/></svg><small class=\"key\">Diện rộng</small><span class=\"cooldown\"></span></button><button id=\"skill-advanced\" data-skill=\"advanced\" class=\"skill advanced\" title=\"3 \u{b7} Liên hoàn \u{b7} 28 mana\"><svg class=\"icon\"><use href=\"#i-flame\"/></svg><small class=\"key\">Liên hoàn</small><span class=\"cooldown\"></span></button><button id=\"skill-mount\" data-skill=\"mount\" class=\"skill mount\" title=\"4 \u{b7} Thú cưỡi\" hidden><svg id=\"mountIcon\" class=\"icon\"><use href=\"#i-mount\"/></svg><small id=\"mountName\" class=\"key\">Thú cưỡi</small><span class=\"cooldown\"></span></button></div><div class=\"touch-controls\"><div id=\"pad\" class=\"pad\" aria-label=\"Cần điều khiển\"><div class=\"knob\"></div></div></div><section id=\"dialog\" hidden aria-live=\"polite\"><h2 id=\"speaker\"></h2><p id=\"line\"></p><div class=\"actions\"><span id=\"page\" class=\"dots\"></span><span><button id=\"shopBtn\" hidden><svg class=\"icon\"><use href=\"#i-bag\"/></svg><span id=\"shopLabel\">Mua bán</span></button><button id=\"next\"><svg class=\"icon\"><use href=\"#i-next\"/></svg>Tiếp</button></span></div></section><div id=\"toast\" role=\"status\"></div></main><div id=\"overlay\" class=\"overlay\" hidden><section id=\"modalCard\" class=\"card\"><div class=\"card-head\"><div id=\"overlayTitle\" class=\"ttl\"></div><button id=\"closeOverlay\" class=\"close-modal\" aria-label=\"Đóng\"><svg class=\"icon\"><use href=\"#i-close\"/></svg></button></div><div id=\"overlayBody\"></div></section></div>\n</div>\n");})();
 ;/* ================= MÀN HÌNH CHỜ: thanh tải 0\u{2013}100%, cảnh làng + lời dẫn truyện =================
    Dùng chung cho file khởi động (tải tài nguyên trang) và game (kết nối máy chủ, tải nhân vật, dựng bản đồ). */
 window.LH_Loader=window.LH_Loader||(()=>{
@@ -376,8 +376,19 @@ function LH_Core(A){
       const a=auth(p.token);
       return A.lock(()=>{
         const c=ownChar(a,p.charId,'active'),st=stateOf(c),C=p.save&&p.save.player;
-        const R=C?Player.merge(st.player,C):st.player,srv=st.save.srv=st.save.srv||{},now=A.now();
-        const results=(Array.isArray(p.ops)?p.ops.slice(0,60):[]).map(op=>{try{return {ok:true,...Player.applyOp(R,op,srv,now)};}catch(e){return {ok:false,error:String(e.message||e)};}});
+        let R=C?Player.merge(st.player,C):st.player;const srv=st.save.srv=st.save.srv||{},now=A.now(),ops=Array.isArray(p.ops)?p.ops.slice(0,600):[];
+        // Lệnh chơi được gom trên máy người chơi rồi gửi một lần (về làng, qua cầu, gặp thương nhân, bấm Lưu).
+        // Gói đã nhận rồi (mạng rớt lúc chờ trả lời, gửi lại) thì không tính lần hai.
+        const bid=String(p.bid||'').slice(0,40),dup=!!bid&&(srv.bids||[]).includes(bid);
+        // Thời điểm từng lệnh theo đồng hồ máy chủ: không sớm hơn lần lưu trước, không muộn hơn lúc này
+        const skew=Number.isFinite(+p.sentAt)&&+p.sentAt>0?now-(+p.sentAt):0;let prev=Math.max(+srv.lastAt||0,now-864e5);
+        const results=dup?ops.map(()=>({ok:true,dup:true})):ops.map(op=>{
+          let at=Number.isFinite(+(op&&op.at))?+op.at+skew:now;at=Math.min(now,Math.max(prev,at));prev=at;
+          try{if(op&&op.lay)R=Player.relayout(R,op.lay);return {ok:true,...Player.applyOp(R,op,srv,at)};}catch(e){return {ok:false,error:String(e.message||e)};}
+        });
+        if(!dup&&ops.length&&C)R=Player.merge(R,C);
+        if(bid&&!dup)srv.bids=[...(srv.bids||[]),bid].slice(-8);
+        srv.lastAt=now;
         storeState(c,st,R,{pos:p.save&&p.save.pos,seen:p.save&&p.save.seen});
         return {state:R,results,savedAt:c.cap_nhat};
       });
@@ -515,6 +526,32 @@ const Net={
     if(!r.ok&&(r.error==='DANG_NHAP_NOI_KHAC'||(r.error==='PHIEN_HET_HAN'&&this.token))&&typeof window!=='undefined')window.dispatchEvent(new CustomEvent('lh-kicked',{detail:r.error}));
     if(!r.ok){const e=Error(r.error||'LOI');throw e;}
     return r;
+  }
+};
+/* Tiến trình chơi giữ trên máy (localStorage), mỗi nhân vật một khóa: {save, inflight:{bid,ops}, ops}
+   Game ghi liên tục; chỉ gửi lên máy chủ ở các mốc lưu. Lần vào game / Chợ phiên sau, phần còn sót được gửi trước khi tải nhân vật. */
+const LH_Local={
+  key:id=>'lh-local-'+id,
+  get(id){try{return JSON.parse(localStorage.getItem(this.key(id))||'null');}catch(e){return null;}},
+  set(id,v){try{localStorage.setItem(this.key(id),JSON.stringify(v));return true;}catch(e){return false;}},
+  clear(id){try{localStorage.removeItem(this.key(id));}catch(e){}},
+  async push(id){
+    const L=this.get(id);if(!L||!L.save)return false;
+    let last=null;const fix=ops=>{if(ops.length&&!ops[0].lay&&last)ops[0]={...ops[0],lay:last};for(const o of ops)if(o.lay)last=o.lay;return ops;};
+    try{
+      do{
+        if(!L.inflight)L.inflight={bid:Date.now().toString(36)+Math.random().toString(36).slice(2,8),ops:fix((L.ops||[]).splice(0,500))};
+        else fix(L.inflight.ops);
+        this.set(id,L);
+        await Net.call('play',{charId:id,bid:L.inflight.bid,sentAt:Date.now(),save:L.save,ops:L.inflight.ops});
+        L.inflight=null;this.set(id,L);
+      }while((L.ops||[]).length);
+    }catch(e){
+      // nhân vật không còn / đang đi đánh thuê: bỏ phần lưu tạm; lỗi mạng: giữ lại, báo lỗi
+      if(['KHONG_THAY_NHAN_VAT','SAI_TRANG_THAI'].includes(e.message)){this.clear(id);return false;}
+      throw e;
+    }
+    this.clear(id);return true;
   }
 };
 const NET_ERR={PHIEN_HET_HAN:'Phiên đăng nhập hết hạn, hãy đăng nhập lại',TEN_DANG_NHAP_SAI:'Tên đăng nhập 3\u{2013}20 ký tự: chữ thường, số, dấu _',EMAIL_SAI:'Email không hợp lệ',MAT_KHAU_NGAN:'Mật khẩu tối thiểu 6 ký tự',TEN_DANG_NHAP_DA_CO:'Tên đăng nhập đã có người dùng',EMAIL_DA_CO:'Email đã được đăng ký',SAI_DANG_NHAP:'Sai tên đăng nhập hoặc mật khẩu',KHONG_THAY_EMAIL:'Không có tài khoản dùng email này',MA_SAI:'Mã khôi phục sai hoặc hết hạn',TEN_NHAN_VAT_SAI:'Tên nhân vật 2\u{2013}16 ký tự, chỉ chữ và số',DIEM_SAI:'Phải chia đủ số điểm',DU_NHAN_VAT:'Tài khoản đã đủ số nhân vật',TEN_DA_CO:'Tên nhân vật đã có người dùng',KHONG_THAY_NHAN_VAT:'Không tìm thấy nhân vật',SAI_TRANG_THAI:'Nhân vật đang đi đánh thuê',GIA_SAI:'Giá không hợp lệ',LINH_KHONG_CON:'Lính này đã có người thuê',DA_BAN:'Món này đã được bán',DO_CUA_MINH:'Đây là đồ bạn ký gửi',KHONG_HUY_DUOC:'Không hủy được',DU_LIEU_QUA_LON:'Dữ liệu lưu quá lớn',KHONG_DU_TIEN:'Nhân vật không đủ tiền',DU_LINH:'Nhân vật đã đủ lính',BAG_FULL:'Túi đồ đã đầy',VAT_PHAM_SAI:'Món đồ không hợp lệ',NHANH_QUA:'Quái chưa kịp hồi sinh',KHONG_DU_HONG_NGOC:'Nhân vật không đủ hồng ngọc',DANG_NHAP_NOI_KHAC:'Tài khoản vừa đăng nhập trên thiết bị khác',KHONG_CO_LENH:'Máy chủ chưa cập nhật bản mới',MAY_CHU_LOI:'Máy chủ Apps Script đang lỗi hoặc chưa mở quyền truy cập cho mọi người',POST_LOI:'Máy chủ có chạy nhưng không nhận lệnh: dán Code.gs mới rồi Triển khai \u{2192} Quản lý triển khai \u{2192} Sửa \u{2192} Phiên bản mới',KHONG_TRUY_CAP:'Trình duyệt này không gọi được máy chủ: trong Apps Script, Triển khai \u{2192} Quản lý triển khai \u{2192} Sửa, mục "Ai có quyền truy cập" chọn "Bất kỳ ai"'};
@@ -1013,6 +1050,12 @@ const Player=(()=>{
                  C = trạng thái máy người chơi (chỉ được sắp xếp đồ đang có + máu, mana, giếng\u{2026}).
      Người chơi không thể tự sinh đồ hay tiền: món nào không có trên máy chủ thì bị bỏ, món mới trên máy chủ tự vào túi. */
   const allItems=s=>[...(s.bag||[]),...Object.values(s.equipment||{}),...(s.skillSlots||[]),...(s.mercs||[]).flatMap(m=>Object.values(m.equipment||{}))].filter(it=>it&&typeof it.uid==='string');
+  // Sắp xếp đồ của người chơi lúc ra lệnh (chỉ mã đồ): b túi, e trang bị, s ô sách, m trang bị lính, a sách đang dùng
+  function layout(s){const u=x=>x&&x.uid||null,eq=E=>Object.fromEntries(slots.map(k=>[k,u(E&&E[k])]));return {b:(s.bag||[]).map(u),e:eq(s.equipment),s:(s.skillSlots||[]).map(u),m:Object.fromEntries((s.mercs||[]).map(m=>[m.mid,eq(m.equipment)])),a:s.activeBook};}
+  function relayout(S,L){
+    if(!L||typeof L!=='object')return S;const it=u=>typeof u==='string'?{uid:u}:null,eq=E=>Object.fromEntries(slots.map(k=>[k,it(E&&E[k])]));
+    return merge(S,{...S,bag:(Array.isArray(L.b)?L.b:[]).map(it),equipment:eq(L.e),skillSlots:(Array.isArray(L.s)?L.s:[]).map(it),activeBook:L.a,mercs:(S.mercs||[]).map(m=>({...m,equipment:eq(L.m&&L.m[m.mid])}))});
+  }
   function merge(S,C){
     const chOf={name:S.name,gender:S.gender,stats:S.stats};
     const soft={hp:C&&C.hp,mana:C&&C.mana,passive:C&&C.passive,cooldowns:C&&C.cooldowns,flags:{...S.flags,river:!!(S.flags&&S.flags.river)||!!(C&&C.flags&&C.flags.river),wells:(C&&C.flags&&C.flags.wells)||(S.flags&&S.flags.wells)||{}}};
@@ -1065,7 +1108,7 @@ const Player=(()=>{
   }
   load(typeof GAME_DATA!=='undefined'?GAME_DATA:{});
   return {VERSION,BAG_SIZE,SKILL_SLOTS,MAX_LV,MAX_MERC,MAX_ACTIVE_QUEST,ELEMENTS,BEASTS,GROUPS,FX_NAMES,STAT_KEYS,CFG,RAR,ADD,SHOPS,SETS,MON,QUESTS,MERCS,items,slots,skills,
-    load,info,kind,weapon,skillCost,cmdInfo,WEAPONS,PREDICT,seqRng,setFollow,fitFollow,mercCmd,petMax,SHOP_ENH,expNeed,maxLevel,gainExp,spendPoints,mountGain,bookStat,mountCmd,qOf,rar,nameOf,stat,canEnhance,tradeable,gainOf,enhRate,enhCost,enhance,roll,rollDrop,create,derive,targets,equip,unequip,stance,isTwo,pairOk,setSkill,unsetSkill,toggleBook,element,money,shopPrice,buy,sell,sellPrice,addItem,cast,
+    layout,relayout,load,info,kind,weapon,skillCost,cmdInfo,WEAPONS,PREDICT,seqRng,setFollow,fitFollow,mercCmd,petMax,SHOP_ENH,expNeed,maxLevel,gainExp,spendPoints,mountGain,bookStat,mountCmd,qOf,rar,nameOf,stat,canEnhance,tradeable,gainOf,enhRate,enhCost,enhance,roll,rollDrop,create,derive,targets,equip,unequip,stance,isTwo,pairOk,setSkill,unsetSkill,toggleBook,element,money,shopPrice,buy,sell,sellPrice,addItem,cast,
     questAccept,questProgress,questTurnIn,hireNpc,addMerc,mercEquip,mercUnequip,dismissMerc,makeMerc,cleanItem,serialize,restore,restorePlayer,merge,applyOp,allItems};
 })();
 
@@ -1095,7 +1138,7 @@ window.startGame=(session)=>{
   const SK={normal:{mul:1,dur:1,cycles:1},basic:{mul:.85,dur:.7,cycles:3},intermediate:{mul:1.15,dur:1.2,cycles:1,multi:3,nova:130},advanced:{mul:.75,dur:.55,cycles:5,nova:160,finale:2}};
   const NPC_IDS=World.npcs.map(n=>n.id);
   let width=0,height=0,scale=1,route=[],targetNPC=null,targetWell=null,dialogNPC=null,page=0,last=0,time=0,toastTimer,joystick={x:0,y:0},holdAttack=false,mouseAim=null,shakeAmp=0,manaWarnAt=-9;
-  let lastAllyKey='',safe=World.isSafe(hero.x),HD=Player.derive(player,{safe}),hdAt=-1,nextSave=60;
+  let lastAllyKey='',safe=World.isSafe(hero.x),HD=Player.derive(player,{safe}),hdAt=-1,bridgeSide=null;
   const ground=document.createElement('canvas'),miniGround=document.createElement('canvas');
   hero.name=player.name;
   const $=s=>document.querySelector(s),clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,t)=>a+(b-a)*t,seg=(p,a,b)=>clamp((p-a)/(b-a),0,1),E=t=>t<.5?2*t*t:1-((-2*t+2)**2)/2;
@@ -1805,14 +1848,20 @@ window.startGame=(session)=>{
       ctx.restore();
     }
   }
-  /* ---------- Đồng bộ với máy chủ: gom lệnh, gửi kèm cách sắp xếp đồ, nhận lại trạng thái chuẩn ---------- */
-  /* Đồng bộ kiểu "hiện trước, lưu sau":
-     - Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm: máy người chơi tính ngay bằng cùng luật + cùng chuỗi ngẫu nhiên với máy chủ,
-       hiện kết quả liền, rồi gom lệnh gửi lên máy chủ. Máy chủ tính lại y hệt và lưu; trạng thái máy chủ luôn là chuẩn.
-     - Lệnh chưa được máy chủ xác nhận nằm trong `pending`; mỗi lần nhận trạng thái mới thì áp lại các lệnh đó lên trên. */
-  const sync={queue:[],busy:false,timer:null,at:0,fail:0},pending=[];
-  function schedule(ms){const at=Date.now()+ms;if(sync.timer&&sync.at<=at)return;clearTimeout(sync.timer);sync.at=at;sync.timer=setTimeout(()=>{sync.timer=null;flush();},ms);}
-  function queueOp(o,delay=0,ent=null){return new Promise((resolve,reject)=>{sync.queue.push({op:o,resolve,reject,ent});schedule(delay);});}
+  /* ---------- Lưu tiến trình: chơi trên máy, chỉ gửi lên máy chủ ở các mốc ----------
+     - Mọi lệnh (giết quái, mua bán, gia cường, nhiệm vụ, thuê lính, cộng điểm\u{2026}) tính ngay trên máy bằng cùng luật + cùng chuỗi ngẫu nhiên với máy chủ,
+       rồi xếp hàng và ghi vào bộ nhớ trình duyệt (localStorage) cùng trạng thái nhân vật. Tắt trang giữa chừng vẫn còn, lần vào sau gửi tiếp.
+     - Chỉ gửi lên máy chủ và tải lại túi đồ, tiền, nhân vật khi: về làng, qua cầu, gặp Thương nhân, bấm Lưu, ra lều. Không tự làm mới.
+     - Máy chủ tính lại y hệt (theo thời điểm và cách xếp đồ lúc ra lệnh) rồi lưu; trạng thái máy chủ là chuẩn. */
+  const CHUNK=500,sync={queue:[],busy:null,sig:'',lastLay:null,at:-99,keptAt:0},pending=[];let inflight=null,sent=[];
+  const record=()=>({save:Player.serialize(player,hero,seen),inflight,ops:sync.queue.map(b=>b.op),t:Date.now()});
+  function keepLocal(){sync.keptAt=time;LH_Local.set(session.charId,record());}
+  const unsaved=()=>!!(sync.queue.length||inflight);
+  function queueOp(o,L=Player.layout(player)){
+    const sig=JSON.stringify(L);o.at=Date.now();
+    if(!sync.queue.length||sig!==sync.sig){o.lay=L;sync.sig=sig;}
+    const b={op:o,ent:null};sync.queue.push(b);keepLocal();return b;
+  }
   function adopt(S){
     const before=JSON.parse(JSON.stringify(player));
     let R=Player.merge(S,before);
@@ -1820,29 +1869,43 @@ window.startGame=(session)=>{
     for(const k of Object.keys(player))if(!(k in R))delete player[k];
     Object.assign(player,R);refreshHD();syncMerc();window.GameUI?.refresh();
   }
-  async function flush(){
-    if(sync.busy){schedule(300);return false;}
-    sync.busy=true;const batch=sync.queue.splice(0);nextSave=time+60;
-    try{
-      const r=await Net.call('play',{charId:session.charId,save:Player.serialize(player,hero,seen),ops:batch.map(b=>b.op)});
-      sync.fail=0;
-      for(const b of batch)if(b.ent){const i=pending.indexOf(b.ent);if(i>=0)pending.splice(i,1);}
-      adopt(r.state);
-      batch.forEach((b,i)=>{const res=r.results[i]||{ok:false,error:'LOI'};if(b.ent&&!res.ok)message(svg('close')+'Máy chủ không nhận lệnh, đã đồng bộ lại');b.resolve(res);});return true;
-    }catch(e){
-      sync.fail++;const keep=batch.filter(b=>(b.op.t==='kill'||b.ent)&&sync.fail<6&&e.message==='Failed to fetch');
-      batch.filter(b=>!keep.includes(b)).forEach(b=>{if(b.ent){const i=pending.indexOf(b.ent);if(i>=0)pending.splice(i,1);}b.reject(e);});sync.queue.unshift(...keep);if(keep.length)schedule(3000*sync.fail);
-      message(svg('close')+netMsg(e));return false;
-    }finally{sync.busy=false;if(sync.queue.length&&!sync.timer)schedule(200);}
+  // Gửi hết hàng chờ (mỗi gói tối đa 500 lệnh), nhận lại trạng thái chuẩn
+  function flush(){
+    if(window.LH_KICKED)return Promise.resolve(false);
+    if(sync.busy)return sync.busy.then(()=>flush());
+    sync.busy=(async()=>{
+      try{
+        do{
+          if(!inflight){
+            sent=sync.queue.splice(0,CHUNK);const ops=sent.map(b=>b.op);
+            if(ops.length&&!ops[0].lay&&sync.lastLay)ops[0]={...ops[0],lay:sync.lastLay};
+            for(const o of ops)if(o.lay)sync.lastLay=o.lay;
+            inflight={bid:Date.now().toString(36)+Math.random().toString(36).slice(2,8),ops};
+          }
+          keepLocal();
+          const r=await Net.call('play',{charId:session.charId,bid:inflight.bid,sentAt:Date.now(),save:Player.serialize(player,hero,seen),ops:inflight.ops});
+          inflight=null;
+          for(const b of sent)if(b.ent){const i=pending.indexOf(b.ent);if(i>=0)pending.splice(i,1);}
+          adopt(r.state);
+          const bad=(r.results||[]).filter(x=>!x.ok).length;if(bad)message(svg('close')+'Máy chủ không nhận '+bad+' lệnh, đã đồng bộ lại');
+          sent=[];
+        }while(sync.queue.length>=CHUNK);
+        sync.at=time;if(!unsaved())LH_Local.clear(session.charId);else keepLocal();return true;
+      }catch(e){keepLocal();message(svg('close')+netMsg(e)+' \u{b7} tiến trình vẫn giữ trên máy');return false;}
+      finally{sync.busy=null;window.GameUI?.refresh();}
+    })();
+    return sync.busy;
   }
-  const op=(o,delay=400)=>{
+  // Mốc lưu tự động (về làng, qua cầu, gặp Thương nhân): vừa lưu xong mà chưa chơi gì thêm thì bỏ qua
+  function checkpoint(){if(!unsaved()&&time-sync.at<20)return;flush().then(ok=>{if(ok)message(svg('save')+'Đã lưu');});}
+  const op=(o)=>{
     if(Player.PREDICT.has(o.t)){
-      let r;try{r=Player.applyOp(player,o,{},Date.now());}catch(e){return Promise.reject(e);}
-      const ent={op:o};pending.push(ent);refreshHD();syncMerc();window.GameUI?.refresh();
-      queueOp(o,delay,ent).catch(()=>{});
+      const L=Player.layout(player);let r;try{r=Player.applyOp(player,o,{},Date.now());}catch(e){return Promise.reject(e);}
+      const b=queueOp(o,L);
+      b.ent={op:o};pending.push(b.ent);refreshHD();syncMerc();window.GameUI?.refresh();
       return Promise.resolve({ok:true,...r});
     }
-    return queueOp(o,0).then(r=>{if(!r.ok)throw Error(r.error);return r;});
+    queueOp(o);return flush().then(()=>({ok:true}));
   };
   function moveVector(){const x=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0)+joystick.x,y=(keys.has('s')||keys.has('arrowdown')?1:0)-(keys.has('w')||keys.has('arrowup')?1:0)+joystick.y;return {x,y,len:Math.hypot(x,y)};}
   function chooseAim(st,d){
@@ -2035,14 +2098,14 @@ window.startGame=(session)=>{
     e.hp-=d;e.hurt=time;floater(e.x,e.y-(e.pet?MON[e.type].h+12:62),'-'+d,'#ffb0a0',13);
     if(e.hp<=0){
       e.hp=0;e.data.hpFrac=0;const i=allies.indexOf(e);if(i>=0)allies.splice(i,1);burst(e.x,e.y-20,'#cfcfcf',18,150);
-      if(e.pet){message(svg('close')+e.name+' đã chết \u{b7} không hồi sinh');queueOp({t:'petOff',pid:e.key},0).catch(()=>{});}
-      else{message(svg('user')+e.name+' gục \u{b7} về làng chờ');save();}
+      if(e.pet){message(svg('close')+e.name+' đã chết \u{b7} không hồi sinh');op({t:'petOff',pid:e.key}).catch(()=>{});}
+      else{message(svg('user')+e.name+' gục \u{b7} về làng chờ');keepLocal();}
     }
   }
   // Về làng: lính gục đứng chờ ở làng nhập đội lại
   function reviveAtVillage(){
     const back=player.mercs.filter(m=>m.hpFrac===0);if(!back.length)return;
-    back.forEach(m=>m.hpFrac=1);syncMerc();message(svg('user')+back.map(m=>m.name).join(', ')+' nhập đội lại');save();
+    back.forEach(m=>m.hpFrac=1);syncMerc();message(svg('user')+back.map(m=>m.name).join(', ')+' nhập đội lại');keepLocal();
   }
   /* ---------- Quái vật và trùm ---------- */
   function pickTarget(m){
@@ -2142,7 +2205,7 @@ window.startGame=(session)=>{
   const PANEL_BTN={shop:'Mua bán',quests:'Nhận việc',mercs:'Thuê lính',market:'Chợ'};
   function nearby(){let best=null,bd=92;for(const n of World.npcs){const d=Math.hypot(n.x-hero.x,n.y-hero.y);if(d<bd){bd=d;best=n;}}return best;}
   function meet(n){
-    route=[];targetNPC=null;
+    route=[];targetNPC=null;if(n.id==='merchant')checkpoint();
     if(!seen.has(n.id)){keys.clear();joystick={x:0,y:0};holdAttack=false;dialogNPC=n;page=0;dialogEl.hidden=false;showLine();return;}
     window.GameUI?.openPanel(n);
   }
@@ -2161,7 +2224,7 @@ window.startGame=(session)=>{
     const S=HD.tot,gain=Math.max(0,Math.round(S.hp-player.hp));player.hp=S.hp;
     player.flags.wells[o.id]=Date.now()+(Number(Player.CFG.gieng_hoi_giay)||300)*1000;
     hero.facing=o.x<hero.x?-1:1;floater(hero.x,hero.y-70-seatH(),'+'+gain,'#7fe0b0',16);burst(o.x,o.y-30,'#9fdcff',26,170);burst(hero.x,hero.y-30,'#9fe8a8',16,120);
-    message(svg('heart')+'Uống nước giếng cổ \u{b7} hồi đầy máu');nextSave=Math.min(nextSave,time+2);window.GameUI?.refresh();
+    message(svg('heart')+'Uống nước giếng cổ \u{b7} hồi đầy máu');keepLocal();window.GameUI?.refresh();
   }
   function interact(){if(!overlayEl.hidden)return;if(dialogNPC){nextLine();return;}const n=nearby();if(n){meet(n);return;}const w=nearWell();if(w)useWell(w);}
   function endDialog(){if(!dialogNPC)return;seen.add(dialogNPC.id);dialogNPC=null;dialogEl.hidden=true;window.GameUI?.refresh();canvas.focus();}
@@ -2183,13 +2246,14 @@ window.startGame=(session)=>{
   function screenPoint(x,y){return {x:x/scale+camera.x,y:y/scale+camera.y};}
   const save=()=>flush();
   function update(dt){
-    const nowSafe=World.isSafe(hero.x);if(nowSafe!==safe){safe=nowSafe;hero.mountAct=null;refreshHD();window.GameUI?.refresh();if(safe)message(svg('shield')+'Vào vùng an toàn');}
+    const nowSafe=World.isSafe(hero.x);if(nowSafe!==safe){safe=nowSafe;hero.mountAct=null;refreshHD();window.GameUI?.refresh();if(safe){message(svg('shield')+'Vào vùng an toàn');checkpoint();}}
     if(time-hdAt>.25){hdAt=time;refreshHD();const k=allyKey();if(k!==lastAllyKey){lastAllyKey=k;syncMerc();}if(safe)reviveAtVillage();}
     const S=HD.tot;
     if(!hero.dead){player.mana=Math.min(S.mp,player.mana+S.mpReg*dt);player.hp=Math.min(S.hp,player.hp+(S.hpReg+(HD.fx.heal?S.hp*HD.fx.heal/100:0))*dt);}
     player.hp=Math.min(player.hp,S.hp);player.mana=Math.min(player.mana,S.mp);
     if(HD.fx.shield&&time>hero.shieldAt){hero.shieldAt=time+10;hero.shieldHp=Math.round(S.hp*HD.fx.shield/100);}else if(!HD.fx.shield)hero.shieldHp=0;
-    if(time>nextSave)save();
+    if(time-sync.keptAt>3)keepLocal();
+    {const B=World.BRIDGE,sd=hero.x<B.x0*T?'w':hero.x>(B.x1+1)*T?'e':bridgeSide;if(sd!==bridgeSide){const was=bridgeSide;bridgeSide=sd;if(was)checkpoint();}}
     updateNPCs(dt);updateProjectiles(dt);updateMonsters(dt);updateAllies(dt);updateStrikes();updateVillage(dt);updateEffects(dt);
     const a=hero.attack;
     if(a){const p=(time-a.start)/a.dur;while(a.hitIdx<a.cycles&&p>=(a.hitIdx+a.hit)/a.cycles){resolveAttack(a,a.hitIdx);a.hitIdx++;}if(p>=1)hero.attack=null;}
@@ -2315,10 +2379,10 @@ window.startGame=(session)=>{
   pad.addEventListener('pointermove',padMove);
   pad.addEventListener('pointerup',e=>{if(e.pointerId===padId)stopPad();});pad.addEventListener('pointercancel',e=>{if(e.pointerId===padId)stopPad();});pad.addEventListener('lostpointercapture',e=>{if(e.pointerId===padId)stopPad();});
   window.addEventListener('resize',resize);
-  document.addEventListener('visibilitychange',()=>{last=0;keys.clear();stopPad();holdAttack=false;if(document.hidden)save();});
-  window.addEventListener('pagehide',()=>{save();});
+  document.addEventListener('visibilitychange',()=>{last=0;keys.clear();stopPad();holdAttack=false;if(document.hidden)keepLocal();});
+  window.addEventListener('pagehide',()=>{keepLocal();});
   groundDraw();resize();syncMerc();requestAnimationFrame(loop);
-  window.mapGame={hero,player,camera,monsters,allies,get route(){return route;},get seen(){return [...seen];},get safe(){return safe;},get HD(){return HD;},now:()=>time,screenPoint,goTo,cast,message,activateBurst,svg,save,op,refreshHD,syncMerc,
+  window.mapGame={hero,player,camera,monsters,allies,get route(){return route;},get seen(){return [...seen];},get safe(){return safe;},get HD(){return HD;},now:()=>time,screenPoint,goTo,cast,message,activateBurst,svg,save,unsaved,op,refreshHD,syncMerc,
     hammer(color){let n=0;const t=setInterval(()=>{burst(hero.x+hero.facing*14,hero.y-26,color||'#ffcf7a',6,140);if(color)fx.push({kind:'ring',x:hero.x,y:hero.y-20,r0:6,r1:46,color,age:0,life:.4,lw:3});else shake(2);if(++n>=3)clearInterval(t);},380);},
     levelUp,
     setHold(v){holdAttack=!!v;},
@@ -2610,7 +2674,7 @@ window.startUI=(session)=>{
     if(window.LH_KICKED)return;window.LH_KICKED=true;try{closeModal();game.closeDialog();}catch(err){}
     const other=e.detail==='DANG_NHAP_NOI_KHAC';Net.setToken('');
     const box=document.createElement('div');box.className='kicked';
-    box.innerHTML=`<div class="kicked-card">${svg(other?'user':'lock')}<b>${other?'Tài khoản đang được dùng ở thiết bị khác':'Phiên đăng nhập đã hết hạn'}</b><small>${other?'Mỗi tài khoản chỉ chơi trên một thiết bị. Phiên ở đây đã dừng, tiến trình đã lưu tới lần đồng bộ gần nhất.':'Đăng nhập lại để chơi tiếp.'}</small><button class="primary big-btn" id="kickedGo">Đăng nhập lại</button></div>`;
+    box.innerHTML=`<div class="kicked-card">${svg(other?'user':'lock')}<b>${other?'Tài khoản đang được dùng ở thiết bị khác':'Phiên đăng nhập đã hết hạn'}</b><small>${other?'Mỗi tài khoản chỉ chơi trên một thiết bị. Phiên ở đây đã dừng. Phần chơi chưa lưu vẫn giữ trên máy này, sẽ gửi khi bạn vào lại.':'Đăng nhập lại để chơi tiếp.'}</small><button class="primary big-btn" id="kickedGo">Đăng nhập lại</button></div>`;
     document.getElementById('lu-hanh').appendChild(box);box.querySelector('#kickedGo').onclick=()=>location.reload();
   });
   const alive=()=>{if(!window.LH_KICKED&&Net.token&&document.visibilityState==='visible')Net.call('alive').catch(()=>{});};
@@ -2618,7 +2682,7 @@ window.startUI=(session)=>{
   window.GameUI={refresh,showAttributes,openPanel,showShop:(id,tab)=>{shopSel=null;showShop(id,tab);},showQuestBoard,showMercBoard,showMarket,showQuests,save,previewElem,previewWho:()=>previewWho,previewBurst:()=>burstAt,
     showBag:()=>{if($('#overlay').hidden){selected=null;skillFocus=null;renderBag();}else closeModal();},
     frame(time,st){
-      if(time-lastFrame<.1)return;lastFrame=time;refresh();const now=Date.now();
+      if(time-lastFrame<.1)return;lastFrame=time;refresh();$('#settingsBtn').classList.toggle('dirty',game.unsaved());$('#saveBtn').classList.toggle('dirty',game.unsaved());const now=Date.now();
       for(const [id,skill] of Object.entries(Player.skills)){const remaining=Math.max(0,(p.cooldowns[id]||0)-now),span=$('#skill-'+id+' .cooldown');if(!span)continue;span.style.setProperty('--progress',Math.min(100,remaining/skill.cooldown*100)+'%');span.textContent=remaining>0&&id!=='normal'?String(Math.ceil(remaining/1000)):'';}
       const bb=$('#bossBar');if(st&&st.boss){bb.hidden=false;bb.classList.toggle('final',st.boss.final);if(bb.dataset.t!==st.boss.type){bb.dataset.t=st.boss.type;bb.title=st.boss.name;$('#bossIc').innerHTML=LH_IMG.icon('quai:'+st.boss.type,st.boss.type==='ngu-tinh'?'water':'tiger');}$('#bossFill').style.width=Math.max(0,st.boss.hp/st.boss.max*100)+'%';$('#bossHp').textContent=Math.max(0,Math.ceil(st.boss.hp));}else bb.hidden=true;
     }};
@@ -2685,7 +2749,8 @@ window.startUI=(session)=>{
   function stopTent(){cancelAnimationFrame(T.raf);T.raf=0;}
   const whoOf=c=>c.look&&c.look.equipment?{gender:c.gender,equipment:c.look.equipment,stats:c.stats}:Player.create({name:c.name,gender:c.gender,stats:c.stats});
   async function chars(selId){
-    let r;try{r=await Net.call('chars');}catch(e){Net.setToken('');note(netMsg(e));return auth('login');}
+    // phần chơi còn giữ trên máy (lần trước chưa kịp lưu): gửi trước để lều hiện đúng cấp, tiền
+    let r;try{r=await Net.call('chars');let n=0;for(const c of r.list||r.chars||[])if(c&&c.id&&LH_Local.get(c.id)){await LH_Local.push(c.id).catch(()=>{});n++;}if(n)r=await Net.call('chars');}catch(e){Net.setToken('');note(netMsg(e));return auth('login');}
     T.r=r;T.mode='view';
     if(selId){const i=r.chars.findIndex(c=>c.id===selId);if(i>=0)T.sel=i;}
     if(T.sel>=Math.max(r.max,1))T.sel=0;
@@ -2802,6 +2867,7 @@ window.startUI=(session)=>{
     busy(btn,true);
     L.show({scene:true,label:'Tải nhân vật',bg:'vao_lang'}).step(0,null,45);
     try{
+      await LH_Local.push(charId);
       const r=await Net.call('load',{charId});
       L.step(45,'Dựng làng Thanh Mộc',88);
       const R=Player.restore(r.save,r.char,World.canStand,World.npcs.map(n=>n.id));

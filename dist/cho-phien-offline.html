@@ -1,4 +1,4 @@
-<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="game-version" content="v8.9"><title>Chợ phiên · thử ngoại tuyến</title><style>
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="game-version" content="v9.0"><title>Chợ phiên · thử ngoại tuyến</title><style>
 #cho-phien{position:fixed;inset:0;z-index:2147483000;overflow:auto;text-align:left;line-height:normal}
 body:has(#cho-phien){overflow:hidden!important}
 #cho-phien{color-scheme:dark;--ink:#efe6cf;--muted:#a8b4a7;--gold:#e3c27a;--line:#ffffff1f;--lac:#8c2f1d}
@@ -464,8 +464,19 @@ function LH_Core(A){
       const a=auth(p.token);
       return A.lock(()=>{
         const c=ownChar(a,p.charId,'active'),st=stateOf(c),C=p.save&&p.save.player;
-        const R=C?Player.merge(st.player,C):st.player,srv=st.save.srv=st.save.srv||{},now=A.now();
-        const results=(Array.isArray(p.ops)?p.ops.slice(0,60):[]).map(op=>{try{return {ok:true,...Player.applyOp(R,op,srv,now)};}catch(e){return {ok:false,error:String(e.message||e)};}});
+        let R=C?Player.merge(st.player,C):st.player;const srv=st.save.srv=st.save.srv||{},now=A.now(),ops=Array.isArray(p.ops)?p.ops.slice(0,600):[];
+        // Lệnh chơi được gom trên máy người chơi rồi gửi một lần (về làng, qua cầu, gặp thương nhân, bấm Lưu).
+        // Gói đã nhận rồi (mạng rớt lúc chờ trả lời, gửi lại) thì không tính lần hai.
+        const bid=String(p.bid||'').slice(0,40),dup=!!bid&&(srv.bids||[]).includes(bid);
+        // Thời điểm từng lệnh theo đồng hồ máy chủ: không sớm hơn lần lưu trước, không muộn hơn lúc này
+        const skew=Number.isFinite(+p.sentAt)&&+p.sentAt>0?now-(+p.sentAt):0;let prev=Math.max(+srv.lastAt||0,now-864e5);
+        const results=dup?ops.map(()=>({ok:true,dup:true})):ops.map(op=>{
+          let at=Number.isFinite(+(op&&op.at))?+op.at+skew:now;at=Math.min(now,Math.max(prev,at));prev=at;
+          try{if(op&&op.lay)R=Player.relayout(R,op.lay);return {ok:true,...Player.applyOp(R,op,srv,at)};}catch(e){return {ok:false,error:String(e.message||e)};}
+        });
+        if(!dup&&ops.length&&C)R=Player.merge(R,C);
+        if(bid&&!dup)srv.bids=[...(srv.bids||[]),bid].slice(-8);
+        srv.lastAt=now;
         storeState(c,st,R,{pos:p.save&&p.save.pos,seen:p.save&&p.save.seen});
         return {state:R,results,savedAt:c.cap_nhat};
       });
@@ -604,6 +615,32 @@ const Net={
     if(!r.ok&&(r.error==='DANG_NHAP_NOI_KHAC'||(r.error==='PHIEN_HET_HAN'&&this.token))&&typeof window!=='undefined')window.dispatchEvent(new CustomEvent('lh-kicked',{detail:r.error}));
     if(!r.ok){const e=Error(r.error||'LOI');throw e;}
     return r;
+  }
+};
+/* Tiến trình chơi giữ trên máy (localStorage), mỗi nhân vật một khóa: {save, inflight:{bid,ops}, ops}
+   Game ghi liên tục; chỉ gửi lên máy chủ ở các mốc lưu. Lần vào game / Chợ phiên sau, phần còn sót được gửi trước khi tải nhân vật. */
+const LH_Local={
+  key:id=>'lh-local-'+id,
+  get(id){try{return JSON.parse(localStorage.getItem(this.key(id))||'null');}catch(e){return null;}},
+  set(id,v){try{localStorage.setItem(this.key(id),JSON.stringify(v));return true;}catch(e){return false;}},
+  clear(id){try{localStorage.removeItem(this.key(id));}catch(e){}},
+  async push(id){
+    const L=this.get(id);if(!L||!L.save)return false;
+    let last=null;const fix=ops=>{if(ops.length&&!ops[0].lay&&last)ops[0]={...ops[0],lay:last};for(const o of ops)if(o.lay)last=o.lay;return ops;};
+    try{
+      do{
+        if(!L.inflight)L.inflight={bid:Date.now().toString(36)+Math.random().toString(36).slice(2,8),ops:fix((L.ops||[]).splice(0,500))};
+        else fix(L.inflight.ops);
+        this.set(id,L);
+        await Net.call('play',{charId:id,bid:L.inflight.bid,sentAt:Date.now(),save:L.save,ops:L.inflight.ops});
+        L.inflight=null;this.set(id,L);
+      }while((L.ops||[]).length);
+    }catch(e){
+      // nhân vật không còn / đang đi đánh thuê: bỏ phần lưu tạm; lỗi mạng: giữ lại, báo lỗi
+      if(['KHONG_THAY_NHAN_VAT','SAI_TRANG_THAI'].includes(e.message)){this.clear(id);return false;}
+      throw e;
+    }
+    this.clear(id);return true;
   }
 };
 const NET_ERR={PHIEN_HET_HAN:'Phiên đăng nhập hết hạn, hãy đăng nhập lại',TEN_DANG_NHAP_SAI:'Tên đăng nhập 3\u{2013}20 ký tự: chữ thường, số, dấu _',EMAIL_SAI:'Email không hợp lệ',MAT_KHAU_NGAN:'Mật khẩu tối thiểu 6 ký tự',TEN_DANG_NHAP_DA_CO:'Tên đăng nhập đã có người dùng',EMAIL_DA_CO:'Email đã được đăng ký',SAI_DANG_NHAP:'Sai tên đăng nhập hoặc mật khẩu',KHONG_THAY_EMAIL:'Không có tài khoản dùng email này',MA_SAI:'Mã khôi phục sai hoặc hết hạn',TEN_NHAN_VAT_SAI:'Tên nhân vật 2\u{2013}16 ký tự, chỉ chữ và số',DIEM_SAI:'Phải chia đủ số điểm',DU_NHAN_VAT:'Tài khoản đã đủ số nhân vật',TEN_DA_CO:'Tên nhân vật đã có người dùng',KHONG_THAY_NHAN_VAT:'Không tìm thấy nhân vật',SAI_TRANG_THAI:'Nhân vật đang đi đánh thuê',GIA_SAI:'Giá không hợp lệ',LINH_KHONG_CON:'Lính này đã có người thuê',DA_BAN:'Món này đã được bán',DO_CUA_MINH:'Đây là đồ bạn ký gửi',KHONG_HUY_DUOC:'Không hủy được',DU_LIEU_QUA_LON:'Dữ liệu lưu quá lớn',KHONG_DU_TIEN:'Nhân vật không đủ tiền',DU_LINH:'Nhân vật đã đủ lính',BAG_FULL:'Túi đồ đã đầy',VAT_PHAM_SAI:'Món đồ không hợp lệ',NHANH_QUA:'Quái chưa kịp hồi sinh',KHONG_DU_HONG_NGOC:'Nhân vật không đủ hồng ngọc',DANG_NHAP_NOI_KHAC:'Tài khoản vừa đăng nhập trên thiết bị khác',KHONG_CO_LENH:'Máy chủ chưa cập nhật bản mới',MAY_CHU_LOI:'Máy chủ Apps Script đang lỗi hoặc chưa mở quyền truy cập cho mọi người',POST_LOI:'Máy chủ có chạy nhưng không nhận lệnh: dán Code.gs mới rồi Triển khai \u{2192} Quản lý triển khai \u{2192} Sửa \u{2192} Phiên bản mới',KHONG_TRUY_CAP:'Trình duyệt này không gọi được máy chủ: trong Apps Script, Triển khai \u{2192} Quản lý triển khai \u{2192} Sửa, mục "Ai có quyền truy cập" chọn "Bất kỳ ai"'};
@@ -1013,6 +1050,12 @@ const Player=(()=>{
                  C = trạng thái máy người chơi (chỉ được sắp xếp đồ đang có + máu, mana, giếng\u{2026}).
      Người chơi không thể tự sinh đồ hay tiền: món nào không có trên máy chủ thì bị bỏ, món mới trên máy chủ tự vào túi. */
   const allItems=s=>[...(s.bag||[]),...Object.values(s.equipment||{}),...(s.skillSlots||[]),...(s.mercs||[]).flatMap(m=>Object.values(m.equipment||{}))].filter(it=>it&&typeof it.uid==='string');
+  // Sắp xếp đồ của người chơi lúc ra lệnh (chỉ mã đồ): b túi, e trang bị, s ô sách, m trang bị lính, a sách đang dùng
+  function layout(s){const u=x=>x&&x.uid||null,eq=E=>Object.fromEntries(slots.map(k=>[k,u(E&&E[k])]));return {b:(s.bag||[]).map(u),e:eq(s.equipment),s:(s.skillSlots||[]).map(u),m:Object.fromEntries((s.mercs||[]).map(m=>[m.mid,eq(m.equipment)])),a:s.activeBook};}
+  function relayout(S,L){
+    if(!L||typeof L!=='object')return S;const it=u=>typeof u==='string'?{uid:u}:null,eq=E=>Object.fromEntries(slots.map(k=>[k,it(E&&E[k])]));
+    return merge(S,{...S,bag:(Array.isArray(L.b)?L.b:[]).map(it),equipment:eq(L.e),skillSlots:(Array.isArray(L.s)?L.s:[]).map(it),activeBook:L.a,mercs:(S.mercs||[]).map(m=>({...m,equipment:eq(L.m&&L.m[m.mid])}))});
+  }
   function merge(S,C){
     const chOf={name:S.name,gender:S.gender,stats:S.stats};
     const soft={hp:C&&C.hp,mana:C&&C.mana,passive:C&&C.passive,cooldowns:C&&C.cooldowns,flags:{...S.flags,river:!!(S.flags&&S.flags.river)||!!(C&&C.flags&&C.flags.river),wells:(C&&C.flags&&C.flags.wells)||(S.flags&&S.flags.wells)||{}}};
@@ -1065,7 +1108,7 @@ const Player=(()=>{
   }
   load(typeof GAME_DATA!=='undefined'?GAME_DATA:{});
   return {VERSION,BAG_SIZE,SKILL_SLOTS,MAX_LV,MAX_MERC,MAX_ACTIVE_QUEST,ELEMENTS,BEASTS,GROUPS,FX_NAMES,STAT_KEYS,CFG,RAR,ADD,SHOPS,SETS,MON,QUESTS,MERCS,items,slots,skills,
-    load,info,kind,weapon,skillCost,cmdInfo,WEAPONS,PREDICT,seqRng,setFollow,fitFollow,mercCmd,petMax,SHOP_ENH,expNeed,maxLevel,gainExp,spendPoints,mountGain,bookStat,mountCmd,qOf,rar,nameOf,stat,canEnhance,tradeable,gainOf,enhRate,enhCost,enhance,roll,rollDrop,create,derive,targets,equip,unequip,stance,isTwo,pairOk,setSkill,unsetSkill,toggleBook,element,money,shopPrice,buy,sell,sellPrice,addItem,cast,
+    layout,relayout,load,info,kind,weapon,skillCost,cmdInfo,WEAPONS,PREDICT,seqRng,setFollow,fitFollow,mercCmd,petMax,SHOP_ENH,expNeed,maxLevel,gainExp,spendPoints,mountGain,bookStat,mountCmd,qOf,rar,nameOf,stat,canEnhance,tradeable,gainOf,enhRate,enhCost,enhance,roll,rollDrop,create,derive,targets,equip,unequip,stance,isTwo,pairOk,setSkill,unsetSkill,toggleBook,element,money,shopPrice,buy,sell,sellPrice,addItem,cast,
     questAccept,questProgress,questTurnIn,hireNpc,addMerc,mercEquip,mercUnequip,dismissMerc,makeMerc,cleanItem,serialize,restore,restorePlayer,merge,applyOp,allItems};
 })();
 </script>
@@ -1114,7 +1157,7 @@ const Player=(()=>{
     if(S.charId)await loadChar();else S.state=null;
     draw();
   }
-  async function loadChar(){try{const r=await Net.call('load',{charId:S.charId});S.state=r.save.player;}catch(e){S.state=null;toast(svg('close')+errMsg(e),true);}}
+  async function loadChar(){try{await LH_Local.push(S.charId);const r=await Net.call('load',{charId:S.charId});S.state=r.save.player;}catch(e){S.state=null;toast(svg('close')+errMsg(e),true);}}
   // ---------- giao diện ----------
   function draw(){
     const act=S.chars.filter(c=>c.status==='active'),c=cur(),st=S.state;

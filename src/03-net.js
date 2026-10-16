@@ -55,6 +55,32 @@ const Net={
     return r;
   }
 };
+/* Tiến trình chơi giữ trên máy (localStorage), mỗi nhân vật một khóa: {save, inflight:{bid,ops}, ops}
+   Game ghi liên tục; chỉ gửi lên máy chủ ở các mốc lưu. Lần vào game / Chợ phiên sau, phần còn sót được gửi trước khi tải nhân vật. */
+const LH_Local={
+  key:id=>'lh-local-'+id,
+  get(id){try{return JSON.parse(localStorage.getItem(this.key(id))||'null');}catch(e){return null;}},
+  set(id,v){try{localStorage.setItem(this.key(id),JSON.stringify(v));return true;}catch(e){return false;}},
+  clear(id){try{localStorage.removeItem(this.key(id));}catch(e){}},
+  async push(id){
+    const L=this.get(id);if(!L||!L.save)return false;
+    let last=null;const fix=ops=>{if(ops.length&&!ops[0].lay&&last)ops[0]={...ops[0],lay:last};for(const o of ops)if(o.lay)last=o.lay;return ops;};
+    try{
+      do{
+        if(!L.inflight)L.inflight={bid:Date.now().toString(36)+Math.random().toString(36).slice(2,8),ops:fix((L.ops||[]).splice(0,500))};
+        else fix(L.inflight.ops);
+        this.set(id,L);
+        await Net.call('play',{charId:id,bid:L.inflight.bid,sentAt:Date.now(),save:L.save,ops:L.inflight.ops});
+        L.inflight=null;this.set(id,L);
+      }while((L.ops||[]).length);
+    }catch(e){
+      // nhân vật không còn / đang đi đánh thuê: bỏ phần lưu tạm; lỗi mạng: giữ lại, báo lỗi
+      if(['KHONG_THAY_NHAN_VAT','SAI_TRANG_THAI'].includes(e.message)){this.clear(id);return false;}
+      throw e;
+    }
+    this.clear(id);return true;
+  }
+};
 const NET_ERR={PHIEN_HET_HAN:'Phiên đăng nhập hết hạn, hãy đăng nhập lại',TEN_DANG_NHAP_SAI:'Tên đăng nhập 3–20 ký tự: chữ thường, số, dấu _',EMAIL_SAI:'Email không hợp lệ',MAT_KHAU_NGAN:'Mật khẩu tối thiểu 6 ký tự',TEN_DANG_NHAP_DA_CO:'Tên đăng nhập đã có người dùng',EMAIL_DA_CO:'Email đã được đăng ký',SAI_DANG_NHAP:'Sai tên đăng nhập hoặc mật khẩu',KHONG_THAY_EMAIL:'Không có tài khoản dùng email này',MA_SAI:'Mã khôi phục sai hoặc hết hạn',TEN_NHAN_VAT_SAI:'Tên nhân vật 2–16 ký tự, chỉ chữ và số',DIEM_SAI:'Phải chia đủ số điểm',DU_NHAN_VAT:'Tài khoản đã đủ số nhân vật',TEN_DA_CO:'Tên nhân vật đã có người dùng',KHONG_THAY_NHAN_VAT:'Không tìm thấy nhân vật',SAI_TRANG_THAI:'Nhân vật đang đi đánh thuê',GIA_SAI:'Giá không hợp lệ',LINH_KHONG_CON:'Lính này đã có người thuê',DA_BAN:'Món này đã được bán',DO_CUA_MINH:'Đây là đồ bạn ký gửi',KHONG_HUY_DUOC:'Không hủy được',DU_LIEU_QUA_LON:'Dữ liệu lưu quá lớn',KHONG_DU_TIEN:'Nhân vật không đủ tiền',DU_LINH:'Nhân vật đã đủ lính',BAG_FULL:'Túi đồ đã đầy',VAT_PHAM_SAI:'Món đồ không hợp lệ',NHANH_QUA:'Quái chưa kịp hồi sinh',KHONG_DU_HONG_NGOC:'Nhân vật không đủ hồng ngọc',DANG_NHAP_NOI_KHAC:'Tài khoản vừa đăng nhập trên thiết bị khác',KHONG_CO_LENH:'Máy chủ chưa cập nhật bản mới',MAY_CHU_LOI:'Máy chủ Apps Script đang lỗi hoặc chưa mở quyền truy cập cho mọi người',POST_LOI:'Máy chủ có chạy nhưng không nhận lệnh: dán Code.gs mới rồi Triển khai → Quản lý triển khai → Sửa → Phiên bản mới',KHONG_TRUY_CAP:'Trình duyệt này không gọi được máy chủ: trong Apps Script, Triển khai → Quản lý triển khai → Sửa, mục "Ai có quyền truy cập" chọn "Bất kỳ ai"'};
 // Không gọi được máy chủ: thử GET (lệnh ping) để biết lỗi ở đâu
 //  - GET được, POST không: Code.gs mới chưa được triển khai (hoặc doPost lỗi)
