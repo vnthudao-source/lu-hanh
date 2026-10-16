@@ -102,12 +102,18 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 - Rớt mạng thoáng qua khi lưu: lệnh ghi (có mã `rid`) tự gửi lại 1 lần ngay; vẫn lỗi thì tự gửi lại sau 10 giây.
 - Thông báo lỗi đúng hơn: đã kết nối được máy chủ trong phiên mà một lần gọi bị rớt thì báo "Mạng chập chờn hoặc máy chủ trả lời chậm" (trước đây báo nhầm là chưa đặt quyền "Bất kỳ ai"). Hạn chờ: lệnh đọc 25 giây, lệnh ghi 45 giây.
 
+## Bản 9.7: đồ vẽ đúng trên người, ảnh vật phẩm
+
+- `src/04-looks.js`: bảng dáng vẻ từng món đồ theo tên / loại (áo choàng, cờ hiệu, cánh, nón lá, nón dấu, mũ trụ, mũ vương, mũ phượng, khăn, trâm, áo bào, giáp vảy, áo da, váy, dép, guốc, hài, ủng, giày mây). Đồ huyền thoại: cả bộ chung bảng màu của vị anh hùng, viền vàng. Đồ thần: màu + hiệu ứng riêng (lửa, ánh vàng, ngọc bích, hào quang, bụi tiên, vảy rồng, mây, sóng nước) quanh nhân vật và trên vũ khí.
+- Ảnh vật phẩm game vẽ sẵn (webp 128×128, vẽ bằng đúng các hàm vẽ trên người): `dist/anh/vat_pham/<mã>.webp` (dấu `:` đổi thành `_`). Tạo lại: mở game ngoại tuyến, gọi `mapGame.itemIcon(canvas, mã)`.
+- Hàm Apps Script `capNhatAnh`: ghi cột `goi_y` (định dạng webp, cách vẽ khớp nhân vật, bảng màu), thêm cột `gioi_tinh` (Nam / Nữ / Chung) và `ghi_chu` (Huyền thoại / Thần thoại) vào file Hình ảnh; dòng vật phẩm chưa có `link_anh` được chép ảnh vào thư mục Drive (mở quyền xem cho mọi người) và ghi link. Chạy quá 4,5 phút thì dừng, chạy lại để chép tiếp.
+
 ## Ra bản mới
 
 1. Sửa trong `src/` (và `VERSION`).
 2. `node tools/build.mjs`
-3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-9.7`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
-4. Trên Blogspot đổi `@ban-9.6` thành `@ban-9.7` (trang game và trang Chợ phiên).
+3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-9.8`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
+4. Trên Blogspot đổi `@ban-9.7` thành `@ban-9.8` (trang game và trang Chợ phiên).
 5. Nếu `Code.gs` đổi: dán lại vào Apps Script, Triển khai → Quản lý triển khai → Sửa → Phiên bản mới (giữ nguyên URL).
 
 ## Dữ liệu trong Sheet
