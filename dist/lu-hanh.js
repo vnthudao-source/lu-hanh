@@ -734,7 +734,7 @@ const World=(()=>{
 if(LH_MAPS[World.DEFAULT])World.use(LH_MAPS[World.DEFAULT]);
 
 ;/* ================= DÁNG VẺ ĐỒ: mỗi món đồ được vẽ trên người theo đúng tên / loại =================
-   Một bảng duy nhất dùng cho cả hình trên người nhân vật lẫn ảnh biểu tượng trong túi (tools/anh-vat-pham.mjs vẽ ảnh webp từ chính các hàm này),
+   Một bảng duy nhất dùng cho cả hình trên người nhân vật lẫn ảnh biểu tượng trong túi (mapGame.itemIcon vẽ ảnh webp từ chính các hàm này),
    nên ảnh và nhân vật luôn khớp nhau.
    - Ô Cánh: tên có "Áo choàng" \u{2192} áo choàng trên vai \u{b7} "Cờ" \u{2192} cờ cắm sau lưng \u{b7} còn lại \u{2192} đôi cánh.
    - Mũ: Nón lá, Nón dấu, Khăn, Trâm, Mũ phượng, Mũ trụ / mũ tướng, Mũ vương (Quang Trung, Quốc công\u{2026}).

@@ -1,5 +1,5 @@
 /* ================= DÁNG VẺ ĐỒ: mỗi món đồ được vẽ trên người theo đúng tên / loại =================
-   Một bảng duy nhất dùng cho cả hình trên người nhân vật lẫn ảnh biểu tượng trong túi (tools/anh-vat-pham.mjs vẽ ảnh webp từ chính các hàm này),
+   Một bảng duy nhất dùng cho cả hình trên người nhân vật lẫn ảnh biểu tượng trong túi (mapGame.itemIcon vẽ ảnh webp từ chính các hàm này),
    nên ảnh và nhân vật luôn khớp nhau.
    - Ô Cánh: tên có "Áo choàng" → áo choàng trên vai · "Cờ" → cờ cắm sau lưng · còn lại → đôi cánh.
    - Mũ: Nón lá, Nón dấu, Khăn, Trâm, Mũ phượng, Mũ trụ / mũ tướng, Mũ vương (Quang Trung, Quốc công…).
