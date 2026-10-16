@@ -93,12 +93,16 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 - Ghi phần chơi xuống máy theo nhịp ~1,5 giây (không ghi mỗi đòn), ghi ngay khi tắt / ẩn trang.
 - Menu → **Tình trạng**: phiên bản, còn phần chơi chưa lưu không, 8 lần gọi máy chủ gần nhất (OK / lỗi gì), 8 lỗi trò chơi gần nhất. Gặp sự cố thì chụp màn hình này.
 
+## Bản 9.5
+
+- Sửa lỗi gốc của đứng hình khi đánh quái: quái đang ra đòn mà bị phản đòn chết ngay thì vòng lặp đọc `m.atk.end` của đòn đã bị xóa (`Cannot read properties of null (reading 'end')`). Trước 9.4 lỗi này làm dừng hẳn game; 9.4 bắt được lỗi và hiện thông báo; 9.5 sửa hẳn.
+
 ## Ra bản mới
 
 1. Sửa trong `src/` (và `VERSION`).
 2. `node tools/build.mjs`
-3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-9.5`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
-4. Trên Blogspot đổi `@ban-9.4` thành `@ban-9.5` (trang game và trang Chợ phiên).
+3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-9.6`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
+4. Trên Blogspot đổi `@ban-9.5` thành `@ban-9.6` (trang game và trang Chợ phiên).
 5. Nếu `Code.gs` đổi: dán lại vào Apps Script, Triển khai → Quản lý triển khai → Sửa → Phiên bản mới (giữ nguyên URL).
 
 ## Dữ liệu trong Sheet

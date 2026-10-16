@@ -1011,7 +1011,7 @@ window.startGame=(session)=>{
   // Quái thu phục: đi theo, cắn/húc quái khác. Chết là mất hẳn
   function updatePet(e,dt){
     const M=MON[e.type];
-    if(e.atk){if(time>=e.atk.at&&!e.atk.done){e.atk.done=true;const t=e.atk.tg;if(t&&!t.dead&&Math.hypot(t.x-e.x,t.y-e.y)<M.range+MON[t.type].r+40){const l=Math.hypot(t.x-e.x,t.y-e.y)||1;hitMonster(t,{abs:Math.max(6,M.dmg)*(1+player.level*.05),owner:'pet',color:EL.demon.glow,knock:40},(t.x-e.x)/l,(t.y-e.y)/l);}}if(time>=e.atk.end)e.atk=null;e.data.hpFrac=e.hp/e.max;return;}
+    if(e.atk){if(time>=e.atk.at&&!e.atk.done){e.atk.done=true;const t=e.atk.tg;if(t&&!t.dead&&Math.hypot(t.x-e.x,t.y-e.y)<M.range+MON[t.type].r+40){const l=Math.hypot(t.x-e.x,t.y-e.y)||1;hitMonster(t,{abs:Math.max(6,M.dmg)*(1+player.level*.05),owner:'pet',color:EL.demon.glow,knock:40},(t.x-e.x)/l,(t.y-e.y)/l);}}if(e.atk&&time>=e.atk.end)e.atk=null;e.data.hpFrac=e.hp/e.max;return;}
     const target=!safe&&!hero.dead?nearestFoe(e,300):null;let goal=null;
     if(target){const dx=target.x-e.x,dist=Math.hypot(dx,target.y-e.y),reach=M.range*.8+MON[target.type].r+M.r*.5;if(Math.abs(dx)>3)e.facing=dx<0?-1:1;
       if(dist>reach)goal={x:target.x,y:target.y};else if(time>e.cd){const w=Math.max(.25,M.windup);e.atk={at:time+w,end:time+w+.35,done:false,tg:target};e.cd=time+w+Math.max(.8,M.cd);}}
@@ -1092,7 +1092,8 @@ window.startGame=(session)=>{
       if(m.leap){const p=(time-m.leap.start)/m.leap.dur;if(p>=1){m.x=m.leap.tx;m.y=m.leap.ty;m.leap=null;monsterStrike(m);}else{World.move(m,(m.leap.tx-m.x)*Math.min(1,dt*8),(m.leap.ty-m.y)*Math.min(1,dt*8),16);}continue;}
       if(m.atk){
         if(time>=m.atk.at&&!m.atk.done){m.atk.done=true;monsterStrike(m);}
-        if(time>=m.atk.end)m.atk=null;
+        // đòn đánh có thể làm quái gục ngay (phản đòn, gai): lúc đó m.atk đã bị xóa
+        if(m.dead)continue;if(m.atk&&time>=m.atk.end)m.atk=null;
       }else{
         const angry=m.aggro>time,canSee=!!tg;let hostile=false;
         if(m.type==='lion'||M.boss)hostile=canSee&&(dist<M.aggro||angry)&&(!M.boss||homeD<420);
