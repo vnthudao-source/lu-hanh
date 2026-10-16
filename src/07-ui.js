@@ -328,6 +328,17 @@ window.startUI=(session)=>{
   $('#avatarBtn').onclick=showAttributes;
   $('#settingsBtn').onclick=()=>{menu.hidden=!menu.hidden;$('#settingsBtn').setAttribute('aria-expanded',String(!menu.hidden));};
   $('#saveBtn').onclick=save;$('#homeBtn').onclick=()=>{closeMenu();closeModal();game.home();refresh();};
+  // Tình trạng: phiên bản, phần chơi chưa lưu, lần gọi máy chủ và lỗi gần đây (chụp màn hình gửi khi game có vấn đề)
+  function showDiag(){
+    closeMenu();const D=LH_DIAG.data,v=document.querySelector('.version');
+    const row=(a,b)=>`<div class="dg-row"><b>${a}</b><span>${b}</span></div>`;
+    openModal(ttl('eye','Tình trạng'),`<div class="dg">${row('Phiên bản',esc(v?v.textContent:''))}${row('Máy chủ',Net.online?'Việt Nam':'Ngoại tuyến')}${row('Chưa lưu',game.unsaved()?'Có · lưu khi về làng, qua cầu, gặp dân làng hoặc bấm Lưu':'Không')}
+      <h4 class="mk-h">Gọi máy chủ</h4>${D.net.length?D.net.map(x=>row(esc(x.t+' '+x.a),x.err?`<i class="dg-bad">${esc(NET_ERR[x.err]||x.err)}</i>`:'OK')).join(''):'<p class="mk-hint">Chưa có</p>'}
+      <h4 class="mk-h">Lỗi gần đây</h4>${D.err.length?D.err.map(x=>`<div class="dg-err"><b>${esc(x.t)} · ${esc(x.where)}</b><span>${esc(x.m)}</span><small>${esc(x.s)}</small></div>`).join(''):'<p class="mk-hint">Không có lỗi</p>'}
+      <button id="dgClear">Xóa nhật ký</button></div>`);
+    $('#dgClear').onclick=()=>{LH_DIAG.clear();showDiag();};
+  }
+  $('#diagBtn').onclick=showDiag;
   $('#questBtn').onclick=showQuests;$('#bagBtn').onclick=()=>{selected=null;skillFocus=null;renderBag();};
   $('#switchBtn').onclick=async()=>{closeMenu();await game.save();location.reload();};
   $('#closeOverlay').onclick=closeModal;$('#overlay').onclick=evt=>{if(evt.target.id==='overlay')closeModal();};

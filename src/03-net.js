@@ -36,16 +36,18 @@ const Net={
       const json=JSON.stringify(body),small=json.length<1800;
       const parse=txt=>{try{return JSON.parse(txt);}catch(e){throw Error(/<html/i.test(txt)?'MAY_CHU_LOI':'Failed to fetch');}};
       // POST giống hệt bản 8.4 (không thêm tùy chọn nào: Safari thêm header là bị chặn CORS)
-      const viaPost=async()=>parse(await (await fetch(LH_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:json})).text());
+      // quá 25 giây không trả lời thì coi như rớt mạng (lệnh ghi có mã rid nên gửi lại không bị làm hai lần)
+      const timed=pr=>Promise.race([pr,new Promise((_,no)=>setTimeout(()=>no(Error('Failed to fetch')),25000))]);
+      const viaPost=async()=>parse(await timed(fetch(LH_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:json}).then(x=>x.text())));
       // Đường dự phòng: lệnh nhỏ gửi bằng GET (?p=…) khi trình duyệt không POST được
-      const viaGet=async()=>{const x=parse(await (await fetch(LH_API+(LH_API.includes('?')?'&':'?')+'p='+encodeURIComponent(json))).text());if(x&&x.msg!==undefined&&action!=='ping')throw Error('POST_LOI');return x;};
+      const viaGet=async()=>{const x=parse(await timed(fetch(LH_API+(LH_API.includes('?')?'&':'?')+'p='+encodeURIComponent(json)).then(x=>x.text())));if(x&&x.msg!==undefined&&action!=='ping')throw Error('POST_LOI');return x;};
       if(small&&Net.useGet){try{r=await viaGet();}catch(e){}}
       // mạng chập chờn (điện thoại chuyển 4G/Wi-Fi): lệnh chỉ đọc thì thử lại tối đa 2 lần
       for(let k=0;!r;k++){
         try{r=await viaPost();}
         catch(e){
           if(small&&(NET_SAFE.has(action)||action==='register'||action==='reset')&&netErr(e).message==='Failed to fetch'){try{r=await viaGet();Net.useGet=true;break;}catch(g){if(g.message==='POST_LOI')throw g;}}
-          if(k>=2||e.message==='MAY_CHU_LOI'||!NET_SAFE.has(action))throw await netDiag(netErr(e));await new Promise(ok=>setTimeout(ok,900*(k+1)));
+          if(k>=2||e.message==='MAY_CHU_LOI'||!NET_SAFE.has(action)){const d=await netDiag(netErr(e));LH_DIAG.net(action,d.message);throw d;}await new Promise(ok=>setTimeout(ok,900*(k+1)));
         }
       }
     }
@@ -53,12 +55,25 @@ const Net={
     if(!r.ok&&r.error==='DANG_NHAP_NOI_KHAC'&&!payload._retry){let st='';try{st=localStorage.getItem('lh-token')||'';}catch(e){}if(st&&st!==this.token){this.token=st;return this.call(action,{...payload,_retry:1});}}
     // phiên bị thay (đăng nhập ở thiết bị khác): báo cho game / Chợ phiên dừng lại
     if(!r.ok&&(r.error==='DANG_NHAP_NOI_KHAC'||(r.error==='PHIEN_HET_HAN'&&this.token))&&typeof window!=='undefined')window.dispatchEvent(new CustomEvent('lh-kicked',{detail:r.error}));
+    LH_DIAG.net(action,r.ok?'':r.error);
     if(!r.ok){const e=Error(r.error||'LOI');throw e;}
     return r;
   }
 };
 /* Tiến trình chơi giữ trên máy (localStorage), mỗi nhân vật một khóa: {save, inflight:{bid,ops}, ops}
    Game ghi liên tục; chỉ gửi lên máy chủ ở các mốc lưu. Lần vào game / Chợ phiên sau, phần còn sót được gửi trước khi tải nhân vật. */
+/* Nhật ký tình trạng (menu → Tình trạng): lỗi trò chơi gần đây, lần gọi máy chủ gần nhất. Giữ trên máy để chụp gửi khi cần. */
+const LH_DIAG=(()=>{
+  const K='lh-diag',st={err:[],net:[]};try{Object.assign(st,JSON.parse(localStorage.getItem(K)||'{}'));}catch(e){}
+  const save=()=>{try{localStorage.setItem(K,JSON.stringify(st));}catch(e){}};
+  const t=()=>new Date().toLocaleTimeString('vi-VN');
+  return {
+    error(e,where){const m=String(e&&e.message||e).slice(0,160),s=String(e&&e.stack||'').split('\n').slice(0,3).join(' | ').slice(0,300);st.err.unshift({t:t(),where,m,s});st.err=st.err.slice(0,8);save();},
+    net(a,err){st.net.unshift({t:t(),a,err:err||''});st.net=st.net.slice(0,8);save();},
+    get data(){return st;},clear(){st.err=[];st.net=[];save();}
+  };
+})();
+if(typeof window!=='undefined'){window.addEventListener('error',e=>LH_DIAG.error(e.error||e.message,'trang'));window.addEventListener('unhandledrejection',e=>LH_DIAG.error(e.reason,'lệnh'));}
 const LH_Local={
   key:id=>'lh-local-'+id,
   get(id){try{return JSON.parse(localStorage.getItem(this.key(id))||'null');}catch(e){return null;}},

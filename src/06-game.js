@@ -755,7 +755,9 @@ window.startGame=(session)=>{
      - Máy chủ tính lại y hệt (theo thời điểm và cách xếp đồ lúc ra lệnh) rồi lưu; trạng thái máy chủ là chuẩn. */
   const CHUNK=500,sync={queue:[],busy:null,sig:'',lastLay:null,at:-99,keptAt:0},pending=[];let inflight=null,sent=[];
   const record=()=>({save:Player.serialize(player,hero,seen),inflight,ops:sync.queue.map(b=>b.op),t:Date.now()});
-  function keepLocal(){sync.keptAt=time;LH_Local.set(session.charId,record());}
+  // Ghi phần chơi xuống máy: ngay khi cần (force) hoặc theo nhịp ~1,5 giây (không ghi mỗi đòn đánh để máy yếu không khựng)
+  let localDirty=false;
+  function keepLocal(force){if(!force&&time-sync.keptAt<1.5){localDirty=true;return;}localDirty=false;sync.keptAt=time;try{LH_Local.set(session.charId,record());}catch(e){LH_DIAG.error(e,'lưu máy');}}
   const unsaved=()=>!!(sync.queue.length||inflight);
   function queueOp(o,L=Player.layout(player)){
     const sig=JSON.stringify(L);o.at=Date.now();
@@ -782,7 +784,7 @@ window.startGame=(session)=>{
             for(const o of ops)if(o.lay)sync.lastLay=o.lay;
             inflight={bid:Date.now().toString(36)+Math.random().toString(36).slice(2,8),ops};
           }
-          keepLocal();
+          keepLocal(true);
           const sentSig=JSON.stringify(Player.layout(player));
           const r=await Net.call('play',{charId:session.charId,bid:inflight.bid,sentAt:Date.now(),save:Player.serialize(player,hero,seen),ops:inflight.ops});
           sync.flushedSig=sentSig;
@@ -792,8 +794,8 @@ window.startGame=(session)=>{
           const bad=(r.results||[]).filter(x=>!x.ok).length;if(bad)message(svg('close')+'Máy chủ không nhận '+bad+' lệnh, đã đồng bộ lại');
           sent=[];
         }while(sync.queue.length>=CHUNK);
-        sync.at=time;if(!unsaved())LH_Local.clear(session.charId);else keepLocal();return true;
-      }catch(e){keepLocal();message(svg('close')+netMsg(e)+' · tiến trình vẫn giữ trên máy');return false;}
+        sync.at=time;if(!unsaved())LH_Local.clear(session.charId);else keepLocal(true);return true;
+      }catch(e){keepLocal(true);message(svg('close')+netMsg(e)+' · tiến trình vẫn giữ trên máy');return false;}
       finally{sync.busy=null;window.GameUI?.refresh();}
     })();
     return sync.busy;
@@ -1178,7 +1180,7 @@ window.startGame=(session)=>{
     if(!hero.dead){player.mana=Math.min(S.mp,player.mana+S.mpReg*dt);player.hp=Math.min(S.hp,player.hp+(S.hpReg+(HD.fx.heal?S.hp*HD.fx.heal/100:0))*dt);}
     player.hp=Math.min(player.hp,S.hp);player.mana=Math.min(player.mana,S.mp);
     if(HD.fx.shield&&time>hero.shieldAt){hero.shieldAt=time+10;hero.shieldHp=Math.round(S.hp*HD.fx.shield/100);}else if(!HD.fx.shield)hero.shieldHp=0;
-    if(time-sync.keptAt>3)keepLocal();
+    if(time-sync.keptAt>(localDirty?1.5:3))keepLocal(true);
     World.bridges.forEach((B,i)=>{const sd=hero.x<B.x0*T?'w':hero.x>(B.x1+1)*T?'e':bridgeSide[i];if(sd!==bridgeSide[i]){const was=bridgeSide[i];bridgeSide[i]=sd;if(was)checkpoint();}});
     {const P=World.portalAt(hero.x,hero.y);if(!P)portalArmed=true;else if(portalArmed&&!travelling&&!hero.dead){portalArmed=false;checkpoint();travel(P.to,P.tx,P.ty);}}
     updateNPCs(dt);updateProjectiles(dt);updateMonsters(dt);updateAllies(dt);updateStrikes();updateVillage(dt);updateEffects(dt);
@@ -1270,7 +1272,15 @@ window.startGame=(session)=>{
     drawHero(c,fake,st,who?null:el,time,{label:false,who:who||undefined});c.restore();
   }
   function activateBurst(el){if(!el)return;const C=EL[el];fx.push({kind:'ring',x:hero.x,y:hero.y-10,r0:8,r1:90,color:C.color,age:0,life:.6,lw:5});burst(hero.x,hero.y-26,C.color,26,200);burst(hero.x,hero.y-26,C.glow,12,120);}
-  function loop(ms){if(window.LH_KICKED)return;const dt=Math.min(.04,(ms-(last||ms))/1000);last=ms;time=ms/1000;update(dt);render();requestAnimationFrame(loop);}
+  // Vòng lặp: một khung hình lỗi không làm dừng game (ghi vào nhật ký Tình trạng, báo một dòng, chạy tiếp)
+  let errAt=-99;
+  function oops(e,where){LH_DIAG.error(e,where);if(time-errAt>8){errAt=time;message(svg('close')+'Lỗi '+where+': '+String(e&&e.message||e).slice(0,80));}}
+  function loop(ms){
+    if(window.LH_KICKED)return;requestAnimationFrame(loop);
+    const dt=Math.min(.04,(ms-(last||ms))/1000);last=ms;time=ms/1000;
+    try{update(dt);}catch(e){oops(e,'cập nhật');}
+    try{render();}catch(e){oops(e,'vẽ');try{resize();}catch(_){}}
+  }
 
   /* ---------- Điều khiển ---------- */
   // Chế độ chân dung: chỉ mượn bộ vẽ nhân vật (căn lều chọn nhân vật, chợ cho thuê), không chạy game
@@ -1306,8 +1316,8 @@ window.startGame=(session)=>{
   pad.addEventListener('pointermove',padMove);
   pad.addEventListener('pointerup',e=>{if(e.pointerId===padId)stopPad();});pad.addEventListener('pointercancel',e=>{if(e.pointerId===padId)stopPad();});pad.addEventListener('lostpointercapture',e=>{if(e.pointerId===padId)stopPad();});
   window.addEventListener('resize',resize);
-  document.addEventListener('visibilitychange',()=>{last=0;keys.clear();stopPad();holdAttack=false;if(document.hidden)keepLocal();});
-  window.addEventListener('pagehide',()=>{keepLocal();});
+  document.addEventListener('visibilitychange',()=>{last=0;keys.clear();stopPad();holdAttack=false;if(document.hidden)keepLocal(true);});
+  window.addEventListener('pagehide',()=>{keepLocal(true);});
   groundDraw();resize();syncMerc();requestAnimationFrame(loop);
   window.mapGame={hero,player,camera,monsters,allies,get route(){return route;},get seen(){return [...seen];},get safe(){return safe;},get HD(){return HD;},now:()=>time,screenPoint,goTo,cast,message,activateBurst,svg,save,unsaved,checkpoint,server,op,refreshHD,syncMerc,
     hammer(color){let n=0;const t=setInterval(()=>{burst(hero.x+hero.facing*14,hero.y-26,color||'#ffcf7a',6,140);if(color)fx.push({kind:'ring',x:hero.x,y:hero.y-20,r0:6,r1:46,color,age:0,life:.4,lw:3});else shake(2);if(++n>=3)clearInterval(t);},380);},

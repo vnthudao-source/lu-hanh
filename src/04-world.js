@@ -57,6 +57,7 @@ const World=(()=>{
     return true;
   }
   function move(p,dx,dy,r=11){
+    if(!Number.isFinite(dx)||!Number.isFinite(dy))return p;dx=Math.max(-300,Math.min(300,dx));dy=Math.max(-300,Math.min(300,dy));
     const n=Math.max(1,Math.ceil(Math.max(Math.abs(dx),Math.abs(dy))/6));
     for(let i=0;i<n;i++){if(canStand(p.x+dx/n,p.y,r))p.x+=dx/n;if(canStand(p.x,p.y+dy/n,r))p.y+=dy/n;}
     return p;
