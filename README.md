@@ -17,8 +17,8 @@ Webgame nhập vai phiêu lưu, phong cách làng Việt xưa. Chạy trên Blog
 Dán nội dung `blogspot/nhung-vao-blogspot.html` vào bài viết ở chế độ HTML. Đoạn này nạp game từ:
 
 ```
-https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@ban-8.0/dist/lu-hanh.js
-https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@ban-8.0/dist/lu-hanh.css
+https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@ban-8.1/dist/lu-hanh.js
+https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@ban-8.1/dist/lu-hanh.css
 ```
 
 Dòng `window.LH_API=''` là chỗ dán URL Web App (đuôi `/exec`). Để trống thì game chạy ngoại tuyến, lưu trên trình duyệt.
@@ -31,12 +31,18 @@ Trên Blogspot tạo **Trang** mới, đường dẫn `cho-phien`, dán `blogspo
 
 Từ v8, tiền, đồ rơi, gia cường, mua bán, nhiệm vụ, lính đều do máy chủ (`05-player.js` chạy trong Apps Script) quyết định. Máy người chơi chỉ gửi lệnh (gom các lần hạ quái, gửi 2,5 giây một lần) và nhận lại trạng thái. Sửa dữ liệu trên trình duyệt không tăng được tiền hay đồ.
 
+## Cấp độ, sách, thú cưỡi (v8.1)
+
+- Hạ quái và trả việc cho Lý trưởng được kinh nghiệm (cột `kinh_nghiem` ở tab `quai`, `thuong_kinh_nghiem` ở tab `nhiem_vu`; Sheet chưa có cột thì máy chủ tự tính: quái = máu/8, việc = đồng thưởng/10). Kinh nghiệm cần lên cấp L = `exp_goc` × L^(`exp_tang`/100). Mỗi cấp được `diem_moi_cap` điểm cộng vào 4 chỉ số. Cấp và kinh nghiệm ghi vào cột `cap`, `kinh_nghiem` của bảng `nhan_vat`.
+- Sách gắn vào ô kỹ năng cộng dồn chỉ số (`sach_chi_so`, `sach_moi_cap`); luyện sách ở Đạo sĩ.
+- Thú cưỡi gia cường (Lò rèn hoặc Người nuôi thú cưỡi): +1..+6 tốc độ, +7..+10 thêm công, +11..+15 thêm máu, mana, phòng ngự (`thu_cuoi_*`). Lính đánh thuê cưỡi được thú, không tốn Mệnh lệnh của người chơi.
+
 ## Ra bản mới
 
 1. Sửa trong `src/` (và `VERSION`).
 2. `node tools/build.mjs`
-3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-8.1`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
-4. Trên Blogspot đổi `@ban-8.0` thành `@ban-8.1` ở 2 chỗ.
+3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-8.2`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
+4. Trên Blogspot đổi `@ban-8.1` thành `@ban-8.2` ở 2 chỗ.
 5. Nếu `Code.gs` đổi: dán lại vào Apps Script, Triển khai → Quản lý triển khai → Sửa → Phiên bản mới (giữ nguyên URL).
 
 ## Dữ liệu trong Sheet

@@ -26,6 +26,17 @@ cau_hinh:[
  {khoa:'bo_toc_thu_cuoi',gia_tri:155,ghi_chu:'Đồ bộ: tốc độ thú cưỡi (% tốc đi bộ)'},
  {khoa:'gia_do_bo',gia_tri:5000,ghi_chu:'Giá gốc món đồ bộ (để tính giá bán lại)'},
  {khoa:'gieng_hoi_giay',gia_tri:300,ghi_chu:'Giếng cổ: số giây để nước đầy lại sau khi dùng'},
+ {khoa:'exp_goc',gia_tri:60,ghi_chu:'Kinh nghiệm cần để lên cấp 2. Cấp L cần exp_goc × L^(exp_tang/100)'},
+ {khoa:'exp_tang',gia_tri:150,ghi_chu:'Độ tăng kinh nghiệm cần mỗi cấp (150 = lũy thừa 1,5)'},
+ {khoa:'cap_toi_da',gia_tri:60,ghi_chu:'Cấp cao nhất của nhân vật'},
+ {khoa:'diem_moi_cap',gia_tri:5,ghi_chu:'Điểm cộng chỉ số nhận được mỗi lần lên cấp'},
+ {khoa:'sach_chi_so',gia_tri:4,ghi_chu:'Mỗi sách gắn vào ô kỹ năng cộng chừng này điểm vào chỉ số theo hệ (Mộc chia đôi cho Sức khỏe và Trí tuệ)'},
+ {khoa:'sach_moi_cap',gia_tri:2,ghi_chu:'Mỗi cấp gia cường sách cộng thêm'},
+ {khoa:'thu_cuoi_toc_cap',gia_tri:3,ghi_chu:'Thú cưỡi: % tốc độ mỗi cấp gia cường (+1 đến +15)'},
+ {khoa:'thu_cuoi_cong_cap',gia_tri:2,ghi_chu:'Thú cưỡi: công mỗi cấp từ +7'},
+ {khoa:'thu_cuoi_mau_cap',gia_tri:20,ghi_chu:'Thú cưỡi: máu mỗi cấp từ +11'},
+ {khoa:'thu_cuoi_mana_cap',gia_tri:10,ghi_chu:'Thú cưỡi: mana mỗi cấp từ +11'},
+ {khoa:'thu_cuoi_thu_cap',gia_tri:2,ghi_chu:'Thú cưỡi: phòng ngự mỗi cấp từ +11'},
  {khoa:'link_cho_phien',gia_tri:'https://ikynagame.blogspot.com/p/cho-phien.html',ghi_chu:'Địa chỉ trang Chợ phiên (mua bán giữa người chơi, nhân vật đi theo)'}
 ],
 // cap = cấp hiện tại; ti_le = % thành công lên cấp kế; thất bại: cấp về ngẫu nhiên từ that_bai_tu đến that_bai_den (để trống = giữ nguyên)
@@ -114,7 +125,7 @@ quai:[
  ['croc','Cá sấu',190,15,35,150,20,20,150,58,1.5,.3,35,.5,0,15,.08,.012,.0008,0,'0-0','thuong',5],
  ['chua-son-lam','Chúa Sơn Lâm',2500,28,80,150,30,64,260,74,1.4,.5,300,.1,1,120,.6,.25,.04,0,'3-10','huyen_thoai',15],
  ['ngu-tinh','Ngư Tinh',6000,40,40,110,40,80,280,120,2.2,.8,1000,.05,2,300,.8,.5,.12,.015,'10-30','than',20]
-].map(([id,ten,mau,sat_thuong,toc_do,toc_chay,ban_kinh,cao,tam_danh,tam_gan,hoi_chieu,vung_tay,dong,day_lui,boss,hoi_sinh_giay,ti_le_dep,ti_le_hoan_hao,ti_le_huyen_thoai,ti_le_than,hong_ngoc,loai_sat_thuong,ti_le_x2])=>{const [ha,hb]=hong_ngoc.split('-').map(Number),v=x=>Math.round(x*10000);return {id,ten,mau,sat_thuong,toc_do,toc_chay,ban_kinh,cao,tam_danh,tam_gan,hoi_chieu_ms:Math.round(hoi_chieu*1000),vung_tay_ms:Math.round(vung_tay*1000),dong,day_lui_phan_tram:Math.round(day_lui*100),boss,hoi_sinh_giay,dep_phan_van:v(ti_le_dep),hoan_hao_phan_van:v(ti_le_hoan_hao),huyen_thoai_phan_van:v(ti_le_huyen_thoai),than_phan_van:v(ti_le_than),hong_ngoc_it:ha,hong_ngoc_nhieu:hb,loai_sat_thuong,ti_le_x2};}),
+].map(([id,ten,mau,sat_thuong,toc_do,toc_chay,ban_kinh,cao,tam_danh,tam_gan,hoi_chieu,vung_tay,dong,day_lui,boss,hoi_sinh_giay,ti_le_dep,ti_le_hoan_hao,ti_le_huyen_thoai,ti_le_than,hong_ngoc,loai_sat_thuong,ti_le_x2])=>{const [ha,hb]=hong_ngoc.split('-').map(Number),v=x=>Math.round(x*10000);return {id,ten,mau,sat_thuong,toc_do,toc_chay,ban_kinh,cao,tam_danh,tam_gan,hoi_chieu_ms:Math.round(hoi_chieu*1000),vung_tay_ms:Math.round(vung_tay*1000),dong,day_lui_phan_tram:Math.round(day_lui*100),boss,hoi_sinh_giay,dep_phan_van:v(ti_le_dep),hoan_hao_phan_van:v(ti_le_hoan_hao),huyen_thoai_phan_van:v(ti_le_huyen_thoai),than_phan_van:v(ti_le_than),hong_ngoc_it:ha,hong_ngoc_nhieu:hb,loai_sat_thuong,ti_le_x2,kinh_nghiem:{deer:8,lion:20,elephant:50,croc:25,'chua-son-lam':300,'ngu-tinh':800}[id]||0};}),
 nhiem_vu:[
  ['q-huou','Săn hươu','Dân làng cần thịt hươu cho hội làng.','deer',5,200,0,'hat','g','co'],
  ['q-su-tu','Trừ sư tử','Sư tử bên Đông Ngạn hay vồ người đi rừng.','lion',3,500,0,'sword-iron','n','co'],
@@ -122,7 +133,7 @@ nhiem_vu:[
  ['q-voi','Đuổi voi rừng','Voi rừng phá nương rẫy phía đông.','elephant',2,800,0,'armor-leather','g','co'],
  ['q-chua-son-lam','Hạ Chúa Sơn Lâm','Con hổ chúa ở rừng đông bắc đã giết nhiều thợ săn.','chua-son-lam',1,10000,10,'','','co'],
  ['q-ngu-tinh','Trừ Ngư Tinh','Ngư Tinh nổi lên ở đầm phía đông nam, dâng nước hại dân.','ngu-tinh',1,30000,30,'','','co']
-].map(([id,ten,mo_ta,muc_tieu,so_luong,thuong_dong,thuong_hong_ngoc,thuong_do,pham_chat_do,lap_lai])=>({id,ten,mo_ta,muc_tieu,so_luong,thuong_dong,thuong_hong_ngoc,thuong_do,pham_chat_do,lap_lai})),
+].map(([id,ten,mo_ta,muc_tieu,so_luong,thuong_dong,thuong_hong_ngoc,thuong_do,pham_chat_do,lap_lai])=>({id,ten,mo_ta,muc_tieu,so_luong,thuong_dong,thuong_hong_ngoc,thuong_do,pham_chat_do,lap_lai,thuong_kinh_nghiem:Math.round(thuong_dong/10)})),
 linh:[
  ['dan-binh','Dân binh','m',100,5,12,8,12,4,'spear,hat','Lính giáo rẻ, máu trâu'],
  ['cung-thu','Nữ cung thủ','f',300,5,10,14,8,6,'bow,shoes','Bắn từ xa'],

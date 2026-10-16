@@ -19,7 +19,7 @@ function LH_Core(A){
     if(status&&c.trang_thai!==status)fail('SAI_TRANG_THAI');
     return c;
   }
-  const charView=c=>({id:c.id,name:c.ten,gender:c.gioi_tinh,stats:{strength:+c.suc_manh,agility:+c.nhanh_nhen,vitality:+c.suc_khoe,intelligence:+c.tri_tue},status:c.trang_thai,price:+c.gia_danh_thue||0,created:+c.tao_luc});
+  const charView=c=>({id:c.id,name:c.ten,gender:c.gioi_tinh,stats:{strength:+c.suc_manh,agility:+c.nhanh_nhen,vitality:+c.suc_khoe,intelligence:+c.tri_tue},status:c.trang_thai,level:+c.cap||1,price:+c.gia_danh_thue||0,created:+c.tao_luc});
   function newToken(a){a.token=A.uid()+A.uid();a.token_het_han=A.now()+TOKEN_DAYS*864e5;A.update('tai_khoan',a);return a.token;}
   // Trạng thái nhân vật lưu trên máy chủ (cột luu): {v, player, pos, seen, srv}
   function stateOf(c){
@@ -33,7 +33,7 @@ function LH_Core(A){
     const okPos=v=>v&&Number.isFinite(+v.x)&&Number.isFinite(+v.y)?{x:+v.x,y:+v.y}:null;
     const save={v:Player.VERSION,player,pos:soft.pos!==undefined?okPos(soft.pos):(st.save.pos||null),seen:Array.isArray(soft.seen)?soft.seen.slice(0,60).map(String):(st.save.seen||[]),srv:st.save.srv||{}};
     const j=JSON.stringify(save);if(j.length>45000)fail('DU_LIEU_QUA_LON');
-    c.luu=j;c.cap_nhat=A.now();A.update('nhan_vat',c);st.save=save;
+    c.luu=j;c.cap=player.level;c.kinh_nghiem=player.exp;c.cap_nhat=A.now();A.update('nhan_vat',c);st.save=save;
   }
   function pendingClaims(acc){return A.rows('cho').filter(r=>r.trang_thai==='da_ban'&&r.nguoi_ban===acc&&String(r.da_nhan)!=='1');}
   const H={

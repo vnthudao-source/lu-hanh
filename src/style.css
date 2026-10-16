@@ -210,3 +210,20 @@ button.primary:hover{background:linear-gradient(#b8533a,#8a3320)}
 .cho-card{display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid var(--line);border-radius:12px;background:#0b1a13;margin-bottom:12px}.cho-card>svg{width:34px;height:34px;color:var(--gold);flex:none}.cho-card b{color:#f3dfae}.cho-card p{margin:6px 0 0;font-size:13px;line-height:1.5;color:#d9d2bd}
 a.cho-go{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;border-radius:10px;border:1px solid #e3b86f;background:linear-gradient(#a4452c,#7c2c1b);color:#fff3d6;font-weight:700;text-decoration:none;text-shadow:0 1px 0 #3a120a}a.cho-go svg{width:18px;height:18px}
 button.busy{opacity:.6;pointer-events:none}
+
+/* v8.1: vòng kinh nghiệm quanh chân dung, điểm cộng chỉ số */
+.exp-ring{position:absolute;left:-8px;top:-8px;width:calc(100% + 16px);height:calc(100% + 16px);transform:rotate(-90deg);pointer-events:none;overflow:visible}
+.exp-ring circle{fill:none;stroke-width:5}
+.exp-bg{stroke:#14231c}
+.exp-fg{stroke:#e8c46a;stroke-linecap:round;filter:drop-shadow(0 0 3px #ffd98a88);transition:stroke-dasharray .5s}
+.avatar.lvup .exp-fg{stroke:#fff3c4}
+.pt-dot{position:absolute;top:-8px;right:-8px;width:20px;height:20px;border-radius:50%;background:linear-gradient(#a4452c,#7c2c1b);color:#fff3d6;font:700 15px/18px sans-serif;font-style:normal;text-align:center;border:1px solid #e3b86f;box-shadow:0 0 8px #ff9a5a88}
+.pt-dot[hidden]{display:none}
+.exp-line{display:flex;align-items:center;gap:8px;margin:6px 0 2px;font-size:12px;color:#d9d2bd}
+.exp-line .xb{flex:1;height:6px;border-radius:4px;background:#14231c;overflow:hidden}
+.exp-line .xb i{display:block;height:100%;background:linear-gradient(90deg,#c99a3e,#ffe08a)}
+.pts{display:flex;align-items:center;gap:8px;margin:8px 0;padding:8px 10px;border:1px dashed #e3b86f88;border-radius:10px;color:#f3dfae;font-size:13px}
+.pts b{font-size:18px;color:#ffd98a}
+.attr .main .pt-add{margin-left:6px;padding:3px 9px;min-width:0;border-radius:8px;border:1px solid #e3b86f;background:linear-gradient(#a4452c,#7c2c1b);color:#fff3d6;font-weight:700;font-size:12px;line-height:1.2}
+.qdone{display:flex;align-items:center;gap:8px;padding:10px;color:#b9c4b0;font-size:13px}
+@media (max-width:640px){.exp-ring{left:-6px;top:-6px;width:calc(100% + 12px);height:calc(100% + 12px)}.exp-ring circle{stroke-width:6}.pt-dot{width:18px;height:18px;font-size:13px;line-height:16px}}

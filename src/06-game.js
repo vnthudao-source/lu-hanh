@@ -438,13 +438,14 @@ window.startGame=(session)=>{
     roundRect(c,-14,-58,22,8,2,'#6b3a24');
   }
   function drawMount(c,md,moving,walk,t){if(md.beast==='tiger'){c.save();c.scale(1.3,1.3);drawTiger(c,moving,walk,t);c.restore();}else if(md.beast==='elephant')drawElephantMount(c,md.tint,moving,walk,t);else drawHorse(c,md.tint||'#7a4b2a',moving,walk,t);}
-  function seatH(){if(safe)return 0;const md=player.equipment.mount&&Player.info(player.equipment.mount);return md?Player.BEASTS[md.beast].seat:0;}
+  function seatOf(eq){if(safe)return 0;const md=eq&&eq.mount&&Player.info(eq.mount);return md?Player.BEASTS[md.beast].seat:0;}
+  function seatH(){return seatOf(player.equipment);}
   // Thú cưỡi nghiêng người khi dùng kỹ năng: ngựa chổng hậu, voi chồm lên, hổ lao tới
   function mountRot(h,t){const m=h.mountAct;if(!m)return null;const p=clamp((t-m.start)/m.dur,0,1),k=Math.sin(Math.PI*p);
     if(m.type==='horse')return {px:14,rot:.32*k};if(m.type==='elephant')return {px:-20,rot:-.32*Math.sin(Math.PI*Math.min(1,p/m.hit))};return {px:0,rot:-.22*k};}
   // Mặc định: nam cởi trần đóng khố, nữ mặc yếm váy
   function drawHero(c,h,st,el,t,opts={}){
-    const who=opts.who||player,eq=who.equipment,info=Player.info,a=h.attack,P=heroPose(h,st,a,t),flash=t-h.hurt<.12,md=!opts.who&&!safe&&eq.mount&&info(eq.mount),mounted=!!md,seat=mounted?Player.BEASTS[md.beast].seat:0,big=mounted&&md.beast==='elephant',fem=who.gender==='f';
+    const who=opts.who||player,eq=who.equipment,info=Player.info,a=h.attack,P=heroPose(h,st,a,t),flash=t-h.hurt<.12,md=!safe&&eq.mount&&info(eq.mount),mounted=!!md,seat=mounted?Player.BEASTS[md.beast].seat:0,big=mounted&&md.beast==='elephant',fem=who.gender==='f';
     const bob=h.moving?-Math.abs(Math.sin(h.walk))*(mounted?1.4:2.2):Math.sin(t*2)*.6,SKIN='#d9ad80';
     c.save();if(h.dead)c.globalAlpha=.45;
     ell(c,h.x,h.y+5,big?42:mounted?28:15,big?12:mounted?8:7,'#243d3544');
@@ -637,10 +638,22 @@ window.startGame=(session)=>{
     sack.open=time;const x=sack.x,y=sack.y-30;let dy=0;
     burst(x,y+18,(r.items.length?Player.rar(r.items[0]).color:'#e9dcb4'),r.items.length?22:10,150);
     if(r.rubies){floater(x,y-dy,'+'+r.rubies+' hồng ngọc','#ff7aa0',14);dy+=16;}
+    if(r.exp){floater(x,y-dy,'+'+r.exp+' kinh nghiệm','#ffe08a',12);dy+=14;}
+    if(r.up)levelUp(r.up);
     r.items.forEach(it=>{const R=Player.rar(it),nm=Player.nameOf(it);floater(x,y-dy,nm,R.color,14);dy+=16;message(svg('bag')+`Nhặt được <b style="color:${R.color}">${nm}</b> \u{00b7} ${R.name}`);});
     (r.lost||[]).forEach(it=>message(svg('close')+'Túi đầy, rơi mất '+Player.nameOf(it)));
     (r.done||[]).forEach(id=>{const Q=Player.QUESTS[id];if(Q)message(svg('quest')+`${Q.name}: xong, về gặp Lý trưởng`);});
     if(r.bonus)message(svg('check')+'Săn đủ 4 loài \u{00b7} +'+r.bonus+' đồng');
+  }
+  // Lên cấp: vòng sáng, hạt vàng, đầy máu và mana
+  function levelUp(n){
+    refreshHD();player.hp=HD.tot.hp;player.mana=HD.tot.mp;
+    for(let i=0;i<3;i++)fx.push({kind:'ring',x:hero.x,y:hero.y-10,r0:10+i*6,r1:110+i*30,color:i?'#fff3c4':'#ffd36a',age:0,life:.8+i*.15,lw:5-i});
+    burst(hero.x,hero.y-30,'#ffe08a',40,240);burst(hero.x,hero.y-30,'#fff6d8',18,150);
+    floater(hero.x,hero.y-90,'Lên cấp '+player.level+'!','#ffe08a',20);
+    message(svg('check')+`Lên cấp ${player.level} · +${n*(Number(Player.CFG.diem_moi_cap)||5)} điểm cộng chỉ số`);
+    const av=document.getElementById('avatarBtn');if(av){av.classList.add('lvup');setTimeout(()=>av.classList.remove('lvup'),1600);}
+    window.GameUI?.refresh();
   }
   function drawLoot(){
     for(let i=loot.length-1;i>=0;i--){
@@ -975,7 +988,7 @@ window.startGame=(session)=>{
     const ui=window.GameUI,el=ui&&ui.previewElem?ui.previewElem():Player.element(player),who=ui&&ui.previewWho?ui.previewWho():null,dpr=Math.min(2,devicePixelRatio||1),cw=pv.clientWidth||100,ch=pv.clientHeight||100;
     if(pv.width!==Math.round(cw*dpr)){pv.width=Math.round(cw*dpr);pv.height=Math.round(ch*dpr);}
     const c=pv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,cw,ch);
-    const st=Player.stance(who||player),d=ATK[st.type],cyc=d.dur+1.1,ph=time%cyc,sh=who?0:seatH(),mounted=sh>0,k=ch/100*(mounted?(sh>30?.62:.9):1.15);
+    const st=Player.stance(who||player),d=ATK[st.type],cyc=d.dur+1.1,ph=time%cyc,sh=seatOf((who||player).equipment),mounted=sh>0,k=ch/100*(mounted?(sh>30?.62:.9):1.15);
     const fake={x:cw/2-(mounted?2:6),y:ch*.86,facing:1,moving:false,walk:0,aim:{x:1,y:0},hurt:-9,blockUntil:0,barrierUntil:0,dead:0,name:'',attack:ph<d.dur?{type:st.type,skill:'normal',start:time-ph,dur:d.dur,aim:{x:1,y:0},hand:'right',stance:st}:null};
     c.save();c.translate(fake.x,fake.y);c.scale(k,k);c.translate(-fake.x,-fake.y);
     const b=ui&&ui.previewBurst?time-ui.previewBurst():9;
@@ -1011,7 +1024,8 @@ window.startGame=(session)=>{
   window.addEventListener('pagehide',()=>{save();});
   groundDraw();resize();syncMerc();requestAnimationFrame(loop);
   window.mapGame={hero,player,camera,monsters,merc,get route(){return route;},get seen(){return [...seen];},get safe(){return safe;},get HD(){return HD;},now:()=>time,screenPoint,goTo,cast,message,activateBurst,svg,save,op,refreshHD,syncMerc,
-    hammer(){let n=0;const t=setInterval(()=>{burst(hero.x+hero.facing*14,hero.y-26,'#ffcf7a',6,140);shake(2);if(++n>=3)clearInterval(t);},380);},
+    hammer(color){let n=0;const t=setInterval(()=>{burst(hero.x+hero.facing*14,hero.y-26,color||'#ffcf7a',6,140);if(color)fx.push({kind:'ring',x:hero.x,y:hero.y-20,r0:6,r1:46,color,age:0,life:.4,lw:3});else shake(2);if(++n>=3)clearInterval(t);},380);},
+    levelUp,
     setHold(v){holdAttack=!!v;},
     enhanceFx(ok){const c=ok?'#ffd77a':'#9aa0a6';fx.push({kind:'ring',x:hero.x,y:hero.y-20,r0:6,r1:ok?80:40,color:c,age:0,life:.5,lw:4});burst(hero.x,hero.y-24,c,ok?24:10,ok?200:90);},
     home(){route=[];targetNPC=null;dialogNPC=null;dialogEl.hidden=true;keys.clear();joystick={x:0,y:0};hero.attack=null;hero.mountAct=null;projectiles.length=0;Object.assign(hero,World.spawn);if(merc.ent){merc.ent.x=hero.x-30;merc.ent.y=hero.y+12;}resize();},

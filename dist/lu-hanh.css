@@ -1,4 +1,4 @@
-/*! Lữ Hành v8.0 · Làng Thanh Mộc · https://github.com/vnthudao-source/lu-hanh */
+/*! Lữ Hành v8.1 · Làng Thanh Mộc · https://github.com/vnthudao-source/lu-hanh */
 #lu-hanh{position:fixed;inset:0;z-index:2147483000;overflow:hidden;text-align:left;line-height:normal}
 body:has(#lu-hanh){overflow:hidden!important}
 #lu-hanh{color-scheme:dark;--paper:#eee9da;--gold:#d8b678;--muted:#a8b4a7;--line:#ffffff20}
@@ -376,3 +376,21 @@ body:has(#lu-hanh){overflow:hidden!important}
 #lu-hanh a.cho-go{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;border-radius:10px;border:1px solid #e3b86f;background:linear-gradient(#a4452c,#7c2c1b);color:#fff3d6;font-weight:700;text-decoration:none;text-shadow:0 1px 0 #3a120a}
 #lu-hanh a.cho-go svg{width:18px;height:18px}
 #lu-hanh button.busy{opacity:.6;pointer-events:none}
+#lu-hanh .exp-ring{position:absolute;left:-8px;top:-8px;width:calc(100% + 16px);height:calc(100% + 16px);transform:rotate(-90deg);pointer-events:none;overflow:visible}
+#lu-hanh .exp-ring circle{fill:none;stroke-width:5}
+#lu-hanh .exp-bg{stroke:#14231c}
+#lu-hanh .exp-fg{stroke:#e8c46a;stroke-linecap:round;filter:drop-shadow(0 0 3px #ffd98a88);transition:stroke-dasharray .5s}
+#lu-hanh .avatar.lvup .exp-fg{stroke:#fff3c4}
+#lu-hanh .pt-dot{position:absolute;top:-8px;right:-8px;width:20px;height:20px;border-radius:50%;background:linear-gradient(#a4452c,#7c2c1b);color:#fff3d6;font:700 15px/18px sans-serif;font-style:normal;text-align:center;border:1px solid #e3b86f;box-shadow:0 0 8px #ff9a5a88}
+#lu-hanh .pt-dot[hidden]{display:none}
+#lu-hanh .exp-line{display:flex;align-items:center;gap:8px;margin:6px 0 2px;font-size:12px;color:#d9d2bd}
+#lu-hanh .exp-line .xb{flex:1;height:6px;border-radius:4px;background:#14231c;overflow:hidden}
+#lu-hanh .exp-line .xb i{display:block;height:100%;background:linear-gradient(90deg,#c99a3e,#ffe08a)}
+#lu-hanh .pts{display:flex;align-items:center;gap:8px;margin:8px 0;padding:8px 10px;border:1px dashed #e3b86f88;border-radius:10px;color:#f3dfae;font-size:13px}
+#lu-hanh .pts b{font-size:18px;color:#ffd98a}
+#lu-hanh .attr .main .pt-add{margin-left:6px;padding:3px 9px;min-width:0;border-radius:8px;border:1px solid #e3b86f;background:linear-gradient(#a4452c,#7c2c1b);color:#fff3d6;font-weight:700;font-size:12px;line-height:1.2}
+#lu-hanh .qdone{display:flex;align-items:center;gap:8px;padding:10px;color:#b9c4b0;font-size:13px}
+@media (max-width:640px){#lu-hanh .exp-ring{left:-6px;top:-6px;width:calc(100% + 12px);height:calc(100% + 12px)}
+#lu-hanh .exp-ring circle{stroke-width:6}
+#lu-hanh .pt-dot{width:18px;height:18px;font-size:13px;line-height:16px}
+}
