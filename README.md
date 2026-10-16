@@ -116,12 +116,20 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 - `lu-hanh.js` được rút gọn bằng Terser (chép sẵn trong `tools/vendor/terser`, không cần npm): nhỏ hơn khoảng 21%. `lu-hanh.html` (bản dán Google Doc) giữ nguyên để đọc.
 - Máy chủ: Sheet `quai`, `nhiem_vu` chưa có dòng mới thì tự dùng số liệu mặc định; chạy `kiemTra` một lần để chép các dòng mới vào Sheet (và dòng ảnh quái mới vào file Hình ảnh) rồi sửa số liệu ở đó.
 
+## Bản 9.9: chọn bản đồ, cấp vào vùng
+
+- **Ô trang bị trống** (mũ, tay, chân, cánh, thú cưỡi, quần, giày…) giờ dùng biểu tượng ô (`bieu_tuong:<ô>` trong file Hình ảnh, ví dụ `bieu_tuong:hat`), không còn lấy nhầm ảnh vật phẩm cùng mã (`vat_pham:hat` là Nón lá, `vat_pham:mount` là Ngựa con…).
+- **Thay ảnh mà vẫn thấy ảnh cũ:** khi tải phiên bản mới đè lên cùng file Drive (link không đổi), trình duyệt giữ ảnh cũ. Hàm Apps Script `lamMoiAnh` ghi giờ sửa từng file vào cột `phien_ban` của file Hình ảnh, game tải lại ảnh nào có phiên bản mới; chạy tay một lần, sau đó tự chạy mỗi giờ. Nhật ký báo các ảnh chưa chia sẻ hoặc không mở được.
+- Nút menu góc trên đổi từ bánh răng sang biểu tượng menu (ba gạch). Menu có thêm **Bản đồ**: đi thẳng tới trạm nghỉ ở cổng Làng Thanh Mộc, Hang động, Sa mạc, Núi tuyết (tự lưu trước khi đi).
+- **Cấp tối thiểu** (Sheet `cau_hinh`: `cap_hang_dong` 5, `cap_sa_mac` 10, `cap_nui_tuyet` 15; chạy `kiemTra` để thêm các dòng này): chặn ở bảng Bản đồ, ở cổng vào vùng, và máy chủ đưa nhân vật về làng nếu vị trí lưu ở vùng chưa đủ cấp.
+- **Lý trưởng** xếp việc theo cấp, nhóm theo vùng; việc ở vùng chưa đủ cấp hiện khóa, không nhận được (máy chủ cũng kiểm tra). Cột tùy chọn `cap_toi_thieu` ở tab `nhiem_vu` đặt cấp riêng cho từng việc.
+
 ## Ra bản mới
 
 1. Sửa trong `src/` (và `VERSION`).
 2. `node tools/build.mjs`
-3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-9.9`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
-4. Trên Blogspot đổi `@ban-9.8` thành `@ban-9.9` (trang game và trang Chợ phiên).
+3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-10.0`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
+4. Trên Blogspot đổi `@ban-9.9` thành `@ban-10.0` (trang game và trang Chợ phiên).
 5. Nếu `Code.gs` đổi: dán lại vào Apps Script, Triển khai → Quản lý triển khai → Sửa → Phiên bản mới (giữ nguyên URL).
 
 ## Dữ liệu trong Sheet

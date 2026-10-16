@@ -1,6 +1,7 @@
 /* ================= ẢNH TĨNH (Sheet "LH · Hình ảnh", tab hinh_anh) =================
    Mỗi dòng: nhom + ma + link_anh. Dán link ảnh Google Drive (chia sẻ "Bất kỳ ai có đường liên kết") hoặc link ảnh bất kỳ.
    Ô link để trống, hoặc ảnh không tải được: dùng biểu tượng / hình vẽ mặc định của game.
+   Thay ảnh bằng cách tải phiên bản mới lên cùng file Drive: chạy lamMoiAnh (Apps Script) để game tải lại ảnh đó.
    nhom: bieu_tuong (biểu tượng giao diện) · vat_pham (đồ dùng) · quai (quái vật) · npc (dân làng) · giao_dien (logo, nền, chân dung, túi đồ rơi) */
 const LH_IMG=(()=>{
   const KEY='lh-img',MAP={},PIC={},ORIG={};
@@ -40,7 +41,10 @@ const LH_IMG=(()=>{
   }
   // rows: [{nhom, ma, link_anh}] từ máy chủ
   function set(rows){
-    const map={};for(const r of rows||[]){const u=direct(r.link_anh),k=String(r.nhom||'').trim()+':'+String(r.ma||'').trim();if(u&&k.length>2)map[k]=u;}
+    const map={};for(const r of rows||[]){let u=direct(r.link_anh);const k=String(r.nhom||'').trim()+':'+String(r.ma||'').trim();
+      // v: phiên bản ảnh (giờ sửa file trên Drive, hàm lamMoiAnh ghi vào cột phien_ban) → thay file cùng link thì trình duyệt vẫn tải ảnh mới
+      if(u&&r.v&&!/^data:/.test(u))u+=(u.includes('?')?'&':'?')+'v='+encodeURIComponent(String(r.v));
+      if(u&&k.length>2)map[k]=u;}
     try{localStorage.setItem(KEY,JSON.stringify(map));}catch(e){}
     load(map);
   }

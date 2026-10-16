@@ -41,21 +41,21 @@ function lhStatic_(){
     const sh=ss.getSheetByName(tab)||(tab==='hinh_anh'?ss.getSheets()[0]:null);if(!sh||sh.getLastRow()<2){out[tab]=LH_DEFAULT[tab]||[];continue;}out[tab]=sh?lhRows_(sh).filter(r=>Object.keys(r).some(k=>k!=='_r'&&r[k]!=='')).map(r=>{delete r._r;return r;}):[];
   }
   // Quái, nhiệm vụ mới của bản cập nhật (vùng mới) mà Sheet chưa có dòng: dùng số liệu mặc định cho tới khi chạy kiemTra để chép vào Sheet
-  for(const tab of LH_BO_SUNG)if(LH_SHEETS[LH_STATIC[tab]]&&Array.isArray(out[tab])&&out[tab].length){const has=new Set(out[tab].map(r=>String(r.id)));for(const r of LH_DEFAULT[tab]||[])if(!has.has(String(r.id)))out[tab].push(r);}
+  for(const tab of LH_BO_SUNG)if(LH_SHEETS[LH_STATIC[tab]]&&Array.isArray(out[tab])&&out[tab].length){const key=tab==='cau_hinh'?'khoa':'id',has=new Set(out[tab].map(r=>String(r[key])));for(const r of LH_DEFAULT[tab]||[])if(!has.has(String(r[key])))out[tab].push(r);}
   // Ảnh tĩnh: chỉ gửi các dòng đã dán link
-  out.hinh_anh=(out.hinh_anh||[]).filter(r=>String(r.link_anh||'').trim()).map(r=>({nhom:r.nhom,ma:r.ma,link_anh:String(r.link_anh).trim()}));
+  out.hinh_anh=(out.hinh_anh||[]).filter(r=>String(r.link_anh||'').trim()).map(r=>({nhom:r.nhom,ma:r.ma,link_anh:String(r.link_anh).trim(),...(String(r.phien_ban||'').trim()?{v:String(r.phien_ban).trim()}:{})}));
   const s=JSON.stringify(out);if(s.length<95000)cache.put('lh-data',s,120);
   return out;
 }
 // Tab được bổ sung dòng mới (theo cột id) khi game thêm quái, nhiệm vụ
-const LH_BO_SUNG=['quai','nhiem_vu'];
+const LH_BO_SUNG=['quai','nhiem_vu','cau_hinh'];
 // Chép các dòng mặc định còn thiếu (quái, nhiệm vụ của vùng mới) xuống cuối tab; không sửa dòng đã có
 function lhDuLieuBoSung_(){
   let n=0;
   for(const tab of LH_BO_SUNG){
     const file=LH_SHEETS[LH_STATIC[tab]];if(!file)continue;const sh=SpreadsheetApp.openById(file).getSheetByName(tab);if(!sh||sh.getLastRow()<2)continue;
-    const v=sh.getDataRange().getValues(),h=v[0].map(String),ci=h.indexOf('id');if(ci<0)continue;const has=new Set(v.slice(1).map(r=>String(r[ci])));
-    const add=(LH_DEFAULT[tab]||[]).filter(r=>!has.has(String(r.id))).map(r=>h.map(k=>r[k]===undefined||r[k]===null?'':r[k]));
+    const v=sh.getDataRange().getValues(),h=v[0].map(String),key=h.indexOf('id')>=0?'id':'khoa',ci=h.indexOf(key);if(ci<0)continue;const has=new Set(v.slice(1).map(r=>String(r[ci])));
+    const add=(LH_DEFAULT[tab]||[]).filter(r=>!has.has(String(r[key]))).map(r=>h.map(k=>r[k]===undefined||r[k]===null?'':r[k]));
     if(add.length){sh.getRange(sh.getLastRow()+1,1,add.length,h.length).setValues(add);n+=add.length;Logger.log('Thêm '+add.length+' dòng vào tab '+tab);}
   }
   return n;
@@ -193,5 +193,25 @@ function capNhatAnh(){
     }catch(e){Logger.log('Không chép được '+d.file+': '+e);}
   }
   xoaBoNhoDem();Logger.log('Đã chép '+n+' ảnh vào Drive'+(left?', còn '+left+' ảnh: chạy lại capNhatAnh':', xong'));
+}
+// Làm mới ảnh: ghi giờ sửa file Drive của từng link vào cột phien_ban. Thay ảnh bằng "Quản lý phiên bản" / tải đè cùng tên
+// (link không đổi) thì trình duyệt vẫn giữ ảnh cũ; có phien_ban mới, game tải lại ảnh đó. Tự chạy mỗi giờ (lần đầu chạy tay để tạo lịch).
+function lamMoiAnh(){
+  const t0=Date.now(),ss=SpreadsheetApp.openById(LH_SHEETS.hinh_anh),sh=ss.getSheetByName('hinh_anh')||ss.getSheets()[0];
+  const h=sh.getRange(1,1,1,sh.getLastColumn()).getValues()[0].map(String);
+  if(h.indexOf('phien_ban')<0){h.push('phien_ban');sh.getRange(1,h.length).setValue('phien_ban').setFontWeight('bold');}
+  const ci=k=>h.indexOf(k),last=sh.getLastRow();if(last<2)return;
+  const v=sh.getRange(2,1,last-1,h.length).getValues(),out=v.map(r=>[r[ci('phien_ban')]]);let n=0,bad=[];
+  for(let i=0;i<v.length;i++){
+    const link=String(v[i][ci('link_anh')]||'').trim(),m=link.match(/\/d\/([\w-]{20,})/)||link.match(/[?&]id=([\w-]{20,})/);
+    if(!m){if(!link&&out[i][0]!==''){out[i][0]='';n++;}continue;}
+    if(Date.now()-t0>270000)break;
+    try{const f=DriveApp.getFileById(m[1]),ver=Math.floor(f.getLastUpdated().getTime()/1000).toString(36);if(String(out[i][0])!==ver){out[i][0]=ver;n++;}
+      const a=f.getSharingAccess();if(a!==DriveApp.Access.ANYONE_WITH_LINK&&a!==DriveApp.Access.ANYONE)bad.push(v[i][ci('nhom')]+':'+v[i][ci('ma')]+' (chưa chia sẻ)');}
+    catch(e){bad.push(v[i][ci('nhom')]+':'+v[i][ci('ma')]+' (không mở được file)');}
+  }
+  if(n){sh.getRange(2,ci('phien_ban')+1,out.length,1).setValues(out);xoaBoNhoDem();}
+  try{if(!ScriptApp.getProjectTriggers().some(t=>t.getHandlerFunction()==='lamMoiAnh'))ScriptApp.newTrigger('lamMoiAnh').timeBased().everyHours(1).create();}catch(e){}
+  Logger.log('Cập nhật phiên bản '+n+' ảnh'+(bad.length?'\nẢnh lỗi:\n'+bad.join('\n'):''));
 }
 function kiemTra(){try{lhDuLieuBoSung_();}catch(e){Logger.log('Chưa bổ sung được quái / nhiệm vụ mới: '+e);}try{const n=lhHinhAnhBoSung_();if(n)Logger.log('Thêm '+n+' dòng ảnh mới vào file Hình ảnh');}catch(e){Logger.log('Chưa bổ sung được file Hình ảnh: '+e);}xoaBoNhoDem();const d=lhStatic_();Logger.log(Object.keys(d).map(k=>k+': '+d[k].length+' dòng').join('\n'));LH_DB.rows('tai_khoan');LH_DB.rows('nhan_vat');LH_DB.rows('cho');Logger.log('Bảng người chơi sẵn sàng. Quyền gửi mail: '+MailApp.getRemainingDailyQuota()+' thư/ngày');}

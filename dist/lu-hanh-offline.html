@@ -1,4 +1,4 @@
-<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="game-version" content="v9.8"><title>Lữ Hành v9.8 · thử ngoại tuyến</title><style>
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="game-version" content="v9.9"><title>Lữ Hành v9.9 · thử ngoại tuyến</title><style>
 #lu-hanh{position:fixed;inset:0;z-index:2147483000;overflow:hidden;text-align:left;line-height:normal}
 body:has(#lu-hanh){overflow:hidden!important}
 #lu-hanh{color-scheme:dark;--paper:#eee9da;--gold:#d8b678;--muted:#a8b4a7;--line:#ffffff20}
@@ -477,6 +477,15 @@ body:has(#lu-hanh){overflow:hidden!important}
 #lu-hanh .dg-err{display:flex;flex-direction:column;gap:2px;padding:7px 9px;border:1px solid #ff9a8a55;border-radius:9px;background:#2a1512;font-size:12px}
 #lu-hanh .dg-err small{color:#a8b4a7;word-break:break-all;font-size:10px}
 #lu-hanh #dgClear{align-self:flex-start;margin-top:6px}
+#lu-hanh .qgroup{display:flex;align-items:center;gap:6px;margin:8px 2px 0;font-size:12px;color:#d8c48f}
+#lu-hanh .qgroup:first-child{margin-top:0}
+#lu-hanh .qgroup svg{width:16px;height:16px}
+#lu-hanh .qgroup span{margin-left:auto;color:#a8b4a7}
+#lu-hanh .qgroup.qlock{color:#8c958a}
+#lu-hanh .qrow.dim{opacity:.5}
+#lu-hanh .qprog svg{width:14px;height:14px;vertical-align:-2px;margin-right:2px}
+#lu-hanh .map-ic{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:#ffffff0d;color:var(--gold);flex:none}
+#lu-hanh .map-ic svg{width:22px;height:22px}
 </style></head><body>
 <div id="lu-hanh">
 <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true"><defs>
@@ -532,10 +541,11 @@ body:has(#lu-hanh){overflow:hidden!important}
 <symbol id="i-home" viewBox="0 0 32 32"><path d="m2 15 14-12 14 12M6 12v17h20V12M13 29V18h7v11"/></symbol>
 <symbol id="i-save" viewBox="0 0 32 32"><path d="M4 3h21l4 5v21H3V3Zm5 0v9h13V3M9 29V18h14v11"/></symbol>
 <symbol id="i-quest" viewBox="0 0 32 32"><path d="M7 3h19v23H7M7 3C1 3 1 10 7 10m0 16c-6 0-6 5 0 5h20M12 10h9m-9 6h9"/></symbol>
-<symbol id="i-gear" viewBox="0 0 32 32"><path d="m12 3 8 0 1 5 5 1 3 7-4 4 1 5-7 4-4-3-5 1-5-6 2-5-2-5 6-5 1-3Z"/><circle cx="16" cy="16" r="5"/></symbol>
+<symbol id="i-menu" viewBox="0 0 32 32"><path d="M5 8h22M5 16h22M5 24h22"/></symbol>
+<symbol id="i-map" viewBox="0 0 32 32"><path d="m3 7 8-3 10 3 8-3v21l-8 3-10-3-8 3Z"/><path d="M11 4v21m10-18v21"/></symbol>
 </defs></svg>
-<header><div class="profile"><button id="avatarBtn" class="avatar" aria-label="Thuộc tính nhân vật"><svg viewBox="0 0 64 64" class="portrait" aria-hidden="true"><path fill="#d9ad80" d="M10 64v-8c0-21 44-21 44 0v8Z"/><path fill="#dfbf91" d="M25 32h14v17H25z"/><ellipse id="pfHair" fill="#2a2622" cx="20" cy="34" rx="7" ry="13" style="display:none"/><path id="pfYem" fill="#c0392b" d="M32 44l10 10-10 10-10-10Z" style="display:none"/><ellipse fill="#e4c69b" cx="32" cy="25" rx="15" ry="18"/><path fill="#2a2622" d="M16 26V14C16-2 52-3 48 19L33 13l-17 13Z"/></svg><svg class="exp-ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="exp-bg" cx="50" cy="50" r="46" pathLength="100"/><circle id="expArc" class="exp-fg" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="0 100"/></svg><b id="levelBadge" class="level">Lv. 1</b><i id="ptDot" class="pt-dot" hidden>+</i></button><div class="player-info"><strong id="playerName" class="player-name">Lữ khách</strong><div class="bars"><div class="bar" aria-label="Máu"><div id="hpFill" class="bar-fill hp"></div><small id="hpText">100 / 100</small></div><div class="bar" aria-label="Mana"><div id="manaFill" class="bar-fill mana"></div><small id="manaText">80 / 80</small></div><div class="bar" aria-label="Nội tại"><div id="passiveFill" class="bar-fill passive" style="width:0"></div><small id="passiveText">0%</small></div></div><div id="buffs" class="buffs"></div></div></div><div class="top-right"><div id="bossBar" class="boss-mini" hidden><span id="bossIc" class="bi"></span><span class="bm"><span class="bm-bar"><span id="bossFill" class="bm-fill"></span></span><small id="bossHp"></small></span></div><span class="version">v9.8</span><button id="settingsBtn" aria-label="Menu" aria-expanded="false"><svg class="icon"><use href="#i-gear"/></svg></button><nav id="gameMenu" class="menu" hidden><button id="bagBtn"><svg class="icon"><use href="#i-bag"/></svg>Túi đồ</button><button id="questBtn"><svg class="icon"><use href="#i-quest"/></svg>Nhiệm vụ</button><button id="saveBtn"><svg class="icon"><use href="#i-save"/></svg>Lưu</button><button id="homeBtn"><svg class="icon"><use href="#i-home"/></svg>Về làng</button><button id="switchBtn"><svg class="icon"><use href="#i-user"/></svg>Đổi nhân vật</button><button id="diagBtn"><svg class="icon"><use href="#i-eye"/></svg>Tình trạng</button></nav></div></header>
-<div id="portal" class="portal"><div class="portal-card"><div class="plogo"><b>Lữ Hành</b><small>Làng Thanh Mộc · v9.8</small></div><div id="portalBody"></div><p id="portalMsg"></p><small id="netMode" class="netmode"></small></div></div>
+<header><div class="profile"><button id="avatarBtn" class="avatar" aria-label="Thuộc tính nhân vật"><svg viewBox="0 0 64 64" class="portrait" aria-hidden="true"><path fill="#d9ad80" d="M10 64v-8c0-21 44-21 44 0v8Z"/><path fill="#dfbf91" d="M25 32h14v17H25z"/><ellipse id="pfHair" fill="#2a2622" cx="20" cy="34" rx="7" ry="13" style="display:none"/><path id="pfYem" fill="#c0392b" d="M32 44l10 10-10 10-10-10Z" style="display:none"/><ellipse fill="#e4c69b" cx="32" cy="25" rx="15" ry="18"/><path fill="#2a2622" d="M16 26V14C16-2 52-3 48 19L33 13l-17 13Z"/></svg><svg class="exp-ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="exp-bg" cx="50" cy="50" r="46" pathLength="100"/><circle id="expArc" class="exp-fg" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="0 100"/></svg><b id="levelBadge" class="level">Lv. 1</b><i id="ptDot" class="pt-dot" hidden>+</i></button><div class="player-info"><strong id="playerName" class="player-name">Lữ khách</strong><div class="bars"><div class="bar" aria-label="Máu"><div id="hpFill" class="bar-fill hp"></div><small id="hpText">100 / 100</small></div><div class="bar" aria-label="Mana"><div id="manaFill" class="bar-fill mana"></div><small id="manaText">80 / 80</small></div><div class="bar" aria-label="Nội tại"><div id="passiveFill" class="bar-fill passive" style="width:0"></div><small id="passiveText">0%</small></div></div><div id="buffs" class="buffs"></div></div></div><div class="top-right"><div id="bossBar" class="boss-mini" hidden><span id="bossIc" class="bi"></span><span class="bm"><span class="bm-bar"><span id="bossFill" class="bm-fill"></span></span><small id="bossHp"></small></span></div><span class="version">v9.9</span><button id="settingsBtn" aria-label="Menu" aria-expanded="false"><svg class="icon"><use href="#i-menu"/></svg></button><nav id="gameMenu" class="menu" hidden><button id="bagBtn"><svg class="icon"><use href="#i-bag"/></svg>Túi đồ</button><button id="questBtn"><svg class="icon"><use href="#i-quest"/></svg>Nhiệm vụ</button><button id="saveBtn"><svg class="icon"><use href="#i-save"/></svg>Lưu</button><button id="mapBtn"><svg class="icon"><use href="#i-map"/></svg>Bản đồ</button><button id="homeBtn"><svg class="icon"><use href="#i-home"/></svg>Về làng</button><button id="switchBtn"><svg class="icon"><use href="#i-user"/></svg>Đổi nhân vật</button><button id="diagBtn"><svg class="icon"><use href="#i-eye"/></svg>Tình trạng</button></nav></div></header>
+<div id="portal" class="portal"><div class="portal-card"><div class="plogo"><b>Lữ Hành</b><small>Làng Thanh Mộc · v9.9</small></div><div id="portalBody"></div><p id="portalMsg"></p><small id="netMode" class="netmode"></small></div></div>
 <main class="layout"><canvas id="scene" tabindex="0" aria-label="Bản đồ"></canvas><div id="questTrack" class="quest-track floating"></div><div class="map-box"><canvas id="minimap" width="240" height="128" aria-label="Bản đồ thu nhỏ"></canvas><div class="map-meta"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span id="placeName">Thanh Mộc</span><span id="placeCoord" class="coord"></span><span id="safeTag" class="safe" hidden>An toàn</span></div></div><div class="hint"><b>WASD</b>di chuyển <b>Space</b>đánh <b>1</b>combo <b>2</b>diện rộng <b>3</b>liên hoàn <b>4</b>thú cưỡi <b>E</b>nói chuyện <b>B</b>túi đồ</div><div class="skill-wheel"><button id="skill-normal" data-skill="normal" class="skill normal" title="Space"><svg id="normalIcon" class="icon"><use href="#i-sword"/></svg><small class="key">Đánh</small><span class="cooldown"></span></button><button id="skill-basic" data-skill="basic" class="skill basic" title="1 · Combo · 10 mana"><svg class="icon"><use href="#i-spark"/></svg><small class="key">Combo</small><span class="cooldown"></span></button><button id="skill-intermediate" data-skill="intermediate" class="skill intermediate" title="2 · Diện rộng · 18 mana"><svg class="icon"><use href="#i-whirl"/></svg><small class="key">Diện rộng</small><span class="cooldown"></span></button><button id="skill-advanced" data-skill="advanced" class="skill advanced" title="3 · Liên hoàn · 28 mana"><svg class="icon"><use href="#i-flame"/></svg><small class="key">Liên hoàn</small><span class="cooldown"></span></button><button id="skill-mount" data-skill="mount" class="skill mount" title="4 · Thú cưỡi" hidden><svg id="mountIcon" class="icon"><use href="#i-mount"/></svg><small id="mountName" class="key">Thú cưỡi</small><span class="cooldown"></span></button></div><div class="touch-controls"><div id="pad" class="pad" aria-label="Cần điều khiển"><div class="knob"></div></div></div><section id="dialog" hidden aria-live="polite"><h2 id="speaker"></h2><p id="line"></p><div class="actions"><span id="page" class="dots"></span><span><button id="shopBtn" hidden><svg class="icon"><use href="#i-bag"/></svg><span id="shopLabel">Mua bán</span></button><button id="next"><svg class="icon"><use href="#i-next"/></svg>Tiếp</button></span></div></section><div id="toast" role="status"></div></main><div id="overlay" class="overlay" hidden><section id="modalCard" class="card"><div class="card-head"><div id="overlayTitle" class="ttl"></div><button id="closeOverlay" class="close-modal" aria-label="Đóng"><svg class="icon"><use href="#i-close"/></svg></button></div><div id="overlayBody"></div></section></div>
 </div>
 <script>window.LH_API='';window.LH_CHO='https://ikynagame.blogspot.com/p/cho-phien.html';window.LH_GAME='https://ikynagame.blogspot.com/';</script>
@@ -638,6 +648,9 @@ cau_hinh:[
  {khoa:'diem_khoi_tao',gia_tri:50,ghi_chu:'Tổng điểm chia cho Sức mạnh, Nhanh nhẹn, Sức khỏe, Trí tuệ khi tạo nhân vật'},
  {khoa:'menh_lenh_goc',gia_tri:10,ghi_chu:'Mệnh lệnh ban đầu của mọi nhân vật'},
  {khoa:'so_nhan_vat_toi_da',gia_tri:5,ghi_chu:'Số nhân vật tối đa của một tài khoản'},
+ {khoa:'cap_hang_dong',gia_tri:5,ghi_chu:'Cấp tối thiểu vào Hang động (qua cổng hoặc chọn bản đồ), nhận việc ở Hang động'},
+ {khoa:'cap_sa_mac',gia_tri:10,ghi_chu:'Cấp tối thiểu vào Sa mạc, nhận việc ở Sa mạc'},
+ {khoa:'cap_nui_tuyet',gia_tri:15,ghi_chu:'Cấp tối thiểu vào Núi tuyết, nhận việc ở Núi tuyết'},
  {khoa:'tien_thu_nghiem',gia_tri:9999999,ghi_chu:'Tiền (đồng) cho nhân vật mới: 999 vàng 99 bạc 99 đồng. 100 đồng = 1 bạc, 100 bạc = 1 vàng'},
  {khoa:'hong_ngoc_thu_nghiem',gia_tri:999,ghi_chu:'Hồng ngọc cho nhân vật mới'},
  {khoa:'ti_le_ban_lai',gia_tri:40,ghi_chu:'% giá gốc nhận lại khi bán cho cửa hàng'},
@@ -1157,6 +1170,7 @@ const netMsg=e=>NET_ERR[e&&e.message]||(e&&e.message==='Failed to fetch'?'Không
 /* ================= ẢNH TĨNH (Sheet "LH \u{b7} Hình ảnh", tab hinh_anh) =================
    Mỗi dòng: nhom + ma + link_anh. Dán link ảnh Google Drive (chia sẻ "Bất kỳ ai có đường liên kết") hoặc link ảnh bất kỳ.
    Ô link để trống, hoặc ảnh không tải được: dùng biểu tượng / hình vẽ mặc định của game.
+   Thay ảnh bằng cách tải phiên bản mới lên cùng file Drive: chạy lamMoiAnh (Apps Script) để game tải lại ảnh đó.
    nhom: bieu_tuong (biểu tượng giao diện) \u{b7} vat_pham (đồ dùng) \u{b7} quai (quái vật) \u{b7} npc (dân làng) \u{b7} giao_dien (logo, nền, chân dung, túi đồ rơi) */
 const LH_IMG=(()=>{
   const KEY='lh-img',MAP={},PIC={},ORIG={};
@@ -1196,7 +1210,10 @@ const LH_IMG=(()=>{
   }
   // rows: [{nhom, ma, link_anh}] từ máy chủ
   function set(rows){
-    const map={};for(const r of rows||[]){const u=direct(r.link_anh),k=String(r.nhom||'').trim()+':'+String(r.ma||'').trim();if(u&&k.length>2)map[k]=u;}
+    const map={};for(const r of rows||[]){let u=direct(r.link_anh);const k=String(r.nhom||'').trim()+':'+String(r.ma||'').trim();
+      // v: phiên bản ảnh (giờ sửa file trên Drive, hàm lamMoiAnh ghi vào cột phien_ban) \u{2192} thay file cùng link thì trình duyệt vẫn tải ảnh mới
+      if(u&&r.v&&!/^data:/.test(u))u+=(u.includes('?')?'&':'?')+'v='+encodeURIComponent(String(r.v));
+      if(u&&k.length>2)map[k]=u;}
     try{localStorage.setItem(KEY,JSON.stringify(map));}catch(e){}
     load(map);
   }
@@ -1237,7 +1254,7 @@ window.LH_MAPS=window.LH_MAPS||{};
 window.LH_PACK=(id,def,art)=>{window.LH_MAPS[id]=def;LH_ART.add(id,art);};
 </script>
 <script>
-window.LH_MAP_CDN='https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@ban-9.8/dist/maps/';window.LH_MON_PACK={"doi-quy":"hang-dong","nhen-doc":"hang-dong","dai-bang":"hang-dong","soi-tuyet":"nui-tuyet","gau-nui":"nui-tuyet","ho-tinh":"nui-tuyet","bo-cap":"sa-mac","ken-ken":"sa-mac","chan-tinh":"sa-mac"};window.LH_MAPS=window.LH_MAPS||{};LH_PACK("hang-dong",{"id":"hang-dong","name":"Hang động","w":48,"h":34,"theme":"cave","sky":"cave","note":"Hang động thạch nhũ phía nam rừng Đông Ngạn. Ô: . nền đá \u{b7} , sỏi \u{b7} \" rêu sáng \u{b7} ~ sông ngầm \u{b7} = cầu đá \u{b7} # vách hang.","spawn":{"x":23,"y":3},"safe":{"x0":19,"y0":1,"x1":27,"y1":6},"zones":[{"name":"Sông ngầm","x0":1,"y0":16,"x1":46,"y1":22},{"name":"Tổ Đại Bàng","x0":15,"y0":22,"x1":33,"y1":32}],"monsters":[{"type":"doi-quy","x":10,"y":11},{"type":"doi-quy","x":38,"y":12},{"type":"doi-quy","x":24,"y":13},{"type":"nhen-doc","x":12,"y":25},{"type":"nhen-doc","x":37,"y":26},{"type":"nhen-doc","x":9,"y":15},{"type":"dai-bang","x":24,"y":26}],"portals":[{"x":22,"y":1,"w":3,"h":1,"to":"thanh-moc","tx":53,"ty":28,"label":"Rừng Đông Ngạn"}],"tiles":["################################################","######################:::#########..,..#########","#######..,..,######........######,,,....########","#######.......,####,.,......####..,.,.,,...#####","#######,,,....,..#,,.,....,.###..,.,..,.,,..####","#######....,..,..,#...,.,,..##....,,,###,..#####","#######.,...,...,.####,...,..,,.....############","#######,..,,,...,.,####........,,...############","#######,,,.,........##..,,,..,,...,.############","#######....,,,....,,..,........,,,...###########","#####.,,....,..,..,.,..,,,.,,.....,.,..,.#######","###,#.,,...,,,,,.,.,,.,..,..,....,......,.######","##..,..,.,..,.....,...,.,.,,........,,.,....####","###.,,,,,,...,....,.#,....####...,...,..,...####","####..,..,,,...,#####,..,.####..,..........,####","####,,.,..,.,...######..,,####..,.,....,..,.####","###....,.....,,,#######..,####,..,..,,,.,.,,####","###,.....,.,,.,.,######~~~~###...,.,,#...#..,###","##...,,.,,.,,,.,~~#####~~~~~~~~~....##,...,..,##","##~..,,.,.....~~~~~.##,.....,~~~~~~###,.,....~~#","#~~~~~~~~~===~~~..,....,.,.,,.,.~~~###==~~~~~~~#","#.,~~~~~~~===~.,.,,.....,,....,...,###==~~~~~,.#","#,...,..###...,.....,.......,..,,.####....,.,..#","##,.,...#...,,..##.\",\".,.\",,.,\".,.##,.......,.,#","###.,,..,,..,.......,\",..,,.,.,.\"..,,,.,.,,.,..#","#######.,.,....,.,...,,.\".......\"..,,,.,,,..,.,#","########.,,...,.....,....\",.,...\"..,,......,,..#","#########.......\"\",....,....\".,\",,,,.,,,..,....#","###.######,......\".,....,,....\".\",,,..,..##....#","##..,.###.,......#,,.\"....,.\".....##########,.,#","#.,.....,...,...###..\".\"....#...\",.#########..,#","#..,,.....,.,..,###..,....####,,...##########.##","#..,......,,...####,.....#####,,,.,#############","################################################"],"objects":[{"kind":"torch","x":20,"y":2,"light":"#ffb060","solid":false},{"kind":"torch","x":26,"y":2,"light":"#ffb060","solid":false},{"kind":"well","ancient":true,"id":"gieng-6","x":26,"y":5},{"kind":"fire","x":20,"y":5},{"kind":"nest","x":23,"y":29,"w":3,"solid":false},{"kind":"torch","x":18,"y":23,"light":"#ff9a50","solid":false},{"kind":"torch","x":30,"y":23,"light":"#ff9a50","solid":false},{"kind":"stalag","x":4,"y":30},{"kind":"stalag","x":6,"y":17},{"kind":"stalag","x":15,"y":7},{"kind":"stalag","x":13,"y":28},{"kind":"stalag","x":7,"y":31},{"kind":"stalag","x":21,"y":13},{"kind":"stalag","x":37,"y":4},{"kind":"stalag","x":35,"y":16},{"kind":"stalag","x":14,"y":21},{"kind":"stalag","x":42,"y":4},{"kind":"stalag","x":14,"y":15},{"kind":"stalag","x":16,"y":11},{"kind":"stalag","x":41,"y":12},{"kind":"stalag","x":30,"y":30},{"kind":"stalag","x":23,"y":21},{"kind":"stalag","x":32,"y":16},{"kind":"stalag","x":10,"y":3},{"kind":"stalag","x":34,"y":9},{"kind":"stalag","x":40,"y":23},{"kind":"stalag","x":28,"y":19},{"kind":"stalag","x":16,"y":29},{"kind":"stalag","x":27,"y":8},{"kind":"stalag","x":21,"y":32},{"kind":"stalag","x":13,"y":31},{"kind":"stalag","x":7,"y":7},{"kind":"stalag","x":13,"y":18},{"kind":"stalag","x":16,"y":4},{"kind":"stalag","x":24,"y":9},{"kind":"stalag","x":27,"y":23},{"kind":"stalag","x":34,"y":6},{"kind":"crystal","x":44,"y":24,"light":"#7fd8ff"},{"kind":"crystal","x":44,"y":30,"light":"#c08aff"},{"kind":"crystal","x":2,"y":12,"light":"#7fffc4"},{"kind":"crystal","x":39,"y":17,"light":"#ff8ad8"},{"kind":"crystal","x":7,"y":24,"light":"#7fd8ff"},{"kind":"crystal","x":3,"y":22,"light":"#c08aff"},{"kind":"crystal","x":44,"y":19,"light":"#7fffc4"},{"kind":"crystal","x":20,"y":9,"light":"#ff8ad8"},{"kind":"crystal","x":28,"y":12,"light":"#7fd8ff"},{"kind":"crystal","x":34,"y":32,"light":"#c08aff"},{"kind":"crystal","x":11,"y":7,"light":"#7fffc4"}]},K=>{
+window.LH_MAP_CDN='https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@ban-9.9/dist/maps/';window.LH_MON_PACK={"doi-quy":"hang-dong","nhen-doc":"hang-dong","dai-bang":"hang-dong","soi-tuyet":"nui-tuyet","gau-nui":"nui-tuyet","ho-tinh":"nui-tuyet","bo-cap":"sa-mac","ken-ken":"sa-mac","chan-tinh":"sa-mac"};window.LH_MAPS=window.LH_MAPS||{};LH_PACK("hang-dong",{"id":"hang-dong","name":"Hang động","w":48,"h":34,"theme":"cave","sky":"cave","note":"Hang động thạch nhũ phía nam rừng Đông Ngạn. Ô: . nền đá \u{b7} , sỏi \u{b7} \" rêu sáng \u{b7} ~ sông ngầm \u{b7} = cầu đá \u{b7} # vách hang.","spawn":{"x":23,"y":3},"safe":{"x0":19,"y0":1,"x1":27,"y1":6},"zones":[{"name":"Sông ngầm","x0":1,"y0":16,"x1":46,"y1":22},{"name":"Tổ Đại Bàng","x0":15,"y0":22,"x1":33,"y1":32}],"monsters":[{"type":"doi-quy","x":10,"y":11},{"type":"doi-quy","x":38,"y":12},{"type":"doi-quy","x":24,"y":13},{"type":"nhen-doc","x":12,"y":25},{"type":"nhen-doc","x":37,"y":26},{"type":"nhen-doc","x":9,"y":15},{"type":"dai-bang","x":24,"y":26}],"portals":[{"x":22,"y":1,"w":3,"h":1,"to":"thanh-moc","tx":53,"ty":28,"label":"Rừng Đông Ngạn"}],"tiles":["################################################","######################:::#########..,..#########","#######..,..,######........######,,,....########","#######.......,####,.,......####..,.,.,,...#####","#######,,,....,..#,,.,....,.###..,.,..,.,,..####","#######....,..,..,#...,.,,..##....,,,###,..#####","#######.,...,...,.####,...,..,,.....############","#######,..,,,...,.,####........,,...############","#######,,,.,........##..,,,..,,...,.############","#######....,,,....,,..,........,,,...###########","#####.,,....,..,..,.,..,,,.,,.....,.,..,.#######","###,#.,,...,,,,,.,.,,.,..,..,....,......,.######","##..,..,.,..,.....,...,.,.,,........,,.,....####","###.,,,,,,...,....,.#,....####...,...,..,...####","####..,..,,,...,#####,..,.####..,..........,####","####,,.,..,.,...######..,,####..,.,....,..,.####","###....,.....,,,#######..,####,..,..,,,.,.,,####","###,.....,.,,.,.,######~~~~###...,.,,#...#..,###","##...,,.,,.,,,.,~~#####~~~~~~~~~....##,...,..,##","##~..,,.,.....~~~~~.##,.....,~~~~~~###,.,....~~#","#~~~~~~~~~===~~~..,....,.,.,,.,.~~~###==~~~~~~~#","#.,~~~~~~~===~.,.,,.....,,....,...,###==~~~~~,.#","#,...,..###...,.....,.......,..,,.####....,.,..#","##,.,...#...,,..##.\",\".,.\",,.,\".,.##,.......,.,#","###.,,..,,..,.......,\",..,,.,.,.\"..,,,.,.,,.,..#","#######.,.,....,.,...,,.\".......\"..,,,.,,,..,.,#","########.,,...,.....,....\",.,...\"..,,......,,..#","#########.......\"\",....,....\".,\",,,,.,,,..,....#","###.######,......\".,....,,....\".\",,,..,..##....#","##..,.###.,......#,,.\"....,.\".....##########,.,#","#.,.....,...,...###..\".\"....#...\",.#########..,#","#..,,.....,.,..,###..,....####,,...##########.##","#..,......,,...####,.....#####,,,.,#############","################################################"],"objects":[{"kind":"torch","x":20,"y":2,"light":"#ffb060","solid":false},{"kind":"torch","x":26,"y":2,"light":"#ffb060","solid":false},{"kind":"well","ancient":true,"id":"gieng-6","x":26,"y":5},{"kind":"fire","x":20,"y":5},{"kind":"nest","x":23,"y":29,"w":3,"solid":false},{"kind":"torch","x":18,"y":23,"light":"#ff9a50","solid":false},{"kind":"torch","x":30,"y":23,"light":"#ff9a50","solid":false},{"kind":"stalag","x":4,"y":30},{"kind":"stalag","x":6,"y":17},{"kind":"stalag","x":15,"y":7},{"kind":"stalag","x":13,"y":28},{"kind":"stalag","x":7,"y":31},{"kind":"stalag","x":21,"y":13},{"kind":"stalag","x":37,"y":4},{"kind":"stalag","x":35,"y":16},{"kind":"stalag","x":14,"y":21},{"kind":"stalag","x":42,"y":4},{"kind":"stalag","x":14,"y":15},{"kind":"stalag","x":16,"y":11},{"kind":"stalag","x":41,"y":12},{"kind":"stalag","x":30,"y":30},{"kind":"stalag","x":23,"y":21},{"kind":"stalag","x":32,"y":16},{"kind":"stalag","x":10,"y":3},{"kind":"stalag","x":34,"y":9},{"kind":"stalag","x":40,"y":23},{"kind":"stalag","x":28,"y":19},{"kind":"stalag","x":16,"y":29},{"kind":"stalag","x":27,"y":8},{"kind":"stalag","x":21,"y":32},{"kind":"stalag","x":13,"y":31},{"kind":"stalag","x":7,"y":7},{"kind":"stalag","x":13,"y":18},{"kind":"stalag","x":16,"y":4},{"kind":"stalag","x":24,"y":9},{"kind":"stalag","x":27,"y":23},{"kind":"stalag","x":34,"y":6},{"kind":"crystal","x":44,"y":24,"light":"#7fd8ff"},{"kind":"crystal","x":44,"y":30,"light":"#c08aff"},{"kind":"crystal","x":2,"y":12,"light":"#7fffc4"},{"kind":"crystal","x":39,"y":17,"light":"#ff8ad8"},{"kind":"crystal","x":7,"y":24,"light":"#7fd8ff"},{"kind":"crystal","x":3,"y":22,"light":"#c08aff"},{"kind":"crystal","x":44,"y":19,"light":"#7fffc4"},{"kind":"crystal","x":20,"y":9,"light":"#ff8ad8"},{"kind":"crystal","x":28,"y":12,"light":"#7fd8ff"},{"kind":"crystal","x":34,"y":32,"light":"#c08aff"},{"kind":"crystal","x":11,"y":7,"light":"#7fffc4"}]},K=>{
   const {ell,line,poly,rr,shade,hash,PI2}=K;
   function tile(c,x,y,v,n,T,G){
     const X=x*T,Y=y*T,h=hash(x,y);
@@ -1910,7 +1927,7 @@ const Player=(()=>{
       items[r.id]=d;
     }
     for(const r of data.quai||[])MON[r.id]={name:r.ten,hp:num(r.mau),dmg:num(r.sat_thuong),speed:num(r.toc_do),run:num(r.toc_chay),r:num(r.ban_kinh),h:num(r.cao),aggro:num(r.tam_danh),range:num(r.tam_gan),cd:num(r.hoi_chieu_ms)/1000,windup:num(r.vung_tay_ms)/1000,copper:num(r.dong),knock:num(r.day_lui_phan_tram)/100,boss:num(r.boss),respawn:num(r.hoi_sinh_giay,15),drops:{g:num(r.dep_phan_van)/1e4,p:num(r.hoan_hao_phan_van)/1e4,l:num(r.huyen_thoai_phan_van)/1e4,m:num(r.than_phan_van)/1e4},rubies:[num(r.hong_ngoc_it),num(r.hong_ngoc_nhieu)],dtype:r.loai_sat_thuong||'thuong',crit:num(r.ti_le_x2),exp:num(r.kinh_nghiem,Math.max(1,Math.round(num(r.mau)/8)))};
-    for(const r of data.nhiem_vu||[])QUESTS[r.id]={id:r.id,name:r.ten,desc:r.mo_ta,target:r.muc_tieu,count:num(r.so_luong,1),copper:num(r.thuong_dong),rubies:num(r.thuong_hong_ngoc),item:r.thuong_do||'',itemQ:r.pham_chat_do||'n',repeat:r.lap_lai!=='khong',exp:num(r.thuong_kinh_nghiem,Math.round(num(r.thuong_dong)/10))};
+    for(const r of data.nhiem_vu||[])QUESTS[r.id]={id:r.id,name:r.ten,desc:r.mo_ta,target:r.muc_tieu,count:num(r.so_luong,1),copper:num(r.thuong_dong),rubies:num(r.thuong_hong_ngoc),item:r.thuong_do||'',itemQ:r.pham_chat_do||'n',repeat:r.lap_lai!=='khong',lv:num(r.cap_toi_thieu),exp:num(r.thuong_kinh_nghiem,Math.round(num(r.thuong_dong)/10))};
     for(const r of data.linh||[])MERCS[r.id]={id:r.id,name:r.ten,gender:r.gioi_tinh==='f'?'f':'m',price:num(r.gia),cmd:num(r.menh_lenh,5),stats:{strength:num(r.suc_manh),agility:num(r.nhanh_nhen),vitality:num(r.suc_khoe),intelligence:num(r.tri_tue),command:0},gear:String(r.trang_bi||'').split(',').map(x=>x.trim()).filter(Boolean),desc:r.mo_ta};
   }
   const info=i=>i&&items[i.type];
@@ -2097,7 +2114,13 @@ const Player=(()=>{
     return {ok:true,stance:stance(s),empowered};
   }
   // Nhiệm vụ của Lý trưởng
-  function questAccept(s,id){const Q=QUESTS[id];if(!Q)throw Error('QUEST');if(s.quests.active[id]!=null)throw Error('QUEST_HAVE');if(Object.keys(s.quests.active).length>=MAX_ACTIVE_QUEST)throw Error('QUEST_FULL');if(!Q.repeat&&s.quests.done[id])throw Error('QUEST_DONE');s.quests.active[id]=0;}
+  /* ---------- Vùng đất và cấp tối thiểu (v9.9): Sheet cau_hinh cap_hang_dong, cap_sa_mac, cap_nui_tuyet ---------- */
+  const REGIONS=[{id:'thanh-moc',name:'Làng Thanh Mộc',icon:'home'},{id:'hang-dong',name:'Hang động',key:'cap_hang_dong',def:5,icon:'light'},{id:'sa-mac',name:'Sa mạc',key:'cap_sa_mac',def:10,icon:'flame'},{id:'nui-tuyet',name:'Núi tuyết',key:'cap_nui_tuyet',def:15,icon:'ice'}];
+  const MON_REGION={'bo-cap':'sa-mac','ken-ken':'sa-mac','chan-tinh':'sa-mac','soi-tuyet':'nui-tuyet','gau-nui':'nui-tuyet','ho-tinh':'nui-tuyet','doi-quy':'hang-dong','nhen-doc':'hang-dong','dai-bang':'hang-dong'};
+  const mapLevel=id=>{const R=REGIONS.find(r=>r.id===id);return R&&R.key?Math.max(1,num(CFG[R.key],R.def)):1;};
+  const regionOf=monId=>(MON[monId]&&MON[monId].map)||MON_REGION[monId]||'thanh-moc';
+  const questLevel=Q=>Q?(Q.lv||mapLevel(regionOf(Q.target))):1;
+  function questAccept(s,id){const Q=QUESTS[id];if(!Q)throw Error('QUEST');if((s.level||1)<questLevel(Q))throw Error('LEVEL');if(s.quests.active[id]!=null)throw Error('QUEST_HAVE');if(Object.keys(s.quests.active).length>=MAX_ACTIVE_QUEST)throw Error('QUEST_FULL');if(!Q.repeat&&s.quests.done[id])throw Error('QUEST_DONE');s.quests.active[id]=0;}
   function questProgress(s,monId){const out=[];for(const id of Object.keys(s.quests.active)){const Q=QUESTS[id];if(Q&&Q.target===monId&&s.quests.active[id]<Q.count){s.quests.active[id]++;out.push(id);}}return out;}
   function questTurnIn(s,id,rng=Math.random){
     const Q=QUESTS[id];if(!Q||s.quests.active[id]==null)throw Error('QUEST');if(s.quests.active[id]<Q.count)throw Error('QUEST_NOT_DONE');
@@ -2184,7 +2207,8 @@ const Player=(()=>{
   function restore(save,ch,canStand,npcIds){
     if(!save||!save.player)return {player:create(ch),pos:null,seen:[]};
     const s=restorePlayer(save.player,ch),pos=save.pos;
-    return {player:s,pos:pos&&canStand&&canStand(pos.x,pos.y)?{x:pos.x,y:pos.y,...(typeof pos.map==='string'?{map:pos.map}:{})}:null,seen:Array.isArray(save.seen)?save.seen.filter(v=>npcIds?npcIds.includes(v):typeof v==='string'&&/^[a-z0-9-]{1,40}$/.test(v)):[]};
+    // vùng chưa đủ cấp (sửa dữ liệu, đổi cấu hình): về làng
+    return {player:s,pos:pos&&!(typeof pos.map==='string'&&mapLevel(pos.map)>(s.level||1))&&canStand&&canStand(pos.x,pos.y)?{x:pos.x,y:pos.y,...(typeof pos.map==='string'?{map:pos.map}:{})}:null,seen:Array.isArray(save.seen)?save.seen.filter(v=>npcIds?npcIds.includes(v):typeof v==='string'&&/^[a-z0-9-]{1,40}$/.test(v)):[]};
   }
   /* ---------- v8: máy chủ quyết định tiền, đồ, gia cường ----------
      merge(S,C): S = trạng thái máy chủ (đồ nào tồn tại, tiền, hồng ngọc, nhiệm vụ),
@@ -2250,7 +2274,7 @@ const Player=(()=>{
   load(typeof GAME_DATA!=='undefined'?GAME_DATA:{});
   return {VERSION,BAG_SIZE,SKILL_SLOTS,MAX_LV,MAX_MERC,MAX_ACTIVE_QUEST,ELEMENTS,BEASTS,GROUPS,FX_NAMES,STAT_KEYS,CFG,RAR,ADD,SHOPS,SETS,MON,QUESTS,MERCS,items,slots,skills,
     layout,relayout,load,info,kind,weapon,skillCost,cmdInfo,WEAPONS,PREDICT,seqRng,setFollow,fitFollow,mercCmd,petMax,SHOP_ENH,expNeed,maxLevel,gainExp,spendPoints,mountGain,bookStat,mountCmd,qOf,rar,nameOf,stat,canEnhance,tradeable,gainOf,enhRate,enhCost,enhance,roll,rollDrop,create,derive,targets,equip,unequip,stance,isTwo,pairOk,setSkill,unsetSkill,toggleBook,element,money,shopPrice,buy,sell,sellPrice,addItem,cast,
-    questAccept,questProgress,questTurnIn,hireNpc,addMerc,mercEquip,mercUnequip,dismissMerc,makeMerc,cleanItem,serialize,restore,restorePlayer,merge,applyOp,allItems};
+    REGIONS,MON_REGION,mapLevel,regionOf,questLevel,questAccept,questProgress,questTurnIn,hireNpc,addMerc,mercEquip,mercUnequip,dismissMerc,makeMerc,cleanItem,serialize,restore,restorePlayer,merge,applyOp,allItems};
 })();
 </script>
 <script>
@@ -3457,7 +3481,7 @@ window.startGame=(session)=>{
     if(time-sync.keptAt>(localDirty?1.5:3))keepLocal(true);
     World.bridges.forEach((B,i)=>{const sd=hero.x<B.x0*T?'w':hero.x>(B.x1+1)*T?'e':bridgeSide[i];if(sd!==bridgeSide[i]){const was=bridgeSide[i];bridgeSide[i]=sd;if(was)checkpoint();}});
     if(time-prefAt>1){prefAt=time;for(const P of World.portals)if(Math.hypot((P.x+.5)*T-hero.x,(P.y+.5)*T-hero.y)<T*9)World.prefetch(P.to);}
-    {const P=World.portalAt(hero.x,hero.y);if(!P)portalArmed=true;else if(portalArmed&&!travelling&&!hero.dead){portalArmed=false;checkpoint();travel(P.to,P.tx,P.ty);}}
+    {const P=World.portalAt(hero.x,hero.y);if(!P)portalArmed=true;else if(portalArmed&&!travelling&&!hero.dead){portalArmed=false;const need=Player.mapLevel(P.to);if((player.level||1)<need)message(svg('lock')+'Cần cấp '+need+' để vào '+(P.label||(LH_MAPS[P.to]&&LH_MAPS[P.to].name)||''));else{checkpoint();travel(P.to,P.tx,P.ty);}}}
     updateNPCs(dt);updateProjectiles(dt);updateMonsters(dt);updateAllies(dt);updateStrikes();updateVillage(dt);updateEffects(dt);
     const a=hero.attack;
     if(a){const p=(time-a.start)/a.dur;while(a.hitIdx<a.cycles&&p>=(a.hitIdx+a.hit)/a.cycles){resolveAttack(a,a.hitIdx);a.hitIdx++;}if(p>=1)hero.attack=null;}
@@ -3633,6 +3657,16 @@ window.startGame=(session)=>{
     setHold(v){holdAttack=!!v;},
     enhanceFx(ok){const c=ok?'#ffd77a':'#9aa0a6';fx.push({kind:'ring',x:hero.x,y:hero.y-20,r0:6,r1:ok?80:40,color:c,age:0,life:.5,lw:4});burst(hero.x,hero.y-24,c,ok?24:10,ok?200:90);},
     home(){if(World.id!==World.DEFAULT){travel(World.DEFAULT);return;}route=[];targetNPC=null;dialogNPC=null;dialogEl.hidden=true;keys.clear();joystick={x:0,y:0};hero.attack=null;hero.mountAct=null;projectiles.length=0;Object.assign(hero,World.spawn);allies.forEach((e,i)=>{e.x=hero.x+FORM[i%6][0];e.y=hero.y+FORM[i%6][1];if(!World.canStand(e.x,e.y)){e.x=hero.x;e.y=hero.y;}e.path=null;});resize();},
+    // Chọn bản đồ (menu): về trạm nghỉ ở cổng vùng đó; thiếu cấp thì không đi
+    async goto(id){
+      const R=Player.REGIONS.find(r=>r.id===id),need=Player.mapLevel(id);if(!R||travelling)return false;
+      if(hero.dead){message(svg('close')+'Đang gục, chưa đi được');return false;}
+      if((player.level||1)<need){message(svg('lock')+'Cần cấp '+need+' để vào '+R.name);return false;}
+      if(id===World.DEFAULT){this.home();return true;}
+      if(World.id===id){Object.assign(hero,World.spawn,{attack:null,mountAct:null});route=[];resize();message(svg('pin')+World.name);return true;}
+      checkpoint();return travel(id);
+    },
+    get mapId(){return World.id;},
     stop(){route=[];targetNPC=null;keys.clear();joystick={x:0,y:0};holdAttack=false;},
     closeDialog(){dialogNPC=null;dialogEl.hidden=true;}};
 };
@@ -3652,7 +3686,7 @@ window.startUI=(session)=>{
   const qdot=it=>{const q=Player.qOf(it);return q!=='n'?`<i class="qd" style="background:${qColor(it)}"></i>`:'';};
   const SLOT_NAMES={mount:'Thú cưỡi',hat:'Mũ',wings:'Cánh',left:'Tay trái',armor:'Áo giáp',right:'Tay phải',gloves:'Găng tay',pants:'Quần',shoes:'Giày'};
   const KIND_NAMES={sword:'Kiếm',shield:'Khiên',staff:'Gậy phép',bow:'Cung',spear:'Thương',crossbow:'Nỏ',punch:'Tay không'};
-  const ERR={BAG_FULL:'Túi đầy',PAIR:'Không cầm chung được',MONEY:'Không đủ tiền',SLOT:'Không mặc vào ô này được',RUBY:'Không đủ hồng ngọc',MAX:'Đã tối đa +15',BOOK:'Không phải sách',ITEM:'Món này không làm được việc này',GENDER:'Đồ này dành cho nhân vật khác giới',CMD:'Không đủ Mệnh lệnh',QUEST_FULL:'Chỉ nhận tối đa 3 việc cùng lúc',QUEST_HAVE:'Đã nhận việc này',QUEST_NOT_DONE:'Chưa làm xong',QUEST_DONE:'Việc này chỉ làm một lần',MERC_FULL:'Tối đa 3 lính đánh thuê',MERC:'Không tìm thấy lính',POINTS:'Không đủ điểm',STAT:'Chỉ số không hợp lệ',MERC_DOWN:'Lính đang chờ ở làng, về làng để dắt đi',SHOP:'Món này gia cường ở chỗ khác',PET:'Không tìm thấy quái'};
+  const ERR={BAG_FULL:'Túi đầy',PAIR:'Không cầm chung được',MONEY:'Không đủ tiền',SLOT:'Không mặc vào ô này được',RUBY:'Không đủ hồng ngọc',MAX:'Đã tối đa +15',BOOK:'Không phải sách',ITEM:'Món này không làm được việc này',GENDER:'Đồ này dành cho nhân vật khác giới',CMD:'Không đủ Mệnh lệnh',QUEST_FULL:'Chỉ nhận tối đa 3 việc cùng lúc',QUEST_HAVE:'Đã nhận việc này',QUEST_NOT_DONE:'Chưa làm xong',QUEST_DONE:'Việc này chỉ làm một lần',MERC_FULL:'Tối đa 3 lính đánh thuê',MERC:'Không tìm thấy lính',POINTS:'Không đủ điểm',STAT:'Chỉ số không hợp lệ',MERC_DOWN:'Lính đang chờ ở làng, về làng để dắt đi',SHOP:'Món này gia cường ở chỗ khác',PET:'Không tìm thấy quái',LEVEL:'Chưa đủ cấp'};
   const fail=err=>game.message(svg('close')+(ERR[err.message]||netMsg(err)));
   // Chạy lệnh máy chủ: khóa nút trong lúc chờ, báo lỗi nếu có
   const run=(btn,pr,after)=>{if(btn){btn.disabled=true;btn.classList.add('busy');}return pr.then(()=>refresh(),e=>{fail(e);if(btn){btn.disabled=false;btn.classList.remove('busy');}after&&after();});};
@@ -3756,7 +3790,7 @@ window.startUI=(session)=>{
   const slotHtml=(who,slot,canFn)=>{
     let it=who.equipment[slot],locked=false;if(slot==='left'&&Player.isTwo(who.equipment.right)){it=who.equipment.right;locked=true;}
     const type=it?it.type:slot==='left'?'shield':slot==='right'?'sword':slot,label=it?Player.nameOf(it):SLOT_NAMES[slot],can=canFn&&canFn(slot);
-    return `<button class="equipment-slot${locked?' locked':''}${can?' can':''}${it?' has':''}" data-slot="${slot}" title="${esc(label)}" style="${it&&Player.qOf(it)!=='n'?`border-color:${qColor(it)}`:''}"><span style="color:${it?(tintOf(it)||'#e4cc8d'):'#4f6452'}">${icon(type)}</span><small class="slot-label" style="${it?`color:${qColor(it)}`:''}">${esc(label)}</small>${locked?'':lvb(it)}${locked?`<span class="lock">${svg('lock')}</span>`:''}</button>`;
+    return `<button class="equipment-slot${locked?' locked':''}${can?' can':''}${it?' has':''}" data-slot="${slot}" title="${esc(label)}" style="${it&&Player.qOf(it)!=='n'?`border-color:${qColor(it)}`:''}"><span style="color:${it?(tintOf(it)||'#e4cc8d'):'#4f6452'}">${it?icon(type):svg(type)}</span><small class="slot-label" style="${it?`color:${qColor(it)}`:''}">${esc(label)}</small>${locked?'':lvb(it)}${locked?`<span class="lock">${svg('lock')}</span>`:''}</button>`;
   };
   const bagHtml=(filter)=>p.bag.map((it,i)=>{const ok=!filter||!it||filter(it);return `<button data-bag="${i}" class="bag-slot${i===selected?' selected':''}${ok?'':' dim'}" title="${it?esc(Player.nameOf(it)):''}" style="${it&&Player.qOf(it)!=='n'?`border-color:${qColor(it)}`:''}">${it?icon(it.type,tintOf(it)):''}${lvb(it)}${it?qdot(it):''}</button>`;}).join('');
   function renderBag(){
@@ -3839,13 +3873,19 @@ window.startUI=(session)=>{
   /* ---------- Lý trưởng: bảng nhiệm vụ ---------- */
   function rewardChips(Q){const o=[];if(Q.copper)o.push(`<i class="ch">${coins(Q.copper)}</i>`);if(Q.rubies)o.push(`<i class="ch">${ruby(Q.rubies)}</i>`);if(Q.item&&Player.items[Q.item]){const it={type:Q.item,q:Q.itemQ};o.push(`<i class="ch" style="color:${qColor(it)}">${icon(Q.item)}${esc(Player.items[Q.item].name)} \u{b7} ${Player.RAR[Q.itemQ||'n'].name}</i>`);}return o.join('');}
   function showQuestBoard(){
-    // việc làm một lần đã xong thì không hiện nữa
-    const rows=Object.values(Player.QUESTS).filter(Q=>Q.repeat||!p.quests.done[Q.id]||p.quests.active[Q.id]!=null).map(Q=>{
+    // việc làm một lần đã xong thì không hiện nữa; xếp theo cấp, nhóm theo vùng; vùng chưa đủ cấp hiện khóa
+    const lv=p.level||1,R=id=>Player.REGIONS.find(r=>r.id===id)||Player.REGIONS[0];
+    const list=Object.values(Player.QUESTS).filter(Q=>Q.repeat||!p.quests.done[Q.id]||p.quests.active[Q.id]!=null)
+      .map(Q=>({Q,need:Player.questLevel(Q),reg:R(Player.regionOf(Q.target))})).sort((a,b)=>a.need-b.need);
+    let last='',rows='';
+    for(const {Q,need,reg} of list){
+      const key=need+'|'+reg.id,lock=lv<need;
+      if(key!==last){last=key;rows+=`<div class="qgroup${lock?' qlock':''}">${svg(lock?'lock':reg.icon)}<b>${esc(reg.name)}</b><span>${lock?'Cần cấp '+need:'Cấp '+need+'+'}</span></div>`;}
       const n=p.quests.active[Q.id],done=p.quests.done[Q.id]||0,M=Player.MON[Q.target],act=n!=null,ready=act&&n>=Q.count;
-      const btn=ready?`<button class="primary" data-turnin="${Q.id}">${svg('check')}Trả việc</button>`:act?`<span class="qprog">${n}/${Q.count}</span>`:(!Q.repeat&&done)?`<span class="qprog">Đã xong</span>`:`<button data-accept="${Q.id}">${svg('next')}Nhận</button>`;
-      return `<div class="qrow${act?' act':''}">${LH_IMG.icon('quai:'+Q.target,monIc(Q.target,'flag'))}<div><b>${esc(Q.name)}</b><small>${esc(Q.desc)} \u{b7} ${M?esc(M.name):''} \u{d7}${Q.count}${done?` \u{b7} đã làm ${done} lần`:''}</small><span class="chips">${rewardChips(Q)}</span></div>${btn}</div>`;
-    }).join('');
-    openModal(ttl('quest','Lý trưởng giao việc'),`<small class="sel-desc">Nhận tối đa ${Player.MAX_ACTIVE_QUEST} việc cùng lúc. Xong việc quay về gặp Lý trưởng để nhận thưởng.</small><div class="quest-rows" style="margin-top:8px">${rows||`<div class="cho-note">${svg('check')}<span>Đã làm xong mọi việc của làng. Hãy ra Đông Ngạn săn quái, luyện cấp.</span></div>`}</div>`,true);
+      const btn=ready?`<button class="primary" data-turnin="${Q.id}">${svg('check')}Trả việc</button>`:act?`<span class="qprog">${n}/${Q.count}</span>`:(!Q.repeat&&done)?`<span class="qprog">Đã xong</span>`:lock?`<span class="qprog">${svg('lock')}${need}</span>`:`<button data-accept="${Q.id}">${svg('next')}Nhận</button>`;
+      rows+=`<div class="qrow${act?' act':''}${lock&&!act?' dim':''}">${LH_IMG.icon('quai:'+Q.target,monIc(Q.target,'flag'))}<div><b>${esc(Q.name)}</b><small>${esc(Q.desc)} \u{b7} ${M?esc(M.name):''} \u{d7}${Q.count}${done?` \u{b7} đã làm ${done} lần`:''}</small><span class="chips">${rewardChips(Q)}</span></div>${btn}</div>`;
+    }
+    openModal(ttl('quest','Lý trưởng giao việc'),`<small class="sel-desc">Lv. ${lv} \u{b7} nhận tối đa ${Player.MAX_ACTIVE_QUEST} việc cùng lúc. Xong việc quay về gặp Lý trưởng để nhận thưởng.</small><div class="quest-rows" style="margin-top:8px">${rows||`<div class="cho-note">${svg('check')}<span>Đã làm xong mọi việc của làng. Hãy ra Đông Ngạn săn quái, luyện cấp.</span></div>`}</div>`,true);
     document.querySelectorAll('[data-accept]').forEach(b=>b.onclick=()=>run(b,game.op({t:'qa',id:b.dataset.accept}).then(()=>showQuestBoard())));
     document.querySelectorAll('[data-turnin]').forEach(b=>b.onclick=()=>run(b,game.op({t:'qt',id:b.dataset.turnin}).then(r=>{game.message(svg('check')+'Nhận thưởng'+(r.copper?' '+coins(r.copper):'')+(r.rubies?' '+ruby(r.rubies):'')+(r.exp?' \u{b7} +'+r.exp+' kinh nghiệm':'')+(r.item?` \u{00b7} <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b>`:''));if(r.up)game.levelUp(r.up);showQuestBoard();})));
   }
@@ -3967,10 +4007,19 @@ window.startUI=(session)=>{
     if(n.panel==='mercs')return showMercBoard('hire');
     if(n.panel==='market'){MK.list=null;MK.mercs=null;return showMarket('buy');}
   }
+  /* ---------- Chọn bản đồ: đi nhanh tới trạm nghỉ ở cổng từng vùng; thiếu cấp thì khóa ---------- */
+  function showMaps(){
+    closeMenu();const lv=p.level||1,cur=game.mapId;
+    const rows=Player.REGIONS.map(R=>{const need=Player.mapLevel(R.id),lock=lv<need,here=cur===R.id;
+      const btn=here?`<span class="qprog">${svg('pin')}Đang ở</span>`:lock?`<span class="qprog">${svg('lock')}${need}</span>`:`<button class="primary" data-go="${R.id}">${svg('next')}Đi</button>`;
+      return `<div class="qrow map-row${lock?' dim':''}${here?' act':''}"><span class="map-ic">${svg(R.icon)}</span><div><b>${esc(R.name)}</b><small>${need>1?(lock?'Cần cấp '+need:'Từ cấp '+need):'Làng, vùng an toàn'}</small></div>${btn}</div>`;}).join('');
+    openModal(ttl('map','Bản đồ'),`<small class="sel-desc">Lv. ${lv} \u{b7} đi thẳng tới trạm nghỉ ở cổng vùng (tự lưu trước khi đi).</small><div class="quest-rows" style="margin-top:8px">${rows}</div>`);
+    document.querySelectorAll('[data-go]').forEach(b=>b.onclick=async()=>{b.disabled=true;closeModal();await game.goto(b.dataset.go);refresh();});
+  }
   async function save(){closeMenu();const ok=await game.save();game.message(ok?svg('save')+'Đã lưu':svg('close')+'Không lưu được');}
   $('#avatarBtn').onclick=showAttributes;
   $('#settingsBtn').onclick=()=>{menu.hidden=!menu.hidden;$('#settingsBtn').setAttribute('aria-expanded',String(!menu.hidden));};
-  $('#saveBtn').onclick=save;$('#homeBtn').onclick=()=>{closeMenu();closeModal();game.home();refresh();};
+  $('#saveBtn').onclick=save;$('#mapBtn').onclick=showMaps;$('#homeBtn').onclick=()=>{closeMenu();closeModal();game.home();refresh();};
   // Tình trạng: phiên bản, phần chơi chưa lưu, lần gọi máy chủ và lỗi gần đây (chụp màn hình gửi khi game có vấn đề)
   function showDiag(){
     closeMenu();const D=LH_DIAG.data,v=document.querySelector('.version');
@@ -4003,7 +4052,7 @@ window.startUI=(session)=>{
   });
   const alive=()=>{if(!window.LH_KICKED&&Net.token&&document.visibilityState==='visible')Net.call('alive').catch(()=>{});};
   setInterval(alive,20000);document.addEventListener('visibilitychange',alive);
-  window.GameUI={refresh,showAttributes,openPanel,showShop:(id,tab)=>{shopSel=null;showShop(id,tab);},showQuestBoard,showMercBoard,showMarket,showQuests,save,previewElem,previewWho:()=>previewWho,previewBurst:()=>burstAt,
+  window.GameUI={refresh,showAttributes,openPanel,showShop:(id,tab)=>{shopSel=null;showShop(id,tab);},showQuestBoard,showMaps,showMercBoard,showMarket,showQuests,save,previewElem,previewWho:()=>previewWho,previewBurst:()=>burstAt,
     showBag:()=>{if($('#overlay').hidden){selected=null;skillFocus=null;renderBag();}else closeModal();},
     frame(time,st){
       if(time-lastFrame<.1)return;lastFrame=time;refresh();$('#settingsBtn').classList.toggle('dirty',game.unsaved());$('#saveBtn').classList.toggle('dirty',game.unsaved());const now=Date.now();

@@ -12,7 +12,7 @@ window.startUI=(session)=>{
   const qdot=it=>{const q=Player.qOf(it);return q!=='n'?`<i class="qd" style="background:${qColor(it)}"></i>`:'';};
   const SLOT_NAMES={mount:'Thú cưỡi',hat:'Mũ',wings:'Cánh',left:'Tay trái',armor:'Áo giáp',right:'Tay phải',gloves:'Găng tay',pants:'Quần',shoes:'Giày'};
   const KIND_NAMES={sword:'Kiếm',shield:'Khiên',staff:'Gậy phép',bow:'Cung',spear:'Thương',crossbow:'Nỏ',punch:'Tay không'};
-  const ERR={BAG_FULL:'Túi đầy',PAIR:'Không cầm chung được',MONEY:'Không đủ tiền',SLOT:'Không mặc vào ô này được',RUBY:'Không đủ hồng ngọc',MAX:'Đã tối đa +15',BOOK:'Không phải sách',ITEM:'Món này không làm được việc này',GENDER:'Đồ này dành cho nhân vật khác giới',CMD:'Không đủ Mệnh lệnh',QUEST_FULL:'Chỉ nhận tối đa 3 việc cùng lúc',QUEST_HAVE:'Đã nhận việc này',QUEST_NOT_DONE:'Chưa làm xong',QUEST_DONE:'Việc này chỉ làm một lần',MERC_FULL:'Tối đa 3 lính đánh thuê',MERC:'Không tìm thấy lính',POINTS:'Không đủ điểm',STAT:'Chỉ số không hợp lệ',MERC_DOWN:'Lính đang chờ ở làng, về làng để dắt đi',SHOP:'Món này gia cường ở chỗ khác',PET:'Không tìm thấy quái'};
+  const ERR={BAG_FULL:'Túi đầy',PAIR:'Không cầm chung được',MONEY:'Không đủ tiền',SLOT:'Không mặc vào ô này được',RUBY:'Không đủ hồng ngọc',MAX:'Đã tối đa +15',BOOK:'Không phải sách',ITEM:'Món này không làm được việc này',GENDER:'Đồ này dành cho nhân vật khác giới',CMD:'Không đủ Mệnh lệnh',QUEST_FULL:'Chỉ nhận tối đa 3 việc cùng lúc',QUEST_HAVE:'Đã nhận việc này',QUEST_NOT_DONE:'Chưa làm xong',QUEST_DONE:'Việc này chỉ làm một lần',MERC_FULL:'Tối đa 3 lính đánh thuê',MERC:'Không tìm thấy lính',POINTS:'Không đủ điểm',STAT:'Chỉ số không hợp lệ',MERC_DOWN:'Lính đang chờ ở làng, về làng để dắt đi',SHOP:'Món này gia cường ở chỗ khác',PET:'Không tìm thấy quái',LEVEL:'Chưa đủ cấp'};
   const fail=err=>game.message(svg('close')+(ERR[err.message]||netMsg(err)));
   // Chạy lệnh máy chủ: khóa nút trong lúc chờ, báo lỗi nếu có
   const run=(btn,pr,after)=>{if(btn){btn.disabled=true;btn.classList.add('busy');}return pr.then(()=>refresh(),e=>{fail(e);if(btn){btn.disabled=false;btn.classList.remove('busy');}after&&after();});};
@@ -116,7 +116,7 @@ window.startUI=(session)=>{
   const slotHtml=(who,slot,canFn)=>{
     let it=who.equipment[slot],locked=false;if(slot==='left'&&Player.isTwo(who.equipment.right)){it=who.equipment.right;locked=true;}
     const type=it?it.type:slot==='left'?'shield':slot==='right'?'sword':slot,label=it?Player.nameOf(it):SLOT_NAMES[slot],can=canFn&&canFn(slot);
-    return `<button class="equipment-slot${locked?' locked':''}${can?' can':''}${it?' has':''}" data-slot="${slot}" title="${esc(label)}" style="${it&&Player.qOf(it)!=='n'?`border-color:${qColor(it)}`:''}"><span style="color:${it?(tintOf(it)||'#e4cc8d'):'#4f6452'}">${icon(type)}</span><small class="slot-label" style="${it?`color:${qColor(it)}`:''}">${esc(label)}</small>${locked?'':lvb(it)}${locked?`<span class="lock">${svg('lock')}</span>`:''}</button>`;
+    return `<button class="equipment-slot${locked?' locked':''}${can?' can':''}${it?' has':''}" data-slot="${slot}" title="${esc(label)}" style="${it&&Player.qOf(it)!=='n'?`border-color:${qColor(it)}`:''}"><span style="color:${it?(tintOf(it)||'#e4cc8d'):'#4f6452'}">${it?icon(type):svg(type)}</span><small class="slot-label" style="${it?`color:${qColor(it)}`:''}">${esc(label)}</small>${locked?'':lvb(it)}${locked?`<span class="lock">${svg('lock')}</span>`:''}</button>`;
   };
   const bagHtml=(filter)=>p.bag.map((it,i)=>{const ok=!filter||!it||filter(it);return `<button data-bag="${i}" class="bag-slot${i===selected?' selected':''}${ok?'':' dim'}" title="${it?esc(Player.nameOf(it)):''}" style="${it&&Player.qOf(it)!=='n'?`border-color:${qColor(it)}`:''}">${it?icon(it.type,tintOf(it)):''}${lvb(it)}${it?qdot(it):''}</button>`;}).join('');
   function renderBag(){
@@ -199,13 +199,19 @@ window.startUI=(session)=>{
   /* ---------- Lý trưởng: bảng nhiệm vụ ---------- */
   function rewardChips(Q){const o=[];if(Q.copper)o.push(`<i class="ch">${coins(Q.copper)}</i>`);if(Q.rubies)o.push(`<i class="ch">${ruby(Q.rubies)}</i>`);if(Q.item&&Player.items[Q.item]){const it={type:Q.item,q:Q.itemQ};o.push(`<i class="ch" style="color:${qColor(it)}">${icon(Q.item)}${esc(Player.items[Q.item].name)} · ${Player.RAR[Q.itemQ||'n'].name}</i>`);}return o.join('');}
   function showQuestBoard(){
-    // việc làm một lần đã xong thì không hiện nữa
-    const rows=Object.values(Player.QUESTS).filter(Q=>Q.repeat||!p.quests.done[Q.id]||p.quests.active[Q.id]!=null).map(Q=>{
+    // việc làm một lần đã xong thì không hiện nữa; xếp theo cấp, nhóm theo vùng; vùng chưa đủ cấp hiện khóa
+    const lv=p.level||1,R=id=>Player.REGIONS.find(r=>r.id===id)||Player.REGIONS[0];
+    const list=Object.values(Player.QUESTS).filter(Q=>Q.repeat||!p.quests.done[Q.id]||p.quests.active[Q.id]!=null)
+      .map(Q=>({Q,need:Player.questLevel(Q),reg:R(Player.regionOf(Q.target))})).sort((a,b)=>a.need-b.need);
+    let last='',rows='';
+    for(const {Q,need,reg} of list){
+      const key=need+'|'+reg.id,lock=lv<need;
+      if(key!==last){last=key;rows+=`<div class="qgroup${lock?' qlock':''}">${svg(lock?'lock':reg.icon)}<b>${esc(reg.name)}</b><span>${lock?'Cần cấp '+need:'Cấp '+need+'+'}</span></div>`;}
       const n=p.quests.active[Q.id],done=p.quests.done[Q.id]||0,M=Player.MON[Q.target],act=n!=null,ready=act&&n>=Q.count;
-      const btn=ready?`<button class="primary" data-turnin="${Q.id}">${svg('check')}Trả việc</button>`:act?`<span class="qprog">${n}/${Q.count}</span>`:(!Q.repeat&&done)?`<span class="qprog">Đã xong</span>`:`<button data-accept="${Q.id}">${svg('next')}Nhận</button>`;
-      return `<div class="qrow${act?' act':''}">${LH_IMG.icon('quai:'+Q.target,monIc(Q.target,'flag'))}<div><b>${esc(Q.name)}</b><small>${esc(Q.desc)} · ${M?esc(M.name):''} ×${Q.count}${done?` · đã làm ${done} lần`:''}</small><span class="chips">${rewardChips(Q)}</span></div>${btn}</div>`;
-    }).join('');
-    openModal(ttl('quest','Lý trưởng giao việc'),`<small class="sel-desc">Nhận tối đa ${Player.MAX_ACTIVE_QUEST} việc cùng lúc. Xong việc quay về gặp Lý trưởng để nhận thưởng.</small><div class="quest-rows" style="margin-top:8px">${rows||`<div class="cho-note">${svg('check')}<span>Đã làm xong mọi việc của làng. Hãy ra Đông Ngạn săn quái, luyện cấp.</span></div>`}</div>`,true);
+      const btn=ready?`<button class="primary" data-turnin="${Q.id}">${svg('check')}Trả việc</button>`:act?`<span class="qprog">${n}/${Q.count}</span>`:(!Q.repeat&&done)?`<span class="qprog">Đã xong</span>`:lock?`<span class="qprog">${svg('lock')}${need}</span>`:`<button data-accept="${Q.id}">${svg('next')}Nhận</button>`;
+      rows+=`<div class="qrow${act?' act':''}${lock&&!act?' dim':''}">${LH_IMG.icon('quai:'+Q.target,monIc(Q.target,'flag'))}<div><b>${esc(Q.name)}</b><small>${esc(Q.desc)} · ${M?esc(M.name):''} ×${Q.count}${done?` · đã làm ${done} lần`:''}</small><span class="chips">${rewardChips(Q)}</span></div>${btn}</div>`;
+    }
+    openModal(ttl('quest','Lý trưởng giao việc'),`<small class="sel-desc">Lv. ${lv} · nhận tối đa ${Player.MAX_ACTIVE_QUEST} việc cùng lúc. Xong việc quay về gặp Lý trưởng để nhận thưởng.</small><div class="quest-rows" style="margin-top:8px">${rows||`<div class="cho-note">${svg('check')}<span>Đã làm xong mọi việc của làng. Hãy ra Đông Ngạn săn quái, luyện cấp.</span></div>`}</div>`,true);
     document.querySelectorAll('[data-accept]').forEach(b=>b.onclick=()=>run(b,game.op({t:'qa',id:b.dataset.accept}).then(()=>showQuestBoard())));
     document.querySelectorAll('[data-turnin]').forEach(b=>b.onclick=()=>run(b,game.op({t:'qt',id:b.dataset.turnin}).then(r=>{game.message(svg('check')+'Nhận thưởng'+(r.copper?' '+coins(r.copper):'')+(r.rubies?' '+ruby(r.rubies):'')+(r.exp?' · +'+r.exp+' kinh nghiệm':'')+(r.item?` \u{00b7} <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b>`:''));if(r.up)game.levelUp(r.up);showQuestBoard();})));
   }
@@ -327,10 +333,19 @@ window.startUI=(session)=>{
     if(n.panel==='mercs')return showMercBoard('hire');
     if(n.panel==='market'){MK.list=null;MK.mercs=null;return showMarket('buy');}
   }
+  /* ---------- Chọn bản đồ: đi nhanh tới trạm nghỉ ở cổng từng vùng; thiếu cấp thì khóa ---------- */
+  function showMaps(){
+    closeMenu();const lv=p.level||1,cur=game.mapId;
+    const rows=Player.REGIONS.map(R=>{const need=Player.mapLevel(R.id),lock=lv<need,here=cur===R.id;
+      const btn=here?`<span class="qprog">${svg('pin')}Đang ở</span>`:lock?`<span class="qprog">${svg('lock')}${need}</span>`:`<button class="primary" data-go="${R.id}">${svg('next')}Đi</button>`;
+      return `<div class="qrow map-row${lock?' dim':''}${here?' act':''}"><span class="map-ic">${svg(R.icon)}</span><div><b>${esc(R.name)}</b><small>${need>1?(lock?'Cần cấp '+need:'Từ cấp '+need):'Làng, vùng an toàn'}</small></div>${btn}</div>`;}).join('');
+    openModal(ttl('map','Bản đồ'),`<small class="sel-desc">Lv. ${lv} · đi thẳng tới trạm nghỉ ở cổng vùng (tự lưu trước khi đi).</small><div class="quest-rows" style="margin-top:8px">${rows}</div>`);
+    document.querySelectorAll('[data-go]').forEach(b=>b.onclick=async()=>{b.disabled=true;closeModal();await game.goto(b.dataset.go);refresh();});
+  }
   async function save(){closeMenu();const ok=await game.save();game.message(ok?svg('save')+'Đã lưu':svg('close')+'Không lưu được');}
   $('#avatarBtn').onclick=showAttributes;
   $('#settingsBtn').onclick=()=>{menu.hidden=!menu.hidden;$('#settingsBtn').setAttribute('aria-expanded',String(!menu.hidden));};
-  $('#saveBtn').onclick=save;$('#homeBtn').onclick=()=>{closeMenu();closeModal();game.home();refresh();};
+  $('#saveBtn').onclick=save;$('#mapBtn').onclick=showMaps;$('#homeBtn').onclick=()=>{closeMenu();closeModal();game.home();refresh();};
   // Tình trạng: phiên bản, phần chơi chưa lưu, lần gọi máy chủ và lỗi gần đây (chụp màn hình gửi khi game có vấn đề)
   function showDiag(){
     closeMenu();const D=LH_DIAG.data,v=document.querySelector('.version');
@@ -363,7 +378,7 @@ window.startUI=(session)=>{
   });
   const alive=()=>{if(!window.LH_KICKED&&Net.token&&document.visibilityState==='visible')Net.call('alive').catch(()=>{});};
   setInterval(alive,20000);document.addEventListener('visibilitychange',alive);
-  window.GameUI={refresh,showAttributes,openPanel,showShop:(id,tab)=>{shopSel=null;showShop(id,tab);},showQuestBoard,showMercBoard,showMarket,showQuests,save,previewElem,previewWho:()=>previewWho,previewBurst:()=>burstAt,
+  window.GameUI={refresh,showAttributes,openPanel,showShop:(id,tab)=>{shopSel=null;showShop(id,tab);},showQuestBoard,showMaps,showMercBoard,showMarket,showQuests,save,previewElem,previewWho:()=>previewWho,previewBurst:()=>burstAt,
     showBag:()=>{if($('#overlay').hidden){selected=null;skillFocus=null;renderBag();}else closeModal();},
     frame(time,st){
       if(time-lastFrame<.1)return;lastFrame=time;refresh();$('#settingsBtn').classList.toggle('dirty',game.unsaved());$('#saveBtn').classList.toggle('dirty',game.unsaved());const now=Date.now();
