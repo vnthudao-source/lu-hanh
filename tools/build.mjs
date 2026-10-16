@@ -1,16 +1,17 @@
 // Đóng gói: node tools/build.mjs
 //   dist/lu-hanh.css, dist/lu-hanh.js      → game, nạp qua jsDelivr trên Blogspot
 //   dist/lu-hanh.html                       → game một file (giống file trong Google Doc), mở thẳng để chơi thử ngoại tuyến
-//   dist/maps/<mã>.json                     → các bản đồ / phó bản (ngoài Thanh Mộc), game chỉ tải khi nhân vật bước vào
+//   dist/maps/<mã>.js                       → gói bản đồ / phó bản (ngoài Thanh Mộc): dữ liệu + hình vẽ riêng, game chỉ tải khi nhân vật tới gần cổng
+//   (lu-hanh.js, lu-hanh.css, gói bản đồ được rút gọn bằng Terser trong tools/vendor; lu-hanh.html giữ nguyên để đọc)
 //   dist/cho-phien.css, dist/cho-phien.js   → trang Chợ phiên (từ v9.3 chỉ còn trang báo dời vào game)
 //   dist/cho-phien.html                     → Chợ phiên một file để thử ngoại tuyến
 //   apps-script/Code.gs                     → dán vào Apps Script (máy chủ chung cho game và Chợ phiên)
-import fs from 'node:fs';import path from 'node:path';import vm from 'node:vm';
+import fs from 'node:fs';import path from 'node:path';import vm from 'node:vm';import {minify} from './vendor/terser/main.js';
 const root=path.resolve(path.dirname(new URL(import.meta.url).pathname),'..');
 const rd=f=>fs.readFileSync(path.join(root,f),'utf8'),wr=(f,s)=>{fs.writeFileSync(path.join(root,f),s);console.log(f.padEnd(24),s.length);};
 const V=rd('VERSION').trim();
 const API='https://script.google.com/macros/s/AKfycbwEUXIQSLK1t6FXNDDD18lbJGNomqhMAzcwh55N_uzKbUL19LaxvieMyhLpzrB06VfzgA/exec';
-const GAME=['00-loader.js','01-data.js','02-core.js','03-net.js','03-img.js','04-world.js','04-looks.js','05-player.js','06-game.js','07-ui.js','08-portal.js'];
+const GAME=['00-loader.js','01-data.js','02-core.js','03-net.js','03-img.js','04-art.js','04-world.js','04-looks.js','05-player.js','06-game.js','07-ui.js','08-portal.js'];
 const CHO=['cho/cho.js'];
 // CSS: gắn mọi luật vào khung gốc (#lu-hanh, #cho-phien) để giao diện Blogspot không đè được (nút, chữ, ô nhập)
 function scope(src,id){
@@ -33,18 +34,29 @@ const banner=name=>`/*! Lữ Hành ${V} · ${name} · https://github.com/vnthuda
 const inject=(body,probe)=>`(function(){if(document.getElementById('${probe}'))return;document.body.insertAdjacentHTML('beforeend',${safe(JSON.stringify(body))});})();\n`;
 const page=(title,css,body,js,api)=>`<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="game-version" content="${V}"><title>${title}</title><style>\n${css}</style></head><body>\n${body}<script>${cfgJs(api)}</script>\n${js.map(s=>`<script>\n${s}</script>\n`).join('')}</body></html>\n`;
 const cfgJs=api=>`window.LH_API='${api}';window.LH_CHO='https://ikynagame.blogspot.com/p/cho-phien.html';window.LH_GAME='https://ikynagame.blogspot.com/';`;
-// ---- bản đồ (thư mục maps/): bản đồ đầu nằm sẵn trong game, bản đồ khác thành file riêng dist/maps/<mã>.json, chỉ tải khi vào
+// ---- bản đồ (thư mục maps/): bản đồ đầu nằm sẵn trong game; bản đồ khác là gói dist/maps/<mã>.js = dữ liệu maps/<mã>.json + hình vẽ maps/<mã>.art.js
 const MAP0='thanh-moc',mapIds=fs.readdirSync(path.join(root,'maps')).filter(f=>f.endsWith('.json')).map(f=>f.slice(0,-5));
 const mapOf=id=>JSON.parse(rd('maps/'+id+'.json'));
+const artOf=id=>fs.existsSync(path.join(root,'maps/'+id+'.art.js'))?rd('maps/'+id+'.art.js').replace(/^\s*\/\*[\s\S]*?\*\/\s*/,'').trim().replace(/;$/,''):'null';
+const packOf=id=>`LH_PACK(${JSON.stringify(id)},${JSON.stringify(mapOf(id))},${artOf(id)});`;
+// JS rút gọn (tên biến ngắn, bỏ khoảng trắng); giữ chú thích /*! … */ ở đầu
+const MIN={compress:{passes:2},mangle:true,format:{comments:/^!/}};
+const mini=async(src,what)=>{const r=await minify(src,MIN);if(!r.code)throw Error('Rút gọn lỗi: '+what);return r.code;};
+// CSS rút gọn: bỏ xuống dòng, khoảng trắng thừa quanh { } ;
+const miniCss=css=>css.replace(/\/\*(?!!)[\s\S]*?\*\//g,'').replace(/\s+/g,' ').replace(/\s*([{};])\s*/g,'$1').replace(/;}/g,'}').trim()+'\n';
 fs.mkdirSync(path.join(root,'dist/maps'),{recursive:true});
-for(const id of mapIds){const d=mapOf(id);if(d.id!==id)throw Error('maps/'+id+'.json: id phải là '+id);if(d.tiles.length!==d.h||d.tiles.some(r=>r.length!==d.w))throw Error('maps/'+id+'.json: tiles phải đủ '+d.h+' hàng × '+d.w+' ô');if(id!==MAP0)wr('dist/maps/'+id+'.json',JSON.stringify(d));}
-const mapJs=ids=>`window.LH_MAP_CDN='https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@ban-${V.replace(/^v/,'')}/dist/maps/';`+'window.LH_MAPS=window.LH_MAPS||{};'+ids.map(id=>`window.LH_MAPS[${JSON.stringify(id)}]=${JSON.stringify(mapOf(id))};`).join('');
+for(const f of fs.readdirSync(path.join(root,'dist/maps')))fs.unlinkSync(path.join(root,'dist/maps',f));
+const monPack={};
+for(const id of mapIds){const d=mapOf(id);if(d.id!==id)throw Error('maps/'+id+'.json: id phải là '+id);if(d.tiles.length!==d.h||d.tiles.some(r=>r.length!==d.w))throw Error('maps/'+id+'.json: tiles phải đủ '+d.h+' hàng × '+d.w+' ô');
+  if(id===MAP0)continue;for(const m of d.monsters||[])monPack[m.type]=monPack[m.type]||id;
+  wr('dist/maps/'+id+'.js',await mini(packOf(id),'maps/'+id));}
+const mapJs=ids=>`window.LH_MAP_CDN='https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@ban-${V.replace(/^v/,'')}/dist/maps/';window.LH_MON_PACK=${JSON.stringify(monPack)};`+'window.LH_MAPS=window.LH_MAPS||{};'+ids.map(id=>id===MAP0?`window.LH_MAPS[${JSON.stringify(id)}]=${JSON.stringify(mapOf(id))};`:packOf(id)).join('\n');
 // ---- game
 const body=rd('src/body.html').replaceAll('{{VERSION}}',V),css=rootCss('#lu-hanh','hidden')+scope(rd('src/style.css'),'#lu-hanh');
-const gameJs=ids=>GAME.flatMap(f=>f==='04-world.js'?[safe(mapJs(ids)),safe(rd('src/'+f))]:[safe(rd('src/'+f))]);
+const gameJs=ids=>GAME.flatMap(f=>f==='04-art.js'?[safe(rd('src/'+f)),safe(mapJs(ids))]:[safe(rd('src/'+f))]);
 const js=gameJs([MAP0]),jsAll=gameJs(mapIds);
-wr('dist/lu-hanh.css',banner('Làng Thanh Mộc')+css);
-wr('dist/lu-hanh.js',banner('Làng Thanh Mộc')+inject(body,'portal')+js.map(s=>';'+s).join('\n'));
+wr('dist/lu-hanh.css',banner('Làng Thanh Mộc')+miniCss(css));
+wr('dist/lu-hanh.js',safe(await mini(banner('Làng Thanh Mộc')+inject(body,'portal')+js.map(s=>';'+s).join('\n'),'lu-hanh.js')));
 wr('dist/lu-hanh.html',page(`Lữ Hành ${V} · Làng Thanh Mộc`,css,body,js,API));
 wr('dist/lu-hanh-offline.html',page(`Lữ Hành ${V} · thử ngoại tuyến`,css,body,jsAll,''));
 // file khởi động: hiện màn hình chờ, tải CSS + JS có đếm phần trăm
@@ -83,5 +95,5 @@ for(const {id,name} of mapIds.flatMap(m=>mapOf(m).npcs||[]))imgRows.push(['npc',
 wr('apps-script/hinh-anh.csv',imgRows.map(r=>r.map(x=>/[",\n]/.test(String(x))?'"'+String(x).replace(/"/g,'""')+'"':String(x)).join(',')).join('\n')+'\n');
 wr('apps-script/Code.gs',rd('apps-script/gs-adapter.js').replace('@@IDS@@',JSON.stringify(ids,null,1))+
   '\n// Ảnh vật phẩm game vẽ sẵn (hàm capNhatAnh chép vào Drive)\nconst LH_ANH_CDN='+JSON.stringify(cdn.replace(/dist\/$/,'dist/anh/'))+';\n'+
-  '\n// Dòng ảnh giao diện bổ sung vào file Hình ảnh khi chạy kiemTra\nconst LH_HINH_THEM='+JSON.stringify(imgRows.slice(1).filter(r=>r[0]==='giao_dien').map(r=>Object.fromEntries(imgRows[0].map((k,i)=>[k,r[i]]))))+';\n'+
+  '\n// Dòng ảnh giao diện, quái bổ sung vào file Hình ảnh khi chạy kiemTra\nconst LH_HINH_THEM='+JSON.stringify(imgRows.slice(1).filter(r=>r[0]==='giao_dien'||r[0]==='quai').map(r=>Object.fromEntries(imgRows[0].map((k,i)=>[k,r[i]]))))+';\n'+
   '\n// Dữ liệu mặc định (dùng khi tab Sheet còn trống và để chạy caiDat)\nconst LH_DEFAULT=(d=>Object.fromEntries(Object.entries(d).map(([k,[h,...rows]])=>[k,rows.map(r=>Object.fromEntries(h.map((c,i)=>[c,r[i]])))])))('+JSON.stringify(table)+');\n\n'+rd('src/02-core.js')+'\n'+rd('src/05-player.js')+'\n'+rd('src/04-looks.js'));

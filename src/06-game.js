@@ -44,7 +44,10 @@ window.startGame=(session)=>{
   /* ---------- Nền: đường đất, sân gạch, ruộng lúa, ao sen ---------- */
   function groundDraw(){
     ground.width=W*T;ground.height=H*T;const c=ground.getContext('2d');
-    for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+    // Bản đồ có bộ nền riêng (sa mạc, tuyết, hang…): vẽ từng ô bằng hình vẽ của gói bản đồ
+    const TH=World.theme&&LH_ART.theme[World.theme];
+    if(TH){const B=World.base,G=(x,y)=>x<0||y<0||x>=W||y>=H?1:B[y][x];for(let y=0;y<H;y++)for(let x=0;x<W;x++)TH.tile(c,x,y,B[y][x],(x*37+y*71)%9,T,G);if(TH.over)TH.over(c,World.def,T,G);}
+    else for(let y=0;y<H;y++)for(let x=0;x<W;x++){
       const v=grid[y][x],n=(x*37+y*71)%9,east=v===5;
       c.fillStyle=v===2?'#4f7f74':v===3?'#a68a52':v===4?['#b99a68','#b4955f','#bd9f6d'][n%3]:v===6?['#8fae63','#93b266'][n%2]:east?['#a6a56c','#aaa771','#a1a067','#aeab75'][n%4]:['#7f9a5e','#829d61','#7b965b','#86a064'][n%4];
       c.fillRect(x*T,y*T,T,T);
@@ -571,7 +574,10 @@ window.startGame=(session)=>{
     c.translate(lunge,0);if(m.dead)c.rotate(-.5*(1-alpha));
     const leg=(x,ph,len,w,colr)=>line(c,[x,-len,x+Math.sin(g+ph)*len*.3*(m.moving?1:0),0],colr,w);
     const pic=LH_IMG.pic('quai:'+m.type);
+    const art=!pic&&LH_ART.mon[m.type];
     if(pic){if(fl)c.filter='brightness(1.8)';drawPic(c,pic,Math.max(M.h*1.3,M.r*2),m.moving?-Math.abs(Math.sin(g))*3:0);c.filter='none';}
+    else if(art)art(c,m,M,{t:time,open,col,g,fl,atk:!!m.atk});
+    else if(!['deer','lion','elephant','croc','chua-son-lam','ngu-tinh'].includes(m.type)){World.monPack(m.type);ell(c,0,-M.h*.45,M.r,M.h*.45,col('#5a4a3a'));ell(c,M.r*.6,-M.h*.7,3,3,'#ffd27a');}
     else if(m.type==='deer'){
       leg(-12,0,22,3,col('#7a5334'));leg(10,Math.PI,22,3,col('#7a5334'));
       ell(c,0,-26,20,10,col('#b07a4c'));ell(c,0,-21,14,4,col('#d9b48a'));leg(-9,Math.PI,21,3,col('#93623d'));leg(13,0,21,3,col('#93623d'));
@@ -900,7 +906,7 @@ window.startGame=(session)=>{
     player.hp=0;hero.dead=time+2.2;hero.attack=null;hero.mountAct=null;route=[];message(svg('heart')+'Bạn đã gục · về làng');
   }
   /* ---------- Đổi bản đồ: lưu, tải gói dữ liệu bản đồ (lần đầu), dựng lại nền, quái, dân làng ---------- */
-  let portalArmed=!World.portalAt(hero.x,hero.y);
+  let portalArmed=!World.portalAt(hero.x,hero.y),prefAt=0;
   async function travel(id,tx,ty){
     if(travelling)return;travelling=true;route=[];targetNPC=null;keys.clear();joystick={x:0,y:0};holdAttack=false;dialogNPC=null;dialogEl.hidden=true;
     let def;
@@ -1057,7 +1063,7 @@ window.startGame=(session)=>{
     const hits=[];if(!hero.dead&&Math.hypot(hero.x-m.x,hero.y-m.y)<reach)hits.push('hero');for(const e of allies)if(e.hp>0&&Math.hypot(e.x-m.x,e.y-m.y)<reach+(e.pet?MON[e.type].r:0))hits.push(e);
     const pref=m.tgt&&hits.includes(m.tgt)?m.tgt:hits.includes('hero')?'hero':hits[0],list=M.boss?hits:pref?[pref]:[];
     for(const h of list){if(h==='hero')hurtHero(M.dmg,m);else hurtAlly(h,M.dmg);}
-    if(m.type==='elephant'||M.boss){shake(M.boss?8:6);fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:70,color:m.type==='ngu-tinh'?'#7fd0ff':'#d9cdb0',age:0,life:.45,lw:5});}
+    if(m.type==='elephant'||M.boss){shake(M.boss?8:6);fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:70,color:LH_ART.ring[m.type]||(m.type==='ngu-tinh'?'#7fd0ff':'#d9cdb0'),age:0,life:.45,lw:5});}
     if(m.type==='ngu-tinh')for(let i=0;i<14;i++){const a=i/14*PI2;particles.push({x:m.x+Math.cos(a)*30,y:m.y-10,vx:Math.cos(a)*160,vy:Math.sin(a)*60-80,age:0,life:.6,color:'#9fdcff',size:4,grav:300});}
   }
   // Đi tới đích; vướng bụi cây, nhà, nước thì tìm đường vòng theo lưới ô thay vì đẩy mãi vào vật cản
@@ -1106,9 +1112,10 @@ window.startGame=(session)=>{
         if(m.dead)continue;if(m.atk&&time>=m.atk.end)m.atk=null;
       }else{
         const angry=m.aggro>time,canSee=!!tg;let hostile=false;
-        if(m.type==='lion'||M.boss)hostile=canSee&&(dist<M.aggro||angry)&&(!M.boss||homeD<420);
-        else if(m.type==='elephant')hostile=canSee&&angry;
+        if(m.type==='elephant')hostile=canSee&&angry;
         else if(m.type==='croc')hostile=canSee&&(dist<M.aggro||angry)&&homeD<230;
+        // sư tử, trùm và quái các vùng mới: thấy người là đánh, đuổi không quá xa ổ
+        else if(m.type!=='deer')hostile=canSee&&(dist<M.aggro||angry)&&(M.boss?homeD<420:m.type==='lion'||homeD<380);
         if(hostile)m.tgt=tg.isHero?'hero':tg.ent;
         if(m.type==='deer'){if(m.flee>time||(dist<110&&canSee)){const g=fleeGoal(m,tg?tg.x:m.x-1,tg?tg.y:m.y);tx=g.x-m.x;ty=g.y-m.y;spd=m.flee>time?M.run:M.speed*1.6;}}
         else if(hostile){
@@ -1193,6 +1200,7 @@ window.startGame=(session)=>{
     if(HD.fx.shield&&time>hero.shieldAt){hero.shieldAt=time+10;hero.shieldHp=Math.round(S.hp*HD.fx.shield/100);}else if(!HD.fx.shield)hero.shieldHp=0;
     if(time-sync.keptAt>(localDirty?1.5:3))keepLocal(true);
     World.bridges.forEach((B,i)=>{const sd=hero.x<B.x0*T?'w':hero.x>(B.x1+1)*T?'e':bridgeSide[i];if(sd!==bridgeSide[i]){const was=bridgeSide[i];bridgeSide[i]=sd;if(was)checkpoint();}});
+    if(time-prefAt>1){prefAt=time;for(const P of World.portals)if(Math.hypot((P.x+.5)*T-hero.x,(P.y+.5)*T-hero.y)<T*9)World.prefetch(P.to);}
     {const P=World.portalAt(hero.x,hero.y);if(!P)portalArmed=true;else if(portalArmed&&!travelling&&!hero.dead){portalArmed=false;checkpoint();travel(P.to,P.tx,P.ty);}}
     updateNPCs(dt);updateProjectiles(dt);updateMonsters(dt);updateAllies(dt);updateStrikes();updateVillage(dt);updateEffects(dt);
     const a=hero.attack;
@@ -1247,7 +1255,8 @@ window.startGame=(session)=>{
     ctx.clearRect(0,0,width,height);ctx.save();ctx.scale(scale,scale);
     const sx=shakeAmp?(Math.random()-.5)*shakeAmp:0,sy=shakeAmp?(Math.random()-.5)*shakeAmp:0;
     ctx.translate(-camera.x+sx,-camera.y+sy);ctx.drawImage(ground,0,0);
-    ctx.strokeStyle='#c8e0ca55';ctx.lineWidth=2;for(const R of World.ripples){const y=R.y;if(y%2!==1||World.bridges.some(b=>y>=b.y0-1&&y<=b.y1+1))continue;const rx=(R.x+1.2)*T;ctx.beginPath();ctx.moveTo(rx+Math.sin(time+y)*9,y*T);ctx.lineTo(rx+25+Math.sin(time+y)*9,y*T);ctx.stroke();}
+    const TH=World.theme&&LH_ART.theme[World.theme];
+    ctx.strokeStyle=TH&&TH.ripple||'#c8e0ca55';ctx.lineWidth=2;if(!(TH&&TH.still))for(const R of World.ripples){const y=R.y;if(y%2!==1||World.bridges.some(b=>y>=b.y0-1&&y<=b.y1+1))continue;const rx=(R.x+1.2)*T;ctx.beginPath();ctx.moveTo(rx+Math.sin(time+y)*9,y*T);ctx.lineTo(rx+25+Math.sin(time+y)*9,y*T);ctx.stroke();}
     if(route.length){ctx.fillStyle='#f3d58c99';for(let i=0;i<route.length;i+=2){ctx.beginPath();ctx.arc(route[i].x,route[i].y,3,0,PI2);ctx.fill();}const p=route[route.length-1];ctx.strokeStyle='#f3d58c';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(p.x,p.y,12+Math.sin(time*5)*2,6,0,0,PI2);ctx.stroke();}
     const st=Player.stance(player),el=Player.element(player);
     if(st.type==='crossbow'&&!hero.dead){const ax=hero.aim.x,ay=hero.aim.y,ox=hero.x+ax*30,oy=hero.y-20-seatH()+ay*30;ctx.save();ctx.setLineDash([6,8]);ctx.globalAlpha=.55;line(ctx,[ox,oy,ox+ax*170,oy+ay*170],'#f6e3a8',1.5);ctx.setLineDash([]);ctx.beginPath();ctx.arc(ox+ax*180,oy+ay*180,6,0,PI2);ctx.stroke();ctx.restore();}
@@ -1259,10 +1268,13 @@ window.startGame=(session)=>{
       if(o===hero){drawHero(ctx,hero,st,el,time);if(hero.shieldHp>0){ctx.save();ctx.globalAlpha=.3+Math.sin(time*6)*.08;ctx.strokeStyle='#ffe9a8';ctx.lineWidth=2.5;ctx.beginPath();ctx.ellipse(hero.x,hero.y-24-seatH(),26,36,0,0,PI2);ctx.stroke();ctx.restore();}}
       else if(o.key&&o.data){const e=o;if(e.pet){drawPet(e);}else{drawHero(ctx,e,Player.stance(e.data),null,time,{who:e.data,labelColor:'#bfe3ff',label:safe});const sh=seatOf(e.data.equipment);if(e.hp<e.max){roundRect(ctx,e.x-18,e.y-78-sh,36,4,2,'#0a120ecc');roundRect(ctx,e.x-18,e.y-78-sh,36*e.hp/e.max,4,2,'#7fd38a');}}}
       else if(o.amb)drawAmbient(o);
+      else if(LH_ART.obj[o.kind])LH_ART.obj[o.kind](ctx,o,time);
       else if(o.kind==='tree')tree(o);else if(o.kind==='house')house(o);else if(o.kind==='banyan')banyan(o);else if(o.kind==='well')well(o);else if(o.kind==='fire')campfire(o);else if(o.role)drawNPC(o);else drawMonster(o);
     }
-    drawFX();drawLoot();drawNPCMarks();drawWellMarks();
+    drawFX();drawLoot();drawNPCMarks();drawWellMarks();drawPortalMarks();
     ctx.restore();
+    // trời riêng của bản đồ (cát bay, tuyết rơi, bóng tối trong hang có đuốc, pha lê sáng)
+    const SK=World.def.sky&&LH_ART.sky[World.def.sky];if(SK)try{SK(ctx,{w:width,h:height,t:time,sc:scale,cam:camera,hx:(hero.x-camera.x)*scale,hy:(hero.y-24-camera.y)*scale,lights:World.lights,fires:World.fires,T})}catch(e){oops(e,'vẽ trời');}
     const boss=monsters.find(m=>!m.dead&&MON[m.type].boss&&(m.aggro>time||Math.hypot(m.x-hero.x,m.y-hero.y)<420));
     window.GameUI?.frame(time,{safe,boss:boss?{type:boss.type,name:MON[boss.type].name,hp:boss.hp,max:boss.max,final:MON[boss.type].boss===2}:null});
     mx.drawImage(miniGround,0,0);const kx=mini.width/(W*T),ky=mini.height/(H*T);mx.strokeStyle='#f2e5bd88';mx.lineWidth=1;mx.strokeRect(camera.x*kx,camera.y*ky,width/scale*kx,height/scale*ky);
@@ -1271,6 +1283,8 @@ window.startGame=(session)=>{
     mx.fillStyle='#fff6d5';mx.beginPath();mx.arc(hero.x*kx,hero.y*ky,3,0,PI2);mx.fill();
     const pv=document.getElementById('preview');if(pv&&!overlayEl.hidden)drawPreview(pv);
   }
+  // Tên vùng bên kia cổng, hiện khi lại gần
+  function drawPortalMarks(){for(const P of World.portals){const cx=(P.x+(P.w||1)/2)*T,cy=(P.y+(P.h||1)/2)*T;if(Math.hypot(cx-hero.x,cy-hero.y)>260)continue;const nm=P.label||(LH_MAPS[P.to]&&LH_MAPS[P.to].name)||'';if(nm)label('\u{2192} '+nm,cx,(cy<T*3?cy+T*1.1:cy-30)+Math.sin(time*3)*2,'#ffe6a8');}}
   function drawPreview(pv){
     const ui=window.GameUI,el=ui&&ui.previewElem?ui.previewElem():Player.element(player),who=ui&&ui.previewWho?ui.previewWho():null,dpr=Math.min(2,devicePixelRatio||1),cw=pv.clientWidth||100,ch=pv.clientHeight||100;
     if(pv.width!==Math.round(cw*dpr)){pv.width=Math.round(cw*dpr);pv.height=Math.round(ch*dpr);}
@@ -1357,7 +1371,7 @@ window.startGame=(session)=>{
     else if(L){c.translate(N/2,N/2);c.scale(N/64,N/64);LH_Look.iconWear(c,L,T0);}
     c.restore();curLook=null;return true;
   }
-  window.mapGame={itemIcon,hero,player,camera,monsters,allies,get route(){return route;},get seen(){return [...seen];},get safe(){return safe;},get HD(){return HD;},now:()=>time,screenPoint,goTo,cast,message,activateBurst,svg,save,unsaved,checkpoint,server,op,refreshHD,syncMerc,
+  window.mapGame={itemIcon,travel,hero,player,camera,monsters,allies,get route(){return route;},get seen(){return [...seen];},get safe(){return safe;},get HD(){return HD;},now:()=>time,screenPoint,goTo,cast,message,activateBurst,svg,save,unsaved,checkpoint,server,op,refreshHD,syncMerc,
     hammer(color){let n=0;const t=setInterval(()=>{burst(hero.x+hero.facing*14,hero.y-26,color||'#ffcf7a',6,140);if(color)fx.push({kind:'ring',x:hero.x,y:hero.y-20,r0:6,r1:46,color,age:0,life:.4,lw:3});else shake(2);if(++n>=3)clearInterval(t);},380);},
     levelUp,
     setHold(v){holdAttack=!!v;},

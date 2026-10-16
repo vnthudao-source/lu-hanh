@@ -108,12 +108,20 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 - Ảnh vật phẩm game vẽ sẵn (webp 128×128, vẽ bằng đúng các hàm vẽ trên người): `dist/anh/vat_pham/<mã>.webp` (dấu `:` đổi thành `_`). Tạo lại: mở game ngoại tuyến, gọi `mapGame.itemIcon(canvas, mã)`.
 - Hàm Apps Script `capNhatAnh`: ghi cột `goi_y` (định dạng webp, cách vẽ khớp nhân vật, bảng màu), thêm cột `gioi_tinh` (Nam / Nữ / Chung) và `ghi_chu` (Huyền thoại / Thần thoại) vào file Hình ảnh; dòng vật phẩm chưa có `link_anh` được chép ảnh vào thư mục Drive (mở quyền xem cho mọi người) và ghi link. Chạy quá 4,5 phút thì dừng, chạy lại để chép tiếp.
 
+## Bản 9.8: ba vùng mới, tải nhẹ hơn
+
+- Bản đồ mới (thư mục `maps/`): **Sa mạc** (cổng ở bìa bắc rừng Đông Ngạn), **Núi tuyết** (cổng ở đầu đường phía tây làng), **Hang động** (cổng ở bìa nam rừng Đông Ngạn). Mỗi vùng có trạm nghỉ an toàn ở cổng vào (lửa trại, giếng cổ hồi máu), 2 loài quái và 1 trùm.
+- Quái mạnh gấp 2–3 lần rừng Đông Ngạn: Bọ cạp cát, Kền kền, trùm Chằn Tinh (sa mạc); Sói tuyết, Gấu ngựa, trùm Hồ Tinh chín đuôi (núi tuyết); Dơi quỷ, Nhện độc, trùm Đại Bàng Tinh (hang động). Chỉ rơi đồ từ Hoàn hảo trở xuống. 6 nhiệm vụ mới ở Lý trưởng.
+- Mỗi vùng là một gói `dist/maps/<mã>.js` (dữ liệu + hình vẽ nền, cây đá, quái, trời: cát bay, tuyết rơi, bóng tối có đuốc và pha lê), khoảng 13 KB, chỉ tải khi nhân vật tới gần cổng. File game chính không chứa hình vẽ các vùng này.
+- `lu-hanh.js` được rút gọn bằng Terser (chép sẵn trong `tools/vendor/terser`, không cần npm): nhỏ hơn khoảng 21%. `lu-hanh.html` (bản dán Google Doc) giữ nguyên để đọc.
+- Máy chủ: Sheet `quai`, `nhiem_vu` chưa có dòng mới thì tự dùng số liệu mặc định; chạy `kiemTra` một lần để chép các dòng mới vào Sheet (và dòng ảnh quái mới vào file Hình ảnh) rồi sửa số liệu ở đó.
+
 ## Ra bản mới
 
 1. Sửa trong `src/` (và `VERSION`).
 2. `node tools/build.mjs`
-3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-9.8`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
-4. Trên Blogspot đổi `@ban-9.7` thành `@ban-9.8` (trang game và trang Chợ phiên).
+3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-9.9`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
+4. Trên Blogspot đổi `@ban-9.8` thành `@ban-9.9` (trang game và trang Chợ phiên).
 5. Nếu `Code.gs` đổi: dán lại vào Apps Script, Triển khai → Quản lý triển khai → Sửa → Phiên bản mới (giữ nguyên URL).
 
 ## Dữ liệu trong Sheet

@@ -3,7 +3,8 @@
 Mỗi bản đồ là một file `maps/<mã>.json`. Game dùng chung một bộ chạy bản đồ (`src/04-world.js`) và một bộ luật nhân vật (`Player`), nên thêm bản đồ chỉ là thêm dữ liệu.
 
 - `thanh-moc.json` nằm sẵn trong file game (bản đồ đầu).
-- Các bản đồ khác được đóng gói thành `dist/maps/<mã>.json`, game **chỉ tải khi nhân vật bước qua cổng** (vài KB). Thêm bao nhiêu bản đồ thì file game chính cũng không nặng thêm.
+- Các bản đồ khác được đóng gói thành `dist/maps/<mã>.js` (dữ liệu `<mã>.json` + hình vẽ `<mã>.art.js`, đã rút gọn), game **tải trước khi nhân vật tới gần cổng** (khoảng 9 ô) nên bước qua cổng là vào ngay. Thêm bao nhiêu bản đồ thì file game chính cũng không nặng thêm.
+- Quái của bản đồ nào thì hình vẽ nằm trong gói bản đồ đó; quái thu phục đi theo về làng thì game tự tải gói chứa hình của nó.
 - Chạy `node tools/build.mjs`: kiểm tra `id` trùng tên file, `tiles` đủ `h` hàng × `w` ô.
 
 ## Các trường
@@ -24,5 +25,18 @@ Mỗi bản đồ là một file `maps/<mã>.json`. Game dùng chung một bộ 
 | `monsters` | `{type,x,y}` — `type` là mã quái trong Sheet quai |
 | `portals` | cổng `{x,y,w,h,to,tx,ty}`: bước vào thì lưu rồi sang bản đồ `to`, đứng ở ô `tx,ty` |
 | `ambient` | `"village"`: có chó, mèo, chuột chạy quanh (chỉ Thanh Mộc) |
+| `theme` | bộ nền vẽ từng ô trong `<mã>.art.js` (`sand`, `snow`, `cave`); bỏ trống = nền cỏ của làng |
+| `sky` | hiệu ứng phủ màn hình (`sand` cát bay, `snow` tuyết rơi, `cave` bóng tối, chỉ sáng quanh người và vật có `light`) |
+| `objects` (thêm) | vật riêng của gói: `{kind,x,y,w?,solid?,light?}` — `kind` là tên hàm trong `obj` của `<mã>.art.js` (xương rồng `cactus`, thốt nốt `palm`, tháp Chàm `tower`, thông tuyết `pine`, miếu đá `shrine`, thạch nhũ `stalag`, pha lê `crystal`…); `solid:false` đi xuyên qua; `light:"#màu"` phát sáng trong hang |
+| `portals[].label` | tên hiện trên cổng khi lại gần |
+
+## Hình vẽ của gói (`<mã>.art.js`)
+
+Một hàm `K=>({...})`, nhận bộ bút `K` (`ell`, `line`, `poly`, `rr`, `shade`, `mix`, `noise`, `hash`, `blob`) và trả về:
+
+- `theme.<tên>.tile(c,x,y,v,n,T,G)`: vẽ một ô nền (`v` = loại ô 0 cỏ, 1 chắn, 2 nước, 3 cầu, 4 đường, 5 cỏ khô, 6 ruộng/đặc biệt; `G(x,y)` đọc ô bên cạnh); `over(c,def,T,G)` vẽ thêm sau cùng (hồ, băng có mép tròn).
+- `obj.<kind>(c,o,t)`: vẽ vật; `mon.<mã quái>(c,m,M,s)`: vẽ quái (gốc tọa độ ở chân, mặt quay sang phải); `sky.<tên>(c,s)`: hiệu ứng trên màn hình; `ring.<mã quái>`: màu vòng đòn đánh.
+
+Ảnh dán ở Sheet Hình ảnh (`quai:<mã>`) vẫn được ưu tiên hơn hình vẽ.
 
 Muốn mở bản đồ mới từ Thanh Mộc: thêm một cổng vào `portals` của `thanh-moc.json` (ví dụ ở rìa Đông Ngạn) trỏ tới mã bản đồ mới, và một cổng quay về ở bản đồ mới. Gục ở bản đồ khác thì về làng Thanh Mộc.
