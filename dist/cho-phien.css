@@ -1,0 +1,107 @@
+/*! Lữ Hành v8.0 · Chợ phiên · https://github.com/vnthudao-source/lu-hanh */
+#cho-phien{position:fixed;inset:0;z-index:2147483000;overflow:auto;text-align:left;line-height:normal}
+body:has(#cho-phien){overflow:hidden!important}
+#cho-phien{color-scheme:dark;--ink:#efe6cf;--muted:#a8b4a7;--gold:#e3c27a;--line:#ffffff1f;--lac:#8c2f1d}
+#cho-phien *{box-sizing:border-box}
+#cho-phien{margin:0;background:#101b16;color:var(--ink);font:14px system-ui,-apple-system,"Segoe UI",sans-serif;overflow:auto;-webkit-tap-highlight-color:transparent}
+#cho-phien button,#cho-phien input{font:inherit;letter-spacing:normal;text-transform:none;line-height:normal;margin:0;box-shadow:none;height:auto;width:auto;min-height:0}
+#cho-phien h1,#cho-phien h2,#cho-phien h3,#cho-phien p,#cho-phien small,#cho-phien b,#cho-phien label{font-family:inherit;letter-spacing:normal;text-transform:none}
+#cho-phien svg.icon{width:20px;height:20px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+#cho-phien button{cursor:pointer;color:var(--ink);background:#22362cf2;border:1px solid #b5ba9850;border-radius:10px;padding:9px 12px;display:inline-flex;align-items:center;justify-content:center;gap:6px;touch-action:manipulation}
+#cho-phien button:hover{background:#2f4a3c}
+#cho-phien button:disabled{opacity:.4;cursor:not-allowed}
+#cho-phien button.primary{background:linear-gradient(#a4452c,#7c2c1b);border-color:#e3b86f;color:#fff3d6;font-weight:700;text-shadow:0 1px 0 #3a120a}
+#cho-phien button.primary:hover{background:linear-gradient(#b8533a,#8a3320)}
+#cho-phien button.busy{opacity:.6;pointer-events:none}
+#cho-phien button.ghost{background:transparent}
+#cho-phien input{padding:9px 10px;border:1px solid #79907177;background:#0d1a13;color:#fff;border-radius:9px;font-size:15px}
+#cho-phien .ch-head{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;background:linear-gradient(#1a2c22f5,#132219f5);border-bottom:2px solid #8c6b3a;box-shadow:0 6px 18px #0006}
+#cho-phien .brand{display:flex;align-items:center;gap:10px}
+#cho-phien .brand .mark{width:38px;height:38px;color:var(--gold)}
+#cho-phien .brand b{display:block;font:24px Georgia,serif;color:var(--gold);line-height:1}
+#cho-phien .brand small{color:var(--muted);font-size:11px}
+#cho-phien .user{display:flex;align-items:center;gap:8px}
+#cho-phien .user b{color:#f3dfae;font-size:13px}
+#cho-phien .user button{padding:6px 10px;font-size:12px}
+#cho-phien .ch-body{max-width:960px;margin:0 auto;padding:14px 16px 90px;display:flex;flex-direction:column;gap:12px}
+#cho-phien .ch-foot{max-width:960px;margin:0 auto;padding:0 16px 24px;display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--muted);font-size:11px}
+#cho-phien .link{color:var(--gold);text-decoration:none;font-weight:600}
+#cho-phien .hint{margin:0;color:var(--muted);font-size:12.5px;line-height:1.5}
+#cho-phien .ch-login{max-width:380px;width:100%;margin:30px auto 0;display:flex;flex-direction:column;gap:10px;padding:20px;border:1px solid #ab956a66;border-radius:18px;background:#1a2b21}
+#cho-phien .ch-login h2{margin:0;font:24px Georgia,serif;color:var(--gold)}
+#cho-phien .ch-login label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:#c9d2c3}
+#cho-phien .big{padding:12px}
+#cho-phien .msg{margin:0;min-height:18px;color:#ff9f8f;font-size:13px;text-align:center}
+#cho-phien .who{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--line);border-radius:14px;background:#16261d}
+#cho-phien .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+#cho-phien .who-list{display:flex;gap:6px;flex-wrap:wrap}
+#cho-phien .who-list button{flex-direction:column;align-items:flex-start;gap:0;padding:7px 12px}
+#cho-phien .who-list button small{font-size:10px;color:var(--muted)}
+#cho-phien .who-list button.on{background:#ecd29a;border-color:#f6e2b4;color:#2a1a0e}
+#cho-phien .who-list button.on small{color:#5a4325}
+#cho-phien .purse{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#cho-phien .bagc{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:#c9d2c3}
+#cho-phien .bagc svg{width:16px;height:16px}
+#cho-phien .money{display:inline-flex;gap:8px;align-items:center}
+#cho-phien .coin{display:inline-flex;align-items:center;gap:3px;font-size:12.5px;font-weight:700}
+#cho-phien .coin i{display:block;width:11px;height:11px;border:2px solid #ffffff33;border-radius:50%;background:#ac6c45}
+#cho-phien .coin.silver i{background:#b1bdc7}
+#cho-phien .coin.gold i{background:#d6b354}
+#cho-phien .tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+#cho-phien .tabs button{flex-direction:column;gap:3px;padding:9px 4px;font-size:12px;position:relative}
+#cho-phien .tabs button.on{background:#ecd29a;border-color:#f6e2b4;color:#2a1a0e;font-weight:700}
+#cho-phien .tabs .dot{position:absolute;top:6px;right:8px;width:8px;height:8px;border-radius:50%;background:#ff6f6f}
+#cho-phien #chPane{display:flex;flex-direction:column;gap:10px}
+#cho-phien .flt{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+#cho-phien .flt button{padding:6px 12px;font-weight:700}
+#cho-phien .flt button.on{background:#2f2a1c;border-color:currentColor}
+#cho-phien .flt .ghost{margin-left:auto;font-weight:500;color:var(--muted)}
+#cho-phien .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
+#cho-phien .card{position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 8px 10px;border-radius:14px;background:#14241c;border:1px solid color-mix(in srgb,var(--q) 55%,transparent);text-align:center}
+#cho-phien .card[data-on]{box-shadow:0 0 0 2px var(--gold)}
+#cho-phien .ci{position:relative;width:52px;height:52px;display:grid;place-items:center;border-radius:12px;background:radial-gradient(circle at 50% 40%,#2c4636,#0e1a13)}
+#cho-phien .ci svg{width:32px;height:32px}
+#cho-phien .lv{position:absolute;left:3px;top:2px;font-size:10px;color:#ffd77a}
+#cho-phien .nm{font-size:13px;line-height:1.25}
+#cho-phien .q{font-size:11px;font-weight:700}
+#cho-phien .chips{display:flex;flex-wrap:wrap;gap:3px;justify-content:center}
+#cho-phien .ch{display:inline-flex;align-items:center;gap:2px;font-size:11px;font-style:normal;font-weight:600;color:#f0e2bd;background:#0b1a13;border-radius:6px;padding:1px 5px}
+#cho-phien .ch svg{width:12px;height:12px}
+#cho-phien .ch.add{color:#bfe3ff;background:#0d1f2a}
+#cho-phien .ch.fx{color:#ffd0ec;background:#2a1424;font-weight:500}
+#cho-phien .pr{margin-top:2px}
+#cho-phien .seller{font-size:10.5px;color:var(--muted)}
+#cho-phien .card button{width:100%;margin-top:4px}
+#cho-phien .sellbar{position:sticky;bottom:10px;display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap;padding:12px;border:1px solid #e3b86f88;border-radius:14px;background:#1d2c22f5;box-shadow:0 8px 24px #0008}
+#cho-phien .sellbar>span{flex-basis:100%;font-size:13px}
+#cho-phien .sellbar label,#cho-phien .price-in label{display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--muted)}
+#cho-phien .sellbar input,#cho-phien .price-in input{width:72px;padding:7px}
+#cho-phien .price-in{display:flex;gap:6px}
+#cho-phien .rows{display:flex;flex-direction:column;gap:6px}
+#cho-phien .row{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--line);border-radius:12px;background:#14241c;flex-wrap:wrap}
+#cho-phien .row>div{display:flex;flex-direction:column;gap:3px;min-width:0}
+#cho-phien .row>div:nth-child(2){flex:1}
+#cho-phien .row b{color:#f3dfae}
+#cho-phien .row .end{flex-direction:row;align-items:center;gap:8px;flex-wrap:wrap}
+#cho-phien .g{font-size:11px;padding:3px 6px;border-radius:6px;background:#0b1a13;color:#c9d2c3}
+#cho-phien .gear{display:flex;gap:3px}
+#cho-phien .gear svg{width:16px;height:16px}
+#cho-phien .stats{font-size:11px;color:var(--muted)}
+#cho-phien .tag{font-size:11px;color:#ffd77a}
+#cho-phien h3{margin:8px 0 0;font:17px Georgia,serif;color:var(--gold)}
+#cho-phien .claim{display:flex;align-items:center;gap:12px;padding:16px;border:1px solid #e3b86f66;border-radius:14px;background:#1c2a20}
+#cho-phien .claim>svg{width:34px;height:34px;color:var(--gold)}
+#cho-phien .claim>div{flex:1;display:flex;flex-direction:column;gap:4px}
+#cho-phien .claim span{font-size:12px;color:var(--muted)}
+#cho-phien .empty{display:flex;flex-direction:column;align-items:center;gap:6px;padding:26px;color:#7f937f;text-align:center}
+#cho-phien .empty svg{width:30px;height:30px}
+#cho-phien #chToast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;display:flex;align-items:center;gap:6px;padding:10px 14px;border-radius:12px;background:#16261df5;border:1px solid #9fe8a866;transition:.2s;max-width:92%;z-index:9}
+#cho-phien #chToast.on{opacity:1;transform:translateX(-50%)}
+#cho-phien #chToast.bad{border-color:#ff9f8f88}
+#cho-phien #chToast svg{width:18px;height:18px}
+#cho-phien [hidden]{display:none!important}
+@media(max-width:560px){#cho-phien .tabs span{font-size:11px}
+#cho-phien .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+#cho-phien .brand b{font-size:20px}
+#cho-phien .row .end{width:100%;justify-content:space-between}
+}

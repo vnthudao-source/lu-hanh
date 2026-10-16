@@ -17,18 +17,26 @@ Webgame nhập vai phiêu lưu, phong cách làng Việt xưa. Chạy trên Blog
 Dán nội dung `blogspot/nhung-vao-blogspot.html` vào bài viết ở chế độ HTML. Đoạn này nạp game từ:
 
 ```
-https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@ban-7.2/dist/lu-hanh.js
-https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@ban-7.2/dist/lu-hanh.css
+https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@ban-8.0/dist/lu-hanh.js
+https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@ban-8.0/dist/lu-hanh.css
 ```
 
 Dòng `window.LH_API=''` là chỗ dán URL Web App (đuôi `/exec`). Để trống thì game chạy ngoại tuyến, lưu trên trình duyệt.
+
+## Chợ phiên (trang riêng)
+
+Trên Blogspot tạo **Trang** mới, đường dẫn `cho-phien`, dán `blogspot/cho-phien.html` (chế độ HTML). Trang này dùng chung tài khoản và máy chủ với game: ký gửi đồ Hoàn hảo/Thần, mua đồ, mua nhân vật người khác làm lính đi theo, nhận tiền bán hàng.
+
+## Máy chủ quyết định
+
+Từ v8, tiền, đồ rơi, gia cường, mua bán, nhiệm vụ, lính đều do máy chủ (`05-player.js` chạy trong Apps Script) quyết định. Máy người chơi chỉ gửi lệnh (gom các lần hạ quái, gửi 2,5 giây một lần) và nhận lại trạng thái. Sửa dữ liệu trên trình duyệt không tăng được tiền hay đồ.
 
 ## Ra bản mới
 
 1. Sửa trong `src/` (và `VERSION`).
 2. `node tools/build.mjs`
-3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-7.3`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
-4. Trên Blogspot đổi `@ban-7.2` thành `@ban-7.3` ở 2 chỗ.
+3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-8.1`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
+4. Trên Blogspot đổi `@ban-8.0` thành `@ban-8.1` ở 2 chỗ.
 5. Nếu `Code.gs` đổi: dán lại vào Apps Script, Triển khai → Quản lý triển khai → Sửa → Phiên bản mới (giữ nguyên URL).
 
 ## Dữ liệu trong Sheet

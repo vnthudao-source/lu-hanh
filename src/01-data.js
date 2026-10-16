@@ -25,7 +25,8 @@ cau_hinh:[
  {khoa:'bo_thu_nho',gia_tri:6,ghi_chu:'Đồ bộ: thủ của mũ, quần, găng, giày, cánh'},
  {khoa:'bo_toc_thu_cuoi',gia_tri:155,ghi_chu:'Đồ bộ: tốc độ thú cưỡi (% tốc đi bộ)'},
  {khoa:'gia_do_bo',gia_tri:5000,ghi_chu:'Giá gốc món đồ bộ (để tính giá bán lại)'},
- {khoa:'gieng_hoi_giay',gia_tri:300,ghi_chu:'Giếng cổ: số giây để nước đầy lại sau khi dùng'}
+ {khoa:'gieng_hoi_giay',gia_tri:300,ghi_chu:'Giếng cổ: số giây để nước đầy lại sau khi dùng'},
+ {khoa:'link_cho_phien',gia_tri:'https://ikynagame.blogspot.com/p/cho-phien.html',ghi_chu:'Địa chỉ trang Chợ phiên (mua bán giữa người chơi, nhân vật đi theo)'}
 ],
 // cap = cấp hiện tại; ti_le = % thành công lên cấp kế; thất bại: cấp về ngẫu nhiên từ that_bai_tu đến that_bai_den (để trống = giữ nguyên)
 gia_cuong:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14].map(c=>({cap:c,ti_le:c<6?100:c<10?50:[25,20,15,10,5][c-10],phi_hong_ngoc:c+1,that_bai_tu:c<6?'':c<10?0:6,that_bai_den:c<6?'':6})),

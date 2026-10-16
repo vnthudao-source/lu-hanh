@@ -1,6 +1,7 @@
 /* ================= LÕI MÁY CHỦ (dùng chung cho Apps Script và chế độ ngoại tuyến) =================
-   adapter cần có: rows(bang) · insert(bang,obj) · update(bang,obj) · mail(to,tieuDe,noiDung) · hash(chuoi) · now() · uid() · staticData() · lock(fn)
-   Bảng: tai_khoan · nhan_vat · cho */
+   adapter cần có: rows(bang) · insert(bang,obj) · update(bang,obj) · mail(to,tieuDe,noiDung) · hash(chuoi) · now() · uid() · staticData() · lock(fn) · rules() (nạp luật chơi)
+   Bảng: tai_khoan · nhan_vat · cho
+   v8: máy chủ giữ tiền, hồng ngọc, đồ của từng nhân vật. Trình duyệt chỉ gửi: sắp xếp đồ, máu/mana, vị trí và các lệnh (hạ quái, mua, bán, gia cường, nhiệm vụ, thuê lính). */
 function LH_Core(A){
   const TOKEN_DAYS=30,RESET_MIN=15;
   const fail=e=>{throw Error(e);};
@@ -20,6 +21,20 @@ function LH_Core(A){
   }
   const charView=c=>({id:c.id,name:c.ten,gender:c.gioi_tinh,stats:{strength:+c.suc_manh,agility:+c.nhanh_nhen,vitality:+c.suc_khoe,intelligence:+c.tri_tue},status:c.trang_thai,price:+c.gia_danh_thue||0,created:+c.tao_luc});
   function newToken(a){a.token=A.uid()+A.uid();a.token_het_han=A.now()+TOKEN_DAYS*864e5;A.update('tai_khoan',a);return a.token;}
+  // Trạng thái nhân vật lưu trên máy chủ (cột luu): {v, player, pos, seen, srv}
+  function stateOf(c){
+    A.rules&&A.rules();
+    let save=null;try{save=c.luu?JSON.parse(c.luu):null;}catch(e){}save=save||{};
+    const ch=charView(c);
+    return {save,player:save.player?Player.restore(save,ch,()=>true,null).player:Player.create(ch)};
+  }
+  function storeState(c,st,player,soft){
+    soft=soft||{};
+    const okPos=v=>v&&Number.isFinite(+v.x)&&Number.isFinite(+v.y)?{x:+v.x,y:+v.y}:null;
+    const save={v:Player.VERSION,player,pos:soft.pos!==undefined?okPos(soft.pos):(st.save.pos||null),seen:Array.isArray(soft.seen)?soft.seen.slice(0,60).map(String):(st.save.seen||[]),srv:st.save.srv||{}};
+    const j=JSON.stringify(save);if(j.length>45000)fail('DU_LIEU_QUA_LON');
+    c.luu=j;c.cap_nhat=A.now();A.update('nhan_vat',c);st.save=save;
+  }
   function pendingClaims(acc){return A.rows('cho').filter(r=>r.trang_thai==='da_ban'&&r.nguoi_ban===acc&&String(r.da_nhan)!=='1');}
   const H={
     ping:()=>({msg:'Lữ Hành API'}),
@@ -79,12 +94,22 @@ function LH_Core(A){
         A.insert('nhan_vat',c);return {char:charView(c)};
       });
     },
-    load(p){const a=auth(p.token),c=ownChar(a,p.charId,'active');let save=null;try{save=c.luu?JSON.parse(c.luu):null;}catch(e){}return {char:charView(c),save};},
-    save(p){
-      const a=auth(p.token),c=ownChar(a,p.charId,'active'),s=JSON.stringify(p.save||{});
-      if(s.length>45000)fail('DU_LIEU_QUA_LON');
-      c.luu=s;c.cap_nhat=A.now();A.update('nhan_vat',c);return {savedAt:c.cap_nhat};
+    load(p){
+      const a=auth(p.token);
+      return A.lock(()=>{const c=ownChar(a,p.charId,'active'),st=stateOf(c);if(!c.luu)storeState(c,st,st.player);return {char:charView(c),save:{player:st.player,pos:st.save.pos||null,seen:st.save.seen||[]}};});
     },
+    // Đồng bộ: nhận cách sắp xếp đồ + lệnh, máy chủ tự tính kết quả (rơi đồ, tiền, gia cường…) rồi trả lại trạng thái chuẩn
+    play(p){
+      const a=auth(p.token);
+      return A.lock(()=>{
+        const c=ownChar(a,p.charId,'active'),st=stateOf(c),C=p.save&&p.save.player;
+        const R=C?Player.merge(st.player,C):st.player,srv=st.save.srv=st.save.srv||{},now=A.now();
+        const results=(Array.isArray(p.ops)?p.ops.slice(0,60):[]).map(op=>{try{return {ok:true,...Player.applyOp(R,op,srv,now)};}catch(e){return {ok:false,error:String(e.message||e)};}});
+        storeState(c,st,R,{pos:p.save&&p.save.pos,seen:p.save&&p.save.seen});
+        return {state:R,results,savedAt:c.cap_nhat};
+      });
+    },
+    save(p){return H.play({...p,ops:[]});},
     mercRegister(p){
       const a=auth(p.token),c=ownChar(a,p.charId,'active'),price=Math.floor(Number(p.price));
       if(!(price>=100))fail('GIA_SAI');
@@ -96,15 +121,18 @@ function LH_Core(A){
       return {list:A.rows('nhan_vat').filter(c=>c.trang_thai==='merc'&&c.tai_khoan!==a.id).map(c=>{let eq={};try{eq=(JSON.parse(c.luu||'{}').player||{}).equipment||{};}catch(e){}return {...charView(c),equipment:eq};})};
     },
     mercBuy(p){
-      const a=auth(p.token);ownChar(a,p.charId,'active');
+      const a=auth(p.token);
       return A.lock(()=>{
-        const t=A.rows('nhan_vat').find(c=>c.id===p.targetId);
+        const b=ownChar(a,p.charId,'active'),t=A.rows('nhan_vat').find(c=>c.id===p.targetId);
         if(!t||t.trang_thai!=='merc'||t.tai_khoan===a.id)fail('LINH_KHONG_CON');
         let eq={};try{eq=(JSON.parse(t.luu||'{}').player||{}).equipment||{};}catch(e){}
+        const price=Number(t.gia_danh_thue),fee=(cfg('phi_cho')||0)/100,st=stateOf(b);
+        if(st.player.copper<price)fail('KHONG_DU_TIEN');if(st.player.mercs.length>=Player.MAX_MERC)fail('DU_LINH');
+        Player.addMerc(st.player,{name:t.ten,gender:t.gioi_tinh,stats:charView(t).stats,equipment:eq,src:'player',from:t.id,cmd:10});
+        st.player.copper-=price;storeState(b,st,st.player);
         t.trang_thai='sold';t.nguoi_mua=p.charId;t.cap_nhat=A.now();A.update('nhan_vat',t);
-        const price=Number(t.gia_danh_thue),fee=(cfg('phi_cho')||0)/100;
         A.insert('cho',{id:'ch-'+A.uid(),loai:'linh',nguoi_ban:t.tai_khoan,nhan_vat_ban:t.id,vat_pham:'',gia:price,tien_nhan:Math.floor(price*(1-fee)),trang_thai:'da_ban',nguoi_mua:p.charId,tao_luc:A.now(),ban_luc:A.now(),da_nhan:0});
-        return {merc:{name:t.ten,gender:t.gioi_tinh,stats:charView(t).stats,equipment:eq,src:'player',from:t.id},price};
+        return {name:t.ten,price,state:st.player};
       });
     },
     marketList(p){
@@ -112,23 +140,48 @@ function LH_Core(A){
       const view=r=>({id:r.id,item:JSON.parse(r.vat_pham||'null'),price:Number(r.gia),mine:r.nguoi_ban===a.id,seller:r.ten_nguoi_ban||''});
       return {open:rows.filter(r=>r.trang_thai==='mo').map(view),claim:pendingClaims(a.id).reduce((s,r)=>s+Number(r.tien_nhan||0),0)};
     },
+    // Ký gửi: lấy món đồ ra khỏi túi nhân vật trên máy chủ
     marketSell(p){
-      const a=auth(p.token),c=ownChar(a,p.charId,'active'),price=Math.floor(Number(p.price));
-      if(!(price>=1))fail('GIA_SAI');if(!p.item||!p.item.type)fail('VAT_PHAM_SAI');
-      const fee=(cfg('phi_cho')||0)/100,r={id:'ch-'+A.uid(),loai:'do',nguoi_ban:a.id,nhan_vat_ban:c.id,ten_nguoi_ban:c.ten,vat_pham:JSON.stringify(p.item),gia:price,tien_nhan:Math.floor(price*(1-fee)),trang_thai:'mo',nguoi_mua:'',tao_luc:A.now(),ban_luc:0,da_nhan:0};
-      A.insert('cho',r);return {id:r.id};
+      const a=auth(p.token),price=Math.floor(Number(p.price));
+      if(!(price>=1))fail('GIA_SAI');
+      return A.lock(()=>{
+        const c=ownChar(a,p.charId,'active'),st=stateOf(c),i=Math.floor(Number(p.i)),it=st.player.bag[i];
+        if(!it||!Player.tradeable(it))fail('VAT_PHAM_SAI');
+        st.player.bag[i]=null;storeState(c,st,st.player);
+        const fee=(cfg('phi_cho')||0)/100,r={id:'ch-'+A.uid(),loai:'do',nguoi_ban:a.id,nhan_vat_ban:c.id,ten_nguoi_ban:c.ten,vat_pham:JSON.stringify(it),gia:price,tien_nhan:Math.floor(price*(1-fee)),trang_thai:'mo',nguoi_mua:'',tao_luc:A.now(),ban_luc:0,da_nhan:0};
+        A.insert('cho',r);return {id:r.id,state:st.player};
+      });
     },
+    // Hủy ký gửi: trả món đồ về túi nhân vật đã ký gửi
     marketCancel(p){
       const a=auth(p.token);
-      return A.lock(()=>{const r=A.rows('cho').find(x=>x.id===p.id);if(!r||r.nguoi_ban!==a.id||r.trang_thai!=='mo')fail('KHONG_HUY_DUOC');r.trang_thai='huy';A.update('cho',r);return {item:JSON.parse(r.vat_pham)};});
+      return A.lock(()=>{
+        const r=A.rows('cho').find(x=>x.id===p.id);if(!r||r.nguoi_ban!==a.id||r.trang_thai!=='mo')fail('KHONG_HUY_DUOC');
+        const c=ownChar(a,r.nhan_vat_ban,'active'),st=stateOf(c),it=Player.cleanItem(JSON.parse(r.vat_pham));
+        if(it)Player.addItem(st.player,it);storeState(c,st,st.player);
+        r.trang_thai='huy';A.update('cho',r);return {charId:c.id,state:st.player};
+      });
     },
     marketBuy(p){
-      const a=auth(p.token);ownChar(a,p.charId,'active');
-      return A.lock(()=>{const r=A.rows('cho').find(x=>x.id===p.id);if(!r||r.trang_thai!=='mo')fail('DA_BAN');if(r.nguoi_ban===a.id)fail('DO_CUA_MINH');r.trang_thai='da_ban';r.nguoi_mua=p.charId;r.ban_luc=A.now();A.update('cho',r);return {item:JSON.parse(r.vat_pham),price:Number(r.gia)};});
+      const a=auth(p.token);
+      return A.lock(()=>{
+        const c=ownChar(a,p.charId,'active'),r=A.rows('cho').find(x=>x.id===p.id);
+        if(!r||r.trang_thai!=='mo')fail('DA_BAN');if(r.nguoi_ban===a.id)fail('DO_CUA_MINH');
+        const st=stateOf(c),price=Number(r.gia),it=Player.cleanItem(JSON.parse(r.vat_pham));
+        if(st.player.copper<price)fail('KHONG_DU_TIEN');if(!it)fail('VAT_PHAM_SAI');
+        Player.addItem(st.player,it);st.player.copper-=price;storeState(c,st,st.player);
+        r.trang_thai='da_ban';r.nguoi_mua=p.charId;r.ban_luc=A.now();A.update('cho',r);
+        return {item:it,price,state:st.player};
+      });
     },
+    // Nhận tiền bán hàng vào một nhân vật
     claim(p){
       const a=auth(p.token);
-      return A.lock(()=>{let sum=0;for(const r of pendingClaims(a.id)){sum+=Number(r.tien_nhan||0);r.da_nhan=1;A.update('cho',r);}return {amount:sum};});
+      return A.lock(()=>{
+        const c=ownChar(a,p.charId,'active'),st=stateOf(c);let sum=0;
+        for(const r of pendingClaims(a.id)){sum+=Number(r.tien_nhan||0);r.da_nhan=1;A.update('cho',r);}
+        st.player.copper+=sum;storeState(c,st,st.player);return {amount:sum,state:st.player};
+      });
     }
   };
   return {handle(action,p){try{if(!H[action])fail('KHONG_CO_LENH');return {ok:true,...H[action](p||{})};}catch(e){return {ok:false,error:String(e.message||e)};}}};

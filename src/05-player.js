@@ -251,9 +251,8 @@ const Player=(()=>{
     return it;
   }
   function serialize(s,pos,seen){return {v:VERSION,player:s,pos:{x:pos.x,y:pos.y},seen:[...seen]};}
-  function restore(save,ch,canStand,npcIds){
-    const s=create(ch);if(!save||!save.player)return {player:s,pos:null,seen:[]};
-    const p=save.player,n=(v,a,b,f)=>typeof v==='number'&&Number.isFinite(v)?Math.max(a,Math.min(b,v)):f,used=new Set();
+  function restorePlayer(p,ch){
+    const s=create(ch),n=(v,a,b,f)=>typeof v==='number'&&Number.isFinite(v)?Math.max(a,Math.min(b,v)):f,used=new Set();
     const valid=i=>{const it=cleanItem(i);if(!it||used.has(it.uid))return null;used.add(it.uid);return it;};
     s.level=Math.floor(n(p.level,1,999,1));s.passive=n(p.passive,0,100,0);
     s.copper=Math.floor(n(p.copper,0,Number.MAX_SAFE_INTEGER,0));s.rubies=Math.floor(n(p.rubies,0,Number.MAX_SAFE_INTEGER,0));
@@ -275,11 +274,63 @@ const Player=(()=>{
     if(Array.isArray(p.mercs))s.mercs=p.mercs.slice(0,MAX_MERC).map(m=>{const x=makeMerc(m);x.mid=typeof m.mid==='string'?m.mid.slice(0,30):x.mid;x.hpFrac=n(m.hpFrac,0,1,1);return x;});
     s.activeMerc=Number.isInteger(p.activeMerc)&&s.mercs[p.activeMerc]?p.activeMerc:null;
     const D=derive(s);s.hp=n(p.hp,1,D.tot.hp,D.tot.hp);s.mana=n(p.mana,0,D.tot.mp,D.tot.mp);
-    const pos=save.pos;
+    return s;
+  }
+  function restore(save,ch,canStand,npcIds){
+    if(!save||!save.player)return {player:create(ch),pos:null,seen:[]};
+    const s=restorePlayer(save.player,ch),pos=save.pos;
     return {player:s,pos:pos&&canStand&&canStand(pos.x,pos.y)?{x:pos.x,y:pos.y}:null,seen:Array.isArray(save.seen)?save.seen.filter(v=>(npcIds||[]).includes(v)):[]};
+  }
+  /* ---------- v8: máy chủ quyết định tiền, đồ, gia cường ----------
+     merge(S,C): S = trạng thái máy chủ (đồ nào tồn tại, tiền, hồng ngọc, nhiệm vụ),
+                 C = trạng thái máy người chơi (chỉ được sắp xếp đồ đang có + máu, mana, giếng…).
+     Người chơi không thể tự sinh đồ hay tiền: món nào không có trên máy chủ thì bị bỏ, món mới trên máy chủ tự vào túi. */
+  const allItems=s=>[...(s.bag||[]),...Object.values(s.equipment||{}),...(s.skillSlots||[]),...(s.mercs||[]).flatMap(m=>Object.values(m.equipment||{}))].filter(it=>it&&typeof it.uid==='string');
+  function merge(S,C){
+    const chOf={name:S.name,gender:S.gender,stats:S.stats};
+    const soft={hp:C&&C.hp,mana:C&&C.mana,passive:C&&C.passive,cooldowns:C&&C.cooldowns,flags:{...S.flags,river:!!(S.flags&&S.flags.river)||!!(C&&C.flags&&C.flags.river),wells:(C&&C.flags&&C.flags.wells)||(S.flags&&S.flags.wells)||{}}};
+    const softOnly=()=>restorePlayer({...S,...soft},chOf);
+    if(!C||typeof C!=='object')return restorePlayer(S,chOf);
+    const pool=new Map(allItems(S).map(it=>[it.uid,it]));
+    const take=x=>{if(!x||typeof x.uid!=='string')return null;const it=pool.get(x.uid);if(!it)return null;pool.delete(x.uid);return it;};
+    const cm=new Map((Array.isArray(C.mercs)?C.mercs:[]).filter(m=>m&&typeof m.mid==='string').map(m=>[m.mid,m]));
+    const mercs=(S.mercs||[]).map(m=>({...m,equipment:Object.fromEntries(slots.map(k=>[k,null]))}));
+    mercs.forEach((m,i)=>{if(!cm.has(m.mid))for(const k of slots)m.equipment[k]=take((S.mercs[i].equipment||{})[k]);});
+    mercs.forEach(m=>{const c=cm.get(m.mid);if(!c)return;for(const k of slots)if(k!=='mount')m.equipment[k]=take(c.equipment&&c.equipment[k]);if(Number.isFinite(+c.hpFrac))m.hpFrac=Math.max(0,Math.min(1,+c.hpFrac));});
+    const equipment=Object.fromEntries(slots.map(k=>[k,take(C.equipment&&C.equipment[k])]));
+    const skillSlots=Array.from({length:SKILL_SLOTS},(_,i)=>take(Array.isArray(C.skillSlots)?C.skillSlots[i]:null));
+    const bag=Array.from({length:BAG_SIZE},(_,i)=>take(Array.isArray(C.bag)?C.bag[i]:null));
+    for(const it of pool.values()){const i=bag.indexOf(null);if(i<0)return softOnly();bag[i]=it;}
+    const cmid=Number.isInteger(C.activeMerc)&&Array.isArray(C.mercs)&&C.mercs[C.activeMerc]?C.mercs[C.activeMerc].mid:null,am=mercs.findIndex(m=>m.mid===cmid);
+    const R=restorePlayer({...S,...soft,activeBook:C.activeBook,equipment,skillSlots,bag,mercs,activeMerc:am>=0?am:null},chOf);
+    return allItems(R).length===allItems(S).length?R:softOnly();
+  }
+  // Các lệnh làm thay đổi tiền/đồ, chạy trên máy chủ (và trên trình duyệt ở chế độ ngoại tuyến)
+  const KILL_LIMIT=id=>MON[id].boss?1:3;
+  function applyOp(s,op,srv,now=Date.now(),rng=Math.random){
+    const t=op&&op.t;
+    if(t==='kill'){
+      const M=MON[op.mon];if(!M)throw Error('MON');
+      srv.kills=srv.kills||{};const win=Math.max(5,M.respawn)*1000,log=(srv.kills[op.mon]||[]).filter(x=>now-x<win);
+      if(log.length>=KILL_LIMIT(op.mon))throw Error('NHANH_QUA');log.push(now);srv.kills[op.mon]=log;
+      s.copper+=M.copper;s.flags.kills[op.mon]=(s.flags.kills[op.mon]||0)+1;
+      const drop=rollDrop(op.mon,rng),items=[],lost=[];s.rubies+=drop.rubies;
+      for(const it of drop.items){try{addItem(s,it);items.push(it);}catch(e){lost.push(it);}}
+      const done=questProgress(s,op.mon).filter(id=>s.quests.active[id]>=QUESTS[id].count);
+      let bonus=0;const k=s.flags.kills;if(!s.flags.hunted&&k.deer&&k.lion&&k.elephant&&k.croc){s.flags.hunted=true;s.copper+=100;bonus=100;}
+      return {mon:op.mon,copper:M.copper,rubies:drop.rubies,items,lost,done,bonus};
+    }
+    if(t==='buy'){const i=buy(s,String(op.type),op.q==='g'?'g':'n');return {i,item:s.bag[i]};}
+    if(t==='sell'){const i=Math.floor(op.i),it=s.bag[i];const v=sell(s,i);return {v,item:it};}
+    if(t==='enh'){const bag=op.where==='bag',key=bag?Math.floor(op.key):String(op.key);if(!bag&&!slots.includes(key))throw Error('SLOT');const r=enhance(s,{where:bag?'bag':'equipment',key},rng);return {...r,item:bag?s.bag[key]:s.equipment[key]};}
+    if(t==='qa'){questAccept(s,String(op.id));return {};}
+    if(t==='qt'){return questTurnIn(s,String(op.id),rng);}
+    if(t==='hire'){const m=hireNpc(s,String(op.id));return {mid:m.mid,name:m.name};}
+    if(t==='dismiss'){const i=Math.floor(op.i),m=s.mercs[i];dismissMerc(s,i);return {name:m?m.name:''};}
+    throw Error('LENH');
   }
   load(typeof GAME_DATA!=='undefined'?GAME_DATA:{});
   return {VERSION,BAG_SIZE,SKILL_SLOTS,MAX_LV,MAX_MERC,MAX_ACTIVE_QUEST,ELEMENTS,BEASTS,GROUPS,FX_NAMES,STAT_KEYS,CFG,RAR,ADD,SHOPS,SETS,MON,QUESTS,MERCS,items,slots,skills,
     load,info,kind,qOf,rar,nameOf,stat,canEnhance,tradeable,gainOf,enhRate,enhCost,enhance,roll,rollDrop,create,derive,targets,equip,unequip,stance,isTwo,pairOk,setSkill,unsetSkill,toggleBook,element,money,shopPrice,buy,sell,sellPrice,addItem,cast,
-    questAccept,questProgress,questTurnIn,hireNpc,addMerc,setActiveMerc,mercEquip,mercUnequip,dismissMerc,makeMerc,cleanItem,serialize,restore};
+    questAccept,questProgress,questTurnIn,hireNpc,addMerc,setActiveMerc,mercEquip,mercUnequip,dismissMerc,makeMerc,cleanItem,serialize,restore,restorePlayer,merge,applyOp,allItems};
 })();

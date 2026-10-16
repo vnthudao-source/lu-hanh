@@ -32,19 +32,14 @@
       busy(go,false);
     };
   }
+  const choUrl=()=>String(window.LH_CHO||Player.CFG.link_cho_phien||'').trim();
   async function chars(){
     let r;try{r=await Net.call('chars');}catch(e){Net.setToken('');note(netMsg(e));return auth('login');}
-    const list=r.chars.map(c=>`<div class="pchar${c.status==='merc'?' merc':''}">${face(c.gender)}<div class="pinfo"><b>${esc(c.name)}</b><small>${c.gender==='f'?'Nữ':'Nam'} · SM ${c.stats.strength} · NN ${c.stats.agility} · SK ${c.stats.vitality} · TT ${c.stats.intelligence}</small>${c.status==='merc'?`<small class="mtag">Đang cho thuê · ${money(c.price)}</small>`:''}</div><div class="pbtns">${c.status==='merc'?`<button data-cancel="${c.id}">Hủy cho thuê</button>`:`<button class="primary" data-enter="${c.id}">Vào làng</button><button data-rent="${c.id}">Cho thuê</button>`}</div></div>`).join('');
-    box.innerHTML=`<div class="phead"><b>${esc(r.account.username)}</b><button id="pOut">Đăng xuất</button></div>${r.claim?`<p class="hint2 ok">Có ${money(r.claim)} tiền bán hàng đang chờ, sẽ cộng vào nhân vật khi vào làng.</p>`:''}<div class="plist">${list||'<p class="hint2">Chưa có nhân vật nào.</p>'}</div>${r.chars.length<r.max?`<button class="primary big-btn" id="pNew">Tạo nhân vật (${r.chars.length}/${r.max})</button>`:`<p class="hint2">Đã đủ ${r.max} nhân vật.</p>`}<div id="rentBox"></div>`;
+    const list=r.chars.map(c=>`<div class="pchar${c.status==='merc'?' merc':''}">${face(c.gender)}<div class="pinfo"><b>${esc(c.name)}</b><small>${c.gender==='f'?'Nữ':'Nam'} · SM ${c.stats.strength} · NN ${c.stats.agility} · SK ${c.stats.vitality} · TT ${c.stats.intelligence}</small>${c.status==='merc'?`<small class="mtag">Đang cho thuê ở Chợ phiên · ${money(c.price)}</small>`:''}</div><div class="pbtns">${c.status==='merc'?'':`<button class="primary" data-enter="${c.id}">Vào làng</button>`}</div></div>`).join('');
+    box.innerHTML=`<div class="phead"><b>${esc(r.account.username)}</b><button id="pOut">Đăng xuất</button></div>${r.claim?`<p class="hint2 ok">Có ${money(r.claim)} tiền bán hàng đang chờ, nhận ở Chợ phiên.</p>`:''}<div class="plist">${list||'<p class="hint2">Chưa có nhân vật nào.</p>'}</div>${r.chars.length<r.max?`<button class="primary big-btn" id="pNew">Tạo nhân vật (${r.chars.length}/${r.max})</button>`:`<p class="hint2">Đã đủ ${r.max} nhân vật.</p>`}${choUrl()?`<a class="cho-go" href="${esc(choUrl())}" target="_blank" rel="noopener">Ra Chợ phiên</a>`:''}`;
     $('#pOut').onclick=async()=>{try{await Net.call('logout');}catch(e){}Net.setToken('');auth('login');};
     if($('#pNew'))$('#pNew').onclick=()=>create();
     box.querySelectorAll('[data-enter]').forEach(b=>b.onclick=()=>enter(b.dataset.enter,r.claim,b));
-    box.querySelectorAll('[data-cancel]').forEach(b=>b.onclick=async()=>{busy(b,true);try{await Net.call('mercCancel',{charId:b.dataset.cancel});await chars();}catch(e){note(netMsg(e));busy(b,false);}});
-    box.querySelectorAll('[data-rent]').forEach(b=>b.onclick=()=>{
-      const c=r.chars.find(x=>x.id===b.dataset.rent);
-      $('#rentBox').innerHTML=`<div class="rent"><b>Cho thuê ${esc(c.name)}</b><p class="hint2">Trong lúc cho thuê bạn không vào được nhân vật này. Nếu có người mua, nhân vật thuộc về họ và bạn nhận tiền (trừ ${(Player.CFG.phi_cho||0)}% phí). Bạn vẫn tạo được nhân vật khác.</p><div class="price-in"><label>Vàng<input id="rg" type="number" min="0" value="1"></label><label>Bạc<input id="rs" type="number" min="0" max="99" value="0"></label></div><button class="primary big-btn" id="rGo">Đăng ký cho thuê</button></div>`;
-      $('#rGo').onclick=async()=>{const price=Math.max(0,+$('#rg').value||0)*10000+Math.min(99,Math.max(0,+$('#rs').value||0))*100;const g=$('#rGo');busy(g,true);try{await Net.call('mercRegister',{charId:c.id,price});await chars();}catch(e){note(netMsg(e));busy(g,false);}};
-    });
   }
   function create(){
     const total=Number(Player.CFG.diem_khoi_tao)||50,st={strength:13,agility:13,vitality:12,intelligence:12};let gender='m';

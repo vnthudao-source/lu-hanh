@@ -205,3 +205,8 @@ button.primary:hover{background:linear-gradient(#b8533a,#8a3320)}
 .claim{display:flex;align-items:center;gap:8px;padding:8px 10px;margin-bottom:8px;border:1px solid #d8b67866;border-radius:10px;background:#3a342422}.claim button{margin-left:auto;padding:6px 12px}
 .tile .seller{font-size:10px;color:#93a58f}.tile.mine{border-style:dashed}
 @media(max-width:760px){.boss-bar{top:196px;width:88%}.attr .sub{padding-left:20px}.mrow{flex-wrap:wrap}.mgear .equip-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+/* ---------- v8: Chợ phiên, túi rơi đồ ---------- */
+.cho-note{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;padding:10px;border:1px dashed #d8b67888;border-radius:12px;font-size:12px;color:#d9d2bd}.cho-note svg{width:20px;height:20px;color:var(--gold)}.cho-note span{flex:1;min-width:160px}
+.cho-card{display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid var(--line);border-radius:12px;background:#0b1a13;margin-bottom:12px}.cho-card>svg{width:34px;height:34px;color:var(--gold);flex:none}.cho-card b{color:#f3dfae}.cho-card p{margin:6px 0 0;font-size:13px;line-height:1.5;color:#d9d2bd}
+a.cho-go{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;border-radius:10px;border:1px solid #e3b86f;background:linear-gradient(#a4452c,#7c2c1b);color:#fff3d6;font-weight:700;text-decoration:none;text-shadow:0 1px 0 #3a120a}a.cho-go svg{width:18px;height:18px}
+button.busy{opacity:.6;pointer-events:none}
