@@ -227,3 +227,11 @@ button.busy{opacity:.6;pointer-events:none}
 .attr .main .pt-add{margin-left:6px;padding:3px 9px;min-width:0;border-radius:8px;border:1px solid #e3b86f;background:linear-gradient(#a4452c,#7c2c1b);color:#fff3d6;font-weight:700;font-size:12px;line-height:1.2}
 .qdone{display:flex;align-items:center;gap:8px;padding:10px;color:#b9c4b0;font-size:13px}
 @media (max-width:640px){.exp-ring{left:-6px;top:-6px;width:calc(100% + 12px);height:calc(100% + 12px)}.exp-ring circle{stroke-width:6}.pt-dot{width:18px;height:18px;font-size:13px;line-height:16px}}
+
+/* v8.2: Mệnh lệnh đang dùng, quái thu phục */
+.cmd-line{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px;margin:0 0 8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#0b1a13;font-size:13px;color:#f3dfae}
+.cmd-line svg{width:18px;height:18px;color:var(--gold)}
+.cmd-line b{color:#ffd98a}
+.cmd-line small{flex-basis:100%;color:#b9c4b0;font-size:11px}
+.mg.pet{color:#ffb8dc}
+.mg.pet svg{width:22px;height:22px}

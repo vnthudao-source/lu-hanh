@@ -1,4 +1,4 @@
-/*! Lữ Hành v8.1 · Làng Thanh Mộc · https://github.com/vnthudao-source/lu-hanh */
+/*! Lữ Hành v8.2 · Làng Thanh Mộc · https://github.com/vnthudao-source/lu-hanh */
 #lu-hanh{position:fixed;inset:0;z-index:2147483000;overflow:hidden;text-align:left;line-height:normal}
 body:has(#lu-hanh){overflow:hidden!important}
 #lu-hanh{color-scheme:dark;--paper:#eee9da;--gold:#d8b678;--muted:#a8b4a7;--line:#ffffff20}
@@ -394,3 +394,9 @@ body:has(#lu-hanh){overflow:hidden!important}
 #lu-hanh .exp-ring circle{stroke-width:6}
 #lu-hanh .pt-dot{width:18px;height:18px;font-size:13px;line-height:16px}
 }
+#lu-hanh .cmd-line{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px;margin:0 0 8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#0b1a13;font-size:13px;color:#f3dfae}
+#lu-hanh .cmd-line svg{width:18px;height:18px;color:var(--gold)}
+#lu-hanh .cmd-line b{color:#ffd98a}
+#lu-hanh .cmd-line small{flex-basis:100%;color:#b9c4b0;font-size:11px}
+#lu-hanh .mg.pet{color:#ffb8dc}
+#lu-hanh .mg.pet svg{width:22px;height:22px}

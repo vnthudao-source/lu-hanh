@@ -38,13 +38,15 @@ const World=(()=>{
   buildings.forEach(b=>{for(let y=b.y;y<b.y+b.h;y++)for(let x=b.x;x<b.x+b.w;x++)grid[y][x]=1;objects.push({kind:'house',...b,foot:(b.y+b.h)*T});});
   grid[11][25]=1;objects.push({kind:'banyan',x:25.5*T,y:11.8*T}); // cây đa đầu làng
   grid[18][12]=1;objects.push({kind:'well',x:12.5*T,y:18.7*T});   // giếng làng
+  // Đống lửa trong làng
+  const fires=[{x:14,y:13},{x:25,y:21}].map(f=>{grid[f.y][f.x]=1;const o={kind:'fire',x:(f.x+.5)*T,y:(f.y+.6)*T};objects.push(o);return o;});
   const wells=WELLS.map(w=>{grid[w.y][w.x]=1;const o={kind:'well',ancient:true,id:w.id,x:(w.x+.5)*T,y:(w.y+.7)*T};objects.push(o);return o;});
   const npcs=[
     {id:'elder',role:'elder',panel:'quests',name:'Lý trưởng',x:9*T,y:11.4*T,x0:8.4*T,x1:13.2*T,lines:['Chào lữ khách. Thanh Mộc là nơi bắt đầu hành trình của bạn.','Trong làng là vùng an toàn: không cưỡi thú, không dùng kỹ năng.','Làng có việc gì ta sẽ giao, xong việc có thưởng tiền và đồ.']},
     {id:'smith',role:'smith',shop:'smith',panel:'shop',name:'Thợ rèn',x:20.4*T,y:11.7*T,lines:['Dao, kiếm, khiên, nỏ… lò rèn này có đủ.','Có hồng ngọc thì ta gia cường đồ cho, càng lên cao càng dễ vỡ.']},
     {id:'guide',role:'guide',panel:'mercs',name:'Người dẫn đường',x:27.3*T,y:14.4*T,lines:['Qua sông chỉ có cây cầu này.','Sư tử, cá sấu dữ. Voi chỉ nổi giận khi bị đánh.','Đi một mình nguy hiểm, ta có lính đánh thuê cho thuê.']},
     {id:'trainer',role:'trainer',shop:'trainer',panel:'shop',name:'Người nuôi thú cưỡi',x:18.8*T,y:21.7*T,lines:['Ngựa, hổ, voi… con nào ở đây cũng đã thuần.','Mỗi loài có một ngón nghề riêng: ngựa đá hậu, hổ vồ mồi, voi dày xéo.']},
-    {id:'wizard',role:'wizard',shop:'wizard',panel:'shop',name:'Đạo sĩ',x:17.4*T,y:10.3*T,lines:['Ngũ hành: Hỏa, Thủy, Thổ, Kim, Mộc.','Gắn sách vào ô kỹ năng mới phát huy.']},
+    {id:'wizard',role:'wizard',shop:'wizard',panel:'shop',name:'Đạo sĩ',x:17.4*T,y:10.3*T,lines:['Ngũ hành: Hỏa, Thủy, Thổ, Kim, Mộc. Bí truyền: Lôi, Phong, Băng, Ánh sáng, Ma công.','Gắn nhiều sách cùng lúc, chỉ số cộng dồn. Ta luyện sách cho mạnh thêm.']},
     {id:'merchant',role:'merchant',panel:'market',name:'Thương nhân',x:9.6*T,y:24.4*T,lines:['Ta buôn bán khắp các làng.','Đồ Hoàn hảo và đồ Thần, ta bán hộ cho người chơi khác.','Bán được ta giữ một ít tiền công.']}
   ];
   npcs.forEach(n=>Object.assign(n,{hx:n.x,hy:n.y,facing:n.role==='guide'||n.role==='smith'?1:-1,moving:false,walk:0,dir:1,pause:0,turnAt:0,phase:Math.random()}));
@@ -84,5 +86,5 @@ const World=(()=>{
     if(ex===Math.floor(to.x/T)&&ey===Math.floor(to.y/T)&&canStand(to.x,to.y))path[path.length-1]={x:to.x,y:to.y};
     return path;
   }
-  return {isSafe,T,W,H,grid,objects,buildings,npcs,wells,spawn,monsterSpawns,riverX,ROAD,BRIDGE,blocked,canStand,move,findPath,nearestOpen};
+  return {isSafe,T,W,H,grid,objects,buildings,npcs,wells,fires,spawn,monsterSpawns,riverX,ROAD,BRIDGE,blocked,canStand,move,findPath,nearestOpen};
 })();
