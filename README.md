@@ -17,8 +17,8 @@ Webgame nhập vai phiêu lưu, phong cách làng Việt xưa. Chạy trên Blog
 Dán nội dung `blogspot/nhung-vao-blogspot.html` vào bài viết ở chế độ HTML. Đoạn này nạp game từ:
 
 ```
-https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@v7.1/dist/lu-hanh.js
-https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@v7.1/dist/lu-hanh.css
+https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@v7.2/dist/lu-hanh.js
+https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@v7.2/dist/lu-hanh.css
 ```
 
 Dòng `window.LH_API=''` là chỗ dán URL Web App (đuôi `/exec`). Để trống thì game chạy ngoại tuyến, lưu trên trình duyệt.
@@ -27,8 +27,8 @@ Dòng `window.LH_API=''` là chỗ dán URL Web App (đuôi `/exec`). Để tr�
 
 1. Sửa trong `src/` (và `VERSION`).
 2. `node tools/build.mjs`
-3. Commit, tạo tag trùng `VERSION` (ví dụ `v7.2`).
-4. Trên Blogspot đổi `@v7.1` thành `@v7.2`. Tag cố định nên người chơi luôn nhận đúng bản, không bị bộ nhớ đệm của jsDelivr giữ bản cũ.
+3. Commit, tạo tag trùng `VERSION` (ví dụ `v7.3`).
+4. Trên Blogspot đổi `@v7.2` thành `@v7.3`. Tag cố định nên người chơi luôn nhận đúng bản, không bị bộ nhớ đệm của jsDelivr giữ bản cũ.
 5. Nếu `Code.gs` đổi: dán lại vào Apps Script, Triển khai → Quản lý triển khai → Sửa → Phiên bản mới (giữ nguyên URL).
 
 ## Dữ liệu trong Sheet

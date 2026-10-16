@@ -69,7 +69,7 @@
     try{
       const r=await Net.call('load',{charId});
       const R=Player.restore(r.save,r.char,World.canStand,World.npcs.map(n=>n.id));
-      root.hidden=true;document.body.classList.add('in-game');
+      root.hidden=true;document.body.classList.add('in-game');document.getElementById('lu-hanh')?.classList.add('in-game');
       window.startGame({charId,player:R.player,pos:R.pos,seen:R.seen});
       window.startUI({charId,claim});
       if(!r.save)window.mapGame.save();

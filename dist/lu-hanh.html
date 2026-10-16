@@ -1,209 +1,373 @@
-<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="game-version" content="v7.1"><title>Lữ Hành v7.1 · Làng Thanh Mộc</title><style>
-:root{color-scheme:dark;--paper:#eee9da;--gold:#d8b678;--muted:#a8b4a7;--line:#ffffff20}
-*{box-sizing:border-box}
-body{margin:0;background:#121d19;color:var(--paper);font:14px system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
-button,input{font:inherit}
-button{cursor:pointer;color:inherit;background:#23362ef2;border:1px solid #b5ba9840;border-radius:10px;padding:10px 14px;touch-action:manipulation}
-button:hover{background:#3e5141}
-button:disabled{opacity:.4;cursor:not-allowed}
-button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
-input{-webkit-user-select:text;user-select:text}
-svg.icon{width:24px;height:24px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-header{height:94px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;background:#14231def;border-bottom:1px solid var(--line)}
-.profile{display:flex;gap:13px;align-items:center;min-width:0}
-.avatar{position:relative;width:66px;height:66px;padding:3px;border:2px solid #c8ac6d;border-radius:50%;background:radial-gradient(circle at 50% 30%,#7c9275,#2e473e);box-shadow:0 0 0 4px #d8b6780e;flex:none}
-.portrait{width:100%;height:100%;border-radius:50%}
-.level{position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);background:#302c1d;color:#f6d68a;padding:2px 8px;border:1px solid #a48e54;border-radius:7px;font-size:10px;white-space:nowrap}
-.player-info{width:232px}
-.player-name{font:21px Georgia,serif;display:block;line-height:1.2;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bars{display:grid;gap:4px}
-.bar{position:relative;height:9px;border-radius:4px;background:#08110c;border:1px solid #ffffff15;overflow:hidden}
-.bar-fill{height:100%;width:100%;transition:width .18s}
-.hp{background:linear-gradient(90deg,#8d292e,#e8615e)}.mana{background:linear-gradient(90deg,#244994,#65b1ee)}.passive{background:linear-gradient(90deg,#9e7621,#f5d765)}
-.bar small{position:absolute;inset:0;font-size:7px;line-height:8px;text-align:center;color:#fff;text-shadow:0 1px 2px #000}
-.buffs{display:flex;gap:4px;margin-top:5px;min-height:18px}
-.buff{display:grid;place-items:center;width:18px;height:18px;border-radius:50%;border:1px solid currentColor;background:#0009;box-shadow:0 0 6px currentColor}
-.buff svg{width:12px;height:12px;stroke-width:2.4}
-.top-right{display:flex;gap:13px;align-items:center;position:relative}
-.version{font-size:11px;border:1px solid var(--line);border-radius:7px;padding:5px 8px;color:#c6c5a8}
-.menu{position:absolute;right:0;top:50px;display:flex;flex-direction:column;gap:5px;min-width:150px;padding:7px;border:1px solid #b39a654a;border-radius:13px;background:#15271ff5;z-index:6;box-shadow:0 10px 25px #0007}
-.menu button{display:flex;align-items:center;gap:10px;padding:9px 12px;text-align:left}
-.layout{position:relative;height:calc(100dvh - 94px);overflow:hidden}
-#scene{display:block;width:100%;height:100%;touch-action:none;outline:none}
-.floating{position:absolute;pointer-events:none}
-.map-box{position:absolute;right:22px;top:16px;display:flex;flex-direction:column;align-items:flex-end;gap:6px;pointer-events:none}
-#minimap{display:block;width:180px;height:96px;background:#183324;border:5px solid #15221de0;border-radius:13px}
-.map-meta{display:flex;align-items:center;gap:6px;font-size:11px;line-height:1.2;color:#e6e4ca;background:#15221de6;border:1px solid var(--line);border-radius:8px;padding:6px 9px;white-space:nowrap}
-.map-meta svg{width:13px;height:13px;flex:none;color:var(--gold)}
-.map-meta .coord{color:#a9b8a6;font-variant-numeric:tabular-nums}
-.quest-track{left:18px;top:16px;display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;background:#15221ddc;border:1px solid var(--line);border-radius:10px;padding:7px 10px;color:#f0dfb0}
-.quest-track svg{width:20px;height:20px}
-.quest-track .off{opacity:.3}.quest-track .done{color:#9fe8a8}
-.hint{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:5px;pointer-events:none;font-size:11px;color:#efe3bf;text-shadow:0 1px 3px #000;white-space:nowrap}
-.hint b{font-size:11px;color:#f2e4b6;background:#14221bc9;border:1px solid #ffffff22;padding:5px 8px;border-radius:7px}
-.skill-wheel{position:absolute;bottom:13px;right:15px;width:245px;height:244px;pointer-events:none}
-.skill{position:absolute;border-radius:50%;padding:0;display:grid;place-items:center;background:radial-gradient(circle at 35% 25%,#485f50,#162a24 75%);border:2px solid #e4cf9480;box-shadow:0 3px 14px #0006,inset 0 0 0 4px #0c181b77;width:54px;height:54px;pointer-events:auto;overflow:hidden;isolation:isolate;touch-action:none;transition:transform .08s}
-.skill svg{width:25px;height:25px;pointer-events:none}
-.skill.pressed{transform:scale(.92)}
-.skill .cooldown{position:absolute;inset:0;border-radius:50%;z-index:2;pointer-events:none;display:grid;place-items:center;background:conic-gradient(#071017cc var(--progress,0%),transparent 0);font-size:15px;font-weight:700;text-shadow:0 1px 4px #000}
-.skill .key{position:absolute;bottom:3px;font-size:8px;white-space:nowrap;font-weight:600;color:#eee9ca;pointer-events:none}
-.skill.normal{width:83px;height:83px;right:12px;bottom:77px;border-color:var(--elem,#dfc480);color:var(--elem,#f1e2b5);box-shadow:0 0 0 5px #ab95552a,0 5px 20px #0007}
-.skill.normal svg{width:39px;height:39px}
-.skill.basic{right:26.5px;bottom:1.5px;color:#e3c67c}.skill.intermediate{right:104.5px;bottom:46.5px;color:#84bbdf}.skill.advanced{right:104.5px;bottom:136.5px;color:#e4a184}.skill.mount{right:30px;bottom:184px;width:46px;height:46px;color:#ffd08a}.skill.mount svg{width:22px;height:22px}
-#dialog{position:absolute;bottom:45px;left:45%;transform:translateX(-50%);width:min(470px,calc(100% - 30px));padding:16px 18px;background:#2a2116f5;border:1px solid #c9a46a99;border-radius:16px;box-shadow:0 10px 60px #0008;z-index:5}
-#dialog h2{margin:0 0 6px;color:var(--gold);font:19px Georgia,serif}
-#dialog p{margin:0 0 12px;line-height:1.7;color:#efe6cf}
-#dialog .actions{display:flex;justify-content:space-between;align-items:center;gap:8px}
-#dialog .actions span{display:flex;gap:8px}
-#dialog .dots{display:flex;gap:5px}#dialog .dots i{width:7px;height:7px;border-radius:50%;background:#ffffff33}#dialog .dots i.on{background:var(--gold)}
-#dialog button{background:#8e7547;padding:8px 12px;display:flex;align-items:center;gap:6px}#dialog button svg{width:18px;height:18px}
-#dialog #shopBtn{background:#2f5a43;border-color:#9fe8a866}
-.overlay{position:fixed;inset:0;z-index:9;display:grid;place-items:center;background:#06110ad0;padding:12px}
-.card{max-width:460px;width:100%;max-height:92dvh;overflow:auto;background:#1c2e23;border:1px solid #ab956a77;border-radius:18px;padding:16px}
-.card.wide{max-width:880px}
-.card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
-.card-head .ttl{display:flex;align-items:center;gap:8px;color:#f0ddb0}
-.card-head .ttl svg{width:26px;height:26px}
-.close-modal{padding:6px 8px}
-.card input{width:100%;padding:10px;border:1px solid #79907177;background:#102017;color:#fff;border-radius:9px}
-.chips{display:flex;flex-wrap:wrap;gap:4px;justify-content:center}
-.ch{display:inline-flex;align-items:center;gap:2px;font-size:11px;font-style:normal;font-weight:600;color:#f0e2bd;background:#0b1a13;border-radius:6px;padding:1px 5px}
-.ch svg{width:12px;height:12px;stroke-width:2.2}
-.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:6px}
-.stat{display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 6px;background:#ffffff06;border:1px solid var(--line);border-radius:9px;font-size:15px;font-weight:700;color:#f0d9a7}
-.stat svg{width:18px;height:18px;color:#c9d6c2}
-.name-row{display:flex;gap:6px;margin-top:10px}
-.bag-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:14px}
-.equip-head{display:flex;gap:10px;align-items:center;margin-bottom:8px}
-#preview{width:96px;height:96px;border-radius:14px;background:radial-gradient(circle at 50% 65%,#33553f,#0e1c16 72%);border:1px solid var(--line);flex:none}
-.equip-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
-.equipment-slot,.bag-slot,.skill-slot{min-width:0;aspect-ratio:1;display:flex;align-items:center;justify-content:center;padding:4px;position:relative;background:#0f201980;border:1px solid #7e916359;border-radius:9px}
-.equipment-slot svg{width:28px;height:28px}
-.equipment-slot.locked{border-style:dashed;opacity:.6}
-.equipment-slot.can{border-color:var(--gold);box-shadow:0 0 0 2px #d8b67840}
-.lock{position:absolute;right:3px;top:3px;color:#d8b678}.lock svg{width:12px;height:12px}
-.gap{height:8px}
-.skill-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
-.skill-slot svg{width:22px;height:22px}
-.skill-slot.empty{color:#4d6150}
-.skill-slot.active{border:2px solid var(--gold);box-shadow:0 0 14px #f0c66a55,inset 0 0 12px #f0c66a22}
-.skill-slot.focus,.bag-slot.selected{outline:2px solid #fff3c9;outline-offset:1px;background:#7d704255}
-.bag-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px}
-.bag-slot svg{width:22px;height:22px}
-.slot-number{position:absolute;right:3px;bottom:1px;font-size:8px;color:#7a8d78}
-.sel-bar{display:flex;align-items:center;gap:8px;margin-top:10px;min-height:44px;padding:6px 8px;border:1px solid var(--line);border-radius:11px;background:#0b1a13}
-.sel-bar .big{width:34px;height:34px;display:grid;place-items:center;color:#e4cc8d}.sel-bar .big svg{width:28px;height:28px}
-.sel-bar .chips{justify-content:flex-start;flex:1}
-.sel-bar button{padding:7px 9px}.sel-bar button svg{width:18px;height:18px}
-.sel-bar button.primary{background:#8e7547;border-color:#d8b67888}
-.money{display:flex;gap:12px;justify-content:center;margin-top:10px;padding:7px;border:1px solid var(--line);border-radius:9px;background:#0b1a13}
-.coin{display:inline-flex;align-items:center;justify-content:center;gap:3px;font-size:12px;font-weight:600}
-.coin i{display:block;width:11px;height:11px;border:2px solid #ffffff33;border-radius:50%;background:#ac6c45}
-.coin.silver i{background:#b1bdc7}.coin.gold i{background:#d6b354}.coin.ruby i{border-radius:3px;transform:rotate(45deg);background:#e35979}
-.price{display:flex;gap:5px;justify-content:center}.price .coin{font-size:11px}.price .coin i{width:8px;height:8px;border-width:1px}
-.shop-tabs{display:flex;gap:6px}.shop-tabs button{padding:7px 10px}.shop-tabs button.on{background:#8e7547;border-color:#d8b67888}.shop-tabs svg{width:20px;height:20px}
-.purse{display:flex;gap:9px;padding:6px 9px;border:1px solid var(--line);border-radius:9px;background:#0b1a13}
-.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:6px}
-.tile{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px 6px;border-radius:11px;background:#0f201980;border:1px solid var(--line)}
-.tile .ti svg{width:30px;height:30px}
-.tile.off{opacity:.45}
-.tile.sel{border:2px solid var(--gold);background:#5e5132aa}
-.tile .go{position:absolute;inset:0;display:none;place-items:center;border-radius:10px;background:#0009;color:#ffe6a6}
-.tile.sel .go{display:grid}.tile .go svg{width:30px;height:30px}
-.shop-empty{display:grid;place-items:center;padding:20px;color:#617863}.shop-empty svg{width:34px;height:34px}
-.quest-rows{display:grid;gap:8px}
-.qrow{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#ffffff06}
-.qrow>svg{width:24px;height:24px;color:var(--gold)}
-.qrow .chips{justify-content:flex-start}
-.touch-controls{display:none;position:absolute;bottom:25px;left:18px}
-.pad{position:relative;width:118px;height:118px;border:1px solid #ffffff33;border-radius:50%;background:#17312399;touch-action:none}
-.knob{position:absolute;left:37px;top:37px;width:44px;height:44px;border-radius:50%;background:#c8ccad77;border:1px solid #e4e2c488;pointer-events:none}
-#toast{position:absolute;left:50%;top:18px;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:#15221df2;border:1px solid #d7b77a55;border-radius:10px;padding:9px 14px;pointer-events:none;opacity:0;transition:opacity .2s;max-width:90%;text-align:center;z-index:8}
-#toast svg{width:18px;height:18px}
-[hidden]{display:none!important}
-@media(max-width:760px){
- header{height:88px;padding:0 12px}.layout{height:calc(100dvh - 88px)}.avatar{width:52px;height:52px}.profile{gap:10px}.player-info{width:154px}.player-name{font-size:18px;max-width:154px;margin-bottom:5px}.top-right{gap:7px}.top-right>button{padding:9px}.version{font-size:9px;padding:4px}.bar{height:8px}.bar small{font-size:6px;line-height:7px}.buffs{margin-top:4px}
- .map-box{right:12px;top:12px;gap:5px}#minimap{width:120px;height:64px;border-width:4px}.map-meta{font-size:10px;padding:5px 7px}.quest-track{left:12px;top:12px;font-size:12px;padding:6px 8px;gap:5px}.quest-track svg{width:17px;height:17px}.hint{display:none}.touch-controls{display:block}
- .skill-wheel{transform:scale(.8);transform-origin:bottom right;right:6px;bottom:10px}
- #dialog{bottom:215px;left:50%;padding:14px;width:calc(100% - 24px)}#dialog p{font-size:13px}
- #toast{top:auto;bottom:250px}
- .bag-layout{grid-template-columns:1fr;gap:8px}.equip-grid{gap:5px}.equipment-slot{aspect-ratio:2.4}.equipment-slot svg{width:22px;height:22px}
- .bag-grid{gap:4px}.bag-slot{padding:2px;border-radius:6px}.bag-slot svg{width:19px;height:19px}.skill-grid{gap:4px}.skill-slot{aspect-ratio:1.7}.skill-slot svg{width:18px;height:18px}
- #preview{width:80px;height:80px}.shop-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}.tile .ti svg{width:26px;height:26px}
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="game-version" content="v7.2"><title>Lữ Hành v7.2 · Làng Thanh Mộc</title><style>
+#lu-hanh{position:fixed;inset:0;z-index:2147483000;overflow:hidden;text-align:left;line-height:normal}
+body:has(#lu-hanh){overflow:hidden!important}
+#lu-hanh{color-scheme:dark;--paper:#eee9da;--gold:#d8b678;--muted:#a8b4a7;--line:#ffffff20}
+#lu-hanh *{box-sizing:border-box}
+#lu-hanh{margin:0;background:#121d19;color:var(--paper);font:14px system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+#lu-hanh button,#lu-hanh input,#lu-hanh select,#lu-hanh textarea{font:inherit;letter-spacing:normal;text-transform:none;line-height:normal;margin:0;box-shadow:none;min-height:0;height:auto;width:auto}
+#lu-hanh h1,#lu-hanh h2,#lu-hanh h3,#lu-hanh h4,#lu-hanh p,#lu-hanh small,#lu-hanh b,#lu-hanh strong,#lu-hanh label{font-family:inherit;letter-spacing:normal;text-transform:none}
+#lu-hanh svg,#lu-hanh canvas{max-width:none}
+#lu-hanh button{cursor:pointer;color:inherit;background:#23362ef2;border:1px solid #b5ba9840;border-radius:10px;padding:10px 14px;touch-action:manipulation}
+#lu-hanh button:hover{background:#3e5141}
+#lu-hanh button:disabled{opacity:.4;cursor:not-allowed}
+#lu-hanh button:focus-visible,#lu-hanh input:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+#lu-hanh input{-webkit-user-select:text;user-select:text}
+#lu-hanh svg.icon{width:24px;height:24px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#lu-hanh header{height:94px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;background:#14231def;border-bottom:1px solid var(--line)}
+#lu-hanh .profile{display:flex;gap:13px;align-items:center;min-width:0}
+#lu-hanh .avatar{position:relative;width:66px;height:66px;padding:3px;border:2px solid #c8ac6d;border-radius:50%;background:radial-gradient(circle at 50% 30%,#7c9275,#2e473e);box-shadow:0 0 0 4px #d8b6780e;flex:none}
+#lu-hanh .portrait{width:100%;height:100%;border-radius:50%}
+#lu-hanh .level{position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);background:#302c1d;color:#f6d68a;padding:2px 8px;border:1px solid #a48e54;border-radius:7px;font-size:10px;white-space:nowrap}
+#lu-hanh .player-info{width:232px}
+#lu-hanh .player-name{font:21px Georgia,serif;display:block;line-height:1.2;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#lu-hanh .bars{display:grid;gap:4px}
+#lu-hanh .bar{position:relative;height:9px;border-radius:4px;background:#08110c;border:1px solid #ffffff15;overflow:hidden}
+#lu-hanh .bar-fill{height:100%;width:100%;transition:width .18s}
+#lu-hanh .hp{background:linear-gradient(90deg,#8d292e,#e8615e)}
+#lu-hanh .mana{background:linear-gradient(90deg,#244994,#65b1ee)}
+#lu-hanh .passive{background:linear-gradient(90deg,#9e7621,#f5d765)}
+#lu-hanh .bar small{position:absolute;inset:0;font-size:7px;line-height:8px;text-align:center;color:#fff;text-shadow:0 1px 2px #000}
+#lu-hanh .buffs{display:flex;gap:4px;margin-top:5px;min-height:18px}
+#lu-hanh .buff{display:grid;place-items:center;width:18px;height:18px;border-radius:50%;border:1px solid currentColor;background:#0009;box-shadow:0 0 6px currentColor}
+#lu-hanh .buff svg{width:12px;height:12px;stroke-width:2.4}
+#lu-hanh .top-right{display:flex;gap:13px;align-items:center;position:relative}
+#lu-hanh .version{font-size:11px;border:1px solid var(--line);border-radius:7px;padding:5px 8px;color:#c6c5a8}
+#lu-hanh .menu{position:absolute;right:0;top:50px;display:flex;flex-direction:column;gap:5px;min-width:150px;padding:7px;border:1px solid #b39a654a;border-radius:13px;background:#15271ff5;z-index:6;box-shadow:0 10px 25px #0007}
+#lu-hanh .menu button{display:flex;align-items:center;gap:10px;padding:9px 12px;text-align:left}
+#lu-hanh .layout{position:relative;height:calc(100dvh - 94px);overflow:hidden}
+#lu-hanh #scene{display:block;width:100%;height:100%;touch-action:none;outline:none}
+#lu-hanh .floating{position:absolute;pointer-events:none}
+#lu-hanh .map-box{position:absolute;right:22px;top:16px;display:flex;flex-direction:column;align-items:flex-end;gap:6px;pointer-events:none}
+#lu-hanh #minimap{display:block;width:180px;height:96px;background:#183324;border:5px solid #15221de0;border-radius:13px}
+#lu-hanh .map-meta{display:flex;align-items:center;gap:6px;font-size:11px;line-height:1.2;color:#e6e4ca;background:#15221de6;border:1px solid var(--line);border-radius:8px;padding:6px 9px;white-space:nowrap}
+#lu-hanh .map-meta svg{width:13px;height:13px;flex:none;color:var(--gold)}
+#lu-hanh .map-meta .coord{color:#a9b8a6;font-variant-numeric:tabular-nums}
+#lu-hanh .quest-track{left:18px;top:16px;display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;background:#15221ddc;border:1px solid var(--line);border-radius:10px;padding:7px 10px;color:#f0dfb0}
+#lu-hanh .quest-track svg{width:20px;height:20px}
+#lu-hanh .quest-track .off{opacity:.3}
+#lu-hanh .quest-track .done{color:#9fe8a8}
+#lu-hanh .hint{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:5px;pointer-events:none;font-size:11px;color:#efe3bf;text-shadow:0 1px 3px #000;white-space:nowrap}
+#lu-hanh .hint b{font-size:11px;color:#f2e4b6;background:#14221bc9;border:1px solid #ffffff22;padding:5px 8px;border-radius:7px}
+#lu-hanh .skill-wheel{position:absolute;bottom:13px;right:15px;width:245px;height:244px;pointer-events:none}
+#lu-hanh .skill{position:absolute;border-radius:50%;padding:0;display:grid;place-items:center;background:radial-gradient(circle at 35% 25%,#485f50,#162a24 75%);border:2px solid #e4cf9480;box-shadow:0 3px 14px #0006,inset 0 0 0 4px #0c181b77;width:54px;height:54px;pointer-events:auto;overflow:hidden;isolation:isolate;touch-action:none;transition:transform .08s}
+#lu-hanh .skill svg{width:25px;height:25px;pointer-events:none}
+#lu-hanh .skill.pressed{transform:scale(.92)}
+#lu-hanh .skill .cooldown{position:absolute;inset:0;border-radius:50%;z-index:2;pointer-events:none;display:grid;place-items:center;background:conic-gradient(#071017cc var(--progress,0%),transparent 0);font-size:15px;font-weight:700;text-shadow:0 1px 4px #000}
+#lu-hanh .skill .key{position:absolute;bottom:3px;font-size:8px;white-space:nowrap;font-weight:600;color:#eee9ca;pointer-events:none}
+#lu-hanh .skill.normal{width:83px;height:83px;right:12px;bottom:77px;border-color:var(--elem,#dfc480);color:var(--elem,#f1e2b5);box-shadow:0 0 0 5px #ab95552a,0 5px 20px #0007}
+#lu-hanh .skill.normal svg{width:39px;height:39px}
+#lu-hanh .skill.basic{right:26.5px;bottom:1.5px;color:#e3c67c}
+#lu-hanh .skill.intermediate{right:104.5px;bottom:46.5px;color:#84bbdf}
+#lu-hanh .skill.advanced{right:104.5px;bottom:136.5px;color:#e4a184}
+#lu-hanh .skill.mount{right:30px;bottom:184px;width:46px;height:46px;color:#ffd08a}
+#lu-hanh .skill.mount svg{width:22px;height:22px}
+#lu-hanh #dialog{position:absolute;bottom:45px;left:45%;transform:translateX(-50%);width:min(470px,calc(100% - 30px));padding:16px 18px;background:#2a2116f5;border:1px solid #c9a46a99;border-radius:16px;box-shadow:0 10px 60px #0008;z-index:5}
+#lu-hanh #dialog h2{margin:0 0 6px;color:var(--gold);font:19px Georgia,serif}
+#lu-hanh #dialog p{margin:0 0 12px;line-height:1.7;color:#efe6cf}
+#lu-hanh #dialog .actions{display:flex;justify-content:space-between;align-items:center;gap:8px}
+#lu-hanh #dialog .actions span{display:flex;gap:8px}
+#lu-hanh #dialog .dots{display:flex;gap:5px}
+#lu-hanh #dialog .dots i{width:7px;height:7px;border-radius:50%;background:#ffffff33}
+#lu-hanh #dialog .dots i.on{background:var(--gold)}
+#lu-hanh #dialog button{background:#8e7547;padding:8px 12px;display:flex;align-items:center;gap:6px}
+#lu-hanh #dialog button svg{width:18px;height:18px}
+#lu-hanh #dialog #shopBtn{background:#2f5a43;border-color:#9fe8a866}
+#lu-hanh .overlay{position:fixed;inset:0;z-index:9;display:grid;place-items:center;background:#06110ad0;padding:12px}
+#lu-hanh .card{max-width:460px;width:100%;max-height:92dvh;overflow:auto;background:#1c2e23;border:1px solid #ab956a77;border-radius:18px;padding:16px}
+#lu-hanh .card.wide{max-width:880px}
+#lu-hanh .card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+#lu-hanh .card-head .ttl{display:flex;align-items:center;gap:8px;color:#f0ddb0}
+#lu-hanh .card-head .ttl svg{width:26px;height:26px}
+#lu-hanh .close-modal{padding:6px 8px}
+#lu-hanh .card input{width:100%;padding:10px;border:1px solid #79907177;background:#102017;color:#fff;border-radius:9px}
+#lu-hanh .chips{display:flex;flex-wrap:wrap;gap:4px;justify-content:center}
+#lu-hanh .ch{display:inline-flex;align-items:center;gap:2px;font-size:11px;font-style:normal;font-weight:600;color:#f0e2bd;background:#0b1a13;border-radius:6px;padding:1px 5px}
+#lu-hanh .ch svg{width:12px;height:12px;stroke-width:2.2}
+#lu-hanh .stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:6px}
+#lu-hanh .stat{display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 6px;background:#ffffff06;border:1px solid var(--line);border-radius:9px;font-size:15px;font-weight:700;color:#f0d9a7}
+#lu-hanh .stat svg{width:18px;height:18px;color:#c9d6c2}
+#lu-hanh .name-row{display:flex;gap:6px;margin-top:10px}
+#lu-hanh .bag-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:14px}
+#lu-hanh .equip-head{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+#lu-hanh #preview{width:96px;height:96px;border-radius:14px;background:radial-gradient(circle at 50% 65%,#33553f,#0e1c16 72%);border:1px solid var(--line);flex:none}
+#lu-hanh .equip-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+#lu-hanh .equipment-slot,#lu-hanh .bag-slot,#lu-hanh .skill-slot{min-width:0;aspect-ratio:1;display:flex;align-items:center;justify-content:center;padding:4px;position:relative;background:#0f201980;border:1px solid #7e916359;border-radius:9px}
+#lu-hanh .equipment-slot svg{width:28px;height:28px}
+#lu-hanh .equipment-slot.locked{border-style:dashed;opacity:.6}
+#lu-hanh .equipment-slot.can{border-color:var(--gold);box-shadow:0 0 0 2px #d8b67840}
+#lu-hanh .lock{position:absolute;right:3px;top:3px;color:#d8b678}
+#lu-hanh .lock svg{width:12px;height:12px}
+#lu-hanh .gap{height:8px}
+#lu-hanh .skill-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+#lu-hanh .skill-slot svg{width:22px;height:22px}
+#lu-hanh .skill-slot.empty{color:#4d6150}
+#lu-hanh .skill-slot.active{border:2px solid var(--gold);box-shadow:0 0 14px #f0c66a55,inset 0 0 12px #f0c66a22}
+#lu-hanh .skill-slot.focus,#lu-hanh .bag-slot.selected{outline:2px solid #fff3c9;outline-offset:1px;background:#7d704255}
+#lu-hanh .bag-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px}
+#lu-hanh .bag-slot svg{width:22px;height:22px}
+#lu-hanh .slot-number{position:absolute;right:3px;bottom:1px;font-size:8px;color:#7a8d78}
+#lu-hanh .sel-bar{display:flex;align-items:center;gap:8px;margin-top:10px;min-height:44px;padding:6px 8px;border:1px solid var(--line);border-radius:11px;background:#0b1a13}
+#lu-hanh .sel-bar .big{width:34px;height:34px;display:grid;place-items:center;color:#e4cc8d}
+#lu-hanh .sel-bar .big svg{width:28px;height:28px}
+#lu-hanh .sel-bar .chips{justify-content:flex-start;flex:1}
+#lu-hanh .sel-bar button{padding:7px 9px}
+#lu-hanh .sel-bar button svg{width:18px;height:18px}
+#lu-hanh button.primary,#lu-hanh .sel-bar button.primary{background:linear-gradient(#a4452c,#7c2c1b);border-color:#e3b86f;color:#fff3d6;font-weight:700;text-shadow:0 1px 0 #3a120a}
+#lu-hanh button.primary:hover{background:linear-gradient(#b8533a,#8a3320)}
+#lu-hanh .money{display:flex;gap:12px;justify-content:center;margin-top:10px;padding:7px;border:1px solid var(--line);border-radius:9px;background:#0b1a13}
+#lu-hanh .coin{display:inline-flex;align-items:center;justify-content:center;gap:3px;font-size:12px;font-weight:600}
+#lu-hanh .coin i{display:block;width:11px;height:11px;border:2px solid #ffffff33;border-radius:50%;background:#ac6c45}
+#lu-hanh .coin.silver i{background:#b1bdc7}
+#lu-hanh .coin.gold i{background:#d6b354}
+#lu-hanh .coin.ruby i{border-radius:3px;transform:rotate(45deg);background:#e35979}
+#lu-hanh .price{display:flex;gap:5px;justify-content:center}
+#lu-hanh .price .coin{font-size:11px}
+#lu-hanh .price .coin i{width:8px;height:8px;border-width:1px}
+#lu-hanh .shop-tabs{display:flex;gap:6px}
+#lu-hanh .shop-tabs button{padding:7px 10px}
+#lu-hanh .shop-tabs button.on{background:#8e7547;border-color:#d8b67888}
+#lu-hanh .shop-tabs svg{width:20px;height:20px}
+#lu-hanh .purse{display:flex;gap:9px;padding:6px 9px;border:1px solid var(--line);border-radius:9px;background:#0b1a13}
+#lu-hanh .shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:6px}
+#lu-hanh .tile{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px 6px;border-radius:11px;background:#0f201980;border:1px solid var(--line)}
+#lu-hanh .tile .ti svg{width:30px;height:30px}
+#lu-hanh .tile.off{opacity:.45}
+#lu-hanh .tile.sel{border:2px solid var(--gold);background:#5e5132aa}
+#lu-hanh .tile .go{position:absolute;inset:0;display:none;place-items:center;border-radius:10px;background:#0009;color:#ffe6a6}
+#lu-hanh .tile.sel .go{display:grid}
+#lu-hanh .tile .go svg{width:30px;height:30px}
+#lu-hanh .shop-empty{display:grid;place-items:center;padding:20px;color:#617863}
+#lu-hanh .shop-empty svg{width:34px;height:34px}
+#lu-hanh .quest-rows{display:grid;gap:8px}
+#lu-hanh .qrow{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#ffffff06}
+#lu-hanh .qrow>svg{width:24px;height:24px;color:var(--gold)}
+#lu-hanh .qrow .chips{justify-content:flex-start}
+#lu-hanh .touch-controls{display:none;position:absolute;bottom:25px;left:18px}
+#lu-hanh .pad{position:relative;width:118px;height:118px;border:1px solid #ffffff33;border-radius:50%;background:#17312399;touch-action:none}
+#lu-hanh .knob{position:absolute;left:37px;top:37px;width:44px;height:44px;border-radius:50%;background:#c8ccad77;border:1px solid #e4e2c488;pointer-events:none}
+#lu-hanh #toast{position:absolute;left:50%;top:18px;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:#15221df2;border:1px solid #d7b77a55;border-radius:10px;padding:9px 14px;pointer-events:none;opacity:0;transition:opacity .2s;max-width:90%;text-align:center;z-index:8}
+#lu-hanh #toast svg{width:18px;height:18px}
+#lu-hanh [hidden]{display:none!important}
+@media(max-width:760px){#lu-hanh header{height:88px;padding:0 12px}
+#lu-hanh .layout{height:calc(100dvh - 88px)}
+#lu-hanh .avatar{width:52px;height:52px}
+#lu-hanh .profile{gap:10px}
+#lu-hanh .player-info{width:154px}
+#lu-hanh .player-name{font-size:18px;max-width:154px;margin-bottom:5px}
+#lu-hanh .top-right{gap:7px}
+#lu-hanh .top-right>button{padding:9px}
+#lu-hanh .version{font-size:9px;padding:4px}
+#lu-hanh .bar{height:8px}
+#lu-hanh .bar small{font-size:6px;line-height:7px}
+#lu-hanh .buffs{margin-top:4px}
+#lu-hanh .map-box{right:12px;top:12px;gap:5px}
+#lu-hanh #minimap{width:120px;height:64px;border-width:4px}
+#lu-hanh .map-meta{font-size:10px;padding:5px 7px}
+#lu-hanh .quest-track{left:12px;top:12px;font-size:12px;padding:6px 8px;gap:5px}
+#lu-hanh .quest-track svg{width:17px;height:17px}
+#lu-hanh .hint{display:none}
+#lu-hanh .touch-controls{display:block}
+#lu-hanh .skill-wheel{transform:scale(.8);transform-origin:bottom right;right:6px;bottom:10px}
+#lu-hanh #dialog{bottom:215px;left:50%;padding:14px;width:calc(100% - 24px)}
+#lu-hanh #dialog p{font-size:13px}
+#lu-hanh #toast{top:auto;bottom:250px}
+#lu-hanh .bag-layout{grid-template-columns:1fr;gap:8px}
+#lu-hanh .equip-grid{gap:5px}
+#lu-hanh .equipment-slot{aspect-ratio:2.4}
+#lu-hanh .equipment-slot svg{width:22px;height:22px}
+#lu-hanh .bag-grid{gap:4px}
+#lu-hanh .bag-slot{padding:2px;border-radius:6px}
+#lu-hanh .bag-slot svg{width:19px;height:19px}
+#lu-hanh .skill-grid{gap:4px}
+#lu-hanh .skill-slot{aspect-ratio:1.7}
+#lu-hanh .skill-slot svg{width:18px;height:18px}
+#lu-hanh #preview{width:80px;height:80px}
+#lu-hanh .shop-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+#lu-hanh .tile .ti svg{width:26px;height:26px}
 }
-@media(max-width:360px){.version{display:none}.player-info{width:130px}.player-name{max-width:130px;font-size:16px}.bag-slot svg{width:16px;height:16px}.shop-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-.card-head .ttl b{font:19px Georgia,serif}
-.stat-grid{grid-template-columns:repeat(auto-fill,minmax(132px,1fr))}.stat{justify-content:flex-start;gap:8px;padding:8px 10px}.stat span{display:flex;flex-direction:column;line-height:1.2}.stat small{font-size:10px;font-weight:500;color:#a8b4a7}
-.name-row{flex-wrap:wrap}.name-row input{flex:1;min-width:120px}.name-row button{display:flex;align-items:center;gap:6px}.name-row button svg{width:18px;height:18px}
-.seg{display:flex;gap:4px}.seg button{padding:8px 12px}.seg button.on{background:#8e7547;border-color:#d8b67888}
-.equipment-slot{flex-direction:column;gap:2px;aspect-ratio:auto;min-height:62px}.slot-label{font-size:10px;color:#93a58f;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.equipment-slot.has .slot-label{color:#e9dcb4}
-.lvb{position:absolute;left:3px;top:2px;font-size:9px;font-weight:800;color:#ffd77a;text-shadow:0 1px 2px #000}
-.sel-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}.sel-name{color:#f3dfae}.sel-desc{font-size:11px;color:#b9c4b4;line-height:1.35}.sel-bar{flex-wrap:wrap}.sel-bar button{display:flex;align-items:center;gap:5px;font-size:13px}
-.shop-tabs button{display:flex;align-items:center;gap:6px;font-size:13px}.purse{align-items:center}
-.shop-sub{display:flex;align-items:center;gap:6px;font-size:12px;color:#a8b4a7;margin:-4px 0 8px}.shop-sub svg{width:16px;height:16px}
-.shop-grid{grid-template-columns:repeat(auto-fill,minmax(138px,1fr))}.tile .nm{font-size:12.5px;color:#f3e6c4;text-align:center;line-height:1.2}.tile .go{gap:6px;font-weight:700}.tile .go svg{width:24px;height:24px}.shop-empty{gap:6px;font-size:13px}
-.enh{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:12px}.enh-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:5px;align-content:start}
-.mini{position:relative;aspect-ratio:1;padding:4px;display:grid;place-items:center;border-radius:9px;background:#0f201980;border:1px solid var(--line)}.mini svg{width:24px;height:24px}.mini.sel{border:2px solid var(--gold);background:#5e5132aa}.mini .worn{position:absolute;bottom:1px;left:0;right:0;font-size:7px;color:#9fe8a8;text-align:center}
-.enh-box{display:flex;flex-direction:column;gap:9px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#0b1a13}.enh-top{display:flex;gap:10px;align-items:center}.enh-top .big svg{width:40px;height:40px}.enh-top .chips{justify-content:flex-start;margin-top:4px}
-.enh-next{display:flex;align-items:center;gap:6px;color:#ffd77a}.enh-next svg{width:16px;height:16px}.enh-next .chips{justify-content:flex-start}
-.enh-rows{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.enh-rows div{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px;border-radius:8px;background:#ffffff08}.enh-rows small{font-size:10px;color:#a8b4a7}
-.big-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:#8e7547;border-color:#d8b67888;font-weight:700}.big-btn svg{width:20px;height:20px}
-.qrow>div{display:flex;flex-direction:column;gap:5px}.qrow b{font-size:13px;color:#f0ddb0}
-.quest-track{font-size:12px}
-@media(max-width:760px){.card-head{align-items:flex-start}.card-head .ttl{flex-wrap:wrap;min-width:0;flex:1}.shop-tabs button{white-space:nowrap}.equipment-slot{min-height:50px;aspect-ratio:auto}.shop-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.enh{grid-template-columns:1fr}.enh-list{grid-template-columns:repeat(7,minmax(0,1fr))}.stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tile .nm{font-size:11.5px}.sel-bar button{font-size:12px;padding:7px 8px}.shop-tabs button{padding:7px 8px;font-size:12px}.purse{gap:6px;padding:5px 7px}}
-/* ---------- v7: cổng vào, phẩm chất, trùm, lính, chợ ---------- */
-.portal{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:14px;background:radial-gradient(circle at 50% 20%,#2c4a36,#0d1a13 70%);overflow:auto}
-.portal-card{width:min(440px,100%);background:#1c2e23f2;border:1px solid #ab956a77;border-radius:18px;padding:20px 18px;box-shadow:0 20px 60px #000a}
-.plogo{text-align:center;margin-bottom:14px}.plogo b{display:block;font:32px Georgia,serif;color:var(--gold)}.plogo small{color:#a8b4a7}
-.ptabs{display:flex;gap:4px;margin-bottom:12px}.ptabs button{flex:1;padding:9px 4px;font-size:13px}.ptabs button.on{background:#8e7547;border-color:#d8b67888}
-.pform,.portal-card,#portalBody{display:flex;flex-direction:column;gap:9px}
-.portal-card label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:#c9d2c3}
-.portal-card input{padding:10px;border:1px solid #79907177;background:#102017;color:#fff;border-radius:9px;font-size:15px}
-#portalMsg{min-height:18px;margin:0;font-size:13px;color:#ff9f8f;text-align:center}#portalMsg.ok{color:#9fe8a8}
-.netmode{text-align:center;color:#7d8f7b;font-size:11px}
-.hint2{margin:0;font-size:12px;color:#b9c4b4;line-height:1.45}.hint2.ok{color:#9fe8a8}
-.phead{display:flex;justify-content:space-between;align-items:center}.phead b{font:20px Georgia,serif;color:#f0ddb0}.phead button{padding:7px 10px;font-size:12px}
-.plist{display:flex;flex-direction:column;gap:7px}
-.pchar{display:flex;align-items:center;gap:10px;padding:9px;border:1px solid var(--line);border-radius:12px;background:#0f201980}.pchar.merc{opacity:.75;border-style:dashed}
-.pface{width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 50% 30%,#7c9275,#2e473e);flex:none}
-.pinfo{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.pinfo b{color:#f3dfae}.pinfo small{font-size:11px;color:#a8b4a7}.mtag{color:#ffd77a!important}
-.pbtns{display:flex;flex-direction:column;gap:4px}.pbtns button{padding:7px 10px;font-size:12px;white-space:nowrap}
-.gpick{display:grid;grid-template-columns:1fr 1fr;gap:8px}.gpick button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px;font-size:12px}.gpick button.on{border:2px solid var(--gold);background:#5e5132aa}.gpick .pface{width:64px;height:64px}
-.spick{display:flex;flex-direction:column;gap:6px}
-.srow{display:grid;grid-template-columns:1fr 36px 56px 36px;gap:5px;align-items:center}.srow div{display:flex;flex-direction:column}.srow small{font-size:10px;color:#93a58f}.srow button{padding:6px 0;font-size:18px;line-height:1}.srow input{text-align:center;padding:7px 4px!important}
-.left{margin:2px 0 0;font-size:13px;color:#ffb07a;text-align:right}.left.ok{color:#9fe8a8}
-.rent{margin-top:10px;padding:10px;border:1px dashed #d8b67888;border-radius:12px;display:flex;flex-direction:column;gap:8px}
-.big-btn.busy{opacity:.6}
-.safe{color:#9fe8a8;font-weight:600}
-.skill.locked{filter:grayscale(1);opacity:.45}
-.skill.normal.charged{box-shadow:0 0 0 5px #f5d76566,0 0 22px #f5d765aa}
-.boss-bar{position:absolute;left:50%;top:14px;transform:translateX(-50%);width:min(420px,70%);display:flex;flex-direction:column;align-items:center;gap:3px;pointer-events:none;z-index:4}
-.boss-bar b{font:15px Georgia,serif;color:#ffc58a;text-shadow:0 1px 3px #000}.boss-bar.final b{color:#ff9ad0}
-.boss-bar .bar{width:100%;height:10px}.boss-bar .bar-fill{background:linear-gradient(90deg,#8d292e,#ff7a5a)}.boss-bar.final .bar-fill{background:linear-gradient(90deg,#8d2960,#ff6fb5)}
-.boss-bar small{font-size:10px;color:#e6dcc4;text-shadow:0 1px 2px #000}
-.qd{position:absolute;right:3px;top:3px;width:6px;height:6px;border-radius:50%}
-.bag-slot.dim{opacity:.3}
-.qtag{font-size:11px;font-weight:600}
-.ch.add{color:#bfe3ff;background:#0d1f2a}
-.set-desc{font-size:11px;color:#9a8a70;line-height:1.5;padding:5px 7px;border-radius:8px;background:#ffffff06}.set-desc b{color:#e8c070}.set-desc .on{color:#ffd99a}
-.attr-head{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}.attr-head b{font:20px Georgia,serif;color:#f3dfae}.attr-head small{color:#a8b4a7}
-.attr-list{display:flex;flex-direction:column;gap:6px}
-.attr{border:1px solid var(--line);border-radius:10px;background:#ffffff05;padding:7px 10px}
-.attr .main{display:flex;align-items:center;gap:8px;font-size:15px}.attr .main svg{width:20px;height:20px;color:#c9d6c2}.attr .main span{flex:1}.attr .main b{color:#f0d9a7;font-size:17px}.attr em{font-style:normal;font-size:12px;color:#9fe8a8;margin-left:4px}
-.attr .sub{display:flex;align-items:center;gap:6px;font-size:12px;color:#c9d2c3;padding:3px 0 0 28px}.attr .sub span{flex:1}.attr .sub b{color:#f3e6c4}.attr .sub.base{color:#93a58f}
-.qbar{display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap}.qbar button{padding:6px 12px;font-size:13px;font-weight:700}.qbar button.on{background:#3a3424;border-color:currentColor}.qbar small{color:#a8b4a7;font-size:11px}
-.qrow.act{border-color:#d8b67866}.qrow>div{flex:1;min-width:0}.qrow small{font-size:11px;color:#a8b4a7}.qrow button{padding:7px 10px;font-size:12px;display:flex;align-items:center;gap:4px;white-space:nowrap}.qrow button svg{width:16px;height:16px}.qprog{font-weight:700;color:#ffd77a;white-space:nowrap}
-.sec{margin:12px 0 6px;font:15px Georgia,serif;color:#e8d3a2}
-.mrow{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#ffffff05;margin-bottom:6px}.mrow>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.mrow b{color:#f3dfae}.mrow.act{border-color:#9fe8a888}.mrow.sel{background:#5e513244}.mrow.pl{border-style:dashed}
-.mrow button{padding:7px 10px;font-size:12px;display:flex;align-items:center;gap:6px;white-space:nowrap}.mbtns{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
-.mg{font-size:11px;padding:3px 6px;border-radius:6px;background:#0b1a13;color:#c9d2c3}
-.gear{display:flex;gap:3px}.gear svg{width:16px;height:16px}
-.mgear{margin-top:10px;padding:10px;border:1px solid var(--line);border-radius:12px}.mgear .equip-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.mgear .bag-grid{grid-template-columns:repeat(10,minmax(0,1fr))}
-.price-in{display:flex;gap:6px}.price-in label{display:flex;flex-direction:column;font-size:11px;color:#a8b4a7;gap:3px}.price-in input{width:74px;padding:7px;border:1px solid #79907177;background:#102017;color:#fff;border-radius:8px}
-.claim{display:flex;align-items:center;gap:8px;padding:8px 10px;margin-bottom:8px;border:1px solid #d8b67866;border-radius:10px;background:#3a342422}.claim button{margin-left:auto;padding:6px 12px}
-.tile .seller{font-size:10px;color:#93a58f}.tile.mine{border-style:dashed}
-@media(max-width:760px){.boss-bar{top:196px;width:88%}.attr .sub{padding-left:20px}.mrow{flex-wrap:wrap}.mgear .equip-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:360px){#lu-hanh .version{display:none}
+#lu-hanh .player-info{width:130px}
+#lu-hanh .player-name{max-width:130px;font-size:16px}
+#lu-hanh .bag-slot svg{width:16px;height:16px}
+#lu-hanh .shop-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+#lu-hanh .card-head .ttl b{font:19px Georgia,serif}
+#lu-hanh .stat-grid{grid-template-columns:repeat(auto-fill,minmax(132px,1fr))}
+#lu-hanh .stat{justify-content:flex-start;gap:8px;padding:8px 10px}
+#lu-hanh .stat span{display:flex;flex-direction:column;line-height:1.2}
+#lu-hanh .stat small{font-size:10px;font-weight:500;color:#a8b4a7}
+#lu-hanh .name-row{flex-wrap:wrap}
+#lu-hanh .name-row input{flex:1;min-width:120px}
+#lu-hanh .name-row button{display:flex;align-items:center;gap:6px}
+#lu-hanh .name-row button svg{width:18px;height:18px}
+#lu-hanh .seg{display:flex;gap:4px}
+#lu-hanh .seg button{padding:8px 12px}
+#lu-hanh .seg button.on{background:#8e7547;border-color:#d8b67888}
+#lu-hanh .equipment-slot{flex-direction:column;gap:2px;aspect-ratio:auto;min-height:62px}
+#lu-hanh .slot-label{font-size:10px;color:#93a58f;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#lu-hanh .equipment-slot.has .slot-label{color:#e9dcb4}
+#lu-hanh .lvb{position:absolute;left:3px;top:2px;font-size:9px;font-weight:800;color:#ffd77a;text-shadow:0 1px 2px #000}
+#lu-hanh .sel-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+#lu-hanh .sel-name{color:#f3dfae}
+#lu-hanh .sel-desc{font-size:11px;color:#b9c4b4;line-height:1.35}
+#lu-hanh .sel-bar{flex-wrap:wrap}
+#lu-hanh .sel-bar button{display:flex;align-items:center;gap:5px;font-size:13px}
+#lu-hanh .shop-tabs button{display:flex;align-items:center;gap:6px;font-size:13px}
+#lu-hanh .purse{align-items:center}
+#lu-hanh .shop-sub{display:flex;align-items:center;gap:6px;font-size:12px;color:#a8b4a7;margin:-4px 0 8px}
+#lu-hanh .shop-sub svg{width:16px;height:16px}
+#lu-hanh .shop-grid{grid-template-columns:repeat(auto-fill,minmax(138px,1fr))}
+#lu-hanh .tile .nm{font-size:12.5px;color:#f3e6c4;text-align:center;line-height:1.2}
+#lu-hanh .tile .go{gap:6px;font-weight:700}
+#lu-hanh .tile .go svg{width:24px;height:24px}
+#lu-hanh .shop-empty{gap:6px;font-size:13px}
+#lu-hanh .enh{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:12px}
+#lu-hanh .enh-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:5px;align-content:start}
+#lu-hanh .mini{position:relative;aspect-ratio:1;padding:4px;display:grid;place-items:center;border-radius:9px;background:#0f201980;border:1px solid var(--line)}
+#lu-hanh .mini svg{width:24px;height:24px}
+#lu-hanh .mini.sel{border:2px solid var(--gold);background:#5e5132aa}
+#lu-hanh .mini .worn{position:absolute;bottom:1px;left:0;right:0;font-size:7px;color:#9fe8a8;text-align:center}
+#lu-hanh .enh-box{display:flex;flex-direction:column;gap:9px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#0b1a13}
+#lu-hanh .enh-top{display:flex;gap:10px;align-items:center}
+#lu-hanh .enh-top .big svg{width:40px;height:40px}
+#lu-hanh .enh-top .chips{justify-content:flex-start;margin-top:4px}
+#lu-hanh .enh-next{display:flex;align-items:center;gap:6px;color:#ffd77a}
+#lu-hanh .enh-next svg{width:16px;height:16px}
+#lu-hanh .enh-next .chips{justify-content:flex-start}
+#lu-hanh .enh-rows{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+#lu-hanh .enh-rows div{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px;border-radius:8px;background:#ffffff08}
+#lu-hanh .enh-rows small{font-size:10px;color:#a8b4a7}
+#lu-hanh .big-btn{display:flex;align-items:center;justify-content:center;gap:8px;font-weight:700}
+#lu-hanh .big-btn svg{width:20px;height:20px}
+#lu-hanh .qrow>div{display:flex;flex-direction:column;gap:5px}
+#lu-hanh .qrow b{font-size:13px;color:#f0ddb0}
+#lu-hanh .quest-track{font-size:12px}
+@media(max-width:760px){#lu-hanh .card-head{align-items:flex-start}
+#lu-hanh .card-head .ttl{flex-wrap:wrap;min-width:0;flex:1}
+#lu-hanh .shop-tabs button{white-space:nowrap}
+#lu-hanh .equipment-slot{min-height:50px;aspect-ratio:auto}
+#lu-hanh .shop-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+#lu-hanh .enh{grid-template-columns:1fr}
+#lu-hanh .enh-list{grid-template-columns:repeat(7,minmax(0,1fr))}
+#lu-hanh .stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+#lu-hanh .tile .nm{font-size:11.5px}
+#lu-hanh .sel-bar button{font-size:12px;padding:7px 8px}
+#lu-hanh .shop-tabs button{padding:7px 8px;font-size:12px}
+#lu-hanh .purse{gap:6px;padding:5px 7px}
+}
+#lu-hanh .portal{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:14px;background:radial-gradient(circle at 50% 20%,#2c4a36,#0d1a13 70%);overflow:auto}
+#lu-hanh .portal-card{width:min(440px,100%);background:#1c2e23f2;border:1px solid #ab956a77;border-radius:18px;padding:20px 18px;box-shadow:0 20px 60px #000a}
+#lu-hanh .plogo{text-align:center;margin-bottom:14px}
+#lu-hanh .plogo b{display:block;font:32px Georgia,serif;color:var(--gold)}
+#lu-hanh .plogo small{color:#a8b4a7}
+#lu-hanh .ptabs{display:flex;gap:4px;margin-bottom:12px}
+#lu-hanh .ptabs button{flex:1;padding:9px 4px;font-size:13px;color:#e6dfc8;background:#1d3128;border-color:#b5ba9855}
+#lu-hanh .ptabs button.on{background:#ecd29a;border-color:#f6e2b4;color:#2a1a0e;font-weight:700}
+#lu-hanh .pform,#lu-hanh .portal-card,#lu-hanh #portalBody{display:flex;flex-direction:column;gap:9px}
+#lu-hanh .portal-card label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:#c9d2c3}
+#lu-hanh .portal-card input{padding:10px;border:1px solid #79907177;background:#102017;color:#fff;border-radius:9px;font-size:15px}
+#lu-hanh #portalMsg{min-height:18px;margin:0;font-size:13px;color:#ff9f8f;text-align:center}
+#lu-hanh #portalMsg.ok{color:#9fe8a8}
+#lu-hanh .netmode{text-align:center;color:#7d8f7b;font-size:11px}
+#lu-hanh .hint2{margin:0;font-size:12px;color:#b9c4b4;line-height:1.45}
+#lu-hanh .hint2.ok{color:#9fe8a8}
+#lu-hanh .phead{display:flex;justify-content:space-between;align-items:center}
+#lu-hanh .phead b{font:20px Georgia,serif;color:#f0ddb0}
+#lu-hanh .phead button{padding:7px 10px;font-size:12px}
+#lu-hanh .plist{display:flex;flex-direction:column;gap:7px}
+#lu-hanh .pchar{display:flex;align-items:center;gap:10px;padding:9px;border:1px solid var(--line);border-radius:12px;background:#0f201980}
+#lu-hanh .pchar.merc{opacity:.75;border-style:dashed}
+#lu-hanh .pface{width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 50% 30%,#7c9275,#2e473e);flex:none}
+#lu-hanh .pinfo{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+#lu-hanh .pinfo b{color:#f3dfae}
+#lu-hanh .pinfo small{font-size:11px;color:#a8b4a7}
+#lu-hanh .mtag{color:#ffd77a!important}
+#lu-hanh .pbtns{display:flex;flex-direction:column;gap:4px}
+#lu-hanh .pbtns button{padding:7px 10px;font-size:12px;white-space:nowrap}
+#lu-hanh .gpick{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#lu-hanh .gpick button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px;font-size:12px}
+#lu-hanh .gpick button.on{border:2px solid var(--gold);background:#5e5132aa}
+#lu-hanh .gpick .pface{width:64px;height:64px}
+#lu-hanh .spick{display:flex;flex-direction:column;gap:6px}
+#lu-hanh .srow{display:grid;grid-template-columns:1fr 36px 56px 36px;gap:5px;align-items:center}
+#lu-hanh .srow div{display:flex;flex-direction:column}
+#lu-hanh .srow small{font-size:10px;color:#93a58f}
+#lu-hanh .srow button{padding:6px 0;font-size:18px;line-height:1}
+#lu-hanh .srow input{text-align:center;padding:7px 4px!important}
+#lu-hanh .left{margin:2px 0 0;font-size:13px;color:#ffb07a;text-align:right}
+#lu-hanh .left.ok{color:#9fe8a8}
+#lu-hanh .rent{margin-top:10px;padding:10px;border:1px dashed #d8b67888;border-radius:12px;display:flex;flex-direction:column;gap:8px}
+#lu-hanh .big-btn.busy{opacity:.6}
+#lu-hanh .safe{color:#9fe8a8;font-weight:600}
+#lu-hanh .skill.locked{filter:grayscale(1);opacity:.45}
+#lu-hanh .skill.normal.charged{box-shadow:0 0 0 5px #f5d76566,0 0 22px #f5d765aa}
+#lu-hanh .boss-bar{position:absolute;left:50%;top:14px;transform:translateX(-50%);width:min(420px,70%);display:flex;flex-direction:column;align-items:center;gap:3px;pointer-events:none;z-index:4}
+#lu-hanh .boss-bar b{font:15px Georgia,serif;color:#ffc58a;text-shadow:0 1px 3px #000}
+#lu-hanh .boss-bar.final b{color:#ff9ad0}
+#lu-hanh .boss-bar .bar{width:100%;height:10px}
+#lu-hanh .boss-bar .bar-fill{background:linear-gradient(90deg,#8d292e,#ff7a5a)}
+#lu-hanh .boss-bar.final .bar-fill{background:linear-gradient(90deg,#8d2960,#ff6fb5)}
+#lu-hanh .boss-bar small{font-size:10px;color:#e6dcc4;text-shadow:0 1px 2px #000}
+#lu-hanh .qd{position:absolute;right:3px;top:3px;width:6px;height:6px;border-radius:50%}
+#lu-hanh .bag-slot.dim{opacity:.3}
+#lu-hanh .qtag{font-size:11px;font-weight:600}
+#lu-hanh .ch.add{color:#bfe3ff;background:#0d1f2a}
+#lu-hanh .set-desc{font-size:11px;color:#9a8a70;line-height:1.5;padding:5px 7px;border-radius:8px;background:#ffffff06}
+#lu-hanh .set-desc b{color:#e8c070}
+#lu-hanh .set-desc .on{color:#ffd99a}
+#lu-hanh .attr-head{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
+#lu-hanh .attr-head b{font:20px Georgia,serif;color:#f3dfae}
+#lu-hanh .attr-head small{color:#a8b4a7}
+#lu-hanh .attr-list{display:flex;flex-direction:column;gap:6px}
+#lu-hanh .attr{border:1px solid var(--line);border-radius:10px;background:#ffffff05;padding:7px 10px}
+#lu-hanh .attr .main{display:flex;align-items:center;gap:8px;font-size:15px}
+#lu-hanh .attr .main svg{width:20px;height:20px;color:#c9d6c2}
+#lu-hanh .attr .main span{flex:1}
+#lu-hanh .attr .main b{color:#f0d9a7;font-size:17px}
+#lu-hanh .attr em{font-style:normal;font-size:12px;color:#9fe8a8;margin-left:4px}
+#lu-hanh .attr .sub{display:flex;align-items:center;gap:6px;font-size:12px;color:#c9d2c3;padding:3px 0 0 28px}
+#lu-hanh .attr .sub span{flex:1}
+#lu-hanh .attr .sub b{color:#f3e6c4}
+#lu-hanh .attr .sub.base{color:#93a58f}
+#lu-hanh .qbar{display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+#lu-hanh .qbar button{padding:6px 12px;font-size:13px;font-weight:700}
+#lu-hanh .qbar button.on{background:#3a3424;border-color:currentColor}
+#lu-hanh .qbar small{color:#a8b4a7;font-size:11px}
+#lu-hanh .qrow.act{border-color:#d8b67866}
+#lu-hanh .qrow>div{flex:1;min-width:0}
+#lu-hanh .qrow small{font-size:11px;color:#a8b4a7}
+#lu-hanh .qrow button{padding:7px 10px;font-size:12px;display:flex;align-items:center;gap:4px;white-space:nowrap}
+#lu-hanh .qrow button svg{width:16px;height:16px}
+#lu-hanh .qprog{font-weight:700;color:#ffd77a;white-space:nowrap}
+#lu-hanh .sec{margin:12px 0 6px;font:15px Georgia,serif;color:#e8d3a2}
+#lu-hanh .mrow{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#ffffff05;margin-bottom:6px}
+#lu-hanh .mrow>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+#lu-hanh .mrow b{color:#f3dfae}
+#lu-hanh .mrow.act{border-color:#9fe8a888}
+#lu-hanh .mrow.sel{background:#5e513244}
+#lu-hanh .mrow.pl{border-style:dashed}
+#lu-hanh .mrow button{padding:7px 10px;font-size:12px;display:flex;align-items:center;gap:6px;white-space:nowrap}
+#lu-hanh .mbtns{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+#lu-hanh .mg{font-size:11px;padding:3px 6px;border-radius:6px;background:#0b1a13;color:#c9d2c3}
+#lu-hanh .gear{display:flex;gap:3px}
+#lu-hanh .gear svg{width:16px;height:16px}
+#lu-hanh .mgear{margin-top:10px;padding:10px;border:1px solid var(--line);border-radius:12px}
+#lu-hanh .mgear .equip-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+#lu-hanh .mgear .bag-grid{grid-template-columns:repeat(10,minmax(0,1fr))}
+#lu-hanh .price-in{display:flex;gap:6px}
+#lu-hanh .price-in label{display:flex;flex-direction:column;font-size:11px;color:#a8b4a7;gap:3px}
+#lu-hanh .price-in input{width:74px;padding:7px;border:1px solid #79907177;background:#102017;color:#fff;border-radius:8px}
+#lu-hanh .claim{display:flex;align-items:center;gap:8px;padding:8px 10px;margin-bottom:8px;border:1px solid #d8b67866;border-radius:10px;background:#3a342422}
+#lu-hanh .claim button{margin-left:auto;padding:6px 12px}
+#lu-hanh .tile .seller{font-size:10px;color:#93a58f}
+#lu-hanh .tile.mine{border-style:dashed}
+@media(max-width:760px){#lu-hanh .boss-bar{top:196px;width:88%}
+#lu-hanh .attr .sub{padding-left:20px}
+#lu-hanh .mrow{flex-wrap:wrap}
+#lu-hanh .mgear .equip-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
 </style></head><body>
+<div id="lu-hanh">
 <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true"><defs>
 <symbol id="i-sword" viewBox="0 0 32 32"><path d="M9 23 25 7l1-5-5 1L5 19m1-3 10 10M4 28l5-5m-7 3 4 4"/></symbol>
 <symbol id="i-bow" viewBox="0 0 32 32"><path d="M8 3c21 4 21 22 0 26L18 16 8 3Zm-5 13h25m-5-4 5 4-5 4"/></symbol>
@@ -259,9 +423,10 @@ header{height:94px;display:flex;align-items:center;justify-content:space-between
 <symbol id="i-quest" viewBox="0 0 32 32"><path d="M7 3h19v23H7M7 3C1 3 1 10 7 10m0 16c-6 0-6 5 0 5h20M12 10h9m-9 6h9"/></symbol>
 <symbol id="i-gear" viewBox="0 0 32 32"><path d="m12 3 8 0 1 5 5 1 3 7-4 4 1 5-7 4-4-3-5 1-5-6 2-5-2-5 6-5 1-3Z"/><circle cx="16" cy="16" r="5"/></symbol>
 </defs></svg>
-<header><div class="profile"><button id="avatarBtn" class="avatar" aria-label="Thuộc tính nhân vật"><svg viewBox="0 0 64 64" class="portrait" aria-hidden="true"><path fill="#d9ad80" d="M10 64v-8c0-21 44-21 44 0v8Z"/><path fill="#dfbf91" d="M25 32h14v17H25z"/><ellipse id="pfHair" fill="#2a2622" cx="20" cy="34" rx="7" ry="13" style="display:none"/><path id="pfYem" fill="#c0392b" d="M32 44l10 10-10 10-10-10Z" style="display:none"/><ellipse fill="#e4c69b" cx="32" cy="25" rx="15" ry="18"/><path fill="#2a2622" d="M16 26V14C16-2 52-3 48 19L33 13l-17 13Z"/></svg><b id="levelBadge" class="level">Lv. 1</b></button><div class="player-info"><strong id="playerName" class="player-name">Lữ khách</strong><div class="bars"><div class="bar" aria-label="Máu"><div id="hpFill" class="bar-fill hp"></div><small id="hpText">100 / 100</small></div><div class="bar" aria-label="Mana"><div id="manaFill" class="bar-fill mana"></div><small id="manaText">80 / 80</small></div><div class="bar" aria-label="Nội tại"><div id="passiveFill" class="bar-fill passive" style="width:0"></div><small id="passiveText">0%</small></div></div><div id="buffs" class="buffs"></div></div></div><div class="top-right"><span class="version">v7.1</span><button id="settingsBtn" aria-label="Menu" aria-expanded="false"><svg class="icon"><use href="#i-gear"/></svg></button><nav id="gameMenu" class="menu" hidden><button id="bagBtn"><svg class="icon"><use href="#i-bag"/></svg>Túi đồ</button><button id="questBtn"><svg class="icon"><use href="#i-quest"/></svg>Nhiệm vụ</button><button id="saveBtn"><svg class="icon"><use href="#i-save"/></svg>Lưu</button><button id="homeBtn"><svg class="icon"><use href="#i-home"/></svg>Về làng</button><button id="switchBtn"><svg class="icon"><use href="#i-user"/></svg>Đổi nhân vật</button></nav></div></header>
-<div id="portal" class="portal"><div class="portal-card"><div class="plogo"><b>Lữ Hành</b><small>Làng Thanh Mộc · v7.1</small></div><div id="portalBody"></div><p id="portalMsg"></p><small id="netMode" class="netmode"></small></div></div>
+<header><div class="profile"><button id="avatarBtn" class="avatar" aria-label="Thuộc tính nhân vật"><svg viewBox="0 0 64 64" class="portrait" aria-hidden="true"><path fill="#d9ad80" d="M10 64v-8c0-21 44-21 44 0v8Z"/><path fill="#dfbf91" d="M25 32h14v17H25z"/><ellipse id="pfHair" fill="#2a2622" cx="20" cy="34" rx="7" ry="13" style="display:none"/><path id="pfYem" fill="#c0392b" d="M32 44l10 10-10 10-10-10Z" style="display:none"/><ellipse fill="#e4c69b" cx="32" cy="25" rx="15" ry="18"/><path fill="#2a2622" d="M16 26V14C16-2 52-3 48 19L33 13l-17 13Z"/></svg><b id="levelBadge" class="level">Lv. 1</b></button><div class="player-info"><strong id="playerName" class="player-name">Lữ khách</strong><div class="bars"><div class="bar" aria-label="Máu"><div id="hpFill" class="bar-fill hp"></div><small id="hpText">100 / 100</small></div><div class="bar" aria-label="Mana"><div id="manaFill" class="bar-fill mana"></div><small id="manaText">80 / 80</small></div><div class="bar" aria-label="Nội tại"><div id="passiveFill" class="bar-fill passive" style="width:0"></div><small id="passiveText">0%</small></div></div><div id="buffs" class="buffs"></div></div></div><div class="top-right"><span class="version">v7.2</span><button id="settingsBtn" aria-label="Menu" aria-expanded="false"><svg class="icon"><use href="#i-gear"/></svg></button><nav id="gameMenu" class="menu" hidden><button id="bagBtn"><svg class="icon"><use href="#i-bag"/></svg>Túi đồ</button><button id="questBtn"><svg class="icon"><use href="#i-quest"/></svg>Nhiệm vụ</button><button id="saveBtn"><svg class="icon"><use href="#i-save"/></svg>Lưu</button><button id="homeBtn"><svg class="icon"><use href="#i-home"/></svg>Về làng</button><button id="switchBtn"><svg class="icon"><use href="#i-user"/></svg>Đổi nhân vật</button></nav></div></header>
+<div id="portal" class="portal"><div class="portal-card"><div class="plogo"><b>Lữ Hành</b><small>Làng Thanh Mộc · v7.2</small></div><div id="portalBody"></div><p id="portalMsg"></p><small id="netMode" class="netmode"></small></div></div>
 <main class="layout"><canvas id="scene" tabindex="0" aria-label="Bản đồ"></canvas><div id="questTrack" class="quest-track floating"></div><div id="bossBar" class="boss-bar" hidden><b id="bossName"></b><div class="bar"><div id="bossFill" class="bar-fill"></div></div><small id="bossHp"></small></div><div class="map-box"><canvas id="minimap" width="240" height="128" aria-label="Bản đồ thu nhỏ"></canvas><div class="map-meta"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span id="placeName">Thanh Mộc</span><span id="placeCoord" class="coord"></span><span id="safeTag" class="safe" hidden>An toàn</span></div></div><div class="hint"><b>WASD</b>di chuyển <b>Space</b>đánh <b>1</b>combo <b>2</b>diện rộng <b>3</b>liên hoàn <b>4</b>thú cưỡi <b>E</b>nói chuyện <b>B</b>túi đồ</div><div class="skill-wheel"><button id="skill-normal" data-skill="normal" class="skill normal" title="Space"><svg id="normalIcon" class="icon"><use href="#i-sword"/></svg><small class="key">Đánh</small><span class="cooldown"></span></button><button id="skill-basic" data-skill="basic" class="skill basic" title="1 · Combo · 10 mana"><svg class="icon"><use href="#i-spark"/></svg><small class="key">Combo</small><span class="cooldown"></span></button><button id="skill-intermediate" data-skill="intermediate" class="skill intermediate" title="2 · Diện rộng · 18 mana"><svg class="icon"><use href="#i-whirl"/></svg><small class="key">Diện rộng</small><span class="cooldown"></span></button><button id="skill-advanced" data-skill="advanced" class="skill advanced" title="3 · Liên hoàn · 28 mana"><svg class="icon"><use href="#i-flame"/></svg><small class="key">Liên hoàn</small><span class="cooldown"></span></button><button id="skill-mount" data-skill="mount" class="skill mount" title="4 · Thú cưỡi" hidden><svg id="mountIcon" class="icon"><use href="#i-mount"/></svg><small id="mountName" class="key">Thú cưỡi</small><span class="cooldown"></span></button></div><div class="touch-controls"><div id="pad" class="pad" aria-label="Cần điều khiển"><div class="knob"></div></div></div><section id="dialog" hidden aria-live="polite"><h2 id="speaker"></h2><p id="line"></p><div class="actions"><span id="page" class="dots"></span><span><button id="shopBtn" hidden><svg class="icon"><use href="#i-bag"/></svg><span id="shopLabel">Mua bán</span></button><button id="next"><svg class="icon"><use href="#i-next"/></svg>Tiếp</button></span></div></section><div id="toast" role="status"></div></main><div id="overlay" class="overlay" hidden><section id="modalCard" class="card"><div class="card-head"><div id="overlayTitle" class="ttl"></div><button id="closeOverlay" class="close-modal" aria-label="Đóng"><svg class="icon"><use href="#i-close"/></svg></button></div><div id="overlayBody"></div></section></div>
+</div>
 <script>
 /* ================= DỮ LIỆU MẶC ĐỊNH (giống hệt các file Google Sheet; khi nối Apps Script sẽ lấy bản trên Sheet) ================= */
 const GAME_DATA={
@@ -274,9 +439,9 @@ cau_hinh:[
  {khoa:'ti_le_ban_lai',gia_tri:40,ghi_chu:'% giá gốc nhận lại khi bán cho cửa hàng'},
  {khoa:'he_so_gia_do_dep',gia_tri:250,ghi_chu:'Giá đồ Đẹp trong cửa hàng = % này của giá gốc'},
  {khoa:'phi_cho',gia_tri:5,ghi_chu:'% thương nhân giữ lại khi bán hộ trên chợ và khi bán nhân vật đánh thuê'},
- {khoa:'mau_goc',gia_tri:60,ghi_chu:'Máu = mau_goc + Sức khỏe × mau_moi_diem'},
+ {khoa:'mau_goc',gia_tri:60,ghi_chu:'Máu = mau_goc + Sức khỏe \u00d7 mau_moi_diem'},
  {khoa:'mau_moi_diem',gia_tri:5,ghi_chu:''},
- {khoa:'mana_goc',gia_tri:40,ghi_chu:'Mana = mana_goc + Trí tuệ × mana_moi_diem'},
+ {khoa:'mana_goc',gia_tri:40,ghi_chu:'Mana = mana_goc + Trí tuệ \u00d7 mana_moi_diem'},
  {khoa:'mana_moi_diem',gia_tri:4,ghi_chu:''},
  {khoa:'hoa_sat_thuong',gia_tri:25,ghi_chu:'Sách Hỏa: % sát thương'},
  {khoa:'thuy_hoi_mana',gia_tri:3,ghi_chu:'Sách Thủy: mana mỗi giây'},
@@ -398,8 +563,8 @@ linh:[
 </script>
 <script>
 /* ================= LÕI MÁY CHỦ (dùng chung cho Apps Script và chế độ ngoại tuyến) =================
-   adapter cần có: rows(bang) · insert(bang,obj) · update(bang,obj) · mail(to,tieuDe,noiDung) · hash(chuoi) · now() · uid() · staticData() · lock(fn)
-   Bảng: tai_khoan · nhan_vat · cho */
+   adapter cần có: rows(bang) \u00b7 insert(bang,obj) \u00b7 update(bang,obj) \u00b7 mail(to,tieuDe,noiDung) \u00b7 hash(chuoi) \u00b7 now() \u00b7 uid() \u00b7 staticData() \u00b7 lock(fn)
+   Bảng: tai_khoan \u00b7 nhan_vat \u00b7 cho */
 function LH_Core(A){
   const TOKEN_DAYS=30,RESET_MIN=15;
   const fail=e=>{throw Error(e);};
@@ -449,7 +614,7 @@ function LH_Core(A){
       if(!a)fail('KHONG_THAY_EMAIL');
       const code=String(100000+Math.floor(Math.random()*900000));
       a.ma_khoi_phuc=code;a.ma_het_han=A.now()+RESET_MIN*6e4;A.update('tai_khoan',a);
-      A.mail(a.email,'Lữ Hành · Khôi phục tài khoản',`Tên đăng nhập của bạn: ${a.username}\nMã khôi phục: ${code}\nMã có hiệu lực ${RESET_MIN} phút.`);
+      A.mail(a.email,'Lữ Hành \u00b7 Khôi phục tài khoản',`Tên đăng nhập của bạn: ${a.username}\nMã khôi phục: ${code}\nMã có hiệu lực ${RESET_MIN} phút.`);
       return {sent:true,devCode:A.devMail?code:undefined,username:A.devMail?a.username:undefined};
     },
     reset(p){
@@ -570,14 +735,14 @@ const Net={
     return r;
   }
 };
-const NET_ERR={PHIEN_HET_HAN:'Phiên đăng nhập hết hạn, hãy đăng nhập lại',TEN_DANG_NHAP_SAI:'Tên đăng nhập 3–20 ký tự: chữ thường, số, dấu _',EMAIL_SAI:'Email không hợp lệ',MAT_KHAU_NGAN:'Mật khẩu tối thiểu 6 ký tự',TEN_DANG_NHAP_DA_CO:'Tên đăng nhập đã có người dùng',EMAIL_DA_CO:'Email đã được đăng ký',SAI_DANG_NHAP:'Sai tên đăng nhập hoặc mật khẩu',KHONG_THAY_EMAIL:'Không có tài khoản dùng email này',MA_SAI:'Mã khôi phục sai hoặc hết hạn',TEN_NHAN_VAT_SAI:'Tên nhân vật 2–16 ký tự, chỉ chữ và số',DIEM_SAI:'Phải chia đủ số điểm',DU_NHAN_VAT:'Tài khoản đã đủ số nhân vật',TEN_DA_CO:'Tên nhân vật đã có người dùng',KHONG_THAY_NHAN_VAT:'Không tìm thấy nhân vật',SAI_TRANG_THAI:'Nhân vật đang đi đánh thuê',GIA_SAI:'Giá không hợp lệ',LINH_KHONG_CON:'Lính này đã có người thuê',DA_BAN:'Món này đã được bán',DO_CUA_MINH:'Đây là đồ bạn ký gửi',KHONG_HUY_DUOC:'Không hủy được',DU_LIEU_QUA_LON:'Dữ liệu lưu quá lớn'};
+const NET_ERR={PHIEN_HET_HAN:'Phiên đăng nhập hết hạn, hãy đăng nhập lại',TEN_DANG_NHAP_SAI:'Tên đăng nhập 3\u201320 ký tự: chữ thường, số, dấu _',EMAIL_SAI:'Email không hợp lệ',MAT_KHAU_NGAN:'Mật khẩu tối thiểu 6 ký tự',TEN_DANG_NHAP_DA_CO:'Tên đăng nhập đã có người dùng',EMAIL_DA_CO:'Email đã được đăng ký',SAI_DANG_NHAP:'Sai tên đăng nhập hoặc mật khẩu',KHONG_THAY_EMAIL:'Không có tài khoản dùng email này',MA_SAI:'Mã khôi phục sai hoặc hết hạn',TEN_NHAN_VAT_SAI:'Tên nhân vật 2\u201316 ký tự, chỉ chữ và số',DIEM_SAI:'Phải chia đủ số điểm',DU_NHAN_VAT:'Tài khoản đã đủ số nhân vật',TEN_DA_CO:'Tên nhân vật đã có người dùng',KHONG_THAY_NHAN_VAT:'Không tìm thấy nhân vật',SAI_TRANG_THAI:'Nhân vật đang đi đánh thuê',GIA_SAI:'Giá không hợp lệ',LINH_KHONG_CON:'Lính này đã có người thuê',DA_BAN:'Món này đã được bán',DO_CUA_MINH:'Đây là đồ bạn ký gửi',KHONG_HUY_DUOC:'Không hủy được',DU_LIEU_QUA_LON:'Dữ liệu lưu quá lớn'};
 const netMsg=e=>NET_ERR[e&&e.message]||(e&&e.message==='Failed to fetch'?'Không kết nối được máy chủ':'Lỗi: '+(e&&e.message||e));
 </script>
 <script>
 /* ================= THẾ GIỚI: làng Việt xưa ================= */
 const World=(()=>{
   const T=48,W=60,H=32;
-  // 0 cỏ · 1 vật cản · 2 nước · 3 cầu · 4 đường đất · 5 đồng cỏ khô (bờ đông) · 6 ruộng lúa
+  // 0 cỏ \u00b7 1 vật cản \u00b7 2 nước \u00b7 3 cầu \u00b7 4 đường đất \u00b7 5 đồng cỏ khô (bờ đông) \u00b7 6 ruộng lúa
   const grid=Array.from({length:H},()=>Array(W).fill(0)),objects=[];
   const riverX=y=>30+Math.round(Math.sin(y*.28)*1.3);
   const ROAD={y0:15,y1:16,x0:5,x1:42},BRIDGE={x0:28,x1:35};
@@ -590,7 +755,7 @@ const World=(()=>{
     {x:20,y:20,w:4,h:4,style:'barn'}
   ];
   const monsterSpawns=[{type:'chua-son-lam',x:51,y:5},{type:'ngu-tinh',x:44,y:28},{type:'deer',x:43,y:8},{type:'deer',x:47,y:24},{type:'lion',x:50,y:12},{type:'elephant',x:52,y:21},{type:'croc',x:35,y:7},{type:'croc',x:35,y:25}];
-  // Giếng cổ ở vùng săn (mỗi bản đồ 2–3 giếng): chạm/nói chuyện để hồi đầy máu, dùng xong cạn nước một lúc
+  // Giếng cổ ở vùng săn (mỗi bản đồ 2\u20133 giếng): chạm/nói chuyện để hồi đầy máu, dùng xong cạn nước một lúc
   const WELLS=[{id:'gieng-1',x:39,y:9},{id:'gieng-2',x:48,y:18},{id:'gieng-3',x:54,y:26}];
   const spurs=[[9,10,9,14],[15,15,9,14],[21,22,10,14],[9,10,17,18],[15,16,17,19],[21,22,17,19]];
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){
@@ -617,9 +782,9 @@ const World=(()=>{
   const wells=WELLS.map(w=>{grid[w.y][w.x]=1;const o={kind:'well',ancient:true,id:w.id,x:(w.x+.5)*T,y:(w.y+.7)*T};objects.push(o);return o;});
   const npcs=[
     {id:'elder',role:'elder',panel:'quests',name:'Lý trưởng',x:9*T,y:11.4*T,x0:8.4*T,x1:13.2*T,lines:['Chào lữ khách. Thanh Mộc là nơi bắt đầu hành trình của bạn.','Trong làng là vùng an toàn: không cưỡi thú, không dùng kỹ năng.','Làng có việc gì ta sẽ giao, xong việc có thưởng tiền và đồ.']},
-    {id:'smith',role:'smith',shop:'smith',panel:'shop',name:'Thợ rèn',x:20.4*T,y:11.7*T,lines:['Dao, kiếm, khiên, nỏ… lò rèn này có đủ.','Có hồng ngọc thì ta gia cường đồ cho, càng lên cao càng dễ vỡ.']},
+    {id:'smith',role:'smith',shop:'smith',panel:'shop',name:'Thợ rèn',x:20.4*T,y:11.7*T,lines:['Dao, kiếm, khiên, nỏ\u2026 lò rèn này có đủ.','Có hồng ngọc thì ta gia cường đồ cho, càng lên cao càng dễ vỡ.']},
     {id:'guide',role:'guide',panel:'mercs',name:'Người dẫn đường',x:27.3*T,y:14.4*T,lines:['Qua sông chỉ có cây cầu này.','Sư tử, cá sấu dữ. Voi chỉ nổi giận khi bị đánh.','Đi một mình nguy hiểm, ta có lính đánh thuê cho thuê.']},
-    {id:'trainer',role:'trainer',shop:'trainer',panel:'shop',name:'Người nuôi thú cưỡi',x:18.8*T,y:21.7*T,lines:['Ngựa, hổ, voi… con nào ở đây cũng đã thuần.','Mỗi loài có một ngón nghề riêng: ngựa đá hậu, hổ vồ mồi, voi dày xéo.']},
+    {id:'trainer',role:'trainer',shop:'trainer',panel:'shop',name:'Người nuôi thú cưỡi',x:18.8*T,y:21.7*T,lines:['Ngựa, hổ, voi\u2026 con nào ở đây cũng đã thuần.','Mỗi loài có một ngón nghề riêng: ngựa đá hậu, hổ vồ mồi, voi dày xéo.']},
     {id:'wizard',role:'wizard',shop:'wizard',panel:'shop',name:'Đạo sĩ',x:17.4*T,y:10.3*T,lines:['Ngũ hành: Hỏa, Thủy, Thổ, Kim, Mộc.','Gắn sách vào ô kỹ năng mới phát huy.']},
     {id:'merchant',role:'merchant',panel:'market',name:'Thương nhân',x:9.6*T,y:24.4*T,lines:['Ta buôn bán khắp các làng.','Đồ Hoàn hảo và đồ Thần, ta bán hộ cho người chơi khác.','Bán được ta giữ một ít tiền công.']}
   ];
@@ -970,7 +1135,7 @@ window.startGame=(session)=>{
     bow:{dur:.7,hit:.62,speed:640,dmg:1.1,kind:'arrow',range:520},
     crossbow:{dur:.85,hit:.22,speed:880,dmg:1.3,kind:'bolt',range:600,pierce:1}
   };
-  // 4 kỹ năng mặc định: đánh thường · combo (3 đòn) · diện rộng · liên hoàn (5 đòn + nổ)
+  // 4 kỹ năng mặc định: đánh thường \u00b7 combo (3 đòn) \u00b7 diện rộng \u00b7 liên hoàn (5 đòn + nổ)
   const SK={normal:{mul:1,dur:1,cycles:1},basic:{mul:.85,dur:.7,cycles:3},intermediate:{mul:1.15,dur:1.2,cycles:1,multi:3,nova:130},advanced:{mul:.75,dur:.55,cycles:5,nova:160,finale:2}};
   const NPC_IDS=World.npcs.map(n=>n.id);
   let width=0,height=0,scale=1,route=[],targetNPC=null,targetWell=null,dialogNPC=null,page=0,last=0,time=0,toastTimer,joystick={x:0,y:0},holdAttack=false,mouseAim=null,shakeAmp=0,manaWarnAt=-9;
@@ -1014,7 +1179,7 @@ window.startGame=(session)=>{
     const sx0=13.2*T,sy0=17.1*T,sw=4.6*T,sh=2.8*T;c.fillStyle='#b5674a';c.fillRect(sx0,sy0,sw,sh);
     c.strokeStyle='#97513a';c.lineWidth=1.5;for(let gx=sx0;gx<=sx0+sw;gx+=24){c.beginPath();c.moveTo(gx,sy0);c.lineTo(gx,sy0+sh);c.stroke();}for(let gy=sy0;gy<=sy0+sh;gy+=24){c.beginPath();c.moveTo(sx0,gy);c.lineTo(sx0+sw,gy);c.stroke();}
     c.strokeStyle='#7d4330';c.lineWidth=4;c.strokeRect(sx0,sy0,sw,sh);
-    // Cầu tre — lối duy nhất qua sông
+    // Cầu tre \u2014 lối duy nhất qua sông
     const bx0=World.BRIDGE.x0*T,bx1=(World.BRIDGE.x1+1)*T,by0=World.ROAD.y0*T,by1=(World.ROAD.y1+1)*T;
     c.fillStyle='#a68a52';c.fillRect(bx0,by0,bx1-bx0,by1-by0);
     c.strokeStyle='#7f6a3c';c.lineWidth=2;for(let x=bx0;x<=bx1;x+=7){c.beginPath();c.moveTo(x,by0);c.lineTo(x,by1);c.stroke();}
@@ -1579,9 +1744,9 @@ window.startGame=(session)=>{
     floater(m.x,m.y-M.h-6,'+'+coins+' đồng','#f3d27a',13);burst(m.x,m.y-M.h*.4,'#e9dcb4',16);
     const drop=Player.rollDrop(m.type);
     if(drop.rubies){player.rubies+=drop.rubies;floater(m.x,m.y-M.h-22,'+'+drop.rubies+' hồng ngọc','#ff7aa0',14);}
-    drop.items.forEach((it,i)=>{const R=Player.rar(it),nm=Player.nameOf(it);try{Player.addItem(player,it);floater(m.x,m.y-M.h-40-i*16,nm,R.color,14);message(svg('bag')+`Nhặt được <b style="color:${R.color}">${nm}</b> · ${R.name}`);}catch(e){message(svg('close')+'Túi đầy, rơi mất '+nm);}});
+    drop.items.forEach((it,i)=>{const R=Player.rar(it),nm=Player.nameOf(it);try{Player.addItem(player,it);floater(m.x,m.y-M.h-40-i*16,nm,R.color,14);message(svg('bag')+`Nhặt được <b style="color:${R.color}">${nm}</b> \u00b7 ${R.name}`);}catch(e){message(svg('close')+'Túi đầy, rơi mất '+nm);}});
     for(const qid of Player.questProgress(player,m.type)){const Q=Player.QUESTS[qid],n=player.quests.active[qid];if(n>=Q.count)message(svg('quest')+`${Q.name}: xong, về gặp Lý trưởng`);}
-    const k=player.flags.kills;if(!player.flags.hunted&&k.deer&&k.lion&&k.elephant&&k.croc){player.flags.hunted=true;player.copper+=100;message(svg('check')+'Săn đủ 4 loài · +1 bạc');}
+    const k=player.flags.kills;if(!player.flags.hunted&&k.deer&&k.lion&&k.elephant&&k.croc){player.flags.hunted=true;player.copper+=100;message(svg('check')+'Săn đủ 4 loài \u00b7 +1 bạc');}
     if(HD.fx.haste&&owner==='hero')hero.hasteUntil=time+4;
     if(M.boss){shake(10);message(svg('check')+'Đã hạ '+M.name);nextSave=Math.min(nextSave,time+2);}
     window.GameUI?.refresh();
@@ -1606,7 +1771,7 @@ window.startGame=(session)=>{
     if(hero.mountAct&&time<hero.mountAct.start+hero.mountAct.dur)return false;
     if(id!=='mount'&&hero.attack&&time<hero.attack.start+hero.attack.dur*(hero.attack.cycles>1?.97:.82))return false;
     const r=Player.cast(player,id,Date.now(),HD);
-    if(!r.ok){if(r.error==='MANA'&&(!quiet||time-manaWarnAt>4)){manaWarnAt=time;message(svg('orb')+'Hết mana'+(HD.tot.mpReg?'':' · cần Sách Thủy hoặc đồ hồi mana'));}return false;}
+    if(!r.ok){if(r.error==='MANA'&&(!quiet||time-manaWarnAt>4)){manaWarnAt=time;message(svg('orb')+'Hết mana'+(HD.tot.mpReg?'':' \u00b7 cần Sách Thủy hoặc đồ hồi mana'));}return false;}
     const st=r.stance,aim=chooseAim(st,ATK[st.type]);
     hero.aim=aim;if(Math.abs(aim.x)>.12)hero.facing=aim.x<0?-1:1;
     if(id==='mount'){
@@ -1617,7 +1782,7 @@ window.startGame=(session)=>{
     if(st.dual)hero.swing^=1;
     const d=ATK[st.type],sk=SK[id];
     hero.attack={type:st.type,skill:id,start:time,dur:d.dur*sk.dur*sk.cycles/atkFactor(),cycles:sk.cycles,hitIdx:0,hit:d.hit,stance:st,elem:Player.element(player),empowered:r.empowered,hand:st.dual&&hero.swing?'left':'right',aim:{...aim}};
-    if(r.empowered)floater(hero.x,hero.y-78-seatH(),'★ Nội tại','#f5d765',16);
+    if(r.empowered)floater(hero.x,hero.y-78-seatH(),'\u2605 Nội tại','#f5d765',16);
     if(SKILL_NAMES[id])floater(hero.x,hero.y-86-seatH(),SKILL_NAMES[id],'#ffe0a0',13);
     window.GameUI?.refresh();return true;
   }
@@ -1652,7 +1817,7 @@ window.startGame=(session)=>{
   }
   function die(){
     if(HD.fx.revive&&time>=hero.reviveAt){player.hp=Math.round(HD.tot.hp*HD.fx.revive/100);hero.reviveAt=time+300;hero.invuln=time+2;message(svg('heart')+'Hồi sinh tại chỗ');burst(hero.x,hero.y-24,'#ffe0f0',30,200);return;}
-    player.hp=0;hero.dead=time+2.2;hero.attack=null;hero.mountAct=null;route=[];message(svg('heart')+'Bạn đã gục · về làng');
+    player.hp=0;hero.dead=time+2.2;hero.attack=null;hero.mountAct=null;route=[];message(svg('heart')+'Bạn đã gục \u00b7 về làng');
   }
   function respawn(){hero.dead=0;hero.mountAct=null;refreshHD();player.hp=HD.tot.hp;player.mana=HD.tot.mp;Object.assign(hero,World.spawn);hero.invuln=time+2;hero.attack=null;monsters.forEach(m=>{m.aggro=-9;m.atk=null;});resize();}
   /* ---------- Lính đánh thuê đi theo ---------- */
@@ -1690,7 +1855,7 @@ window.startGame=(session)=>{
     if(Math.random()*100<S.dodge){floater(e.x,e.y-60,'Né','#cfe8ff',13);return;}
     let d=dmg*100/(100+S.def*4)*(1-S.dmgRed/100);if(Math.random()*100<S.block)d*=.2;d=Math.max(1,Math.round(d));
     e.hp-=d;e.hurt=time;floater(e.x,e.y-60,'-'+d,'#ffb0a0',13);
-    if(e.hp<=0){e.hp=0;e.dead=time+20;e.attack=null;message(svg('user')+e.name+' bất tỉnh · 20 giây sau quay lại');}
+    if(e.hp<=0){e.hp=0;e.dead=time+20;e.attack=null;message(svg('user')+e.name+' bất tỉnh \u00b7 20 giây sau quay lại');}
   }
   /* ---------- Quái vật và trùm ---------- */
   function pickTarget(m){
@@ -1774,11 +1939,11 @@ window.startGame=(session)=>{
   function useWell(o){
     route=[];targetWell=null;targetNPC=null;if(hero.dead)return;
     const left=(player.flags.wells[o.id]||0)-Date.now();
-    if(left>0){const s=Math.ceil(left/1000);message(svg('water')+`Giếng cạn · nước về sau ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`);return;}
+    if(left>0){const s=Math.ceil(left/1000);message(svg('water')+`Giếng cạn \u00b7 nước về sau ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`);return;}
     const S=HD.tot,gain=Math.max(0,Math.round(S.hp-player.hp));player.hp=S.hp;
     player.flags.wells[o.id]=Date.now()+(Number(Player.CFG.gieng_hoi_giay)||300)*1000;
     hero.facing=o.x<hero.x?-1:1;floater(hero.x,hero.y-70-seatH(),'+'+gain,'#7fe0b0',16);burst(o.x,o.y-30,'#9fdcff',26,170);burst(hero.x,hero.y-30,'#9fe8a8',16,120);
-    message(svg('heart')+'Uống nước giếng cổ · hồi đầy máu');nextSave=Math.min(nextSave,time+2);window.GameUI?.refresh();
+    message(svg('heart')+'Uống nước giếng cổ \u00b7 hồi đầy máu');nextSave=Math.min(nextSave,time+2);window.GameUI?.refresh();
   }
   function interact(){if(!overlayEl.hidden)return;if(dialogNPC){nextLine();return;}const n=nearby();if(n){meet(n);return;}const w=nearWell();if(w)useWell(w);}
   function endDialog(){if(!dialogNPC)return;seen.add(dialogNPC.id);dialogNPC=null;dialogEl.hidden=true;window.GameUI?.refresh();canvas.focus();}
@@ -1837,7 +2002,7 @@ window.startGame=(session)=>{
     }
     if(route.length&&!hero.moving&&len>.1){route=[];targetNPC=null;}
     const desiredX=clamp(hero.x-width/scale/2,0,Math.max(0,W*T-width/scale)),desiredY=clamp(hero.y-height/scale/2,0,Math.max(0,H*T-height/scale));camera.x+=(desiredX-camera.x)*(1-Math.exp(-dt*8));camera.y+=(desiredY-camera.y)*(1-Math.exp(-dt*8));
-    if(!player.flags.river&&hero.x>(World.BRIDGE.x1+1)*T){player.flags.river=true;message(svg('bridge')+'Đã qua cầu · Đông Ngạn');window.GameUI?.refresh();}
+    if(!player.flags.river&&hero.x>(World.BRIDGE.x1+1)*T){player.flags.river=true;message(svg('bridge')+'Đã qua cầu \u00b7 Đông Ngạn');window.GameUI?.refresh();}
   }
   function drawFX(){
     for(const pr of projectiles){
@@ -1956,7 +2121,7 @@ window.startUI=(session)=>{
     const d=info(it),s=Player.stat(it),o=[];
     if(s.atk)o.push(chip('sword','Công +'+s.atk));
     if(s.def)o.push(chip('shield','Thủ +'+s.def));
-    if(s.speed)o.push(chip('speed','Tốc ×'+s.speed));
+    if(s.speed)o.push(chip('speed','Tốc \u00d7'+s.speed));
     if(d.element)o.push(chip(EL[d.element].icon,elInfo(d.element),EL[d.element].color));
     if(d.grip==='two')o.push(chip('hand2','Hai tay'));
     if(d.beast)o.push(chip('spark',Player.BEASTS[d.beast].skill,'#ffe0a0'));
@@ -1970,14 +2135,14 @@ window.startUI=(session)=>{
     if(d.slot==='book')return 'Gắn vào ô kỹ năng để nhận hiệu ứng, cùng hệ không cộng dồn.';
     if(!d.slot)return 'Nguyên liệu, mang bán cho thợ rèn.';
     let t;
-    if(d.slot==='mount')t=`Thú cưỡi · phím 4: ${Player.BEASTS[d.beast].skill} · cần ${d.cmd} Mệnh lệnh`;
-    else if(d.slot==='hand'){const k=KIND_NAMES[d.kind];t=d.grip==='two'?k+' · cầm hai tay'+(d.kind==='crossbow'?' · bắn theo hướng chạy':''):k+' · một tay';}
+    if(d.slot==='mount')t=`Thú cưỡi \u00b7 phím 4: ${Player.BEASTS[d.beast].skill} \u00b7 cần ${d.cmd} Mệnh lệnh`;
+    else if(d.slot==='hand'){const k=KIND_NAMES[d.kind];t=d.grip==='two'?k+' \u00b7 cầm hai tay'+(d.kind==='crossbow'?' \u00b7 bắn theo hướng chạy':''):k+' \u00b7 một tay';}
     else t=SLOT_NAMES[d.slot];
-    return t+` · gia cường: ${gainText(d)}/cấp`;
+    return t+` \u00b7 gia cường: ${gainText(d)}/cấp`;
   }
   function itemInfo(it){
-    const d=info(it),R=Player.rar(it);let h=`<div class="sel-info"><b class="sel-name" style="color:${R.color}">${esc(Player.nameOf(it))}</b><small class="qtag" style="color:${R.color}">${R.name}${R.trade?' · bán được qua thương nhân':''}</small>${chips(it)}<small class="sel-desc">${desc(it)}</small>`;
-    if(d.set){const S=Player.SETS[d.set],n=Player.derive(p).sets.find(x=>x.id===d.set);h+=`<small class="set-desc"><b>Bộ ${esc(S.name)} · ${esc(S.hero)}</b> (${n?n.n:0}/9) · ${d.gender==='f'?'nhân vật nữ':'nhân vật nam'}<br>${[3,5,7].map(t=>`<span class="${n&&n.n>=t?'on':''}">${t} món: ${Object.entries(S.tiers[t]).map(([k,v])=>addLine(k,v)).join(', ')}</span>`).join('<br>')}<br><span class="${n&&n.n>=9?'on':''}">9 món: ${esc(S.fxText)}</span></small>`;}
+    const d=info(it),R=Player.rar(it);let h=`<div class="sel-info"><b class="sel-name" style="color:${R.color}">${esc(Player.nameOf(it))}</b><small class="qtag" style="color:${R.color}">${R.name}${R.trade?' \u00b7 bán được qua thương nhân':''}</small>${chips(it)}<small class="sel-desc">${desc(it)}</small>`;
+    if(d.set){const S=Player.SETS[d.set],n=Player.derive(p).sets.find(x=>x.id===d.set);h+=`<small class="set-desc"><b>Bộ ${esc(S.name)} \u00b7 ${esc(S.hero)}</b> (${n?n.n:0}/9) \u00b7 ${d.gender==='f'?'nhân vật nữ':'nhân vật nam'}<br>${[3,5,7].map(t=>`<span class="${n&&n.n>=t?'on':''}">${t} món: ${Object.entries(S.tiers[t]).map(([k,v])=>addLine(k,v)).join(', ')}</span>`).join('<br>')}<br><span class="${n&&n.n>=9?'on':''}">9 món: ${esc(S.fxText)}</span></small>`;}
     if(d.fxText&&!d.set)h+=`<small class="set-desc"><b>${Player.FX_NAMES[d.fx]||''}</b>: ${esc(d.fxText)}</small>`;
     return h+'</div>';
   }
@@ -1997,7 +2162,7 @@ window.startUI=(session)=>{
     $('#playerName').textContent=p.name;$('#levelBadge').textContent='Lv. '+p.level;
     $('#hpFill').style.width=(p.hp/S.hp*100)+'%';$('#hpText').textContent=Math.ceil(p.hp)+' / '+S.hp;
     $('#manaFill').style.width=(p.mana/S.mp*100)+'%';$('#manaText').textContent=Math.floor(p.mana)+' / '+S.mp;
-    $('#passiveFill').style.width=p.passive+'%';$('#passiveText').textContent='★ '+Math.floor(p.passive)+'%';
+    $('#passiveFill').style.width=p.passive+'%';$('#passiveText').textContent='\u2605 '+Math.floor(p.passive)+'%';
     $('#skill-normal').classList.toggle('charged',p.passive>=100);
     const east=game.hero.x>(World.BRIDGE.x1+1)*World.T;
     $('#placeName').textContent=east?'Đông Ngạn':'Thanh Mộc';$('#placeCoord').textContent=Math.floor(game.hero.x/World.T)+', '+Math.floor(game.hero.y/World.T);
@@ -2007,7 +2172,7 @@ window.startUI=(session)=>{
     const el=Player.element(p);$('#skill-normal').style.setProperty('--elem',el?EL[el].color:'#dfc480');
     const books=Object.keys(D.books),key=books.join();if(key!==lastBuffs){lastBuffs=key;$('#buffs').innerHTML=books.map(b=>`<span class="buff" style="color:${EL[b].color}" title="${EL[b].name}: ${elInfo(b)}">${svg(EL[b].icon)}</span>`).join('');}
     const md=p.equipment.mount&&info(p.equipment.mount),mb=$('#skill-mount');mb.hidden=!md||game.safe;
-    if(md&&mb.dataset.beast!==md.beast){mb.dataset.beast=md.beast;const B=Player.BEASTS[md.beast];$('#mountIcon').innerHTML=`<use href="#i-${B.icon}"/>`;$('#mountName').textContent=B.skill;mb.title='4 · '+B.skill+' · 12 mana';}
+    if(md&&mb.dataset.beast!==md.beast){mb.dataset.beast=md.beast;const B=Player.BEASTS[md.beast];$('#mountIcon').innerHTML=`<use href="#i-${B.icon}"/>`;$('#mountName').textContent=B.skill;mb.title='4 \u00b7 '+B.skill+' \u00b7 12 mana';}
     document.querySelectorAll('.skill-wheel .skill:not(.normal)').forEach(b=>b.classList.toggle('locked',game.safe));
     if(lastGender!==p.gender){lastGender=p.gender;$('#pfHair').style.display=p.gender==='f'?'':'none';$('#pfYem').style.display=p.gender==='f'?'':'none';}
   }
@@ -2023,7 +2188,7 @@ window.startUI=(session)=>{
     const sets=D.sets.map(x=>{const S2=Player.SETS[x.id];return chip('quest',`Bộ ${S2.name} ${x.n}/9`,Player.RAR.l.color);}).join('');
     const fxs=Object.entries(D.fx).map(([k,v])=>chip('spark',Player.FX_NAMES[k]+' '+v,Player.RAR.m.color)).join('');
     const books=Object.keys(D.books).map(b=>chip(EL[b].icon,EL[b].name+': '+elInfo(b),EL[b].color)).join('');
-    openModal(ttl('user','Thuộc tính'),`<div class="attr-head"><b>${esc(p.name)}</b><small>${p.gender==='f'?'Nữ':'Nam'} · Lv. ${p.level}</small></div><div class="attr-list">${rows}</div>${sets||fxs||books?`<span class="chips" style="justify-content:flex-start;margin-top:8px">${sets}${fxs}${books}</span>`:''}`);
+    openModal(ttl('user','Thuộc tính'),`<div class="attr-head"><b>${esc(p.name)}</b><small>${p.gender==='f'?'Nữ':'Nam'} \u00b7 Lv. ${p.level}</small></div><div class="attr-list">${rows}</div>${sets||fxs||books?`<span class="chips" style="justify-content:flex-start;margin-top:8px">${sets}${fxs}${books}</span>`:''}`);
   }
   function previewElem(){const sel=selected!==null?p.bag[selected]:null;if(info(sel)&&info(sel).element)return info(sel).element;const f=skillFocus!==null?p.skillSlots[skillFocus]:null;if(info(f)&&info(f).element)return info(f).element;return Player.element(p);}
   const slotHtml=(who,slot,canFn)=>{
@@ -2041,12 +2206,12 @@ window.startUI=(session)=>{
     let bar='';
     if(sel){
       bar=`<span class="big" style="color:${tintOf(sel)||'#e4cc8d'}">${icon(sel.type)}</span>${itemInfo(sel)}`+(sd.slot==='book'?`<button class="primary" data-act="book">${svg('book')}Gắn sách</button>`:'')+`<button data-act="clear">${svg('close')}Bỏ chọn</button>`;
-      if(tg.length)bar=bar.replace('</small></div>',' · chạm ô sáng để mặc</small></div>');
+      if(tg.length)bar=bar.replace('</small></div>',' \u00b7 chạm ô sáng để mặc</small></div>');
     }else if(skillFocus!==null&&p.skillSlots[skillFocus]){
       const it=p.skillSlots[skillFocus],on=p.activeBook===skillFocus;
-      bar=`<span class="big" style="color:${tintOf(it)}">${svg(EL[info(it).element].icon)}</span><div class="sel-info"><b class="sel-name">${esc(info(it).name)}</b>${chips(it)}<small class="sel-desc">Đang gắn · hào quang ${on?'bật':'tắt'}</small></div><button class="primary" data-act="toggle">${svg('eye')}${on?'Tắt':'Bật'} hào quang</button><button data-act="remove">${svg('out')}Tháo</button><button data-act="clear">${svg('close')}Bỏ chọn</button>`;
+      bar=`<span class="big" style="color:${tintOf(it)}">${svg(EL[info(it).element].icon)}</span><div class="sel-info"><b class="sel-name">${esc(info(it).name)}</b>${chips(it)}<small class="sel-desc">Đang gắn \u00b7 hào quang ${on?'bật':'tắt'}</small></div><button class="primary" data-act="toggle">${svg('eye')}${on?'Tắt':'Bật'} hào quang</button><button data-act="remove">${svg('out')}Tháo</button><button data-act="clear">${svg('close')}Bỏ chọn</button>`;
     }
-    openModal(ttl('bag','Túi đồ'),`<div class="bag-layout"><section><div class="equip-head"><canvas id="preview"></canvas><div><span class="chips" style="justify-content:flex-start">${chip(st.type,KIND_NAMES[st.type]+(st.dual?' đôi':''))}${chip('sword',`Sát thương ${D.tot.dmgMin}–${D.tot.dmgMax}`)}${chip('shield','Phòng ngự '+D.tot.def)}</span>${D.sets.length?`<span class="chips" style="justify-content:flex-start;margin-top:4px">${D.sets.map(x=>chip('quest',`${Player.SETS[x.id].hero} ${x.n}/9`,Player.RAR.l.color)).join('')}</span>`:''}</div></div><div class="equip-grid">${equip}</div><div class="gap"></div><div class="skill-grid">${skillSlots}</div></section><section><div class="bag-grid">${bagHtml()}</div><div class="money"><span class="coin gold"><i></i>${money.gold}</span><span class="coin silver"><i></i>${money.silver}</span><span class="coin"><i></i>${money.copper}</span>${ruby(p.rubies)}</div></section></div>${bar?`<div class="sel-bar">${bar}</div>`:''}`,true);
+    openModal(ttl('bag','Túi đồ'),`<div class="bag-layout"><section><div class="equip-head"><canvas id="preview"></canvas><div><span class="chips" style="justify-content:flex-start">${chip(st.type,KIND_NAMES[st.type]+(st.dual?' đôi':''))}${chip('sword',`Sát thương ${D.tot.dmgMin}\u2013${D.tot.dmgMax}`)}${chip('shield','Phòng ngự '+D.tot.def)}</span>${D.sets.length?`<span class="chips" style="justify-content:flex-start;margin-top:4px">${D.sets.map(x=>chip('quest',`${Player.SETS[x.id].hero} ${x.n}/9`,Player.RAR.l.color)).join('')}</span>`:''}</div></div><div class="equip-grid">${equip}</div><div class="gap"></div><div class="skill-grid">${skillSlots}</div></section><section><div class="bag-grid">${bagHtml()}</div><div class="money"><span class="coin gold"><i></i>${money.gold}</span><span class="coin silver"><i></i>${money.silver}</span><span class="coin"><i></i>${money.copper}</span>${ruby(p.rubies)}</div></section></div>${bar?`<div class="sel-bar">${bar}</div>`:''}`,true);
     const act=fn=>{try{fn();game.refreshHD();refresh();renderBag();}catch(err){fail(err);}};
     document.querySelectorAll('[data-bag]').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.bag);skillFocus=null;if(!p.bag[i]||selected===i){selected=null;}else{selected=i;if(info(p.bag[i]).element)burstAt=game.now();}renderBag();});
     document.querySelectorAll('[data-slot]').forEach(btn=>btn.onclick=()=>act(()=>{
@@ -2083,8 +2248,8 @@ window.startUI=(session)=>{
     const tiles=list.map(r=>`<button class="mini${r===cur?' sel':''}" data-enh="${r.where}:${r.key}" title="${esc(Player.nameOf(r.it))}" style="${Player.qOf(r.it)!=='n'?`border-color:${qColor(r.it)}`:''}"><span style="color:${tintOf(r.it)||'#e4cc8d'}">${icon(r.it.type)}</span>${lvb(r.it)}${r.where==='eq'?'<small class="worn">Đang dùng</small>':''}</button>`).join('');
     return `<div class="enh"><div class="enh-list">${tiles}</div><div class="enh-box"><div class="enh-top"><span class="big" style="color:${tintOf(it)||'#e4cc8d'}">${icon(it.type)}</span><div><b class="sel-name" style="color:${qColor(it)}">${esc(Player.nameOf(it))}</b>${chips(it)}</div></div>
       ${max?'':`<div class="enh-next">${svg('next')}<b>+${lv+1}</b>${chips({...next,add:{}})}</div>`}
-      <div class="enh-rows"><div><small>Tỉ lệ</small><b>${max?'—':Math.round(rate*100)+'%'}</b></div><div><small>Phí</small><b>${max?'—':ruby(cost)}</b></div><div><small>Hồng ngọc</small><b>${ruby(p.rubies)}</b></div></div>
-      <small class="sel-desc">${RATE_NOTE(lv)} · Mỗi cấp: ${gainText(info(it))}</small>
+      <div class="enh-rows"><div><small>Tỉ lệ</small><b>${max?'\u2014':Math.round(rate*100)+'%'}</b></div><div><small>Phí</small><b>${max?'\u2014':ruby(cost)}</b></div><div><small>Hồng ngọc</small><b>${ruby(p.rubies)}</b></div></div>
+      <small class="sel-desc">${RATE_NOTE(lv)} \u00b7 Mỗi cấp: ${gainText(info(it))}</small>
       <button id="enhGo" class="primary big-btn"${max?' disabled':''}>${svg('anvil')}Gia cường</button></div></div>`;
   }
   function showShop(id,tab='buy'){
@@ -2100,37 +2265,37 @@ window.startUI=(session)=>{
     else if(tab==='sell'){const t=p.bag.map((it,i)=>it?tile(`data-sell="${i}"`,it.type,it,Player.sellPrice(it),'coin','Bán',false,shopSel===String(i)):'').join('');body=`<div class="shop-grid">${t||`<div class="shop-empty">${svg('bag')}<span>Túi trống</span></div>`}</div>`;}
     else body=enhHtml();
     const tabs=[['buy',META.icon,'Mua'],['sell','coin','Bán'],...(META.enh?[['enh','anvil','Gia cường']]:[])];
-    openModal(`<div class="shop-tabs">${tabs.map(([k,ic,tx])=>`<button data-tab="${k}" class="${tab===k?'on':''}">${svg(ic)}${tx}</button>`).join('')}</div><div class="purse">${coins(p.copper)}${ruby(p.rubies)}</div>`,`<div class="shop-sub">${svg(META.icon)}${META.title}${tab==='enh'?'':' · chạm 2 lần để '+(tab==='buy'?'mua':'bán')}</div>${body}`,true);
+    openModal(`<div class="shop-tabs">${tabs.map(([k,ic,tx])=>`<button data-tab="${k}" class="${tab===k?'on':''}">${svg(ic)}${tx}</button>`).join('')}</div><div class="purse">${coins(p.copper)}${ruby(p.rubies)}</div>`,`<div class="shop-sub">${svg(META.icon)}${META.title}${tab==='enh'?'':' \u00b7 chạm 2 lần để '+(tab==='buy'?'mua':'bán')}</div>${body}`,true);
     document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{shopSel=null;showShop(id,b.dataset.tab);});
     document.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{shopQ=b.dataset.q;shopSel=null;showShop(id,'buy');});
     document.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{const type=b.dataset.buy;if(shopSel!==type){shopSel=type;showShop(id,'buy');return;}try{const i=Player.buy(p,type,shopQ),it=p.bag[i];game.message(svg('check')+`Đã mua <b style="color:${qColor(it)}">${esc(Player.nameOf(it))}</b>`);shopSel=null;refresh();showShop(id,'buy');}catch(err){fail(err);}});
     document.querySelectorAll('[data-sell]').forEach(b=>b.onclick=()=>{const i=b.dataset.sell;if(shopSel!==i){shopSel=i;showShop(id,'sell');return;}try{const name=Player.nameOf(p.bag[Number(i)]),v=Player.sell(p,Number(i));game.message(svg('coin')+'Đã bán '+esc(name)+' +'+v+' đồng');shopSel=null;refresh();showShop(id,'sell');}catch(err){fail(err);}});
     document.querySelectorAll('[data-enh]').forEach(b=>b.onclick=()=>{const [w,k]=b.dataset.enh.split(':');enhSel={where:w,key:w==='bag'?Number(k):k};showShop(id,'enh');});
-    const go=$('#enhGo');if(go)go.onclick=()=>{try{const r=Player.enhance(p,enhSel),it=enhSel.where==='bag'?p.bag[enhSel.key]:p.equipment[enhSel.key],name=info(it).name;game.enhanceFx(r.ok);game.message(r.ok?svg('check')+`Thành công! ${esc(name)} +${r.to}`:svg('close')+`Thất bại… ${esc(name)} về +${r.to}`);game.refreshHD();refresh();showShop(id,'enh');}catch(err){fail(err);}};
+    const go=$('#enhGo');if(go)go.onclick=()=>{try{const r=Player.enhance(p,enhSel),it=enhSel.where==='bag'?p.bag[enhSel.key]:p.equipment[enhSel.key],name=info(it).name;game.enhanceFx(r.ok);game.message(r.ok?svg('check')+`Thành công! ${esc(name)} +${r.to}`:svg('close')+`Thất bại\u2026 ${esc(name)} về +${r.to}`);game.refreshHD();refresh();showShop(id,'enh');}catch(err){fail(err);}};
   }
   /* ---------- Lý trưởng: bảng nhiệm vụ ---------- */
-  function rewardChips(Q){const o=[];if(Q.copper)o.push(`<i class="ch">${coins(Q.copper)}</i>`);if(Q.rubies)o.push(`<i class="ch">${ruby(Q.rubies)}</i>`);if(Q.item&&Player.items[Q.item]){const it={type:Q.item,q:Q.itemQ};o.push(`<i class="ch" style="color:${qColor(it)}">${icon(Q.item)}${esc(Player.items[Q.item].name)} · ${Player.RAR[Q.itemQ||'n'].name}</i>`);}return o.join('');}
+  function rewardChips(Q){const o=[];if(Q.copper)o.push(`<i class="ch">${coins(Q.copper)}</i>`);if(Q.rubies)o.push(`<i class="ch">${ruby(Q.rubies)}</i>`);if(Q.item&&Player.items[Q.item]){const it={type:Q.item,q:Q.itemQ};o.push(`<i class="ch" style="color:${qColor(it)}">${icon(Q.item)}${esc(Player.items[Q.item].name)} \u00b7 ${Player.RAR[Q.itemQ||'n'].name}</i>`);}return o.join('');}
   function showQuestBoard(){
     const rows=Object.values(Player.QUESTS).map(Q=>{
       const n=p.quests.active[Q.id],done=p.quests.done[Q.id]||0,M=Player.MON[Q.target],act=n!=null,ready=act&&n>=Q.count;
       const btn=ready?`<button class="primary" data-turnin="${Q.id}">${svg('check')}Trả việc</button>`:act?`<span class="qprog">${n}/${Q.count}</span>`:(!Q.repeat&&done)?`<span class="qprog">Đã xong</span>`:`<button data-accept="${Q.id}">${svg('next')}Nhận</button>`;
-      return `<div class="qrow${act?' act':''}">${svg(M&&['deer','lion','elephant','croc'].includes(Q.target)?Q.target:'flag')}<div><b>${esc(Q.name)}</b><small>${esc(Q.desc)} · ${M?esc(M.name):''} ×${Q.count}${done?` · đã làm ${done} lần`:''}</small><span class="chips">${rewardChips(Q)}</span></div>${btn}</div>`;
+      return `<div class="qrow${act?' act':''}">${svg(M&&['deer','lion','elephant','croc'].includes(Q.target)?Q.target:'flag')}<div><b>${esc(Q.name)}</b><small>${esc(Q.desc)} \u00b7 ${M?esc(M.name):''} \u00d7${Q.count}${done?` \u00b7 đã làm ${done} lần`:''}</small><span class="chips">${rewardChips(Q)}</span></div>${btn}</div>`;
     }).join('');
     openModal(ttl('quest','Lý trưởng giao việc'),`<small class="sel-desc">Nhận tối đa ${Player.MAX_ACTIVE_QUEST} việc cùng lúc. Xong việc quay về gặp Lý trưởng để nhận thưởng.</small><div class="quest-rows" style="margin-top:8px">${rows}</div>`,true);
     document.querySelectorAll('[data-accept]').forEach(b=>b.onclick=()=>{try{Player.questAccept(p,b.dataset.accept);refresh();showQuestBoard();}catch(e){fail(e);}});
-    document.querySelectorAll('[data-turnin]').forEach(b=>b.onclick=()=>{try{const r=Player.questTurnIn(p,b.dataset.turnin);game.message(svg('check')+'Nhận thưởng'+(r.copper?' '+coins(r.copper):'')+(r.rubies?' '+ruby(r.rubies):'')+(r.item?` · <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b>`:''));game.save();refresh();showQuestBoard();}catch(e){fail(e);}});
+    document.querySelectorAll('[data-turnin]').forEach(b=>b.onclick=()=>{try{const r=Player.questTurnIn(p,b.dataset.turnin);game.message(svg('check')+'Nhận thưởng'+(r.copper?' '+coins(r.copper):'')+(r.rubies?' '+ruby(r.rubies):'')+(r.item?` \u00b7 <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b>`:''));game.save();refresh();showQuestBoard();}catch(e){fail(e);}});
   }
   /* ---------- Người dẫn đường: lính đánh thuê ---------- */
-  const statLine=st=>`<small class="sel-desc">Sức mạnh ${st.strength} · Nhanh nhẹn ${st.agility} · Sức khỏe ${st.vitality} · Trí tuệ ${st.intelligence}</small>`;
+  const statLine=st=>`<small class="sel-desc">Sức mạnh ${st.strength} \u00b7 Nhanh nhẹn ${st.agility} \u00b7 Sức khỏe ${st.vitality} \u00b7 Trí tuệ ${st.intelligence}</small>`;
   const gearIcons=eq=>Player.slots.map(k=>eq&&eq[k]&&info(eq[k])?`<span title="${esc(Player.nameOf(eq[k]))}" style="color:${qColor(eq[k])}">${icon(eq[k].type)}</span>`:'').join('');
   let mercCache=null;
   async function showMercBoard(tab='hire'){
     const tabs=`<div class="shop-tabs"><button data-mt="hire" class="${tab==='hire'?'on':''}">${svg('user')}Thuê lính</button><button data-mt="mine" class="${tab==='mine'?'on':''}">${svg('flag')}Lính của tôi (${p.mercs.length}/${Player.MAX_MERC})</button></div><div class="purse">${coins(p.copper)}</div>`;
     let body='';
     if(tab==='hire'){
-      const npc=Object.values(Player.MERCS).map(M=>`<div class="mrow"><span class="mg">${M.gender==='f'?'Nữ':'Nam'}</span><div><b>${esc(M.name)}</b><small class="sel-desc">${esc(M.desc||'')} · cần ${M.cmd} Mệnh lệnh</small>${statLine(M.stats)}</div><button data-hire="${M.id}"${p.copper<M.price?' disabled':''}>${coins(M.price)}Thuê</button></div>`).join('');
-      let others='<small class="sel-desc">Đang tải…</small>';
-      if(mercCache)others=mercCache.length?mercCache.map(M=>`<div class="mrow pl"><span class="mg">${M.gender==='f'?'Nữ':'Nam'}</span><div><b>${esc(M.name)}</b><span class="gear">${gearIcons(M.equipment)}</span>${statLine(M.stats)}<small class="sel-desc">Nhân vật của người chơi khác. Mua xong lính thuộc về bạn mãi mãi · cần 10 Mệnh lệnh</small></div><button data-buyp="${M.id}"${p.copper<M.price?' disabled':''}>${coins(M.price)}Mua</button></div>`).join(''):'<small class="sel-desc">Chưa có người chơi nào cho thuê nhân vật.</small>';
+      const npc=Object.values(Player.MERCS).map(M=>`<div class="mrow"><span class="mg">${M.gender==='f'?'Nữ':'Nam'}</span><div><b>${esc(M.name)}</b><small class="sel-desc">${esc(M.desc||'')} \u00b7 cần ${M.cmd} Mệnh lệnh</small>${statLine(M.stats)}</div><button data-hire="${M.id}"${p.copper<M.price?' disabled':''}>${coins(M.price)}Thuê</button></div>`).join('');
+      let others='<small class="sel-desc">Đang tải\u2026</small>';
+      if(mercCache)others=mercCache.length?mercCache.map(M=>`<div class="mrow pl"><span class="mg">${M.gender==='f'?'Nữ':'Nam'}</span><div><b>${esc(M.name)}</b><span class="gear">${gearIcons(M.equipment)}</span>${statLine(M.stats)}<small class="sel-desc">Nhân vật của người chơi khác. Mua xong lính thuộc về bạn mãi mãi \u00b7 cần 10 Mệnh lệnh</small></div><button data-buyp="${M.id}"${p.copper<M.price?' disabled':''}>${coins(M.price)}Mua</button></div>`).join(''):'<small class="sel-desc">Chưa có người chơi nào cho thuê nhân vật.</small>';
       body=`<h4 class="sec">Lính trong vùng</h4>${npc}<h4 class="sec">Nhân vật người chơi cho thuê</h4>${others}`;
     }else{
       const m=mercSel!=null?p.mercs[mercSel]:null;
@@ -2161,8 +2326,8 @@ window.startUI=(session)=>{
     let body='';
     const claim=marketData&&marketData.claim?`<div class="claim">${svg('coin')}Tiền bán được đang chờ: ${coins(marketData.claim)}<button class="primary" id="mkClaim">Nhận</button></div>`:'';
     if(tab==='browse'){
-      if(!marketData)body='<small class="sel-desc">Đang tải…</small>';
-      else body=claim+(marketData.open.length?`<div class="shop-grid">${marketData.open.map(r=>{const it=Player.cleanItem(r.item);if(!it)return '';return `<button class="tile${r.mine?' mine':''}" data-mkbuy="${r.id}" title="${esc(desc(it))}" style="border-color:${qColor(it)}"><span class="ti" style="color:${tintOf(it)||'#e4cc8d'}">${icon(it.type)}</span>${lvb(it)}<b class="nm" style="color:${qColor(it)}">${esc(Player.nameOf(it))}</b>${chips(it)}<span class="price">${coins(r.price)}</span><small class="seller">${r.mine?'Của bạn · chạm để hủy':esc(r.seller||'')}</small></button>`;}).join('')}</div>`:`<div class="shop-empty">${svg('coin')}<span>Chợ chưa có hàng</span></div>`);
+      if(!marketData)body='<small class="sel-desc">Đang tải\u2026</small>';
+      else body=claim+(marketData.open.length?`<div class="shop-grid">${marketData.open.map(r=>{const it=Player.cleanItem(r.item);if(!it)return '';return `<button class="tile${r.mine?' mine':''}" data-mkbuy="${r.id}" title="${esc(desc(it))}" style="border-color:${qColor(it)}"><span class="ti" style="color:${tintOf(it)||'#e4cc8d'}">${icon(it.type)}</span>${lvb(it)}<b class="nm" style="color:${qColor(it)}">${esc(Player.nameOf(it))}</b>${chips(it)}<span class="price">${coins(r.price)}</span><small class="seller">${r.mine?'Của bạn \u00b7 chạm để hủy':esc(r.seller||'')}</small></button>`;}).join('')}</div>`:`<div class="shop-empty">${svg('coin')}<span>Chợ chưa có hàng</span></div>`);
     }else{
       const sel=mkSel!=null?p.bag[mkSel]:null;
       body=`<small class="sel-desc">Chỉ đồ ${Object.values(Player.RAR).filter(r=>r.trade).map(r=>r.name).join(', ')} được ký gửi. Thương nhân giữ lại ${(Player.CFG.phi_cho||0)}% khi bán được.</small><div class="bag-grid" style="margin-top:8px">${bagHtml(it=>Player.tradeable(it)).replaceAll('data-bag=','data-mkbag=')}</div>`+
@@ -2197,7 +2362,7 @@ window.startUI=(session)=>{
     const names={deer:'Hươu',lion:'Sư tử',elephant:'Voi',croc:'Cá sấu'};
     const hunt=Object.keys(names).map(t=>chip(t,names[t]+' '+(k[t]||0),k[t]?'#9fe8a8':'')).join('');
     const act=Object.entries(p.quests.active).map(([id,n])=>{const Q=Player.QUESTS[id];return row('quest',esc(Q.name)+` (${Math.min(n,Q.count)}/${Q.count})`,rewardChips(Q));}).join('');
-    openModal(ttl('quest','Nhiệm vụ'),`<div class="quest-rows">${act}${row('talk',`Gặp dân làng (${s.length}/${World.npcs.length})`,met)}${row('bridge','Qua cầu sang Đông Ngạn',chip(p.flags.river?'check':'next',p.flags.river?'Đã qua':'Chưa qua',p.flags.river?'#9fe8a8':''))}${row('bow','Săn mỗi loài một con · thưởng 1 bạc',hunt)}</div>`);
+    openModal(ttl('quest','Nhiệm vụ'),`<div class="quest-rows">${act}${row('talk',`Gặp dân làng (${s.length}/${World.npcs.length})`,met)}${row('bridge','Qua cầu sang Đông Ngạn',chip(p.flags.river?'check':'next',p.flags.river?'Đã qua':'Chưa qua',p.flags.river?'#9fe8a8':''))}${row('bow','Săn mỗi loài một con \u00b7 thưởng 1 bạc',hunt)}</div>`);
   }
   function openPanel(n){
     if(n.panel==='shop')return showShop(n.shop);
@@ -2232,7 +2397,7 @@ window.startUI=(session)=>{
 };
 </script>
 <script>
-/* ================= CỔNG VÀO: đăng nhập · đăng ký · quên tài khoản · chọn và tạo nhân vật ================= */
+/* ================= CỔNG VÀO: đăng nhập \u00b7 đăng ký \u00b7 quên tài khoản \u00b7 chọn và tạo nhân vật ================= */
 (()=>{
   const $=s=>document.querySelector(s),root=$('#portal'),box=$('#portalBody');
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -2242,12 +2407,12 @@ window.startUI=(session)=>{
   let msgTimer;
   const note=(t,ok)=>{const n=$('#portalMsg');n.textContent=t;n.className=ok?'ok':'';clearTimeout(msgTimer);if(t)msgTimer=setTimeout(()=>n.textContent='',6000);};
   const busy=(btn,on)=>{if(btn){btn.disabled=on;btn.classList.toggle('busy',on);}};
-  $('#netMode').textContent=Net.online?'Máy chủ: Apps Script':'Chế độ ngoại tuyến · dữ liệu lưu trên trình duyệt này';
+  $('#netMode').textContent=Net.online?'Máy chủ: Apps Script':'Chế độ ngoại tuyến \u00b7 dữ liệu lưu trên trình duyệt này';
   function auth(tab='login'){
     const tabs=[['login','Đăng nhập'],['register','Đăng ký'],['forgot','Quên tài khoản']];
     let form='';
     if(tab==='login')form=`<label>Tên đăng nhập hoặc email<input id="fUser" autocomplete="username"></label><label>Mật khẩu<input id="fPass" type="password" autocomplete="current-password"></label><button class="primary big-btn" id="fGo">Đăng nhập</button>`;
-    else if(tab==='register')form=`<label>Email<input id="fEmail" type="email" autocomplete="email"></label><label>Tên đăng nhập<input id="fUser" autocomplete="username" placeholder="3–20 ký tự: a-z, 0-9, _"></label><label>Mật khẩu<input id="fPass" type="password" autocomplete="new-password" placeholder="Tối thiểu 6 ký tự"></label><label>Nhập lại mật khẩu<input id="fPass2" type="password" autocomplete="new-password"></label><button class="primary big-btn" id="fGo">Đăng ký</button>`;
+    else if(tab==='register')form=`<label>Email<input id="fEmail" type="email" autocomplete="email"></label><label>Tên đăng nhập<input id="fUser" autocomplete="username" placeholder="3\u201320 ký tự: a-z, 0-9, _"></label><label>Mật khẩu<input id="fPass" type="password" autocomplete="new-password" placeholder="Tối thiểu 6 ký tự"></label><label>Nhập lại mật khẩu<input id="fPass2" type="password" autocomplete="new-password"></label><button class="primary big-btn" id="fGo">Đăng ký</button>`;
     else form=`<p class="hint2">Nhập email đã đăng ký. Mã khôi phục và tên đăng nhập sẽ được gửi vào email.</p><label>Email<input id="fEmail" type="email"></label><button class="big-btn" id="fSend">Gửi mã</button><label>Mã khôi phục<input id="fCode" inputmode="numeric"></label><label>Mật khẩu mới<input id="fPass" type="password" autocomplete="new-password"></label><button class="primary big-btn" id="fGo">Đặt lại mật khẩu</button>`;
     box.innerHTML=`<div class="ptabs">${tabs.map(([k,t])=>`<button data-at="${k}" class="${k===tab?'on':''}">${t}</button>`).join('')}</div><div class="pform">${form}</div>`;
     box.querySelectorAll('[data-at]').forEach(b=>b.onclick=()=>{note('');auth(b.dataset.at);});
@@ -2268,7 +2433,7 @@ window.startUI=(session)=>{
   }
   async function chars(){
     let r;try{r=await Net.call('chars');}catch(e){Net.setToken('');note(netMsg(e));return auth('login');}
-    const list=r.chars.map(c=>`<div class="pchar${c.status==='merc'?' merc':''}">${face(c.gender)}<div class="pinfo"><b>${esc(c.name)}</b><small>${c.gender==='f'?'Nữ':'Nam'} · SM ${c.stats.strength} · NN ${c.stats.agility} · SK ${c.stats.vitality} · TT ${c.stats.intelligence}</small>${c.status==='merc'?`<small class="mtag">Đang cho thuê · ${money(c.price)}</small>`:''}</div><div class="pbtns">${c.status==='merc'?`<button data-cancel="${c.id}">Hủy cho thuê</button>`:`<button class="primary" data-enter="${c.id}">Vào làng</button><button data-rent="${c.id}">Cho thuê</button>`}</div></div>`).join('');
+    const list=r.chars.map(c=>`<div class="pchar${c.status==='merc'?' merc':''}">${face(c.gender)}<div class="pinfo"><b>${esc(c.name)}</b><small>${c.gender==='f'?'Nữ':'Nam'} \u00b7 SM ${c.stats.strength} \u00b7 NN ${c.stats.agility} \u00b7 SK ${c.stats.vitality} \u00b7 TT ${c.stats.intelligence}</small>${c.status==='merc'?`<small class="mtag">Đang cho thuê \u00b7 ${money(c.price)}</small>`:''}</div><div class="pbtns">${c.status==='merc'?`<button data-cancel="${c.id}">Hủy cho thuê</button>`:`<button class="primary" data-enter="${c.id}">Vào làng</button><button data-rent="${c.id}">Cho thuê</button>`}</div></div>`).join('');
     box.innerHTML=`<div class="phead"><b>${esc(r.account.username)}</b><button id="pOut">Đăng xuất</button></div>${r.claim?`<p class="hint2 ok">Có ${money(r.claim)} tiền bán hàng đang chờ, sẽ cộng vào nhân vật khi vào làng.</p>`:''}<div class="plist">${list||'<p class="hint2">Chưa có nhân vật nào.</p>'}</div>${r.chars.length<r.max?`<button class="primary big-btn" id="pNew">Tạo nhân vật (${r.chars.length}/${r.max})</button>`:`<p class="hint2">Đã đủ ${r.max} nhân vật.</p>`}<div id="rentBox"></div>`;
     $('#pOut').onclick=async()=>{try{await Net.call('logout');}catch(e){}Net.setToken('');auth('login');};
     if($('#pNew'))$('#pNew').onclick=()=>create();
@@ -2285,9 +2450,9 @@ window.startUI=(session)=>{
     const left=()=>total-Object.values(st).reduce((a,b)=>a+b,0);
     const draw=()=>{
       box.innerHTML=`<div class="phead"><b>Tạo nhân vật</b><button id="cBack">Quay lại</button></div>
-        <div class="gpick">${['m','f'].map(g=>`<button data-g="${g}" class="${g===gender?'on':''}">${face(g)}<span>${g==='m'?'Nam · cởi trần, đóng khố':'Nữ · yếm, váy'}</span></button>`).join('')}</div>
-        <div class="spick">${STAT.map(([k,n,d])=>`<div class="srow"><div><b>${n}</b><small>${d}</small></div><button data-dec="${k}">−</button><input data-in="${k}" type="number" min="0" max="${total}" value="${st[k]}"><button data-inc="${k}">+</button></div>`).join('')}<p class="left${left()?'':' ok'}">Còn lại: <b>${left()}</b> / ${total} điểm</p></div>
-        <label>Tên nhân vật<input id="cName" maxlength="16" placeholder="2–16 ký tự"></label><button class="primary big-btn" id="cGo"${left()?' disabled':''}>Khởi tạo</button>`;
+        <div class="gpick">${['m','f'].map(g=>`<button data-g="${g}" class="${g===gender?'on':''}">${face(g)}<span>${g==='m'?'Nam \u00b7 cởi trần, đóng khố':'Nữ \u00b7 yếm, váy'}</span></button>`).join('')}</div>
+        <div class="spick">${STAT.map(([k,n,d])=>`<div class="srow"><div><b>${n}</b><small>${d}</small></div><button data-dec="${k}">\u2212</button><input data-in="${k}" type="number" min="0" max="${total}" value="${st[k]}"><button data-inc="${k}">+</button></div>`).join('')}<p class="left${left()?'':' ok'}">Còn lại: <b>${left()}</b> / ${total} điểm</p></div>
+        <label>Tên nhân vật<input id="cName" maxlength="16" placeholder="2\u201316 ký tự"></label><button class="primary big-btn" id="cGo"${left()?' disabled':''}>Khởi tạo</button>`;
       $('#cBack').onclick=()=>chars();
       box.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{gender=b.dataset.g;const n=$('#cName').value;draw();$('#cName').value=n;});
       const set=(k,v)=>{const others=total-left()-st[k];st[k]=Math.max(0,Math.min(total-others,Math.floor(v)||0));const n=$('#cName').value;draw();$('#cName').value=n;};
@@ -2303,7 +2468,7 @@ window.startUI=(session)=>{
     try{
       const r=await Net.call('load',{charId});
       const R=Player.restore(r.save,r.char,World.canStand,World.npcs.map(n=>n.id));
-      root.hidden=true;document.body.classList.add('in-game');
+      root.hidden=true;document.body.classList.add('in-game');document.getElementById('lu-hanh')?.classList.add('in-game');
       window.startGame({charId,player:R.player,pos:R.pos,seen:R.seen});
       window.startUI({charId,claim});
       if(!r.save)window.mapGame.save();
