@@ -25,7 +25,7 @@ function scope(src){
 }
 const ROOT='#lu-hanh{position:fixed;inset:0;z-index:2147483000;overflow:hidden;text-align:left;line-height:normal}\nbody:has(#lu-hanh){overflow:hidden!important}\n';
 // JS: đổi các ký hiệu không phải chữ (· – — × → ★ …) thành \uXXXX để Blogspot không biến thành &#183;
-const safe=t=>t.replace(/[^\x00-\x7f]/gu,ch=>/[\p{L}\p{M}\p{N}]/u.test(ch)?ch:ch.split('').map(c=>'\\u'+c.charCodeAt(0).toString(16).padStart(4,'0')).join(''));
+const safe=t=>t.replace(/[^\x00-\x7f]/gu,ch=>/[\p{L}\p{M}\p{N}]/u.test(ch)?ch:'\\u{'+ch.codePointAt(0).toString(16)+'}');
 const css=ROOT+scope(rd('src/style.css')),body=rd('src/body.html').replaceAll('{{VERSION}}',V),js=JS.map(f=>safe(rd('src/'+f)));
 const banner=`/*! Lữ Hành ${V} · Làng Thanh Mộc · https://github.com/vnthudao-source/lu-hanh */\n`;
 wr('dist/lu-hanh.css',banner+css);
