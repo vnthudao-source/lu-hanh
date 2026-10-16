@@ -19,7 +19,7 @@ const LH_IMG=(()=>{
     // ảnh nằm trong khung <svg class="icon"> để giữ đúng cỡ biểu tượng ở mọi chỗ
     return u?`<svg class="icon pic" viewBox="0 0 32 32" aria-hidden="true"${color?` style="color:${color}"`:''}><image href="${attr(u)}" width="32" height="32" preserveAspectRatio="xMidYMid meet" onerror="const e=document.createElementNS('http://www.w3.org/2000/svg','use');e.setAttribute('href','#i-${fb}');this.replaceWith(e)"/></svg>`:s;
   }
-  // Ảnh cho canvas (quái, NPC, túi đồ): chỉ trả về khi đã tải xong
+  // Ảnh cho canvas (quái, NPC, túi đồ, vũ khí cầm tay): chỉ trả về khi đã tải xong
   function pic(key){const p=PIC[key];return p&&p.complete&&p.naturalWidth>0?p:null;}
   // Biểu tượng giao diện: thay nội dung <symbol id="i-…"> bằng ảnh, mọi chỗ dùng biểu tượng đó tự đổi theo
   function applyIcons(){
@@ -35,7 +35,7 @@ const LH_IMG=(()=>{
   }
   function load(map){
     for(const k of Object.keys(MAP))delete MAP[k];Object.assign(MAP,map);
-    for(const [k,u] of Object.entries(MAP)){if(/^(bieu_tuong|vat_pham):/.test(k)||(PIC[k]&&PIC[k].src===u))continue;const im=new Image();im.referrerPolicy='no-referrer';im.src=u;PIC[k]=im;}
+    for(const [k,u] of Object.entries(MAP)){if(/^bieu_tuong:/.test(k)||(PIC[k]&&PIC[k].src===u))continue;const im=new Image();im.referrerPolicy='no-referrer';im.src=u;PIC[k]=im;}
     applyIcons();
   }
   // rows: [{nhom, ma, link_anh}] từ máy chủ

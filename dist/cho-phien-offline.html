@@ -1,4 +1,4 @@
-<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="game-version" content="v9.0"><title>Chợ phiên · thử ngoại tuyến</title><style>
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="game-version" content="v9.1"><title>Chợ phiên · thử ngoại tuyến</title><style>
 #cho-phien{position:fixed;inset:0;z-index:2147483000;overflow:auto;text-align:left;line-height:normal}
 body:has(#cho-phien){overflow:hidden!important}
 #cho-phien{color-scheme:dark;--ink:#efe6cf;--muted:#a8b4a7;--gold:#e3c27a;--line:#ffffff1f;--lac:#8c2f1d}
@@ -679,7 +679,7 @@ const LH_IMG=(()=>{
     // ảnh nằm trong khung <svg class="icon"> để giữ đúng cỡ biểu tượng ở mọi chỗ
     return u?`<svg class="icon pic" viewBox="0 0 32 32" aria-hidden="true"${color?` style="color:${color}"`:''}><image href="${attr(u)}" width="32" height="32" preserveAspectRatio="xMidYMid meet" onerror="const e=document.createElementNS('http://www.w3.org/2000/svg','use');e.setAttribute('href','#i-${fb}');this.replaceWith(e)"/></svg>`:s;
   }
-  // Ảnh cho canvas (quái, NPC, túi đồ): chỉ trả về khi đã tải xong
+  // Ảnh cho canvas (quái, NPC, túi đồ, vũ khí cầm tay): chỉ trả về khi đã tải xong
   function pic(key){const p=PIC[key];return p&&p.complete&&p.naturalWidth>0?p:null;}
   // Biểu tượng giao diện: thay nội dung <symbol id="i-\u{2026}"> bằng ảnh, mọi chỗ dùng biểu tượng đó tự đổi theo
   function applyIcons(){
@@ -695,7 +695,7 @@ const LH_IMG=(()=>{
   }
   function load(map){
     for(const k of Object.keys(MAP))delete MAP[k];Object.assign(MAP,map);
-    for(const [k,u] of Object.entries(MAP)){if(/^(bieu_tuong|vat_pham):/.test(k)||(PIC[k]&&PIC[k].src===u))continue;const im=new Image();im.referrerPolicy='no-referrer';im.src=u;PIC[k]=im;}
+    for(const [k,u] of Object.entries(MAP)){if(/^bieu_tuong:/.test(k)||(PIC[k]&&PIC[k].src===u))continue;const im=new Image();im.referrerPolicy='no-referrer';im.src=u;PIC[k]=im;}
     applyIcons();
   }
   // rows: [{nhom, ma, link_anh}] từ máy chủ
@@ -920,9 +920,9 @@ const Player=(()=>{
   }
   function stance(s){
     const L=s.equipment.left,R=s.equipment.right;
-    if(isTwo(R))return {type:kind(R),two:true,dual:false,shield:false,left:null,right:kind(R),tintL:null,tintR:info(R).tint||null,lvL:0,lvR:R.lv||0};
+    if(isTwo(R))return {type:kind(R),two:true,dual:false,shield:false,left:null,right:kind(R),tintL:null,tintR:info(R).tint||null,lvL:0,lvR:R.lv||0,itL:null,itR:R.type};
     const l=kind(L),r=kind(R),types=[l,r].filter(Boolean);
-    const base={two:false,left:l,right:r,tintL:L?info(L).tint||null:null,tintR:R?info(R).tint||null:null,lvL:L?L.lv||0:0,lvR:R?R.lv||0:0};
+    const base={two:false,left:l,right:r,tintL:L?info(L).tint||null:null,tintR:R?info(R).tint||null:null,lvL:L?L.lv||0:0,lvR:R?R.lv||0:0,itL:L?L.type:null,itR:R?R.type:null};
     if(!types.length)return {...base,type:'punch',dual:false,shield:false};
     const type=types.includes('sword')?'sword':types.includes('staff')?'staff':'shield';
     return {...base,type,dual:types.length===2&&l===r,shield:types.includes('shield')&&type!=='shield'};

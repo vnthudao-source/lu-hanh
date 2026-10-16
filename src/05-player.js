@@ -209,9 +209,9 @@ const Player=(()=>{
   }
   function stance(s){
     const L=s.equipment.left,R=s.equipment.right;
-    if(isTwo(R))return {type:kind(R),two:true,dual:false,shield:false,left:null,right:kind(R),tintL:null,tintR:info(R).tint||null,lvL:0,lvR:R.lv||0};
+    if(isTwo(R))return {type:kind(R),two:true,dual:false,shield:false,left:null,right:kind(R),tintL:null,tintR:info(R).tint||null,lvL:0,lvR:R.lv||0,itL:null,itR:R.type};
     const l=kind(L),r=kind(R),types=[l,r].filter(Boolean);
-    const base={two:false,left:l,right:r,tintL:L?info(L).tint||null:null,tintR:R?info(R).tint||null:null,lvL:L?L.lv||0:0,lvR:R?R.lv||0:0};
+    const base={two:false,left:l,right:r,tintL:L?info(L).tint||null:null,tintR:R?info(R).tint||null:null,lvL:L?L.lv||0:0,lvR:R?R.lv||0:0,itL:L?L.type:null,itR:R?R.type:null};
     if(!types.length)return {...base,type:'punch',dual:false,shield:false};
     const type=types.includes('sword')?'sword':types.includes('staff')?'staff':'shield';
     return {...base,type,dual:types.length===2&&l===r,shield:types.includes('shield')&&type!=='shield'};

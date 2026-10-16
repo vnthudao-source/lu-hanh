@@ -427,8 +427,16 @@ window.startGame=(session)=>{
     if(cb.bolt){c.save();glow(c,el,8);line(c,[cb.string,-1.5,16,-1.5],'#d8d0b0',2.2);c.fillStyle='#bfc6c9';c.beginPath();c.moveTo(16,-4.5);c.lineTo(22,-1.5);c.lineTo(16,1.5);c.fill();c.restore();}
     if(cb.flash){c.fillStyle='#fff3b0';c.beginPath();for(let i=0;i<8;i++){const a=i*Math.PI/4,r=i%2?4:11;c.lineTo(24+Math.cos(a)*r,Math.sin(a)*r);}c.fill();}
   }
-  function drawHeld(c,type,hp,P,el,t,role,tint){
+  // Ảnh vũ khí trong Sheet Hình ảnh (vat_pham:<mã>): vẽ ảnh thay hình mặc định. Ảnh vẽ chéo, chuôi ở góc dưới trái, mũi ở góc trên phải.
+  const PIC_LEN={sword:36,spear:62,staff:46};
+  function drawHeld(c,type,hp,P,el,t,role,tint,it){
     if(!type)return;c.save();c.translate(hp.x,hp.y);
+    const pic=it&&type!=='bow'&&type!=='crossbow'?LH_IMG.pic('vat_pham:'+it):null;
+    if(pic){
+      if(type==='shield'){const sz=P.block?26:22;c.drawImage(pic,-sz/2,-sz/2,sz,sz);}
+      else{const s=PIC_LEN[type]/1.15;c.rotate(hp.ang+Math.PI/4);if(el){c.shadowColor=EL[el].glow;c.shadowBlur=10;}c.drawImage(pic,-s*.14,-s*.86,s,s);}
+      c.restore();return;
+    }
     if(type==='shield')drawShield(c,role==='back',P.block,t,tint);
     else{c.rotate(hp.ang);if(type==='sword')drawSword(c,el,tint);else if(type==='spear')drawSpear(c,el,tint);else if(type==='staff')drawStaff(c,el,P.charge,t,tint);else if(type==='bow')drawBow(c,P.pull,P.arrow,el,tint);else if(type==='crossbow')drawCrossbow(c,P.cb,el,tint);}
     c.restore();
@@ -504,10 +512,10 @@ window.startGame=(session)=>{
     if(eq.wings)drawWings(c,t);
     const tint=s=>eq[s]&&info(eq[s]).tint;
     const sleeve=eq.armor?(tint('armor')||'#6a5a44'):SKIN,skin=eq.gloves?(tint('gloves')||'#7a6a55'):SKIN;
-    const held=(type,hp,role,tn,lv)=>{c.save();if(lv>=7){c.shadowColor=lv>=10?'#ff6a3a':'#ffd77a';c.shadowBlur=6+lv;}drawHeld(c,type,hp,P,el,t,role,tn);c.restore();};
+    const held=(type,hp,role,tn,lv,it)=>{c.save();if(lv>=7){c.shadowColor=lv>=10?'#ff6a3a':'#ffd77a';c.shadowBlur=6+lv;}drawHeld(c,type,hp,P,el,t,role,tn,it);c.restore();};
     const backTop=a&&a.hand==='left'&&a.type==='sword';
     if(fem)ell(c,-7,-31,6,11,'#2a2622'); // tóc dài sau lưng
-    if(!st.two&&!backTop)held(st.left,P.back,'back',st.tintL,st.lvL);
+    if(!st.two&&!backTop)held(st.left,P.back,'back',st.tintL,st.lvL,st.itL);
     if(!backTop)drawArm(c,SH.back.x,SH.back.y,P.back.x,P.back.y,sleeve,skin);
     const pants=eq.pants?(tint('pants')||'#4a4036'):SKIN,boot=eq.shoes?(tint('shoes')||'#5b5048'):null;
     const foot=(x,y)=>{if(boot){roundRect(c,x-3,y-2,9,5,2,boot);line(c,[x-3,y-1.5,x+6,y-1.5],shade(boot,.25),1);}else ell(c,x+1.5,y+1,4.2,2,SKIN);};
@@ -528,9 +536,9 @@ window.startGame=(session)=>{
     if(fem){ell(c,-10,-46,6.5,5.5,HAIR);line(c,[-15,-48,-4,-44],'#c9a24a',1.6);ell(c,-4,-44,1.6,1.6,'#c0392b');}
     else if(!eq.hat){ell(c,-4,-49,4.5,4,HAIR);line(c,[-7,-46.5,-1,-46.5],'#a8343a',1.8);} // búi tóc
     if(eq.hat){if(eq.hat.type==='hat')nonLa(c);else{c.fillStyle=tint('hat')||'#6b4a2e';c.beginPath();c.moveTo(-15,-40);c.lineTo(0,-52);c.lineTo(15,-40);c.closePath();c.fill();ell(c,0,-53,3,3,'#c0342a');line(c,[-15,-40,15,-40],'#3a2a1a',2);}}
-    if(st.two){held(st.right,P.front,'front',st.tintR,st.lvR);c.fillStyle=skin;c.beginPath();c.arc(P.back.x,P.back.y,3.4,0,PI2);c.fill();}
-    else held(st.right,P.front,'front',st.tintR,st.lvR);
-    if(backTop){held(st.left,P.back,'back',st.tintL,st.lvL);drawArm(c,SH.back.x,SH.back.y,P.back.x,P.back.y,sleeve,skin);}
+    if(st.two){held(st.right,P.front,'front',st.tintR,st.lvR,st.itR);c.fillStyle=skin;c.beginPath();c.arc(P.back.x,P.back.y,3.4,0,PI2);c.fill();}
+    else held(st.right,P.front,'front',st.tintR,st.lvR,st.itR);
+    if(backTop){held(st.left,P.back,'back',st.tintL,st.lvL,st.itL);drawArm(c,SH.back.x,SH.back.y,P.back.x,P.back.y,sleeve,skin);}
     drawArm(c,SH.front.x,SH.front.y,P.front.x,P.front.y,sleeve,skin);
     if(P.trail&&P.trail.to>P.trail.from){const tr=P.trail;c.save();c.globalAlpha=.5*tr.fade;c.fillStyle=el?EL[el].color:'#f4ead0';c.beginPath();c.arc(tr.cx,tr.cy,tr.r+6,tr.from,tr.to);c.arc(tr.cx,tr.cy,tr.r-14,tr.to,tr.from,true);c.closePath();c.fill();c.restore();}
     if(P.heal){c.save();c.globalAlpha=.7;c.fillStyle='#bff5c4';c.beginPath();c.arc(P.front.x,P.front.y,6,0,PI2);c.arc(P.back.x,P.back.y,6,0,PI2);c.fill();c.restore();}

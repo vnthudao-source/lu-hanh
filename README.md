@@ -70,12 +70,17 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 - Còn lệnh chưa lưu: nút menu có chấm cam. Tắt trang khi chưa lưu: lần sau vào game hoặc Chợ phiên, phần còn giữ trên máy được gửi trước khi tải nhân vật.
 - Máy chủ (`play`) tính lại từng lệnh theo thời điểm ra lệnh (không sớm hơn lần lưu trước) và cách xếp đồ lúc đó (`lay`), mỗi gói tối đa 600 lệnh, gói gửi lại do rớt mạng (`bid`) không tính hai lần.
 
+## Bản 9.1
+
+- Ảnh đồ trong file Hình ảnh (`vat_pham:<mã>`) giờ hiện cả trên tay nhân vật và lính (kiếm, thương, gậy, khiên), không chỉ trong túi đồ. Ảnh vũ khí nên vẽ chéo: chuôi ở góc dưới trái, mũi ở góc trên phải, nền trong. Cung, nỏ vẫn dùng hình vẽ của game (có động tác kéo dây).
+- Dữ liệu Sheet lưu đệm trên máy chủ tối đa 2 phút (trước là 10 phút). Muốn thấy ngay: chạy `xoaBoNhoDem` rồi tải lại trang game.
+
 ## Ra bản mới
 
 1. Sửa trong `src/` (và `VERSION`).
 2. `node tools/build.mjs`
-3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-9.1`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
-4. Trên Blogspot đổi `@ban-9.0` thành `@ban-9.1` (trang game và trang Chợ phiên).
+3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-9.2`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
+4. Trên Blogspot đổi `@ban-9.1` thành `@ban-9.2` (trang game và trang Chợ phiên).
 5. Nếu `Code.gs` đổi: dán lại vào Apps Script, Triển khai → Quản lý triển khai → Sửa → Phiên bản mới (giữ nguyên URL).
 
 ## Dữ liệu trong Sheet
