@@ -1,4 +1,4 @@
-/*! Lữ Hành v8.3 · khởi động · https://github.com/vnthudao-source/lu-hanh */
+/*! Lữ Hành v8.4 · khởi động · https://github.com/vnthudao-source/lu-hanh */
 /* ================= MÀN HÌNH CHỜ: thanh tải 0\u{2013}100%, cảnh làng + lời dẫn truyện =================
    Dùng chung cho file khởi động (tải tài nguyên trang) và game (kết nối máy chủ, tải nhân vật, dựng bản đồ). */
 window.LH_Loader=window.LH_Loader||(()=>{
@@ -16,12 +16,17 @@ window.LH_Loader=window.LH_Loader||(()=>{
 #lh-loader .lh-row b{color:#ffd98a;font-variant-numeric:tabular-nums}
 #lh-loader .lh-go{margin-top:4px;padding:10px 22px;border-radius:10px;border:1px solid #e3b86f;background:linear-gradient(#a4452c,#7c2c1b);color:#fff3d6;font-weight:700;font-size:15px;cursor:pointer}
 #lh-loader .lh-go[hidden]{display:none}`;
-  let el,fill,pctEl,lbl,story,goBtn,cv,shown=0,target=0,cap=0,raf=0,t0=0,scene=false,storyDone=Promise.resolve();
+  let el,fill,pctEl,lbl,story,goBtn,cv,bgImg=null,shown=0,target=0,cap=0,raf=0,t0=0,scene=false,storyDone=Promise.resolve();
+  // Ảnh tĩnh đã lưu từ lần vào trước (Sheet hinh_anh): logo, nền màn hình chờ
+  const pics=()=>{try{return JSON.parse(localStorage.getItem('lh-img')||'{}')||{};}catch(e){return {};}};
   function mount(){
     if(el&&document.body.contains(el))return;
     if(!document.getElementById('lh-loader-css')){const s=document.createElement('style');s.id='lh-loader-css';s.textContent=CSS;document.head.appendChild(s);}
     el=document.getElementById('lh-loader');
     if(!el){el=document.createElement('div');el.id='lh-loader';el.innerHTML='<canvas></canvas><div class="lh-in"><div class="lh-logo">L\u{1EEF} H\u{00E0}nh</div><div class="lh-sub">L\u{00E0}ng Thanh M\u{1ED9}c</div><p class="lh-story"></p><div class="lh-bar"><div class="lh-fill"></div></div><div class="lh-row"><span class="lh-lbl"></span><b class="lh-pct">0%</b></div><button class="lh-go" hidden>Ti\u{1EBF}p t\u{1EE5}c</button></div>';document.body.appendChild(el);}
+    const P=pics();
+    if(P['giao_dien:logo']){const lg=el.querySelector('.lh-logo');lg.innerHTML=`<img src="${P['giao_dien:logo'].replace(/"/g,'')}" alt="" referrerpolicy="no-referrer" style="max-width:240px;max-height:100px;object-fit:contain" onerror="this.parentNode.textContent='L\u{1EEF} H\u{00E0}nh'">`;}
+    if(P['giao_dien:nen_cho']){bgImg=new Image();bgImg.referrerPolicy='no-referrer';bgImg.src=P['giao_dien:nen_cho'];}
     fill=el.querySelector('.lh-fill');pctEl=el.querySelector('.lh-pct');lbl=el.querySelector('.lh-lbl');story=el.querySelector('.lh-story');goBtn=el.querySelector('.lh-go');cv=el.querySelector('canvas');
   }
   // Tranh làng lúc hoàng hôn: núi xa, lũy tre, nhà sàn có đèn, người cha đội nón đi trên đường đất
@@ -29,6 +34,8 @@ window.LH_Loader=window.LH_Loader||(()=>{
     const w=cv.clientWidth||innerWidth,h=cv.clientHeight||innerHeight,d=Math.min(2,devicePixelRatio||1);
     if(cv.width!==Math.round(w*d)){cv.width=Math.round(w*d);cv.height=Math.round(h*d);}
     const c=cv.getContext('2d');c.setTransform(d,0,0,d,0,0);
+    if(bgImg&&bgImg.complete&&bgImg.naturalWidth){const s=Math.max(w/bgImg.naturalWidth,h/bgImg.naturalHeight),iw=bgImg.naturalWidth*s,ih=bgImg.naturalHeight*s;c.drawImage(bgImg,(w-iw)/2,(h-ih)/2,iw,ih);
+      const v=c.createRadialGradient(w/2,h/2,Math.min(w,h)*.2,w/2,h/2,Math.max(w,h)*.75);v.addColorStop(0,'#00000022');v.addColorStop(1,'#000000aa');c.fillStyle=v;c.fillRect(0,0,w,h);return;}
     const g=c.createLinearGradient(0,0,0,h);g.addColorStop(0,'#1d2b3a');g.addColorStop(.45,'#7a4a3a');g.addColorStop(.62,'#e3a15a');g.addColorStop(.63,'#3d4a2e');g.addColorStop(1,'#141c12');c.fillStyle=g;c.fillRect(0,0,w,h);
     c.fillStyle='#ffd98a';c.globalAlpha=.85;c.beginPath();c.arc(w*.72,h*.5,Math.min(w,h)*.07,0,Math.PI*2);c.fill();c.globalAlpha=1;
     const hill=(y,amp,col,ph)=>{c.fillStyle=col;c.beginPath();c.moveTo(0,h);for(let x=0;x<=w;x+=8)c.lineTo(x,y+Math.sin(x*.006+ph)*amp+Math.sin(x*.017+ph*2)*amp*.4);c.lineTo(w,h);c.fill();};
@@ -81,7 +88,7 @@ window.LH_Loader=window.LH_Loader||(()=>{
 })();
 ;/* ================= KHỞI ĐỘNG: hiện màn hình chờ ngay, tải CSS + JS của game có đếm phần trăm ================= */
 (function(){
-  var me=document.currentScript,base=(me&&me.src||'').replace(/[^\/]*$/,''),FILES={"css":{"name":"lu-hanh.css","size":33472},"js":{"name":"lu-hanh.js","size":287317}};
+  var me=document.currentScript,base=(me&&me.src||'').replace(/[^\/]*$/,''),FILES={"css":{"name":"lu-hanh.css","size":34705},"js":{"name":"lu-hanh.js","size":298831}};
   var L=window.LH_Loader.show({label:'T\u{1EA3}i t\u{00E0}i nguy\u{00EA}n trang'});
   function plain(){var l=document.createElement('link');l.rel='stylesheet';l.href=base+FILES.css.name;document.head.appendChild(l);var s=document.createElement('script');s.src=base+FILES.js.name;s.charset='utf-8';document.head.appendChild(s);}
   async function get(f,from,to,label){

@@ -6,7 +6,7 @@
   const svg=id=>`<svg class="icon" aria-hidden="true"><use href="#i-${id}"/></svg>`;
   const qColor=it=>Player.rar(it).color;
   const tintOf=it=>{const d=info(it);return d?(d.element?Player.ELEMENTS[d.element].color:d.tint||null):null;};
-  const icon=(type,color)=>{const d=Player.items[type],id=d?(d.icon||d.kind):type;return `<svg class="icon" aria-hidden="true"${color?` style="color:${color}"`:''}><use href="#i-${id}"/></svg>`;};
+  const icon=(type,color)=>{const d=Player.items[type],id=d?(d.icon||d.kind):type;return LH_IMG.icon('vat_pham:'+type,id,color);};
   const coins=c=>{const m=Player.money(c),o=[];if(m.gold)o.push(`<span class="coin gold"><i></i>${m.gold}</span>`);if(m.silver)o.push(`<span class="coin silver"><i></i>${m.silver}</span>`);if(m.copper||!o.length)o.push(`<span class="coin"><i></i>${m.copper}</span>`);return `<span class="money">${o.join('')}</span>`;};
   const ruby=n=>`<span class="coin ruby"><i></i>${n}</span>`;
   const price=(c,r)=>(c||!r?coins(c):'')+(r?ruby(r):'');
@@ -110,7 +110,7 @@
   const g=gameUrl();if(g)$('#chBack').href=g;else $('#chBack').hidden=true;
   $('#chMode').textContent=Net.online?'Máy chủ Việt Nam':'Chế độ ngoại tuyến · dữ liệu lưu trên trình duyệt này';
   (async()=>{
-    if(Net.online){try{const d=await Net.call('data');if(d.data&&d.data.vat_pham)Player.load(d.data);}catch(e){}}
+    if(Net.online){try{const d=await Net.call('data');if(d.data&&d.data.vat_pham){Player.load(d.data);LH_IMG.set(d.data.hinh_anh);}}catch(e){}}
     if(Net.token)await boot();else login();
   })();
 })();

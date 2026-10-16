@@ -1,4 +1,4 @@
-<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="game-version" content="v8.3"><title>Chợ phiên · Lữ Hành v8.3</title><style>
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="game-version" content="v8.4"><title>Chợ phiên · Lữ Hành v8.4</title><style>
 #cho-phien{position:fixed;inset:0;z-index:2147483000;overflow:auto;text-align:left;line-height:normal}
 body:has(#cho-phien){overflow:hidden!important}
 #cho-phien{color-scheme:dark;--ink:#efe6cf;--muted:#a8b4a7;--gold:#e3c27a;--line:#ffffff1f;--lac:#8c2f1d}
@@ -112,6 +112,7 @@ body:has(#cho-phien){overflow:hidden!important}
 #cho-phien .mgear .gi{display:inline-flex;align-items:center;gap:3px;font-size:11px}
 #cho-phien .mgear .gi svg{width:16px;height:16px}
 #cho-phien .mgear .gi small{color:#d9d2bd}
+#cho-phien img.icon.pic{object-fit:contain}
 </style></head><body>
 <div id="cho-phien">
 <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true"><defs>
@@ -269,6 +270,16 @@ vat_pham:[
  ['book-fire','Sách Hỏa','book','book','',0,0,0,400,'','',0,'fire'],['book-water','Sách Thủy','book','book','',0,0,0,300,'','',0,'water'],['book-earth','Sách Thổ','book','book','',0,0,0,450,'','',0,'earth'],['book-metal','Sách Kim','book','book','',0,0,0,450,'','',0,'metal'],['book-wood','Sách Mộc','book','book','',0,0,0,300,'','',0,'wood'],
  ['book-loi','Sách Lôi','book','book','',0,0,0,900,'','',0,'thunder'],['book-phong','Sách Phong','book','book','',0,0,0,700,'','',0,'wind'],['book-bang','Sách Băng','book','book','',0,0,0,800,'','',0,'ice'],['book-ma','Sách Ma công','book','book','',0,0,0,1500,'','',0,'demon'],['book-sang','Sách Ánh sáng','book','book','',0,0,0,1000,'','',0,'light']
 ].map(([id,ten,o,loai,cam,cong,thu,toc,gia,mau,thu_cuoi,menh_lenh,he])=>({id,ten,o,loai,cam,cong,thu,toc:Math.round(toc*100),gia,mau,thu_cuoi:thu_cuoi||'',menh_lenh:menh_lenh||0,he:he||''})),
+// Loại vũ khí: sat_thuong = % sát thương; tam_danh = tầm đánh (điểm ảnh, 1 ô bản đồ = 48); lan_rong = độ rộng đòn (cận chiến: góc chém theo độ, giáo: bề ngang mũi đâm, gậy: bán kính nổ, nỏ: số quái xuyên qua thêm)
+// toc_danh_ms = thời gian một đòn (càng nhỏ càng nhanh); mana = % mana tốn khi dùng kỹ năng; hoi_chieu = % thời gian hồi kỹ năng (càng nhỏ hồi càng nhanh); noi_tai = % thanh nội tại mỗi đòn thường
+vu_khi:[
+ ['spear','Thương',130,130,26,500,110,90,14,'Sát thương cao nhất, đâm thẳng một đường'],
+ ['sword','Kiếm',115,85,115,420,90,110,10,'Đánh nhanh nhất, chém vòng cung trước mặt'],
+ ['shield','Khiên',100,60,75,560,130,70,18,'Tầm ngắn nhất, đẩy lùi mạnh. Tốn mana nhiều nhất nhưng hồi chiêu và nội tại nhanh nhất'],
+ ['crossbow','Nỏ',90,600,1,760,100,100,12,'Bắn xa, mũi tên xuyên qua quái'],
+ ['bow','Cung',80,540,0,660,120,80,16,'Bắn xa, hồi chiêu nhanh'],
+ ['staff','Gậy phép',65,680,90,900,80,120,9,'Tầm xa và rộng nhất (cầu phép nổ lan), sát thương thấp nhất, đánh chậm nhất']
+].map(([loai,ten,sat_thuong,tam_danh,lan_rong,toc_danh_ms,mana,hoi_chieu,noi_tai,ghi_chu])=>({loai,ten,sat_thuong,tam_danh,lan_rong,toc_danh_ms,mana,hoi_chieu,noi_tai,ghi_chu})),
 cua_hang:[
  ...['sword-iron','sword-steel','shield-wood','shield-iron','staff-jade','bow-hunt','spear-iron','crossbow-war','hat-iron','armor-leather','armor-iron','pants-guard','gloves-leather','shoes-leather','shoes-iron'].map((id,i)=>({cua_hang:'smith',id,pham_chat:'n,g',gia:'',thu_tu:i+1})),
  ...['mount','mount-brown','mount-black','mount-white','mount-tiger','mount-elephant'].map((id,i)=>({cua_hang:'trainer',id,pham_chat:'n',gia:'',thu_tu:i+1})),
@@ -573,6 +584,57 @@ const NET_ERR={PHIEN_HET_HAN:'Phiên đăng nhập hết hạn, hãy đăng nh�
 const netMsg=e=>NET_ERR[e&&e.message]||(e&&e.message==='Failed to fetch'?'Không kết nối được máy chủ':'Lỗi: '+(e&&e.message||e));
 </script>
 <script>
+/* ================= ẢNH TĨNH (Sheet "LH \u{b7} Hình ảnh", tab hinh_anh) =================
+   Mỗi dòng: nhom + ma + link_anh. Dán link ảnh Google Drive (chia sẻ "Bất kỳ ai có đường liên kết") hoặc link ảnh bất kỳ.
+   Ô link để trống, hoặc ảnh không tải được: dùng biểu tượng / hình vẽ mặc định của game.
+   nhom: bieu_tuong (biểu tượng giao diện) \u{b7} vat_pham (đồ dùng) \u{b7} quai (quái vật) \u{b7} npc (dân làng) \u{b7} giao_dien (logo, nền, chân dung, túi đồ rơi) */
+const LH_IMG=(()=>{
+  const KEY='lh-img',MAP={},PIC={},ORIG={};
+  // Link Drive (file/d/ID/view, open?id=ID, uc?id=ID\u{2026}) \u{2192} link ảnh xem trực tiếp
+  function direct(u){
+    u=String(u||'').trim();if(!u)return '';
+    const m=/(?:drive|docs)\.google\.com/.test(u)&&(u.match(/\/d\/([\w-]{20,})/)||u.match(/[?&]id=([\w-]{20,})/));
+    if(m)return 'https://lh3.googleusercontent.com/d/'+m[1];
+    return /^https?:\/\/\S+$/.test(u)||/^data:image\//.test(u)?u:'';
+  }
+  const url=key=>MAP[key]||'';
+  const attr=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+  // Biểu tượng HTML: ảnh nếu có, lỗi thì quay về biểu tượng mặc định
+  function icon(key,fb,color){
+    const s=`<svg class="icon" aria-hidden="true"${color?` style="color:${color}"`:''}><use href="#i-${fb}"/></svg>`,u=url(key);
+    // ảnh nằm trong khung <svg class="icon"> để giữ đúng cỡ biểu tượng ở mọi chỗ
+    return u?`<svg class="icon pic" viewBox="0 0 32 32" aria-hidden="true"${color?` style="color:${color}"`:''}><image href="${attr(u)}" width="32" height="32" preserveAspectRatio="xMidYMid meet" onerror="const e=document.createElementNS('http://www.w3.org/2000/svg','use');e.setAttribute('href','#i-${fb}');this.replaceWith(e)"/></svg>`:s;
+  }
+  // Ảnh cho canvas (quái, NPC, túi đồ): chỉ trả về khi đã tải xong
+  function pic(key){const p=PIC[key];return p&&p.complete&&p.naturalWidth>0?p:null;}
+  // Biểu tượng giao diện: thay nội dung <symbol id="i-\u{2026}"> bằng ảnh, mọi chỗ dùng biểu tượng đó tự đổi theo
+  function applyIcons(){
+    if(typeof document==='undefined')return;
+    for(const [id,html] of Object.entries(ORIG)){const s=document.getElementById('i-'+id);if(s&&!MAP['bieu_tuong:'+id]){s.innerHTML=html;delete ORIG[id];}}
+    for(const [k,u] of Object.entries(MAP)){
+      if(!k.startsWith('bieu_tuong:'))continue;const id=k.slice(11),s=document.getElementById('i-'+id);if(!s)continue;
+      if(!(id in ORIG))ORIG[id]=s.innerHTML;
+      const vb=(s.getAttribute('viewBox')||'0 0 32 32').split(/\s+/).map(Number);
+      // thử tải trước: lỗi thì giữ biểu tượng cũ
+      const im=new Image();im.referrerPolicy='no-referrer';im.onload=()=>{s.innerHTML=`<image href="${attr(u)}" x="${vb[0]}" y="${vb[1]}" width="${vb[2]}" height="${vb[3]}" preserveAspectRatio="xMidYMid meet"/>`;};im.src=u;
+    }
+  }
+  function load(map){
+    for(const k of Object.keys(MAP))delete MAP[k];Object.assign(MAP,map);
+    for(const [k,u] of Object.entries(MAP)){if(/^(bieu_tuong|vat_pham):/.test(k)||(PIC[k]&&PIC[k].src===u))continue;const im=new Image();im.referrerPolicy='no-referrer';im.src=u;PIC[k]=im;}
+    applyIcons();
+  }
+  // rows: [{nhom, ma, link_anh}] từ máy chủ
+  function set(rows){
+    const map={};for(const r of rows||[]){const u=direct(r.link_anh),k=String(r.nhom||'').trim()+':'+String(r.ma||'').trim();if(u&&k.length>2)map[k]=u;}
+    try{localStorage.setItem(KEY,JSON.stringify(map));}catch(e){}
+    load(map);
+  }
+  try{const c=JSON.parse(localStorage.getItem(KEY)||'{}');if(c&&typeof c==='object')load(c);}catch(e){}
+  return {set,url,icon,pic,direct,get map(){return {...MAP};}};
+})();
+</script>
+<script>
 /* ================= LUẬT CHƠI: chỉ số, trang bị, phẩm chất, bộ đồ, gia cường, nhiệm vụ, lính đánh thuê ================= */
 const Player=(()=>{
   const VERSION=7,BAG_SIZE=40,SKILL_SLOTS=10,MAX_LV=15,MAX_ACTIVE_QUEST=3,MAX_MERC=4;
@@ -592,13 +654,17 @@ const Player=(()=>{
   const ALIAS={'book-ice':'book-water','book-wind':'book-metal','book-thunder':'book-earth'};
   const skills={normal:{cost:0,cooldown:450},basic:{cost:10,cooldown:3000},intermediate:{cost:18,cooldown:6000},advanced:{cost:28,cooldown:10000},mount:{cost:12,cooldown:6000}};
   // Bảng sinh từ dữ liệu (Sheet)
-  const CFG={},RAR={},ADD={},items={},SHOPS={},SETS={},MON={},QUESTS={},MERCS={},ENH=[];
+  const CFG={},RAR={},ADD={},items={},SHOPS={},SETS={},MON={},QUESTS={},MERCS={},ENH=[],WEAPONS={};
+  // Loại vũ khí (tab vu_khi): sát thương, tầm đánh, độ lan, thời gian một đòn, mana kỹ năng, thời gian hồi chiêu, nội tại mỗi đòn
+  const W_DEF={punch:{name:'Tay không',dmg:.55,range:50,spread:75,dur:.32,mana:1,cd:1,passive:12}};
+  const weapon=t=>WEAPONS[t]||W_DEF[t]||W_DEF.punch;
   const num=(v,f=0)=>{if(v===''||v==null)return f;const n=Number(typeof v==='string'?v.replace(/^'/,'').replace(',','.'):v);return Number.isFinite(n)?n:f;};
   const range=s=>{const [a,b]=String(s||'0-0').split('-').map(Number);return [num(a),num(b,num(a))];};
   const parseBonus=s=>{const o={};String(s||'').split(/[,;]/).forEach(p=>{const [k,v]=p.split(':').map(x=>x&&x.trim());if(k&&ADD[k]&&Number.isFinite(+v))o[k]=+v;});return o;};
   const clear=o=>{for(const k of Object.keys(o))delete o[k];};
   function load(data){
-    [CFG,RAR,ADD,items,SHOPS,SETS,MON,QUESTS,MERCS].forEach(clear);ENH.length=0;
+    [CFG,RAR,ADD,items,SHOPS,SETS,MON,QUESTS,MERCS,WEAPONS].forEach(clear);
+    for(const r of data.vu_khi||[])WEAPONS[r.loai]={name:r.ten,dmg:num(r.sat_thuong,100)/100,range:num(r.tam_danh,80),spread:num(r.lan_rong),dur:Math.max(.15,num(r.toc_danh_ms,500)/1000),mana:num(r.mana,100)/100,cd:num(r.hoi_chieu,100)/100,passive:num(r.noi_tai,12)};ENH.length=0;
     for(const r of data.cau_hinh||[])CFG[r.khoa]=num(r.gia_tri,r.gia_tri);
     for(const r of data.gia_cuong||[])ENH[num(r.cap)]={rate:num(r.ti_le)/100,cost:num(r.phi_hong_ngoc),fail:r.that_bai_tu===''||r.that_bai_tu==null?null:[num(r.that_bai_tu),num(r.that_bai_den,num(r.that_bai_tu))]};
     for(const r of data.pham_chat||[])RAR[r.ma]={name:r.ten,color:r.mau,mul:num(r.he_so,100)/100,lines:num(r.so_dong),tier:num(r.bac),trade:r.giao_dich==='co',buy:r.mua_duoc==='co'};
@@ -742,9 +808,11 @@ const Player=(()=>{
     return {main,add:A,tot,fx,books,bfx,sets,mount,dmgMul:books.fire?1+num(CFG.hoa_sat_thuong,25)/100:1};
   }
   const mountCmd=eq=>eq&&eq.mount&&info(eq.mount)?info(eq.mount).cmd||5:0;
-  // Lính đi theo không tốn Mệnh lệnh: cả 4 lính cùng ra trận (Mệnh lệnh dùng cho thú cưỡi và sách Ma công)
-  function mercCmd(s){return 0;}
-  function fitFollow(s,m){return m.hpFrac===undefined||m.hpFrac>0;}
+  // Mệnh lệnh: thú cưỡi + mỗi lính đang đi theo tốn số điểm riêng của lính đó (lính gục chờ ở làng vẫn giữ chỗ)
+  function mercCmd(s){return (s.mercs||[]).reduce((a,m)=>a+(m.on?num(m.cmd,5):0),0);}
+  // Mệnh lệnh: tổng, đã dùng (thú cưỡi, lính), còn trống
+  function cmdInfo(s){const total=derive(s).main.cmd,mount=mountCmd(s.equipment),merc=mercCmd(s);return {total,mount,merc,used:mount+merc,free:total-mount-merc};}
+  function fitFollow(s,m){return (m.hpFrac===undefined||m.hpFrac>0)&&cmdInfo(s).free>=num(m.cmd,5);}
   function stash(bag,list,prefer){const b=bag.slice();for(const it of list){const i=prefer!=null&&b[prefer]===null?prefer:b.indexOf(null);if(i<0)throw Error('BAG_FULL');b[i]=it;prefer=null;}return b;}
   function targets(s,item){
     const d=info(item);if(!d||!d.slot||d.slot==='book')return [];
@@ -796,15 +864,18 @@ const Player=(()=>{
   function buy(s,type,q='n',rng=Math.random){const d=items[type];if(!d||!d.price||d.q)throw Error('ITEM');const price=shopPrice(type,q);if(s.copper<price)throw Error('MONEY');const i=s.bag.indexOf(null);if(i<0)throw Error('BAG_FULL');s.copper-=price;s.bag[i]=roll(type,q,rng);return i;}
   function sell(s,index){const it=s.bag[index];if(!it)throw Error('SLOT');const v=sellPrice(it);s.copper+=v;s.bag[index]=null;return v;}
   function addItem(s,it){const i=s.bag.indexOf(null);if(i<0)throw Error('BAG_FULL');s.bag[i]=it;return i;}
+  // Mana kỹ năng theo loại vũ khí đang cầm (thú cưỡi không đổi)
+  function skillCost(s,id,W){const k=skills[id];if(!k)return 0;return id==='mount'||!k.cost?k.cost:Math.round(k.cost*(W||weapon(stance(s).type)).mana);}
   function cast(s,id,now,D){
     const skill=skills[id];if(!skill)return {ok:false,error:'SKILL'};
     if(id==='mount'&&!s.equipment.mount)return {ok:false,error:'NOMOUNT'};
     if(now<(s.cooldowns[id]||0))return {ok:false,error:'COOLDOWN'};
-    if(s.mana<skill.cost)return {ok:false,error:'MANA'};
+    const W=weapon(stance(s).type),cost=skillCost(s,id,W);
+    if(s.mana<cost)return {ok:false,error:'MANA'};
     const cdr=D?D.tot.cdr:0;
-    s.mana-=skill.cost;s.cooldowns[id]=now+skill.cooldown*(1-cdr/100);
+    s.mana-=cost;s.cooldowns[id]=now+skill.cooldown*(1-cdr/100)*(id==='normal'||id==='mount'?1:W.cd);
     const empowered=id==='normal'&&s.passive>=100;
-    if(id==='normal')s.passive=empowered?0:Math.min(100,s.passive+12);
+    if(id==='normal')s.passive=empowered?0:Math.min(100,s.passive+W.passive);
     return {ok:true,stance:stance(s),empowered};
   }
   // Nhiệm vụ của Lý trưởng
@@ -846,7 +917,7 @@ const Player=(()=>{
   function setFollow(s,i,on){
     const m=s.mercs[i];if(!m)throw Error('MERC');
     if(!on){m.on=false;return;}
-    if(m.on)return;if(!(m.hpFrac>0))throw Error('MERC_DOWN');m.on=true;
+    if(m.on)return;if(!(m.hpFrac>0))throw Error('MERC_DOWN');if(cmdInfo(s).free<num(m.cmd,5))throw Error('CMD');m.on=true;
   }
   const mercProxy=(s,m)=>({equipment:m.equipment,bag:s.bag,gender:m.gender,stats:m.stats,isMerc:true});
   function mercEquip(s,i,bagIndex,slot){const m=s.mercs[i];if(!m)throw Error('MERC');const P=mercProxy(s,m);equip(P,bagIndex,slot);s.bag=P.bag;}
@@ -887,7 +958,9 @@ const Player=(()=>{
     if(Number.isInteger(p.activeMerc)&&s.mercs[p.activeMerc])s.mercs[p.activeMerc].on=true; // bản cũ: 1 lính
     if(Array.isArray(p.pets))s.pets=p.pets.filter(x=>x&&MON[x.type]&&!MON[x.type].boss&&typeof x.pid==='string').slice(0,petMax()).map(x=>({pid:x.pid.slice(0,30),type:x.type,hpFrac:n(x.hpFrac,0,1,1)}));
     const D=derive(s);
-s.hp=n(p.hp,1,D.tot.hp,D.tot.hp);s.mana=n(p.mana,0,D.tot.mp,D.tot.mp);
+    // lính vượt quá Mệnh lệnh đang có thì cho nghỉ (theo thứ tự trong danh sách)
+    {let left=D.main.cmd-mountCmd(s.equipment);for(const m of s.mercs)if(m.on){if(num(m.cmd,5)<=left)left-=num(m.cmd,5);else m.on=false;}}
+    s.hp=n(p.hp,1,D.tot.hp,D.tot.hp);s.mana=n(p.mana,0,D.tot.mp,D.tot.mp);
     return s;
   }
   function restore(save,ch,canStand,npcIds){
@@ -921,7 +994,7 @@ s.hp=n(p.hp,1,D.tot.hp,D.tot.hp);s.mana=n(p.mana,0,D.tot.mp,D.tot.mp);
   }
   // Các lệnh làm thay đổi tiền/đồ, chạy trên máy chủ (và trên trình duyệt ở chế độ ngoại tuyến)
   const KILL_LIMIT=id=>MON[id].boss?1:3;
-  const PREDICT=new Set(['buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff']);
+  const PREDICT=new Set(['kill','buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff']);
   function applyOp(s,op,srv,now=Date.now(),rng=Math.random){
     const t=op&&op.t;if(PREDICT.has(t))rng=seqRng(s);
     if(t==='kill'){
@@ -935,7 +1008,7 @@ s.hp=n(p.hp,1,D.tot.hp,D.tot.hp);s.mana=n(p.mana,0,D.tot.mp,D.tot.mp);
       let bonus=0;const k=s.flags.kills;if(!s.flags.hunted&&k.deer&&k.lion&&k.elephant&&k.croc){s.flags.hunted=true;s.copper+=100;bonus=100;}
       const up=gainExp(s,M.exp);
       // Sách Ma công: tỉ lệ thu phục quái (không áp dụng cho trùm), tăng theo Mệnh lệnh và cấp sách
-      let pet=null;if(!M.boss&&(s.pets=s.pets||[]).length<petMax()){const D=derive(s);if(D.bfx.demon>=0){const ch=num(CFG.ma_ti_le_goc,2)+D.main.cmd*num(CFG.ma_phan_van_moi_menh_lenh,20)/100+num(CFG.sach_ti_le_cap,1)*D.bfx.demon;if(rng()*100<ch){pet={pid:'pet-'+Math.random().toString(36).slice(2,9),type:op.mon,hpFrac:1};s.pets.push(pet);}}}
+      let pet=null;if(!M.boss&&(s.pets=s.pets||[]).length<petMax()){const D=derive(s);if(D.bfx.demon>=0){const ch=num(CFG.ma_ti_le_goc,2)+D.main.cmd*num(CFG.ma_phan_van_moi_menh_lenh,20)/100+num(CFG.sach_ti_le_cap,1)*D.bfx.demon;if(rng()*100<ch){pet={pid:'pet-'+rnd36(rng),type:op.mon,hpFrac:1};s.pets.push(pet);}}}
       return {mon:op.mon,copper:M.copper,rubies:drop.rubies,items,lost,done,bonus,exp:M.exp,up,level:s.level,pet};
     }
     if(t==='buy'){const i=buy(s,String(op.type),op.q==='g'?'g':'n',rng);return {i,item:s.bag[i]};}
@@ -952,7 +1025,7 @@ s.hp=n(p.hp,1,D.tot.hp,D.tot.hp);s.mana=n(p.mana,0,D.tot.mp,D.tot.mp);
   }
   load(typeof GAME_DATA!=='undefined'?GAME_DATA:{});
   return {VERSION,BAG_SIZE,SKILL_SLOTS,MAX_LV,MAX_MERC,MAX_ACTIVE_QUEST,ELEMENTS,BEASTS,GROUPS,FX_NAMES,STAT_KEYS,CFG,RAR,ADD,SHOPS,SETS,MON,QUESTS,MERCS,items,slots,skills,
-    load,info,kind,PREDICT,seqRng,setFollow,fitFollow,mercCmd,petMax,SHOP_ENH,expNeed,maxLevel,gainExp,spendPoints,mountGain,bookStat,mountCmd,qOf,rar,nameOf,stat,canEnhance,tradeable,gainOf,enhRate,enhCost,enhance,roll,rollDrop,create,derive,targets,equip,unequip,stance,isTwo,pairOk,setSkill,unsetSkill,toggleBook,element,money,shopPrice,buy,sell,sellPrice,addItem,cast,
+    load,info,kind,weapon,skillCost,cmdInfo,WEAPONS,PREDICT,seqRng,setFollow,fitFollow,mercCmd,petMax,SHOP_ENH,expNeed,maxLevel,gainExp,spendPoints,mountGain,bookStat,mountCmd,qOf,rar,nameOf,stat,canEnhance,tradeable,gainOf,enhRate,enhCost,enhance,roll,rollDrop,create,derive,targets,equip,unequip,stance,isTwo,pairOk,setSkill,unsetSkill,toggleBook,element,money,shopPrice,buy,sell,sellPrice,addItem,cast,
     questAccept,questProgress,questTurnIn,hireNpc,addMerc,mercEquip,mercUnequip,dismissMerc,makeMerc,cleanItem,serialize,restore,restorePlayer,merge,applyOp,allItems};
 })();
 </script>
@@ -965,7 +1038,7 @@ s.hp=n(p.hp,1,D.tot.hp,D.tot.hp);s.mana=n(p.mana,0,D.tot.mp,D.tot.mp);
   const svg=id=>`<svg class="icon" aria-hidden="true"><use href="#i-${id}"/></svg>`;
   const qColor=it=>Player.rar(it).color;
   const tintOf=it=>{const d=info(it);return d?(d.element?Player.ELEMENTS[d.element].color:d.tint||null):null;};
-  const icon=(type,color)=>{const d=Player.items[type],id=d?(d.icon||d.kind):type;return `<svg class="icon" aria-hidden="true"${color?` style="color:${color}"`:''}><use href="#i-${id}"/></svg>`;};
+  const icon=(type,color)=>{const d=Player.items[type],id=d?(d.icon||d.kind):type;return LH_IMG.icon('vat_pham:'+type,id,color);};
   const coins=c=>{const m=Player.money(c),o=[];if(m.gold)o.push(`<span class="coin gold"><i></i>${m.gold}</span>`);if(m.silver)o.push(`<span class="coin silver"><i></i>${m.silver}</span>`);if(m.copper||!o.length)o.push(`<span class="coin"><i></i>${m.copper}</span>`);return `<span class="money">${o.join('')}</span>`;};
   const ruby=n=>`<span class="coin ruby"><i></i>${n}</span>`;
   const price=(c,r)=>(c||!r?coins(c):'')+(r?ruby(r):'');
@@ -1069,7 +1142,7 @@ s.hp=n(p.hp,1,D.tot.hp,D.tot.hp);s.mana=n(p.mana,0,D.tot.mp,D.tot.mp);
   const g=gameUrl();if(g)$('#chBack').href=g;else $('#chBack').hidden=true;
   $('#chMode').textContent=Net.online?'Máy chủ Việt Nam':'Chế độ ngoại tuyến \u{b7} dữ liệu lưu trên trình duyệt này';
   (async()=>{
-    if(Net.online){try{const d=await Net.call('data');if(d.data&&d.data.vat_pham)Player.load(d.data);}catch(e){}}
+    if(Net.online){try{const d=await Net.call('data');if(d.data&&d.data.vat_pham){Player.load(d.data);LH_IMG.set(d.data.hinh_anh);}}catch(e){}}
     if(Net.token)await boot();else login();
   })();
 })();

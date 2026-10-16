@@ -42,12 +42,20 @@ Từ v8, tiền, đồ rơi, gia cường, mua bán, nhiệm vụ, lính đều 
 
 Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay trên máy người chơi bằng cùng luật (`05-player.js`) và cùng chuỗi ngẫu nhiên `rs` với máy chủ, hiện kết quả liền rồi gửi lên máy chủ. Máy chủ tính lại y hệt và lưu; trạng thái máy chủ luôn là chuẩn.
 
+## Vũ khí, Mệnh lệnh, ảnh tĩnh (v8.4)
+
+- Tab `vu_khi` (file Sheet vật phẩm): mỗi loại vũ khí có sát thương (%), tầm đánh, độ lan, thời gian một đòn, mana kỹ năng (%), thời gian hồi kỹ năng (%), nội tại mỗi đòn. Mặc định: sát thương Thương > Kiếm > Khiên > Nỏ > Cung > Gậy; tầm Gậy > Nỏ > Cung > Thương > Kiếm > Khiên; tốc đánh Kiếm > Thương > Khiên > Cung > Nỏ > Gậy; tốn mana và hồi chiêu nhanh Khiên > Cung > Thương > Nỏ > Kiếm > Gậy.
+- Mỗi lính đi theo tốn số Mệnh lệnh riêng; bảng lính hiện "Mệnh lệnh đã dùng / tổng" và "Cần X / còn Y" cho từng lính.
+- File `LH 11 · Hình ảnh` (tab `hinh_anh`, danh sách sinh tự động ở `apps-script/hinh-anh.csv`): dán link ảnh Google Drive vào cột `link_anh` để thay biểu tượng, đồ dùng, quái, NPC, logo, nền, chân dung, túi đồ rơi. Ô trống hoặc ảnh lỗi thì dùng hình mặc định. Ảnh Drive phải chia sẻ "Bất kỳ ai có đường liên kết".
+- Hạ quái: phần thưởng tính ngay trên máy người chơi (cùng chuỗi ngẫu nhiên với máy chủ), túi đồ mở liền rồi mới gửi lên máy chủ.
+- Thanh máu trùm: biểu tượng + thanh ngắn cạnh nút phiên bản.
+
 ## Ra bản mới
 
 1. Sửa trong `src/` (và `VERSION`).
 2. `node tools/build.mjs`
-3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-8.4`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
-4. Trên Blogspot đổi `@ban-8.3` thành `@ban-8.4` (trang game và trang Chợ phiên).
+3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-8.5`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
+4. Trên Blogspot đổi `@ban-8.4` thành `@ban-8.5` (trang game và trang Chợ phiên).
 5. Nếu `Code.gs` đổi: dán lại vào Apps Script, Triển khai → Quản lý triển khai → Sửa → Phiên bản mới (giữ nguyên URL).
 
 ## Dữ liệu trong Sheet

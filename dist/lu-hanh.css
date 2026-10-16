@@ -1,4 +1,4 @@
-/*! Lữ Hành v8.3 · Làng Thanh Mộc · https://github.com/vnthudao-source/lu-hanh */
+/*! Lữ Hành v8.4 · Làng Thanh Mộc · https://github.com/vnthudao-source/lu-hanh */
 #lu-hanh{position:fixed;inset:0;z-index:2147483000;overflow:hidden;text-align:left;line-height:normal}
 body:has(#lu-hanh){overflow:hidden!important}
 #lu-hanh{color-scheme:dark;--paper:#eee9da;--gold:#d8b678;--muted:#a8b4a7;--line:#ffffff20}
@@ -258,6 +258,9 @@ body:has(#lu-hanh){overflow:hidden!important}
 #lu-hanh .portal{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:14px;background:radial-gradient(circle at 50% 20%,#2c4a36,#0d1a13 70%);overflow:auto}
 #lu-hanh .portal-card{width:min(440px,100%);background:#1c2e23f2;border:1px solid #ab956a77;border-radius:18px;padding:20px 18px;box-shadow:0 20px 60px #000a}
 #lu-hanh .plogo{text-align:center;margin-bottom:14px}
+#lu-hanh .plogo-img{display:block;max-width:220px;max-height:90px;margin:0 auto;object-fit:contain}
+#lu-hanh img.icon.pic{object-fit:contain}
+#lu-hanh .avatar .pf-img{position:absolute;inset:3px;width:calc(100% - 6px);height:calc(100% - 6px);border-radius:50%;object-fit:cover;pointer-events:none}
 #lu-hanh .plogo b{display:block;font:32px Georgia,serif;color:var(--gold)}
 #lu-hanh .plogo small{color:#a8b4a7}
 #lu-hanh .ptabs{display:flex;gap:4px;margin-bottom:12px}
@@ -301,13 +304,15 @@ body:has(#lu-hanh){overflow:hidden!important}
 #lu-hanh .safe{color:#9fe8a8;font-weight:600}
 #lu-hanh .skill.locked{filter:grayscale(1);opacity:.45}
 #lu-hanh .skill.normal.charged{box-shadow:0 0 0 5px #f5d76566,0 0 22px #f5d765aa}
-#lu-hanh .boss-bar{position:absolute;left:50%;top:14px;transform:translateX(-50%);width:min(420px,70%);display:flex;flex-direction:column;align-items:center;gap:3px;pointer-events:none;z-index:4}
-#lu-hanh .boss-bar b{font:15px Georgia,serif;color:#ffc58a;text-shadow:0 1px 3px #000}
-#lu-hanh .boss-bar.final b{color:#ff9ad0}
-#lu-hanh .boss-bar .bar{width:100%;height:10px}
-#lu-hanh .boss-bar .bar-fill{background:linear-gradient(90deg,#8d292e,#ff7a5a)}
-#lu-hanh .boss-bar.final .bar-fill{background:linear-gradient(90deg,#8d2960,#ff6fb5)}
-#lu-hanh .boss-bar small{font-size:10px;color:#e6dcc4;text-shadow:0 1px 2px #000}
+#lu-hanh .boss-mini{display:flex;align-items:center;gap:5px;padding:3px 7px 3px 4px;border:1px solid #c9735a88;border-radius:9px;background:#2a1410cc;pointer-events:none}
+#lu-hanh .boss-mini .bi{display:flex;width:24px;height:24px;color:#ffc58a}
+#lu-hanh .boss-mini .bi svg,#lu-hanh .boss-mini .bi img{width:24px;height:24px}
+#lu-hanh .boss-mini.final .bi{color:#ff9ad0}
+#lu-hanh .boss-mini .bm{display:flex;flex-direction:column;gap:1px;width:68px}
+#lu-hanh .boss-mini .bm-bar{display:block;height:7px;border-radius:4px;background:#0a120e;overflow:hidden;border:1px solid #00000066}
+#lu-hanh .boss-mini .bm-fill{display:block;height:100%;width:100%;background:linear-gradient(90deg,#8d292e,#ff7a5a);transition:width .15s}
+#lu-hanh .boss-mini.final .bm-fill{background:linear-gradient(90deg,#8d2960,#ff6fb5)}
+#lu-hanh .boss-mini small{font-size:9px;line-height:1;color:#e6dcc4;font-variant-numeric:tabular-nums}
 #lu-hanh .qd{position:absolute;right:3px;top:3px;width:6px;height:6px;border-radius:50%}
 #lu-hanh .bag-slot.dim{opacity:.3}
 #lu-hanh .qtag{font-size:11px;font-weight:600}
@@ -361,7 +366,9 @@ body:has(#lu-hanh){overflow:hidden!important}
 #lu-hanh .claim button{margin-left:auto;padding:6px 12px}
 #lu-hanh .tile .seller{font-size:10px;color:#93a58f}
 #lu-hanh .tile.mine{border-style:dashed}
-@media(max-width:760px){#lu-hanh .boss-bar{top:196px;width:88%}
+@media(max-width:760px){#lu-hanh .boss-mini{padding:2px 5px 2px 3px;gap:3px}
+#lu-hanh .boss-mini .bm{width:44px}
+#lu-hanh .boss-mini .bi,#lu-hanh .boss-mini .bi svg,#lu-hanh .boss-mini .bi img{width:20px;height:20px}
 #lu-hanh .attr .sub{padding-left:20px}
 #lu-hanh .mrow{flex-wrap:wrap}
 #lu-hanh .mgear .equip-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -398,6 +405,14 @@ body:has(#lu-hanh){overflow:hidden!important}
 #lu-hanh .cmd-line svg{width:18px;height:18px;color:var(--gold)}
 #lu-hanh .cmd-line b{color:#ffd98a}
 #lu-hanh .cmd-line small{flex-basis:100%;color:#b9c4b0;font-size:11px}
+#lu-hanh .cmd-bar{flex:1 1 120px;display:flex;height:8px;border-radius:5px;background:#1d2a22;overflow:hidden;border:1px solid #ab956a55}
+#lu-hanh .cmd-bar i{display:block;height:100%}
+#lu-hanh .cmd-bar i.m{background:#c99a5b}
+#lu-hanh .cmd-bar i.l{background:#7fc28a}
+#lu-hanh .need{display:inline-flex;align-items:center;gap:3px;margin:2px 6px 2px 0;font-size:11px;color:#9fe8a8}
+#lu-hanh .need svg{width:12px;height:12px}
+#lu-hanh .need.no{color:#ffb0a0}
+#lu-hanh .need.on{color:#d8c9a0}
 #lu-hanh .mg.pet{color:#ffb8dc}
 #lu-hanh .mg.pet svg{width:22px;height:22px}
 #lu-hanh .portal-card.wide{width:min(940px,100%)}

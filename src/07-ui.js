@@ -4,14 +4,14 @@ window.startUI=(session)=>{
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const tintOf=it=>{const d=info(it);return d?(d.element?EL[d.element].color:d.tint||null):null;};
   const qColor=it=>Player.rar(it).color;
-  const icon=(type,color)=>{const d=Player.items[type],id=d?(d.icon||d.kind):type;return `<svg class="icon" aria-hidden="true"${color?` style="color:${color}"`:''}><use href="#i-${id}"/></svg>`;};
+  const icon=(type,color)=>{const d=Player.items[type],id=d?(d.icon||d.kind):type;return LH_IMG.icon('vat_pham:'+type,id,color);};
   const coins=c=>{const m=Player.money(c),out=[];if(m.gold)out.push(`<span class="coin gold"><i></i>${m.gold}</span>`);if(m.silver)out.push(`<span class="coin silver"><i></i>${m.silver}</span>`);if(m.copper||!out.length)out.push(`<span class="coin"><i></i>${m.copper}</span>`);return out.join('');};
   const ruby=n=>`<span class="coin ruby"><i></i>${n}</span>`;
   const chip=(id,txt,color)=>`<i class="ch"${color?` style="color:${color}"`:''}>${svg(id)}${txt}</i>`;
   const lvb=it=>it&&it.lv?`<b class="lvb">+${it.lv}</b>`:'';
   const qdot=it=>{const q=Player.qOf(it);return q!=='n'?`<i class="qd" style="background:${qColor(it)}"></i>`:'';};
   const SLOT_NAMES={mount:'Thú cưỡi',hat:'Mũ',wings:'Cánh',left:'Tay trái',armor:'Áo giáp',right:'Tay phải',gloves:'Găng tay',pants:'Quần',shoes:'Giày'};
-  const KIND_NAMES={sword:'Kiếm',shield:'Khiên',staff:'Gậy phép',bow:'Cung',spear:'Giáo',crossbow:'Nỏ',punch:'Tay không'};
+  const KIND_NAMES={sword:'Kiếm',shield:'Khiên',staff:'Gậy phép',bow:'Cung',spear:'Thương',crossbow:'Nỏ',punch:'Tay không'};
   const ERR={BAG_FULL:'Túi đầy',PAIR:'Không cầm chung được',MONEY:'Không đủ tiền',SLOT:'Không mặc vào ô này được',RUBY:'Không đủ hồng ngọc',MAX:'Đã tối đa +15',BOOK:'Không phải sách',ITEM:'Món này không làm được việc này',GENDER:'Đồ này dành cho nhân vật khác giới',CMD:'Không đủ Mệnh lệnh',QUEST_FULL:'Chỉ nhận tối đa 3 việc cùng lúc',QUEST_HAVE:'Đã nhận việc này',QUEST_NOT_DONE:'Chưa làm xong',QUEST_DONE:'Việc này chỉ làm một lần',MERC_FULL:'Tối đa 3 lính đánh thuê',MERC:'Không tìm thấy lính',POINTS:'Không đủ điểm',STAT:'Chỉ số không hợp lệ',MERC_DOWN:'Lính đang chờ ở làng, về làng để dắt đi',SHOP:'Món này gia cường ở chỗ khác',PET:'Không tìm thấy quái'};
   const fail=err=>game.message(svg('close')+(ERR[err.message]||netMsg(err)));
   // Chạy lệnh máy chủ: khóa nút trong lúc chờ, báo lỗi nếu có
@@ -29,6 +29,7 @@ window.startUI=(session)=>{
     if(s.speed)o.push(chip('speed','Tốc ×'+s.speed));
     if(d.element)o.push(chip(EL[d.element].icon,elInfo(d.element),EL[d.element].color));
     if(d.grip==='two')o.push(chip('hand2','Hai tay'));
+    const W=d.slot==='hand'&&Player.WEAPONS[d.kind];if(W)o.push(chip('eye','Tầm '+W.range,'#bfe3ff'),chip('speed','Đánh '+String(W.dur).replace('.',',')+' giây','#bfe3ff'),chip('sword','Sát thương '+Math.round(W.dmg*100)+'%','#bfe3ff'),chip('orb','Mana '+Math.round(W.mana*100)+'% · hồi chiêu '+Math.round(W.cd*100)+'%','#bfe3ff'));
     if(d.beast)o.push(chip('spark',Player.BEASTS[d.beast].skill,'#ffe0a0'));
     for(const [k,v] of Object.entries(it.add||{}))o.push(`<i class="ch add">${addLine(k,v)}</i>`);
     return `<span class="chips">${o.join('')}</span>`;
@@ -77,13 +78,13 @@ window.startUI=(session)=>{
     $('#placeName').textContent=east?'Đông Ngạn':'Thanh Mộc';$('#placeCoord').textContent=Math.floor(game.hero.x/World.T)+', '+Math.floor(game.hero.y/World.T);
     $('#safeTag').hidden=!game.safe;
     const q=questHtml();if($('#questTrack').innerHTML!==q)$('#questTrack').innerHTML=q;
-    const type=Player.stance(p).type;if(lastType!==type){$('#normalIcon').innerHTML=`<use href="#i-${type}"/>`;lastType=type;}
+    const type=Player.stance(p).type;if(lastType!==type){$('#normalIcon').innerHTML=`<use href="#i-${type}"/>`;lastType=type;const W=Player.weapon(type);$('#skill-normal').title='Space · '+W.name;[['basic','1','Combo'],['intermediate','2','Diện rộng'],['advanced','3','Liên hoàn']].forEach(([id,k,n])=>{$('#skill-'+id).title=`${k} \u{b7} ${n} \u{b7} ${Player.skillCost(p,id)} mana`;});}
     const el=Player.element(p);$('#skill-normal').style.setProperty('--elem',el?EL[el].color:'#dfc480');
     const books=Object.keys(D.books),key=books.join();if(key!==lastBuffs){lastBuffs=key;$('#buffs').innerHTML=books.map(b=>`<span class="buff" style="color:${EL[b].color}" title="${EL[b].name}: ${elInfo(b)}">${svg(EL[b].icon)}</span>`).join('');}
     const md=p.equipment.mount&&info(p.equipment.mount),mb=$('#skill-mount');mb.hidden=!md||game.safe;
     if(md&&mb.dataset.beast!==md.beast){mb.dataset.beast=md.beast;const B=Player.BEASTS[md.beast];$('#mountIcon').innerHTML=`<use href="#i-${B.icon}"/>`;$('#mountName').textContent=B.skill;mb.title='4 · '+B.skill+' · 12 mana';}
     document.querySelectorAll('.skill-wheel .skill:not(.normal)').forEach(b=>b.classList.toggle('locked',game.safe));
-    if(lastGender!==p.gender){lastGender=p.gender;$('#pfHair').style.display=p.gender==='f'?'':'none';$('#pfYem').style.display=p.gender==='f'?'':'none';}
+    if(lastGender!==p.gender){lastGender=p.gender;const av=$('#avatarBtn'),u=LH_IMG.url('giao_dien:chan_dung_'+(p.gender==='f'?'nu':'nam'));av.querySelector('.pf-img')?.remove();if(u)av.querySelector('.portrait').insertAdjacentHTML('afterend',`<img class="pf-img" src="${esc(u)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`);$('#pfHair').style.display=p.gender==='f'?'':'none';$('#pfYem').style.display=p.gender==='f'?'':'none';}
   }
   /* ---------- Bảng thuộc tính: 5 chỉ số lớn, chỉ số nhỏ chỉ hiện khi có cộng thêm ---------- */
   function showAttributes(){
@@ -91,7 +92,7 @@ window.startUI=(session)=>{
     const rows=Player.GROUPS.map(([g,name,ic])=>{
       const baseKey={str:'strength',agi:'agility',vit:'vitality',int:'intelligence',cmd:'command'}[g],plus=A[g]||0;
       const subs=Object.entries(Player.ADD).filter(([k,a])=>a.group===g&&k!==g&&(A[k]||0)>0).map(([k,a])=>`<div class="sub"><span>${a.name}</span><b>${S[k]}${a.unit}</b><em>+${Math.round(A[k]*10)/10}${a.unit}</em></div>`).join('');
-      const extra=g==='vit'?`<div class="sub base"><span>Máu tối đa</span><b>${S.hp}</b></div>`:g==='int'?`<div class="sub base"><span>Mana tối đa</span><b>${S.mp}</b></div>`:g==='cmd'?`<div class="sub base"><span>Đang dùng</span><b>${Player.mountCmd(p.equipment)+Player.mercCmd(p)}</b></div>`:'';
+      const extra=g==='vit'?`<div class="sub base"><span>Máu tối đa</span><b>${S.hp}</b></div>`:g==='int'?`<div class="sub base"><span>Mana tối đa</span><b>${S.mp}</b></div>`:g==='cmd'?(()=>{const c=Player.cmdInfo(p);return `<div class="sub base"><span>Đang dùng</span><b>${c.used} / ${c.total}</b></div><div class="sub base"><span>Thú cưỡi · lính</span><b>${c.mount} · ${c.merc}</b></div>`;})():'';
       const al=(p.alloc&&p.alloc[baseKey])||0,addBtn=p.points>0?`<button class="pt-add" data-pt="${g}">+1</button>${p.points>=5?`<button class="pt-add" data-pt="${g}" data-n="5">+5</button>`:''}`:'';
       return `<div class="attr"><div class="main">${svg(ic)}<span>${name}</span><b>${D.main[g]}</b>${plus?`<em>+${plus}</em>`:''}${al?`<em title="Điểm đã cộng" style="color:#ffd98a">+${al}</em>`:''}${addBtn}</div>${extra}${subs}</div>`;
     }).join('');
@@ -194,7 +195,7 @@ window.startUI=(session)=>{
     const rows=Object.values(Player.QUESTS).map(Q=>{
       const n=p.quests.active[Q.id],done=p.quests.done[Q.id]||0,M=Player.MON[Q.target],act=n!=null,ready=act&&n>=Q.count;
       const btn=ready?`<button class="primary" data-turnin="${Q.id}">${svg('check')}Trả việc</button>`:act?`<span class="qprog">${n}/${Q.count}</span>`:(!Q.repeat&&done)?`<span class="qprog">Đã xong</span>`:`<button data-accept="${Q.id}">${svg('next')}Nhận</button>`;
-      return `<div class="qrow${act?' act':''}">${svg(M&&['deer','lion','elephant','croc'].includes(Q.target)?Q.target:'flag')}<div><b>${esc(Q.name)}</b><small>${esc(Q.desc)} · ${M?esc(M.name):''} ×${Q.count}${done?` · đã làm ${done} lần`:''}</small><span class="chips">${rewardChips(Q)}</span></div>${btn}</div>`;
+      return `<div class="qrow${act?' act':''}">${LH_IMG.icon('quai:'+Q.target,M&&['deer','lion','elephant','croc'].includes(Q.target)?Q.target:'flag')}<div><b>${esc(Q.name)}</b><small>${esc(Q.desc)} · ${M?esc(M.name):''} ×${Q.count}${done?` · đã làm ${done} lần`:''}</small><span class="chips">${rewardChips(Q)}</span></div>${btn}</div>`;
     }).join('');
     openModal(ttl('quest','Lý trưởng giao việc'),`<small class="sel-desc">Nhận tối đa ${Player.MAX_ACTIVE_QUEST} việc cùng lúc. Xong việc quay về gặp Lý trưởng để nhận thưởng.</small><div class="quest-rows" style="margin-top:8px">${rows}</div>`,true);
     document.querySelectorAll('[data-accept]').forEach(b=>b.onclick=()=>run(b,game.op({t:'qa',id:b.dataset.accept}).then(()=>showQuestBoard())));
@@ -207,15 +208,17 @@ window.startUI=(session)=>{
     const tabs=`<div class="shop-tabs"><button data-mt="hire" class="${tab==='hire'?'on':''}">${svg('user')}Thuê lính</button><button data-mt="mine" class="${tab==='mine'?'on':''}">${svg('flag')}Lính của tôi (${p.mercs.length}/${Player.MAX_MERC})</button></div><div class="purse">${coins(p.copper)}</div>`;
     let body='';
     if(tab==='hire'){
-      const npc=Object.values(Player.MERCS).map(M=>`<div class="mrow"><span class="mg">${M.gender==='f'?'Nữ':'Nam'}</span><div><b>${esc(M.name)}</b><small class="sel-desc">${esc(M.desc||'')}</small>${statLine(M.stats)}</div><button data-hire="${M.id}"${p.copper<M.price?' disabled':''}>${coins(M.price)}Thuê</button></div>`).join('');
+      const c=Player.cmdInfo(p);
+      const npc=Object.values(Player.MERCS).map(M=>`<div class="mrow"><span class="mg">${M.gender==='f'?'Nữ':'Nam'}</span><div><b>${esc(M.name)}</b><small class="sel-desc">${esc(M.desc||'')}</small>${statLine(M.stats)}<small class="need${M.cmd>c.free?' no':''}">${svg('flag')}Đi theo cần ${M.cmd} Mệnh lệnh / còn ${c.free}${M.cmd>c.free?' · thuê xong để nghỉ':''}</small></div><button data-hire="${M.id}"${p.copper<M.price?' disabled':''}>${coins(M.price)}Thuê</button></div>`).join('');
       body=`<h4 class="sec">Lính trong vùng</h4>${npc}<div class="cho-note">${svg('user')}<span>Muốn có nhân vật của người chơi khác đi theo? Mua ở <b>Chợ phiên</b>.</span>${choBtn()}</div>`;
     }else{
       const m=mercSel!=null?p.mercs[mercSel]:null;
-      const on=p.mercs.filter(m=>m.on&&m.hpFrac>0).length;
-      const cmdLine=`<div class="cmd-line">${svg('flag')}<span>Đang ra trận</span><b>${on} / ${Player.MAX_MERC}</b><small>Cả ${Player.MAX_MERC} lính cùng đi theo được. Lính gục về làng chờ, bạn về làng là nhập đội lại.</small></div>`;
+      const c=Player.cmdInfo(p),pct=x=>Math.max(0,Math.min(100,x/Math.max(1,c.total)*100)).toFixed(1)+'%';
+      const cmdLine=`<div class="cmd-line">${svg('flag')}<span>Mệnh lệnh</span><b>${c.used} / ${c.total}</b><div class="cmd-bar"><i class="m" style="width:${pct(c.mount)}"></i><i class="l" style="width:${pct(c.merc)}"></i></div><small>Thú cưỡi ${c.mount} · Lính ${c.merc} · Còn trống <b>${c.free}</b></small></div>`;
       const stat=M=>!(M.hpFrac>0)?'<small class="qtag" style="color:#ffb0a0">Chờ ở làng</small>':M.on?'<small class="qtag" style="color:#9fe8a8">Đang đi theo</small>':'';
-      const list=cmdLine+(p.mercs.map((M,i)=>`<div class="mrow${M.on?' act':''}${mercSel===i?' sel':''}"><span class="mg">${M.gender==='f'?'Nữ':'Nam'}</span><div><b>${esc(M.name)}</b>${stat(M)}<span class="gear">${gearIcons(M.equipment)}</span></div><span class="mbtns"><button data-follow="${i}">${M.on?'Cho nghỉ':'Đi theo'}</button><button data-gear="${i}">Đồ</button><button data-dismiss="${i}">Giải tán</button></span></div>`).join('')||'<small class="sel-desc">Chưa có lính. Qua mục Thuê lính để thuê.</small>');
-      const pets=p.pets&&p.pets.length?`<h4 class="sec">Quái thu phục (${p.pets.length}/${Player.petMax()})</h4>`+p.pets.map(x=>{const M=Player.MON[x.type];return `<div class="mrow"><span class="mg pet">${svg(['deer','lion','elephant','croc'].includes(x.type)?x.type:'demon')}</span><div><b>${esc(M.name)}</b><small class="sel-desc">Máu ${Math.round(M.hp*x.hpFrac)} / ${M.hp} · chết là mất hẳn</small></div><span class="mbtns"><button data-petoff="${x.pid}">Thả đi</button></span></div>`;}).join(''):'';
+      const need=M=>{const n=Number(M.cmd)||5;return M.on?`<small class="need on">${svg('flag')}${n}</small>`:`<small class="need${n>c.free?' no':''}">${svg('flag')}Cần ${n} / còn ${c.free}</small>`;};
+      const list=cmdLine+(p.mercs.map((M,i)=>{const n=Number(M.cmd)||5,can=M.on||(n<=c.free&&M.hpFrac>0);return `<div class="mrow${M.on?' act':''}${mercSel===i?' sel':''}"><span class="mg">${M.gender==='f'?'Nữ':'Nam'}</span><div><b>${esc(M.name)}</b>${stat(M)}${need(M)}<span class="gear">${gearIcons(M.equipment)}</span></div><span class="mbtns"><button data-follow="${i}"${can?'':' disabled'}>${M.on?'Cho nghỉ':'Đi theo'}</button><button data-gear="${i}">Đồ</button><button data-dismiss="${i}">Giải tán</button></span></div>`;}).join('')||'<small class="sel-desc">Chưa có lính. Qua mục Thuê lính để thuê.</small>');
+      const pets=p.pets&&p.pets.length?`<h4 class="sec">Quái thu phục (${p.pets.length}/${Player.petMax()})</h4>`+p.pets.map(x=>{const M=Player.MON[x.type];return `<div class="mrow"><span class="mg pet">${LH_IMG.icon('quai:'+x.type,['deer','lion','elephant','croc'].includes(x.type)?x.type:'demon')}</span><div><b>${esc(M.name)}</b><small class="sel-desc">Máu ${Math.round(M.hp*x.hpFrac)} / ${M.hp} · chết là mất hẳn</small></div><span class="mbtns"><button data-petoff="${x.pid}">Thả đi</button></span></div>`;}).join(''):'';
       let gear='';
       if(m){previewWho={equipment:m.equipment,gender:m.gender,stats:m.stats};const P2={equipment:m.equipment,gender:m.gender,isMerc:true};
         gear=`<div class="mgear"><div class="equip-head"><canvas id="preview"></canvas><div><b>${esc(m.name)}</b><small class="sel-desc">Chạm ô trang bị của lính để lấy về túi. Chạm đồ trong túi để mặc cho lính.</small></div></div><div class="equip-grid">${Player.slots.map(k=>slotHtml(m,k)).join('')}</div><div class="bag-grid" style="margin-top:8px">${bagHtml(it=>Player.targets(P2,it).length>0)}</div></div>`;}
@@ -275,7 +278,7 @@ window.startUI=(session)=>{
     frame(time,st){
       if(time-lastFrame<.1)return;lastFrame=time;refresh();const now=Date.now();
       for(const [id,skill] of Object.entries(Player.skills)){const remaining=Math.max(0,(p.cooldowns[id]||0)-now),span=$('#skill-'+id+' .cooldown');if(!span)continue;span.style.setProperty('--progress',Math.min(100,remaining/skill.cooldown*100)+'%');span.textContent=remaining>0&&id!=='normal'?String(Math.ceil(remaining/1000)):'';}
-      const bb=$('#bossBar');if(st&&st.boss){bb.hidden=false;bb.classList.toggle('final',st.boss.final);$('#bossName').textContent=st.boss.name;$('#bossFill').style.width=(st.boss.hp/st.boss.max*100)+'%';$('#bossHp').textContent=Math.max(0,Math.ceil(st.boss.hp))+' / '+st.boss.max;}else bb.hidden=true;
+      const bb=$('#bossBar');if(st&&st.boss){bb.hidden=false;bb.classList.toggle('final',st.boss.final);if(bb.dataset.t!==st.boss.type){bb.dataset.t=st.boss.type;bb.title=st.boss.name;$('#bossIc').innerHTML=LH_IMG.icon('quai:'+st.boss.type,st.boss.type==='ngu-tinh'?'water':'tiger');}$('#bossFill').style.width=Math.max(0,st.boss.hp/st.boss.max*100)+'%';$('#bossHp').textContent=Math.max(0,Math.ceil(st.boss.hp));}else bb.hidden=true;
     }};
   refresh();
 };

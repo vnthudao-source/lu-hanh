@@ -9,6 +9,12 @@
   let msgTimer;
   const note=(t,ok)=>{const n=$('#portalMsg');n.textContent=t;n.className=ok?'ok':'';clearTimeout(msgTimer);if(t)msgTimer=setTimeout(()=>n.textContent='',6000);};
   const busy=(btn,on)=>{if(btn){btn.disabled=on;btn.classList.toggle('busy',on);}};
+  // Ảnh tĩnh từ Sheet hinh_anh: nền cổng vào, logo
+  function paintPortal(){
+    const bg=LH_IMG.url('giao_dien:nen_dang_nhap');root.style.background=bg?`#0d1a13 url("${bg}") center/cover no-repeat`:'';
+    const lg=LH_IMG.url('giao_dien:logo'),b=$('.plogo b');if(b){if(lg&&!b.querySelector('img')){b.dataset.t=b.textContent;b.innerHTML=`<img src="${esc(lg)}" alt="${esc(b.dataset.t)}" class="plogo-img" referrerpolicy="no-referrer" onerror="this.parentNode.textContent=this.alt">`;}else if(!lg&&b.dataset.t){b.textContent=b.dataset.t;delete b.dataset.t;}}
+  }
+  paintPortal();
   $('#netMode').textContent=Net.online?'Máy chủ Việt Nam':'Chế độ ngoại tuyến · dữ liệu lưu trên trình duyệt này';
   const choUrl=()=>String(window.LH_CHO||Player.CFG.link_cho_phien||'').trim();
   function auth(tab='login'){
@@ -171,7 +177,7 @@
   (async()=>{
     // nối tiếp thanh tải của file khởi động (nếu có), rồi tới kết nối máy chủ và tải nhân vật
     const from=L.visible?70:0;L.show({keep:from>0,label:'Kết nối máy chủ Việt Nam'}).step(from,'Kết nối máy chủ Việt Nam',from+(100-from)*.45);
-    if(Net.online){try{const d=await Net.call('data');if(d.data&&d.data.vat_pham)Player.load(d.data);}catch(e){note('Không tải được dữ liệu từ máy chủ, dùng dữ liệu mặc định');}}
+    if(Net.online){try{const d=await Net.call('data');if(d.data&&d.data.vat_pham){Player.load(d.data);LH_IMG.set(d.data.hinh_anh);paintPortal();}}catch(e){note('Không tải được dữ liệu từ máy chủ, dùng dữ liệu mặc định');}}
     L.step(from+(100-from)*.45,Net.token?'Tải nhân vật':'Sẵn sàng',from+(100-from)*.92);
     if(Net.token)await chars();else auth('login');
     await L.done();
