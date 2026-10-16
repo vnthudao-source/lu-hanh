@@ -1,0 +1,132 @@
+/* ================= DỮ LIỆU MẶC ĐỊNH (giống hệt các file Google Sheet; khi nối Apps Script sẽ lấy bản trên Sheet) ================= */
+const GAME_DATA={
+cau_hinh:[
+ {khoa:'diem_khoi_tao',gia_tri:50,ghi_chu:'Tổng điểm chia cho Sức mạnh, Nhanh nhẹn, Sức khỏe, Trí tuệ khi tạo nhân vật'},
+ {khoa:'menh_lenh_goc',gia_tri:10,ghi_chu:'Mệnh lệnh ban đầu của mọi nhân vật'},
+ {khoa:'so_nhan_vat_toi_da',gia_tri:5,ghi_chu:'Số nhân vật tối đa của một tài khoản'},
+ {khoa:'tien_thu_nghiem',gia_tri:9999999,ghi_chu:'Tiền (đồng) cho nhân vật mới: 999 vàng 99 bạc 99 đồng. 100 đồng = 1 bạc, 100 bạc = 1 vàng'},
+ {khoa:'hong_ngoc_thu_nghiem',gia_tri:999,ghi_chu:'Hồng ngọc cho nhân vật mới'},
+ {khoa:'ti_le_ban_lai',gia_tri:40,ghi_chu:'% giá gốc nhận lại khi bán cho cửa hàng'},
+ {khoa:'he_so_gia_do_dep',gia_tri:250,ghi_chu:'Giá đồ Đẹp trong cửa hàng = % này của giá gốc'},
+ {khoa:'phi_cho',gia_tri:5,ghi_chu:'% thương nhân giữ lại khi bán hộ trên chợ và khi bán nhân vật đánh thuê'},
+ {khoa:'mau_goc',gia_tri:60,ghi_chu:'Máu = mau_goc + Sức khỏe × mau_moi_diem'},
+ {khoa:'mau_moi_diem',gia_tri:5,ghi_chu:''},
+ {khoa:'mana_goc',gia_tri:40,ghi_chu:'Mana = mana_goc + Trí tuệ × mana_moi_diem'},
+ {khoa:'mana_moi_diem',gia_tri:4,ghi_chu:''},
+ {khoa:'hoa_sat_thuong',gia_tri:25,ghi_chu:'Sách Hỏa: % sát thương'},
+ {khoa:'thuy_hoi_mana',gia_tri:3,ghi_chu:'Sách Thủy: mana mỗi giây'},
+ {khoa:'tho_phan_don',gia_tri:30,ghi_chu:'Sách Thổ: % phản đòn'},
+ {khoa:'kim_giam_sat_thuong',gia_tri:25,ghi_chu:'Sách Kim: % giảm sát thương'},
+ {khoa:'moc_hoi_mau',gia_tri:2,ghi_chu:'Sách Mộc: máu mỗi giây'},
+ {khoa:'vung_an_toan_x',gia_tri:27,ghi_chu:'Ô bản đồ từ cột 0 đến cột này là vùng an toàn (làng)'},
+ {khoa:'bo_cong_vu_khi',gia_tri:16,ghi_chu:'Đồ bộ huyền thoại: công vũ khí gốc'},
+ {khoa:'bo_thu_khien',gia_tri:10,ghi_chu:'Đồ bộ: thủ của khiên'},
+ {khoa:'bo_thu_ao',gia_tri:12,ghi_chu:'Đồ bộ: thủ của áo giáp'},
+ {khoa:'bo_thu_nho',gia_tri:6,ghi_chu:'Đồ bộ: thủ của mũ, quần, găng, giày, cánh'},
+ {khoa:'bo_toc_thu_cuoi',gia_tri:155,ghi_chu:'Đồ bộ: tốc độ thú cưỡi (% tốc đi bộ)'},
+ {khoa:'gia_do_bo',gia_tri:5000,ghi_chu:'Giá gốc món đồ bộ (để tính giá bán lại)'},
+ {khoa:'gieng_hoi_giay',gia_tri:300,ghi_chu:'Giếng cổ: số giây để nước đầy lại sau khi dùng'}
+],
+// cap = cấp hiện tại; ti_le = % thành công lên cấp kế; thất bại: cấp về ngẫu nhiên từ that_bai_tu đến that_bai_den (để trống = giữ nguyên)
+gia_cuong:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14].map(c=>({cap:c,ti_le:c<6?100:c<10?50:[25,20,15,10,5][c-10],phi_hong_ngoc:c+1,that_bai_tu:c<6?'':c<10?0:6,that_bai_den:c<6?'':6})),
+pham_chat:[
+ {ma:'n',ten:'Thường',mau:'#e8e6df',he_so:100,so_dong:0,bac:0,giao_dich:'khong',mua_duoc:'co'},
+ {ma:'g',ten:'Đẹp',mau:'#ffd54a',he_so:110,so_dong:1,bac:1,giao_dich:'khong',mua_duoc:'co'},
+ {ma:'p',ten:'Hoàn hảo',mau:'#5aa9ff',he_so:125,so_dong:2,bac:2,giao_dich:'co',mua_duoc:'khong'},
+ {ma:'l',ten:'Huyền thoại',mau:'#c8823e',he_so:150,so_dong:3,bac:3,giao_dich:'khong',mua_duoc:'khong'},
+ {ma:'m',ten:'Thần',mau:'#ff6fb5',he_so:200,so_dong:4,bac:4,giao_dich:'co',mua_duoc:'khong'}
+],
+thuoc_tinh:[
+ ['str','Sức mạnh','str','','1-2','2-4','4-7','8-12'],['agi','Nhanh nhẹn','agi','','1-2','2-4','4-7','8-12'],['vit','Sức khỏe','vit','','1-2','2-4','4-7','8-12'],['int','Trí tuệ','int','','1-2','2-4','4-7','8-12'],['cmd','Mệnh lệnh','cmd','','1-1','1-2','2-4','4-6'],
+ ['dmgMax','Sát thương cao nhất','str','','1-3','3-6','6-10','12-20'],['dmgMin','Sát thương nhỏ nhất','str','','1-2','2-4','4-7','8-14'],['acc','Sát thương chính xác','str','%','1-2','2-4','4-7','8-12'],
+ ['crit2','Tỉ lệ sát thương x2','str','%','1-2','2-4','4-6','7-10'],['crit3','Tỉ lệ sát thương x3','str','%','1-1','1-2','2-3','3-5'],['trueDmg','Sát thương chuẩn','str','','1-2','2-5','5-9','10-18'],
+ ['perfDmg','Sát thương hoàn hảo','str','%','1-1','1-3','3-5','5-8'],['legDmg','Sát thương huyền thoại','str','%','1-1','1-2','2-4','4-6'],['mythDmg','Sát thương thần thoại','str','%','1-1','1-1','1-2','3-5'],
+ ['atkSpd','Tốc độ đánh','agi','%','1-3','3-6','6-10','10-15'],['moveSpd','Tốc độ di chuyển','agi','%','1-2','2-4','4-7','8-12'],['def','Khả năng phòng ngự','agi','','1-2','2-4','4-7','8-14'],
+ ['block','Phòng ngự thành công','agi','%','1-2','2-4','4-6','7-10'],['dodge','Tránh né','agi','%','1-2','2-3','3-5','6-9'],['dmgRed','Giảm sát thương','agi','%','1-2','2-4','4-6','7-10'],
+ ['perfRed','Giảm sát thương hoàn hảo','agi','%','1-2','2-4','4-6','7-10'],['critRed','Giảm sát thương x2, x3','agi','%','1-2','2-4','4-6','7-10'],['legRed','Giảm sát thương huyền thoại','agi','%','1-2','2-4','4-6','7-10'],['mythRed','Giảm sát thương thần thoại','agi','%','1-2','2-3','3-5','5-8'],
+ ['hp','Lượng máu','vit','','5-10','10-20','20-40','50-80'],['hpReg','Hồi máu mỗi giây','vit','','1-1','1-2','2-3','3-5'],['reflect','Phản đòn','vit','%','1-2','2-4','4-7','8-12'],
+ ['mp','Lượng mana','int','','4-8','8-16','16-30','40-60'],['mpReg','Hồi mana mỗi giây','int','','1-1','1-2','2-3','3-5'],['cdr','Giảm thời gian hồi chiêu','int','%','1-2','2-4','4-6','7-10']
+].map(([ma,ten,nhom,don_vi,...r])=>{const o={ma,ten,nhom,don_vi};['dep','hoan_hao','huyen_thoai','than'].forEach((k,i)=>{const [a,b]=r[i].split('-').map(Number);o[k+'_thap']=a;o[k+'_cao']=b;});return o;}),
+vat_pham:[
+ ['sword','Kiếm tập','hand','sword','one',2,0,0,40,'',''],['sword-iron','Kiếm sắt','hand','sword','one',6,0,0,150,'#d5dde2',''],['sword-steel','Kiếm thép','hand','sword','one',11,0,0,480,'#a8dcf0',''],
+ ['shield','Khiên tập','hand','shield','one',0,2,0,40,'',''],['shield-wood','Khiên mây','hand','shield','one',0,4,0,120,'#a8864a',''],['shield-iron','Khiên đồng','hand','shield','one',0,8,0,420,'#b08a4a',''],
+ ['staff','Gậy tập','hand','staff','one',2,0,0,40,'',''],['staff-jade','Gậy ngọc','hand','staff','one',8,0,0,360,'#7fe0b0',''],
+ ['bow','Cung tập','hand','bow','two',3,0,0,50,'',''],['bow-hunt','Cung săn','hand','bow','two',9,0,0,380,'#9a6430',''],
+ ['spear','Giáo tập','hand','spear','two',3,0,0,50,'',''],['spear-iron','Giáo sắt','hand','spear','two',10,0,0,400,'#d5dde2',''],
+ ['crossbow','Nỏ tập','hand','crossbow','two',4,0,0,60,'',''],['crossbow-war','Nỏ chiến','hand','crossbow','two',13,0,0,560,'#4a3524',''],
+ ['hat','Nón lá','hat','hat','',0,1,0,30,'',''],['hat-iron','Nón dấu','hat','hat','',0,3,0,180,'#6b4a2e',''],
+ ['armor','Áo vải','armor','armor','',0,2,0,60,'',''],['armor-leather','Áo da','armor','armor','',0,4,0,200,'#8a5a34',''],['armor-iron','Giáp đồng','armor','armor','',0,8,0,600,'#a07a40',''],
+ ['pants','Quần vải','pants','pants','',0,1,0,30,'',''],['pants-guard','Quần giáp','pants','pants','',0,3,0,180,'#5d4a34',''],
+ ['gloves','Bao tay','gloves','gloves','',0,1,0,30,'',''],['gloves-leather','Bao tay da','gloves','gloves','',0,2,0,120,'#6b4a2e',''],
+ ['shoes','Dép cỏ','shoes','shoes','',0,1,0,30,'',''],['shoes-leather','Giày da','shoes','shoes','',0,2,0,120,'#5b3d26',''],['shoes-iron','Ủng đồng','shoes','shoes','',0,4,0,300,'#8a6a3a',''],
+ ['wings','Áo choàng','wings','wings','',0,1,0,900,'',''],
+ ['mount','Ngựa con','mount','mount','',0,0,1.15,200,'#b78452','horse',5],['mount-brown','Ngựa nâu','mount','mount','',0,0,1.25,600,'#7a4b2a','horse',5],['mount-black','Ngựa ô','mount','mount','',0,0,1.35,1200,'#2e2a2a','horse',5],['mount-white','Bạch mã','mount','mount','',0,0,1.5,2500,'#ece6da','horse',5],
+ ['mount-tiger','Hổ','mount','mount','',4,0,1.45,4000,'#e08a2e','tiger',10],['mount-elephant','Voi','mount','mount','',0,8,1.2,6000,'#8e9398','elephant',15],
+ ['ore','Khoáng thạch','','ore','',0,0,0,20,'',''],
+ ['book-fire','Sách Hỏa','book','book','',0,0,0,400,'','',0,'fire'],['book-water','Sách Thủy','book','book','',0,0,0,300,'','',0,'water'],['book-earth','Sách Thổ','book','book','',0,0,0,450,'','',0,'earth'],['book-metal','Sách Kim','book','book','',0,0,0,450,'','',0,'metal'],['book-wood','Sách Mộc','book','book','',0,0,0,300,'','',0,'wood']
+].map(([id,ten,o,loai,cam,cong,thu,toc,gia,mau,thu_cuoi,menh_lenh,he])=>({id,ten,o,loai,cam,cong,thu,toc:Math.round(toc*100),gia,mau,thu_cuoi:thu_cuoi||'',menh_lenh:menh_lenh||0,he:he||''})),
+cua_hang:[
+ ...['sword-iron','sword-steel','shield-wood','shield-iron','staff-jade','bow-hunt','spear-iron','crossbow-war','hat-iron','armor-leather','armor-iron','pants-guard','gloves-leather','shoes-leather','shoes-iron'].map((id,i)=>({cua_hang:'smith',id,pham_chat:'n,g',gia:'',thu_tu:i+1})),
+ ...['mount','mount-brown','mount-black','mount-white','mount-tiger','mount-elephant'].map((id,i)=>({cua_hang:'trainer',id,pham_chat:'n',gia:'',thu_tu:i+1})),
+ ...['book-fire','book-water','book-earth','book-metal','book-wood'].map((id,i)=>({cua_hang:'wizard',id,pham_chat:'n',gia:'',thu_tu:i+1}))
+],
+// Bộ huyền thoại: nhân vật lịch sử có thật. Mốc 3/5/7 món cộng chỉ số, đủ 9 món kích hoạt hiệu ứng riêng.
+bo_huyen_thoai:[
+ ['ngo-quyen','Ngô Quyền','m','Bạch Đằng','sword','Kiếm Bạch Đằng','shield','Khiên cọc gỗ lim','Mũ trụ Đường Lâm','Giáp Bạch Đằng','Quần trận Bạch Đằng','Bao tay chèo lái','Hài thủy chiến','Cờ hiệu Tiền Ngô','Chiến mã Đường Lâm','horse','def:6,hp:30','reflect:8,dmgRed:4','str:8,crit2:4','stun',15,'Cọc Bạch Đằng: đòn đánh có 15% làm quái choáng 1 giây'],
+ ['dinh-bo-linh','Đinh Bộ Lĩnh','m','Cờ Lau','sword','Kiếm Hoa Lư','sword','Đoản kiếm Hoa Lư','Mũ Vạn Thắng','Long bào Đại Cồ Việt','Quần cờ lau','Bao tay Vạn Thắng','Hài Hoa Lư','Cờ lau tập trận','Ngựa Vạn Thắng','horse','cmd:3,hp:30','atkSpd:8,crit2:3','str:6,agi:6','execute',12,'Dẹp loạn 12 sứ quân: kết liễu quái thường còn dưới 12% máu'],
+ ['le-hoan','Lê Hoàn','m','Đại Hành','sword','Kiếm Thập đạo','shield','Khiên Chi Lăng','Mũ Thập đạo tướng quân','Giáp Lê Đại Hành','Quần trận Chi Lăng','Bao tay Đại Hành','Hài phá Tống','Cờ Đại Hành','Voi chiến Đại Hành','elephant','def:5,block:3','hp:60,dmgRed:4','str:6,trueDmg:8','shield',20,'Chi Lăng: mỗi 10 giây nhận lá chắn bằng 20% máu tối đa'],
+ ['ly-thuong-kiet','Lý Thường Kiệt','m','Như Nguyệt','sword','Kiếm Như Nguyệt','shield','Khiên sông Cầu','Mũ Thái úy','Giáp Như Nguyệt','Quần Thái úy','Bao tay Nam quốc','Hài sông Cầu','Cờ Nam quốc sơn hà','Chiến mã Ung Châu','horse','int:5,mp:20','cdr:6,crit2:3','str:6,dmgMax:8','wave',60,'Nam quốc sơn hà: mỗi đòn thứ 4 tung sóng chém 60% sát thương'],
+ ['tran-hung-dao','Trần Hưng Đạo','m','Hưng Đạo','sword','Kiếm Hưng Đạo Vương','shield','Khiên Vạn Kiếp','Mũ Quốc công','Giáp Hưng Đạo','Quần Vạn Kiếp','Bao tay Hịch tướng sĩ','Hài Bạch Đằng','Cờ Tiết chế','Chiến mã Vạn Kiếp','horse','cmd:4,hp:30','str:5,crit3:2','dmgRed:6,reflect:6','aura',30,'Hịch tướng sĩ: bản thân và lính đánh thuê +30% sát thương'],
+ ['tran-quoc-toan','Trần Quốc Toản','m','Phá Cường Địch','sword','Kiếm Hoài Văn Hầu','sword','Đoản kiếm Hoài Văn','Mũ Hoài Văn Hầu','Giáp thiếu niên','Quần Hoài Văn','Bao tay bóp cam','Hài thiếu niên','Cờ Phá cường địch','Ngựa Hoài Văn','horse','agi:5,atkSpd:5','crit2:4,moveSpd:4','str:6,perfDmg:3','cleave',40,'Phá cường địch: đòn thường lan 40% sát thương sang quái gần'],
+ ['nguyen-trai','Nguyễn Trãi','m','Bình Ngô','staff','Bút Bình Ngô','staff','Gậy trúc Côn Sơn','Khăn Ức Trai','Áo Côn Sơn','Quần Ức Trai','Bao tay Quân trung từ mệnh','Hài Côn Sơn','Áo choàng Bình Ngô','Ngựa mưu sĩ Lam Sơn','horse','int:6,mp:30','mpReg:3,cdr:6','int:8,crit2:3','manaShield',30,'Bình Ngô đại cáo: 30% sát thương nhận vào trừ vào mana'],
+ ['le-loi','Lê Lợi','m','Lam Sơn','sword','Kiếm Lam Sơn','shield','Khiên Lam Sơn','Mũ Bình Định Vương','Giáp Lam Sơn','Quần Lam Sơn','Bao tay Lũng Nhai','Hài Chí Linh','Cờ Bình Định','Voi chiến Lam Sơn','elephant','vit:5,hp:40','def:6,hpReg:2','str:6,crit2:3','lifesteal',8,'Hội thề Lũng Nhai: hút 8% sát thương gây ra thành máu'],
+ ['quang-trung','Quang Trung','m','Tây Sơn','sword','Kiếm Tây Sơn','sword','Đoản kiếm Đống Đa','Mũ Quang Trung','Áo bào Tây Sơn','Quần Ngọc Hồi','Bao tay Đống Đa','Hài thần tốc','Cờ đào Tây Sơn','Voi chiến Ngọc Hồi','elephant','moveSpd:6,atkSpd:5','str:6,crit2:4','crit3:3,dmgMax:10','haste',40,'Thần tốc: hạ quái tăng 40% tốc đánh và tốc chạy trong 4 giây'],
+ ['trung-trac','Trưng Trắc','f','Mê Linh','sword','Kiếm Mê Linh','shield','Khiên Hát Môn','Mũ Trưng Vương','Giáp Mê Linh','Váy trận Hát Môn','Bao tay Trưng Vương','Hài Mê Linh','Cờ Trưng Vương','Voi chiến Mê Linh','elephant','cmd:3,hp:30','str:5,def:5','crit2:4,dmgRed:5','burn',30,'Lửa Mê Linh: đòn đánh gây bỏng thêm 30% sát thương trong 3 giây'],
+ ['trung-nhi','Trưng Nhị','f','Hát Giang','sword','Kiếm Trưng Nhị','sword','Đoản kiếm Hát Giang','Mũ Trưng Nhị','Giáp Hát Giang','Váy trận Trưng Nhị','Bao tay Hát Giang','Hài Hát Giang','Cờ Hát Giang','Voi chiến Hát Giang','elephant','agi:5,dodge:3','atkSpd:6,crit2:3','str:6,dodge:4','counter',100,'Song kiếm: sau khi né, đòn kế tiếp gây gấp đôi'],
+ ['trieu-thi-trinh','Bà Triệu','f','Núi Nưa','sword','Gươm Núi Nưa','sword','Gươm Bồ Điền','Trâm Nhụy Kiều','Giáp vàng Nhụy Kiều','Váy trận Núi Nưa','Bao tay Bồ Điền','Guốc ngà Bà Triệu','Cờ Nhụy Kiều tướng quân','Voi một ngà','elephant','str:5,hp:30','crit2:4,atkSpd:5','str:7,dmgMax:8','wave',50,'Cưỡi gió đạp sóng: mỗi đòn thứ 4 tung sóng 50% sát thương'],
+ ['le-chan','Lê Chân','f','An Biên','sword','Kiếm An Biên','shield','Khiên Hải tần','Mũ nữ tướng An Biên','Giáp thủy quân','Váy trận An Biên','Bao tay chài lưới','Hài Hải Phòng','Cờ An Biên','Ngựa An Biên','horse','def:5,hp:30','block:4,dmgRed:4','vit:6,reflect:5','shield',18,'Thành An Biên: mỗi 10 giây nhận lá chắn bằng 18% máu tối đa'],
+ ['phung-thi-chinh','Phùng Thị Chính','f','Lãng Bạc','sword','Kiếm Lãng Bạc','shield','Khiên Phùng nữ tướng','Mũ Phùng nữ tướng','Giáp Lãng Bạc','Váy trận Lãng Bạc','Bao tay Lãng Bạc','Hài Lãng Bạc','Cờ nữ tướng Lãng Bạc','Ngựa Lãng Bạc','horse','vit:5,hpReg:1','hp:60,def:4','str:5,reflect:6','heal',2,'Trận Lãng Bạc: hồi 2% máu tối đa mỗi giây'],
+ ['vu-thi-thuc','Bát Nàn','f','Tiên La','sword','Kiếm Tiên La','shield','Khiên Bát Nàn','Mũ Bát Nàn công chúa','Giáp Tiên La','Váy trận Bát Nàn','Bao tay Tiên La','Hài Tiên La','Cờ Bát Nàn','Ngựa Tiên La','horse','str:4,hp:30','crit2:3,trueDmg:5','str:6,atkSpd:6','lifesteal',6,'Bát Nàn: hút 6% sát thương gây ra thành máu'],
+ ['duong-van-nga','Dương Vân Nga','f','Hoa Lư','staff','Trượng Thái hậu','staff','Gậy ngọc Hoa Lư','Mũ phượng Dương Vân Nga','Áo phượng Hoa Lư','Xiêm y Thái hậu','Bao tay ngọc Hoa Lư','Hài phượng','Áo choàng Thái hậu','Kiệu ngựa Hoa Lư','horse','int:5,mp:30','mpReg:2,cdr:5','int:7,hp:40','revive',50,'Trao áo long cổn: hồi sinh tại chỗ một lần mỗi 5 phút với 50% máu'],
+ ['y-lan','Ỷ Lan','f','Thổ Lỗi','staff','Trượng Nhiếp chính','shield','Khiên Thổ Lỗi','Mũ Nguyên phi','Áo Nguyên phi','Xiêm y Thổ Lỗi','Bao tay Nhiếp chính','Hài Thổ Lỗi','Áo choàng Ỷ Lan','Ngựa Thăng Long','horse','cmd:3,int:4','cdr:5,mp:30','int:6,dmgRed:5','aura',20,'Nhiếp chính: bản thân và lính đánh thuê +20% sát thương'],
+ ['bui-thi-xuan','Bùi Thị Xuân','f','Tây Sơn ngũ phụng','sword','Song kiếm Bùi Thị Xuân','sword','Đoản kiếm Tây Sơn','Mũ Đô đốc','Giáp Tây Sơn','Váy trận Tây Sơn','Bao tay luyện voi','Hài Tây Sơn','Cờ ngũ phụng','Voi chiến Bùi Thị Xuân','elephant','str:4,cmd:3','atkSpd:6,crit2:3','str:6,crit3:2','stun',12,'Thuần voi: đòn đánh có 12% làm quái choáng 1 giây']
+].map(([id,nhan_vat,gioi_tinh,ten_bo,vu_khi_loai,vu_khi,tay_trai_loai,tay_trai,mu,ao,quan,gang,giay,canh,thu_cuoi,thu_cuoi_loai,moc_3,moc_5,moc_7,hieu_ung_9,gia_tri_9,mo_ta_9])=>({id,nhan_vat,gioi_tinh,ten_bo,vu_khi_loai,vu_khi,tay_trai_loai,tay_trai,mu,ao,quan,gang,giay,canh,thu_cuoi,thu_cuoi_loai,moc_3,moc_5,moc_7,hieu_ung_9,gia_tri_9,mo_ta_9})),
+// Đồ thần: báu vật trong thần thoại, truyền thuyết. Rơi rất hiếm từ trùm cuối.
+do_than:[
+ ['than-roi-sat','Roi sắt Thánh Gióng','hand','sword','one',40,0,0,'','#3c3f44','wave',80,'Mỗi đòn thứ 4 tung sóng lửa 80% sát thương'],
+ ['than-ngua-sat','Ngựa sắt Thánh Gióng','mount','mount','',0,10,1.9,'horse','#4a4d52','burn',40,'Ngựa phun lửa: đòn đánh gây bỏng thêm 40% sát thương'],
+ ['than-giap-sat','Giáp sắt Thánh Gióng','armor','armor','',0,40,0,'','#5a5e64','shield',30,'Mỗi 10 giây nhận lá chắn bằng 30% máu tối đa'],
+ ['than-no-kim-quy','Nỏ thần Kim Quy','hand','crossbow','two',60,0,0,'','#c9a24a','execute',20,'Kết liễu quái thường còn dưới 20% máu'],
+ ['than-kiem-thuan-thien','Kiếm Thuận Thiên','hand','sword','one',45,0,0,'','#9ff0d0','lifesteal',12,'Hút 12% sát thương gây ra thành máu'],
+ ['than-gay-chu-dong-tu','Gậy thần Chử Đồng Tử','hand','staff','one',38,0,0,'','#e6d28a','heal',3,'Hồi 3% máu tối đa mỗi giây'],
+ ['than-non-chu-dong-tu','Nón thần Chử Đồng Tử','hat','hat','',0,20,0,'','#f0dc90','revive',60,'Hồi sinh tại chỗ một lần mỗi 5 phút với 60% máu'],
+ ['than-canh-au-co','Cánh tiên Âu Cơ','wings','wings','',0,18,0,'','#ffd1ec','haste',50,'Hạ quái tăng 50% tốc đánh và tốc chạy trong 4 giây'],
+ ['than-khien-lac-long','Khiên vảy rồng Lạc Long Quân','hand','shield','one',0,35,0,'','#4fb3a8','stun',20,'Đòn đánh có 20% làm quái choáng 1 giây'],
+ ['than-giay-son-tinh','Giày mây Sơn Tinh','shoes','shoes','',0,16,0,'','#a8d08d','counter',150,'Sau khi né, đòn kế tiếp gây thêm 150%'],
+ ['than-gang-thuy-tinh','Bao tay sóng nước Thủy Tinh','gloves','gloves','',0,16,0,'','#5fb6ff','cleave',50,'Đòn thường lan 50% sát thương sang quái gần']
+].map(([id,ten,o,loai,cam,cong,thu,toc,thu_cuoi,mau,hieu_ung,gia_tri,mo_ta])=>({id,ten,o,loai,cam,cong,thu,toc:Math.round(toc*100),thu_cuoi,mau,hieu_ung,gia_tri,mo_ta,gia:20000})),
+// Quái vật. boss: 1 = trùm, 2 = trùm cuối. Tỉ lệ rơi đồ tính theo phần vạn (100 = 1%). loai_sat_thuong: thuong | hoan_hao | huyen_thoai | than
+quai:[
+ ['deer','Hươu',60,0,60,190,16,44,0,0,0,0,8,1,0,12,.08,.012,.0008,0,'0-0','thuong',0],
+ ['lion','Sư tử',150,11,70,165,18,40,240,50,1.2,.38,25,.6,0,15,.08,.012,.0008,0,'0-0','thuong',5],
+ ['elephant','Voi rừng',420,20,45,95,28,72,0,72,1.9,.65,60,.15,0,20,.1,.015,.001,0,'0-0','thuong',5],
+ ['croc','Cá sấu',190,15,35,150,20,20,150,58,1.5,.3,35,.5,0,15,.08,.012,.0008,0,'0-0','thuong',5],
+ ['chua-son-lam','Chúa Sơn Lâm',2500,28,80,150,30,64,260,74,1.4,.5,300,.1,1,120,.6,.25,.04,0,'3-10','huyen_thoai',15],
+ ['ngu-tinh','Ngư Tinh',6000,40,40,110,40,80,280,120,2.2,.8,1000,.05,2,300,.8,.5,.12,.015,'10-30','than',20]
+].map(([id,ten,mau,sat_thuong,toc_do,toc_chay,ban_kinh,cao,tam_danh,tam_gan,hoi_chieu,vung_tay,dong,day_lui,boss,hoi_sinh_giay,ti_le_dep,ti_le_hoan_hao,ti_le_huyen_thoai,ti_le_than,hong_ngoc,loai_sat_thuong,ti_le_x2])=>{const [ha,hb]=hong_ngoc.split('-').map(Number),v=x=>Math.round(x*10000);return {id,ten,mau,sat_thuong,toc_do,toc_chay,ban_kinh,cao,tam_danh,tam_gan,hoi_chieu_ms:Math.round(hoi_chieu*1000),vung_tay_ms:Math.round(vung_tay*1000),dong,day_lui_phan_tram:Math.round(day_lui*100),boss,hoi_sinh_giay,dep_phan_van:v(ti_le_dep),hoan_hao_phan_van:v(ti_le_hoan_hao),huyen_thoai_phan_van:v(ti_le_huyen_thoai),than_phan_van:v(ti_le_than),hong_ngoc_it:ha,hong_ngoc_nhieu:hb,loai_sat_thuong,ti_le_x2};}),
+nhiem_vu:[
+ ['q-huou','Săn hươu','Dân làng cần thịt hươu cho hội làng.','deer',5,200,0,'hat','g','co'],
+ ['q-su-tu','Trừ sư tử','Sư tử bên Đông Ngạn hay vồ người đi rừng.','lion',3,500,0,'sword-iron','n','co'],
+ ['q-ca-sau','Diệt cá sấu','Cá sấu rình ở bến sông, dân không dám lấy nước.','croc',3,500,0,'shoes-leather','g','co'],
+ ['q-voi','Đuổi voi rừng','Voi rừng phá nương rẫy phía đông.','elephant',2,800,0,'armor-leather','g','co'],
+ ['q-chua-son-lam','Hạ Chúa Sơn Lâm','Con hổ chúa ở rừng đông bắc đã giết nhiều thợ săn.','chua-son-lam',1,10000,10,'','','co'],
+ ['q-ngu-tinh','Trừ Ngư Tinh','Ngư Tinh nổi lên ở đầm phía đông nam, dâng nước hại dân.','ngu-tinh',1,30000,30,'','','co']
+].map(([id,ten,mo_ta,muc_tieu,so_luong,thuong_dong,thuong_hong_ngoc,thuong_do,pham_chat_do,lap_lai])=>({id,ten,mo_ta,muc_tieu,so_luong,thuong_dong,thuong_hong_ngoc,thuong_do,pham_chat_do,lap_lai})),
+linh:[
+ ['dan-binh','Dân binh','m',100,5,12,8,12,4,'spear,hat','Lính giáo rẻ, máu trâu'],
+ ['cung-thu','Nữ cung thủ','f',300,5,10,14,8,6,'bow,shoes','Bắn từ xa'],
+ ['vo-si','Võ sĩ','m',600,8,16,10,14,4,'sword,shield,armor','Kiếm khiên, chịu đòn tốt'],
+ ['dao-si','Đạo sĩ trẻ','m',800,6,6,8,10,20,'staff-jade,hat','Bắn cầu phép'],
+ ['nu-tuong','Nữ tướng','f',1200,10,18,14,14,6,'sword-iron,sword-iron,armor-leather','Song kiếm, đánh nhanh']
+].map(([id,ten,gioi_tinh,gia,menh_lenh,suc_manh,nhanh_nhen,suc_khoe,tri_tue,trang_bi,mo_ta])=>({id,ten,gioi_tinh,gia,menh_lenh,suc_manh,nhanh_nhen,suc_khoe,tri_tue,trang_bi,mo_ta}))
+};
