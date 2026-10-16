@@ -57,7 +57,7 @@ header{height:94px;display:flex;align-items:center;justify-content:space-between
 #dialog .actions{display:flex;justify-content:space-between;align-items:center;gap:8px}
 #dialog .actions span{display:flex;gap:8px}
 #dialog .dots{display:flex;gap:5px}#dialog .dots i{width:7px;height:7px;border-radius:50%;background:#ffffff33}#dialog .dots i.on{background:var(--gold)}
-#dialog button{background:#8e7547;padding:8px 12px;display:flex;align-items:center;gap:6px}#dialog button svg{width:18px;height:18px}
+#dialog button{background:linear-gradient(#a4452c,#7c2c1b);border-color:#e3b86f;color:#fff3d6;font-weight:700;padding:8px 12px;display:flex;align-items:center;gap:6px}#dialog button svg{width:18px;height:18px}
 #dialog #shopBtn{background:#2f5a43;border-color:#9fe8a866}
 .overlay{position:fixed;inset:0;z-index:9;display:grid;place-items:center;background:#06110ad0;padding:12px}
 .card{max-width:460px;width:100%;max-height:92dvh;overflow:auto;background:#1c2e23;border:1px solid #ab956a77;border-radius:18px;padding:16px}
@@ -103,7 +103,7 @@ button.primary:hover{background:linear-gradient(#b8533a,#8a3320)}
 .coin i{display:block;width:11px;height:11px;border:2px solid #ffffff33;border-radius:50%;background:#ac6c45}
 .coin.silver i{background:#b1bdc7}.coin.gold i{background:#d6b354}.coin.ruby i{border-radius:3px;transform:rotate(45deg);background:#e35979}
 .price{display:flex;gap:5px;justify-content:center}.price .coin{font-size:11px}.price .coin i{width:8px;height:8px;border-width:1px}
-.shop-tabs{display:flex;gap:6px}.shop-tabs button{padding:7px 10px}.shop-tabs button.on{background:#8e7547;border-color:#d8b67888}.shop-tabs svg{width:20px;height:20px}
+.shop-tabs{display:flex;gap:6px}.shop-tabs button{padding:7px 10px}.shop-tabs button.on{background:#ecd29a;border-color:#f6e2b4;color:#2a1a0e;font-weight:700}.shop-tabs svg{width:20px;height:20px}
 .purse{display:flex;gap:9px;padding:6px 9px;border:1px solid var(--line);border-radius:9px;background:#0b1a13}
 .shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:6px}
 .tile{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px 6px;border-radius:11px;background:#0f201980;border:1px solid var(--line)}
@@ -137,7 +137,7 @@ button.primary:hover{background:linear-gradient(#b8533a,#8a3320)}
 .card-head .ttl b{font:19px Georgia,serif}
 .stat-grid{grid-template-columns:repeat(auto-fill,minmax(132px,1fr))}.stat{justify-content:flex-start;gap:8px;padding:8px 10px}.stat span{display:flex;flex-direction:column;line-height:1.2}.stat small{font-size:10px;font-weight:500;color:#a8b4a7}
 .name-row{flex-wrap:wrap}.name-row input{flex:1;min-width:120px}.name-row button{display:flex;align-items:center;gap:6px}.name-row button svg{width:18px;height:18px}
-.seg{display:flex;gap:4px}.seg button{padding:8px 12px}.seg button.on{background:#8e7547;border-color:#d8b67888}
+.seg{display:flex;gap:4px}.seg button{padding:8px 12px}.seg button.on{background:#ecd29a;border-color:#f6e2b4;color:#2a1a0e;font-weight:700}
 .equipment-slot{flex-direction:column;gap:2px;aspect-ratio:auto;min-height:62px}.slot-label{font-size:10px;color:#93a58f;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.equipment-slot.has .slot-label{color:#e9dcb4}
 .lvb{position:absolute;left:3px;top:2px;font-size:9px;font-weight:800;color:#ffd77a;text-shadow:0 1px 2px #000}
 .sel-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}.sel-name{color:#f3dfae}.sel-desc{font-size:11px;color:#b9c4b4;line-height:1.35}.sel-bar{flex-wrap:wrap}.sel-bar button{display:flex;align-items:center;gap:5px;font-size:13px}
