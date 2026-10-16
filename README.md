@@ -97,12 +97,17 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Sửa lỗi gốc của đứng hình khi đánh quái: quái đang ra đòn mà bị phản đòn chết ngay thì vòng lặp đọc `m.atk.end` của đòn đã bị xóa (`Cannot read properties of null (reading 'end')`). Trước 9.4 lỗi này làm dừng hẳn game; 9.4 bắt được lỗi và hiện thông báo; 9.5 sửa hẳn.
 
+## Bản 9.6
+
+- Rớt mạng thoáng qua khi lưu: lệnh ghi (có mã `rid`) tự gửi lại 1 lần ngay; vẫn lỗi thì tự gửi lại sau 10 giây.
+- Thông báo lỗi đúng hơn: đã kết nối được máy chủ trong phiên mà một lần gọi bị rớt thì báo "Mạng chập chờn hoặc máy chủ trả lời chậm" (trước đây báo nhầm là chưa đặt quyền "Bất kỳ ai"). Hạn chờ: lệnh đọc 25 giây, lệnh ghi 45 giây.
+
 ## Ra bản mới
 
 1. Sửa trong `src/` (và `VERSION`).
 2. `node tools/build.mjs`
-3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-9.6`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
-4. Trên Blogspot đổi `@ban-9.5` thành `@ban-9.6` (trang game và trang Chợ phiên).
+3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-9.7`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
+4. Trên Blogspot đổi `@ban-9.6` thành `@ban-9.7` (trang game và trang Chợ phiên).
 5. Nếu `Code.gs` đổi: dán lại vào Apps Script, Triển khai → Quản lý triển khai → Sửa → Phiên bản mới (giữ nguyên URL).
 
 ## Dữ liệu trong Sheet

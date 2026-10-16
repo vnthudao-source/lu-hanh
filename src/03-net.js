@@ -36,18 +36,18 @@ const Net={
       const json=JSON.stringify(body),small=json.length<1800;
       const parse=txt=>{try{return JSON.parse(txt);}catch(e){throw Error(/<html/i.test(txt)?'MAY_CHU_LOI':'Failed to fetch');}};
       // POST giống hệt bản 8.4 (không thêm tùy chọn nào: Safari thêm header là bị chặn CORS)
-      // quá 25 giây không trả lời thì coi như rớt mạng (lệnh ghi có mã rid nên gửi lại không bị làm hai lần)
-      const timed=pr=>Promise.race([pr,new Promise((_,no)=>setTimeout(()=>no(Error('Failed to fetch')),25000))]);
+      // quá 25 giây (lệnh đọc) / 45 giây (lệnh ghi) không trả lời thì coi như rớt mạng (lệnh ghi có mã rid nên gửi lại không bị làm hai lần)
+      const timed=pr=>Promise.race([pr,new Promise((_,no)=>setTimeout(()=>no(Error('Failed to fetch')),NET_SAFE.has(action)?25000:45000))]);
       const viaPost=async()=>parse(await timed(fetch(LH_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:json}).then(x=>x.text())));
       // Đường dự phòng: lệnh nhỏ gửi bằng GET (?p=…) khi trình duyệt không POST được
       const viaGet=async()=>{const x=parse(await timed(fetch(LH_API+(LH_API.includes('?')?'&':'?')+'p='+encodeURIComponent(json)).then(x=>x.text())));if(x&&x.msg!==undefined&&action!=='ping')throw Error('POST_LOI');return x;};
       if(small&&Net.useGet){try{r=await viaGet();}catch(e){}}
-      // mạng chập chờn (điện thoại chuyển 4G/Wi-Fi): lệnh chỉ đọc thì thử lại tối đa 2 lần
+      // mạng chập chờn (điện thoại chuyển 4G/Wi-Fi): lệnh đọc thử lại tối đa 2 lần, lệnh ghi (có mã rid) thử lại 1 lần
       for(let k=0;!r;k++){
         try{r=await viaPost();}
         catch(e){
           if(small&&(NET_SAFE.has(action)||action==='register'||action==='reset')&&netErr(e).message==='Failed to fetch'){try{r=await viaGet();Net.useGet=true;break;}catch(g){if(g.message==='POST_LOI')throw g;}}
-          if(k>=2||e.message==='MAY_CHU_LOI'||!NET_SAFE.has(action)){const d=await netDiag(netErr(e));LH_DIAG.net(action,d.message);throw d;}await new Promise(ok=>setTimeout(ok,900*(k+1)));
+          if(k>=2||e.message==='MAY_CHU_LOI'||(!NET_SAFE.has(action)&&(k>=1||!body.rid))){const d=await netDiag(netErr(e));LH_DIAG.net(action,d.message);throw d;}await new Promise(ok=>setTimeout(ok,900*(k+1)));
         }
       }
     }
@@ -55,7 +55,7 @@ const Net={
     if(!r.ok&&r.error==='DANG_NHAP_NOI_KHAC'&&!payload._retry){let st='';try{st=localStorage.getItem('lh-token')||'';}catch(e){}if(st&&st!==this.token){this.token=st;return this.call(action,{...payload,_retry:1});}}
     // phiên bị thay (đăng nhập ở thiết bị khác): báo cho game / Chợ phiên dừng lại
     if(!r.ok&&(r.error==='DANG_NHAP_NOI_KHAC'||(r.error==='PHIEN_HET_HAN'&&this.token))&&typeof window!=='undefined')window.dispatchEvent(new CustomEvent('lh-kicked',{detail:r.error}));
-    LH_DIAG.net(action,r.ok?'':r.error);
+    Net.okOnce=true;LH_DIAG.net(action,r.ok?'':r.error);
     if(!r.ok){const e=Error(r.error||'LOI');throw e;}
     return r;
   }
@@ -98,12 +98,14 @@ const LH_Local={
     this.clear(id);return true;
   }
 };
-const NET_ERR={CHUA_LUU:'Chưa lưu được phần chơi lên máy chủ, thử lại',DANG_CHOI:'Nhân vật đang chơi, không cho thuê được',PHIEN_HET_HAN:'Phiên đăng nhập hết hạn, hãy đăng nhập lại',TEN_DANG_NHAP_SAI:'Tên đăng nhập 3–20 ký tự: chữ thường, số, dấu _',EMAIL_SAI:'Email không hợp lệ',MAT_KHAU_NGAN:'Mật khẩu tối thiểu 6 ký tự',TEN_DANG_NHAP_DA_CO:'Tên đăng nhập đã có người dùng',EMAIL_DA_CO:'Email đã được đăng ký',SAI_DANG_NHAP:'Sai tên đăng nhập hoặc mật khẩu',KHONG_THAY_EMAIL:'Không có tài khoản dùng email này',MA_SAI:'Mã khôi phục sai hoặc hết hạn',TEN_NHAN_VAT_SAI:'Tên nhân vật 2–16 ký tự, chỉ chữ và số',DIEM_SAI:'Phải chia đủ số điểm',DU_NHAN_VAT:'Tài khoản đã đủ số nhân vật',TEN_DA_CO:'Tên nhân vật đã có người dùng',KHONG_THAY_NHAN_VAT:'Không tìm thấy nhân vật',SAI_TRANG_THAI:'Nhân vật đang đi đánh thuê',GIA_SAI:'Giá không hợp lệ',LINH_KHONG_CON:'Lính này đã có người thuê',DA_BAN:'Món này đã được bán',DO_CUA_MINH:'Đây là đồ bạn ký gửi',KHONG_HUY_DUOC:'Không hủy được',DU_LIEU_QUA_LON:'Dữ liệu lưu quá lớn',KHONG_DU_TIEN:'Nhân vật không đủ tiền',DU_LINH:'Nhân vật đã đủ lính',BAG_FULL:'Túi đồ đã đầy',VAT_PHAM_SAI:'Món đồ không hợp lệ',NHANH_QUA:'Quái chưa kịp hồi sinh',KHONG_DU_HONG_NGOC:'Nhân vật không đủ hồng ngọc',DANG_NHAP_NOI_KHAC:'Tài khoản vừa đăng nhập trên thiết bị khác',KHONG_CO_LENH:'Máy chủ chưa cập nhật bản mới',MAY_CHU_LOI:'Máy chủ Apps Script đang lỗi hoặc chưa mở quyền truy cập cho mọi người',POST_LOI:'Máy chủ có chạy nhưng không nhận lệnh: dán Code.gs mới rồi Triển khai → Quản lý triển khai → Sửa → Phiên bản mới',KHONG_TRUY_CAP:'Trình duyệt này không gọi được máy chủ: trong Apps Script, Triển khai → Quản lý triển khai → Sửa, mục "Ai có quyền truy cập" chọn "Bất kỳ ai"'};
+const NET_ERR={CHAP_CHON:'Mạng chập chờn hoặc máy chủ trả lời chậm · phần chơi vẫn giữ trên máy, sẽ gửi lại',CHUA_LUU:'Chưa lưu được phần chơi lên máy chủ, thử lại',DANG_CHOI:'Nhân vật đang chơi, không cho thuê được',PHIEN_HET_HAN:'Phiên đăng nhập hết hạn, hãy đăng nhập lại',TEN_DANG_NHAP_SAI:'Tên đăng nhập 3–20 ký tự: chữ thường, số, dấu _',EMAIL_SAI:'Email không hợp lệ',MAT_KHAU_NGAN:'Mật khẩu tối thiểu 6 ký tự',TEN_DANG_NHAP_DA_CO:'Tên đăng nhập đã có người dùng',EMAIL_DA_CO:'Email đã được đăng ký',SAI_DANG_NHAP:'Sai tên đăng nhập hoặc mật khẩu',KHONG_THAY_EMAIL:'Không có tài khoản dùng email này',MA_SAI:'Mã khôi phục sai hoặc hết hạn',TEN_NHAN_VAT_SAI:'Tên nhân vật 2–16 ký tự, chỉ chữ và số',DIEM_SAI:'Phải chia đủ số điểm',DU_NHAN_VAT:'Tài khoản đã đủ số nhân vật',TEN_DA_CO:'Tên nhân vật đã có người dùng',KHONG_THAY_NHAN_VAT:'Không tìm thấy nhân vật',SAI_TRANG_THAI:'Nhân vật đang đi đánh thuê',GIA_SAI:'Giá không hợp lệ',LINH_KHONG_CON:'Lính này đã có người thuê',DA_BAN:'Món này đã được bán',DO_CUA_MINH:'Đây là đồ bạn ký gửi',KHONG_HUY_DUOC:'Không hủy được',DU_LIEU_QUA_LON:'Dữ liệu lưu quá lớn',KHONG_DU_TIEN:'Nhân vật không đủ tiền',DU_LINH:'Nhân vật đã đủ lính',BAG_FULL:'Túi đồ đã đầy',VAT_PHAM_SAI:'Món đồ không hợp lệ',NHANH_QUA:'Quái chưa kịp hồi sinh',KHONG_DU_HONG_NGOC:'Nhân vật không đủ hồng ngọc',DANG_NHAP_NOI_KHAC:'Tài khoản vừa đăng nhập trên thiết bị khác',KHONG_CO_LENH:'Máy chủ chưa cập nhật bản mới',MAY_CHU_LOI:'Máy chủ Apps Script đang lỗi hoặc chưa mở quyền truy cập cho mọi người',POST_LOI:'Máy chủ có chạy nhưng không nhận lệnh: dán Code.gs mới rồi Triển khai → Quản lý triển khai → Sửa → Phiên bản mới',KHONG_TRUY_CAP:'Trình duyệt này không gọi được máy chủ: trong Apps Script, Triển khai → Quản lý triển khai → Sửa, mục "Ai có quyền truy cập" chọn "Bất kỳ ai"'};
 // Không gọi được máy chủ: thử GET (lệnh ping) để biết lỗi ở đâu
 //  - GET được, POST không: Code.gs mới chưa được triển khai (hoặc doPost lỗi)
 //  - GET cũng không: quyền truy cập Web App chưa đặt "Bất kỳ ai" (trình duyệt điện thoại chặn cookie Google bên thứ ba)
 async function netDiag(e){
   if(e.message!=='Failed to fetch'||(typeof navigator!=='undefined'&&navigator.onLine===false))return e;
+  // đã gọi được máy chủ trong phiên này: lỗi lúc này là mạng chập chờn / máy chủ chậm, không phải do cài đặt
+  if(Net.okOnce)return Error('CHAP_CHON');
   try{const r=await fetch(LH_API+(LH_API.includes('?')?'&':'?')+'t='+Date.now());const j=JSON.parse(await r.text());return Error(j&&j.ok?'POST_LOI':'KHONG_TRUY_CAP');}
   catch(x){return Error('KHONG_TRUY_CAP');}
 }

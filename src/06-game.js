@@ -795,7 +795,10 @@ window.startGame=(session)=>{
           sent=[];
         }while(sync.queue.length>=CHUNK);
         sync.at=time;if(!unsaved())LH_Local.clear(session.charId);else keepLocal(true);return true;
-      }catch(e){keepLocal(true);message(svg('close')+netMsg(e)+' · tiến trình vẫn giữ trên máy');return false;}
+      }catch(e){keepLocal(true);message(svg('close')+netMsg(e)+(e.message==='CHAP_CHON'?'':' · tiến trình vẫn giữ trên máy'));
+        // rớt mạng: tự gửi lại một lần sau 10 giây (không cần chờ tới mốc lưu sau)
+        if(['Failed to fetch','CHAP_CHON','KHONG_TRUY_CAP'].includes(e.message)&&!sync.retry){sync.retry=setTimeout(()=>{sync.retry=null;if(unsaved())flush();},10000);}
+        return false;}
       finally{sync.busy=null;window.GameUI?.refresh();}
     })();
     return sync.busy;
