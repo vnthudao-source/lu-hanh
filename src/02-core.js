@@ -51,7 +51,8 @@ function LH_Core(A){
     ping:()=>({msg:'Lữ Hành API'}),
     // kiểm tra phiên còn giữ (game gọi định kỳ): bị đăng nhập nơi khác thì báo DANG_NHAP_NOI_KHAC
     alive(p){auth(p.token);return {};},
-    data:()=>({data:A.staticData()}),
+    // Dữ liệu tĩnh: kèm mã h (băm nội dung) để trình duyệt lưu đệm; gửi lại cùng h thì chỉ trả same:true (đỡ tải ~120 KB mỗi lần vào game)
+    data:p=>{const d=A.staticData(),h=String(d._h||'');if(h&&p&&p.h===h)return {same:true,h};return {data:A.hideAnswers?A.hideAnswers(d):d,h};},
     register(p){
       const username=lower(p.username),email=lower(p.email),pw=String(p.password||'');
       if(!/^[a-z0-9_]{3,20}$/.test(username))fail('TEN_DANG_NHAP_SAI');

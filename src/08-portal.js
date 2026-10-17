@@ -56,9 +56,9 @@
   const getArt=()=>art||(art=window.startGame({portrait:true,player:Player.create({name:'.',gender:'m'})}));
   function stopTent(){cancelAnimationFrame(T.raf);T.raf=0;}
   const whoOf=c=>c.look&&c.look.equipment?{gender:c.gender,equipment:c.look.equipment,stats:c.stats}:Player.create({name:c.name,gender:c.gender,stats:c.stats});
-  async function chars(selId){
+  async function chars(selId,pre){
     // phần chơi còn giữ trên máy (lần trước chưa kịp lưu): gửi trước để lều hiện đúng cấp, tiền
-    let r;try{r=await Net.call('chars');let n=0;for(const c of r.list||r.chars||[])if(c&&c.id&&LH_Local.get(c.id)){await LH_Local.push(c.id).catch(()=>{});n++;}if(n)r=await Net.call('chars');}catch(e){Net.setToken('');note(netMsg(e));return auth('login');}
+    let r;try{r=await (pre||Net.call('chars'));if(r&&r.__err)throw r.__err;let n=0;for(const c of r.list||r.chars||[])if(c&&c.id&&LH_Local.get(c.id)){await LH_Local.push(c.id).catch(()=>{});n++;}if(n)r=await Net.call('chars');}catch(e){Net.setToken('');note(netMsg(e));return auth('login');}
     T.r=r;T.mode='view';window.LH_USER=r.account&&r.account.username||''; // tên đăng nhập (ghi trong nội dung chuyển khoản khi nạp thẻ)
     if(selId){const i=r.chars.findIndex(c=>c.id===selId);if(i>=0)T.sel=i;}
     if(T.sel>=Math.max(r.max,1))T.sel=0;
@@ -191,9 +191,19 @@
   (async()=>{
     // nối tiếp thanh tải của file khởi động (nếu có), rồi tới kết nối máy chủ và tải nhân vật
     const from=L.visible?70:0;L.show({keep:from>0,label:'Kết nối máy chủ Việt Nam',bg:'tai_game'}).step(from,'Kết nối máy chủ Việt Nam',from+(100-from)*.45);
-    if(Net.online){try{const d=await Net.call('data');if(d.data&&d.data.vat_pham){Player.load(d.data);LH_IMG.set(d.data.hinh_anh);paintPortal();}}catch(e){note('Không tải được dữ liệu từ máy chủ, dùng dữ liệu mặc định');}}
+    // v10.11: tải nhanh — dữ liệu tĩnh lưu đệm trong máy (khóa lh-data-cache, kèm mã h); gửi h lên, máy chủ trả same:true nếu chưa đổi (đỡ tải ~120 KB);
+    // gọi 'data' và 'chars' song song thay vì nối tiếp
+    const cached=(()=>{try{const c=JSON.parse(localStorage.getItem('lh-data-cache')||'null');return c&&c.data&&c.data.vat_pham?c:null;}catch(e){return null;}})();
+    if(cached){try{Player.load(cached.data);LH_IMG.set(cached.data.hinh_anh);paintPortal();}catch(e){}}
+    let pChars=null;
+    if(Net.online){
+      if(Net.token)pChars=Net.call('chars').catch(e=>({__err:e}));
+      try{const d=await Net.call('data',{h:cached?cached.h:''});
+        if(!d.same&&d.data&&d.data.vat_pham){Player.load(d.data);LH_IMG.set(d.data.hinh_anh);paintPortal();try{localStorage.setItem('lh-data-cache',JSON.stringify({h:d.h||'',data:d.data}));}catch(e){}}
+      }catch(e){if(!cached)note('Không tải được dữ liệu từ máy chủ, dùng dữ liệu mặc định');}
+    }
     L.step(from+(100-from)*.45,Net.token?'Tải nhân vật':'Sẵn sàng',from+(100-from)*.92);
-    if(Net.token)await chars();else auth('login');
+    if(Net.token)await chars(undefined,pChars);else auth('login');
     await L.done();
   })();
 })();

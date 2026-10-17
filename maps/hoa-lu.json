@@ -536,9 +536,22 @@
    "x": 16,
    "y": 17,
    "panel": "shop",
-   "shop": "smith",
+   "shop": "thanh-hoa-lu-ren",
    "lines": [
     "Rèn Hoa Lư luyện bằng than đá Tràng An, lưỡi bền gấp đôi."
+   ]
+  },
+  {
+   "id": "thay-do-hoa-lu",
+   "role": "thay-do",
+   "name": "Thầy đồ",
+   "act": "stand",
+   "x": 14,
+   "y": 21,
+   "panel": "quiz",
+   "lines": [
+    "Ta là thầy đồ, dạy chữ dạy người. Muốn thử sức với sách \"Thư pháp Việt\" thì ngồi xuống.",
+    "Trả lời đúng ta thưởng hồng ngọc. Không biết thì đi săn quái lấy manh mối, ta sẽ chỉ cho."
    ]
   },
   {

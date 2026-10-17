@@ -19,7 +19,10 @@ const Player=(()=>{
   const ALIAS={'book-ice':'book-water','book-wind':'book-metal','book-thunder':'book-earth'};
   const skills={normal:{cost:0,cooldown:450},basic:{cost:10,cooldown:3000},intermediate:{cost:18,cooldown:6000},advanced:{cost:28,cooldown:10000},mount:{cost:12,cooldown:6000}};
   // Bảng sinh từ dữ liệu (Sheet)
-  const CFG={},RAR={},ADD={},items={},SHOPS={},SETS={},MON={},QUESTS={},MERCS={},ENH=[],WEAPONS={},REGIONS=[],AVATARS={},TOPUPS=[];
+  const CFG={},RAR={},ADD={},items={},SHOPS={},SETS={},MON={},QUESTS={},MERCS={},ENH=[],WEAPONS={},REGIONS=[],AVATARS={},TOPUPS=[],QUIZ={};
+  // Hiệu ứng tên nhân vật (Thuốc đa nhiệm)
+  const NAME_FX={vang:'Ánh vàng','cau-vong':'Cầu vồng',lua:'Lửa',bang:'Băng',tim:'Tím mộng'};
+  const driveDirect=u=>{u=String(u||'').trim();const m=/(?:drive|docs)\.google\.com/.test(u)&&(u.match(/\/d\/([\w-]{20,})/)||u.match(/[?&]id=([\w-]{20,})/));return m?'https://lh3.googleusercontent.com/d/'+m[1]:(/^https?:\/\/\S+$/.test(u)?u:'');};
   // Kỹ năng trùm (cột ky_nang ở tab quai, cách nhau dấu phẩy): tên hiện, màu, thời gian hiệu ứng (giây)
   const SKILLS={slow:{name:'Trì trệ',desc:'giảm tốc đánh 40%',color:'#c8b060',dur:6},freeze:{name:'Đóng băng',desc:'đứng yên',color:'#80d8ff',dur:1.6},stun:{name:'Sét giật',desc:'choáng',color:'#ffe060',dur:1.4},
     weak:{name:'Suy nhược',desc:'giảm sát thương 40%',color:'#c060ff',dur:6},armor:{name:'Phá giáp',desc:'giảm phòng ngự 50%',color:'#ff9040',dur:6},poison:{name:'Trúng độc',desc:'mất máu dần',color:'#80e060',dur:5},
@@ -32,7 +35,7 @@ const Player=(()=>{
   const parseBonus=s=>{const o={};String(s||'').split(/[,;]/).forEach(p=>{const [k,v]=p.split(':').map(x=>x&&x.trim());if(k&&ADD[k]&&Number.isFinite(+v))o[k]=+v;});return o;};
   const clear=o=>{for(const k of Object.keys(o))delete o[k];};
   function load(data){
-    [CFG,RAR,ADD,items,SHOPS,SETS,MON,QUESTS,MERCS,WEAPONS].forEach(clear);
+    [CFG,RAR,ADD,items,SHOPS,SETS,MON,QUESTS,MERCS,WEAPONS,QUIZ].forEach(clear);
     for(const r of data.vu_khi||[])WEAPONS[r.loai]={name:r.ten,dmg:num(r.sat_thuong,100)/100,range:num(r.tam_danh,80),spread:num(r.lan_rong),dur:Math.max(.15,num(r.toc_danh_ms,500)/1000),mana:num(r.mana,100)/100,cd:num(r.hoi_chieu,100)/100,passive:num(r.noi_tai,12)};ENH.length=0;
     for(const r of data.cau_hinh||[])CFG[r.khoa]=num(r.gia_tri,r.gia_tri);
     for(const r of data.gia_cuong||[])ENH[num(r.cap)]={rate:num(r.ti_le)/100,cost:num(r.phi_hong_ngoc),fail:r.that_bai_tu===''||r.that_bai_tu==null?null:[num(r.that_bai_tu),num(r.that_bai_den,num(r.that_bai_tu))]};
@@ -46,6 +49,9 @@ const Player=(()=>{
       if(slot==='wings'&&/^canh-/.test(r.id))d.wing=true; // cánh dung hợp (không mua, không rơi)
       if(r.pham_chat&&RAR[r.pham_chat]&&r.pham_chat!=='n')d.q=r.pham_chat; // phẩm chất cố định (hàng hiệu buôn thành trì)
       if(r.hieu_ung){d.fx=r.hieu_ung;d.fxv=num(r.gia_tri);d.fxText=r.mo_ta||'';}
+      if(num(r.gia_hong_ngoc)>0)d.ruby=num(r.gia_hong_ngoc); // mua bằng hồng ngọc (mỹ phẩm Phấn Son)
+      if(r.anh)d.img=driveDirect(r.anh); // ảnh riêng (thẻ avatar, khung, nền, vật phẩm cốt truyện)
+      if(slot==='cos'||slot==='quest'){d.desc=r.mo_ta||'';d.icon=slot==='quest'?'quest':r.loai==='avatar'?'user':r.loai==='khung'?'shield':r.loai==='nen'?'map':'orb';}
       items[r.id]=d;
     }
     for(const r of data.cua_hang||[]){(SHOPS[r.cua_hang]=SHOPS[r.cua_hang]||[]).push({id:r.id,q:String(r.pham_chat||'n').split(',').map(x=>x.trim()).filter(q=>RAR[q]||q==='n'),price:num(r.gia),order:num(r.thu_tu),t:num(r.bac)});}
@@ -67,11 +73,15 @@ const Player=(()=>{
       items[r.id]=d;
     }
     for(const r of data.quai||[])MON[r.id]={name:r.ten,hp:num(r.mau),dmg:num(r.sat_thuong),speed:num(r.toc_do),run:num(r.toc_chay),r:num(r.ban_kinh),h:num(r.cao),aggro:num(r.tam_danh),range:num(r.tam_gan),cd:num(r.hoi_chieu_ms)/1000,windup:num(r.vung_tay_ms)/1000,copper:num(r.dong),knock:num(r.day_lui_phan_tram)/100,boss:num(r.boss),respawn:num(r.hoi_sinh_giay,15),drops:{g:num(r.dep_phan_van)/1e4,p:num(r.hoan_hao_phan_van)/1e4,l:num(r.huyen_thoai_phan_van)/1e4,m:num(r.than_phan_van)/1e4},rubies:[num(r.hong_ngoc_it),num(r.hong_ngoc_nhieu)],dtype:r.loai_sat_thuong||'thuong',crit:num(r.ti_le_x2),exp:num(r.kinh_nghiem,Math.max(1,Math.round(num(r.mau)/8))),map:String(r.ban_do||'').trim()||undefined,skills:String(r.ky_nang||'').split(/[,\s]+/).filter(k=>SKILLS[k])};
-    for(const r of data.nhiem_vu||[])QUESTS[r.id]={id:r.id,name:r.ten,desc:r.mo_ta,target:r.muc_tieu,count:num(r.so_luong,1),copper:num(r.thuong_dong),rubies:num(r.thuong_hong_ngoc),item:r.thuong_do||'',itemQ:r.pham_chat_do||'n',repeat:r.lap_lai!=='khong',lv:num(r.cap_toi_thieu),exp:num(r.thuong_kinh_nghiem,Math.round(num(r.thuong_dong)/10))};
+    for(const r of data.nhiem_vu||[])QUESTS[r.id]={id:r.id,name:r.ten,desc:r.mo_ta,target:r.muc_tieu,count:num(r.so_luong,1),copper:num(r.thuong_dong),rubies:num(r.thuong_hong_ngoc),item:r.thuong_do||'',itemQ:r.pham_chat_do||'n',repeat:r.lap_lai!=='khong',lv:num(r.cap_toi_thieu),exp:num(r.thuong_kinh_nghiem,Math.round(num(r.thuong_dong)/10)),req:r.yeu_cau||'',end:r.loi_ket||'',story:!!num(r.truyen)};
+    // Thầy đồ: bộ câu hỏi (bo_cau_hoi) + câu hỏi (cau_hoi; máy chủ đọc tab CauHoi của bảng OCD_Quest, cột dap_an không gửi xuống trình duyệt)
+    for(const r of data.bo_cau_hoi||[])QUIZ[r.id]={id:r.id,name:r.ten||r.id,order:num(r.thu_tu,99),rubies:num(r.thuong_hong_ngoc,5),mon:r.quai||'',need:num(r.so_luong,0),map:r.ban_do||'',qs:[]};
+    for(const r of data.cau_hoi||[]){const bo=String(r.bo||r.QuestID||'');if(!bo)continue;if(!QUIZ[bo])QUIZ[bo]={id:bo,name:bo,order:99,rubies:5,mon:'',need:0,map:'',qs:[]};QUIZ[bo].qs.push({id:r.id||r.QuestionID,n:num(r.thu_tu||r.ThuTu,QUIZ[bo].qs.length+1),q:r.cau||r.CauHoi||'',a:r.a||r.A||'',b:r.b||r.B||'',c:r.c||r.C||'',d:r.d||r.D||'',ans:String(r.dap_an||r.DapAn||'').trim().toUpperCase()});}
+    for(const Q of Object.values(QUIZ))Q.qs.sort((x,y)=>x.n-y.n);
     REGIONS.length=0;for(const r of data.ban_do||[])REGIONS.push({id:String(r.id),name:r.ten,lv:num(r.cap,1),icon:r.bieu_tuong||'pin',order:num(r.thu_tu,99)});REGIONS.sort((a,b)=>a.order-b.order);
     TOPUPS.length=0;for(const r of data.goi_nap||[])TOPUPS.push({id:r.id,name:r.ten,vnd:num(r.tien),ruby:num(r.hong_ngoc),desc:r.mo_ta||'',order:num(r.thu_tu,99)});TOPUPS.sort((a,b)=>a.order-b.order);
     clear(AVATARS);for(const r of data.dien_mao||[])AVATARS[r.id]={id:r.id,name:r.ten,gender:r.gioi_tinh||'',price:num(r.gia),ruby:num(r.hong_ngoc),skin:r.mau_da||'#e1c295',hair:r.mau_toc||'#2a2622',style:r.kieu_toc||'',beard:r.rau||'',eye:r.mau_mat||'#2a2018',mark:r.dau||'',order:num(r.thu_tu,99)};
-    for(const r of data.linh||[])MERCS[r.id]={id:r.id,name:r.ten,gender:r.gioi_tinh==='f'?'f':'m',price:num(r.gia),cmd:num(r.menh_lenh,5),stats:{strength:num(r.suc_manh),agility:num(r.nhanh_nhen),vitality:num(r.suc_khoe),intelligence:num(r.tri_tue),command:0},gear:String(r.trang_bi||'').split(',').map(x=>x.trim()).filter(Boolean),desc:r.mo_ta};
+    for(const r of data.linh||[]){const k=r.thanh?num(CFG.linh_thanh_he_so,100)/100:1;MERCS[r.id]={id:r.id,name:r.ten,gender:r.gioi_tinh==='f'?'f':'m',price:num(r.gia),cmd:num(r.menh_lenh,5),stats:{strength:Math.round(num(r.suc_manh)*k),agility:Math.round(num(r.nhanh_nhen)*k),vitality:Math.round(num(r.suc_khoe)*k),intelligence:Math.round(num(r.tri_tue)*k),command:0},gear:String(r.trang_bi||'').split(',').map(x=>x.trim()).filter(Boolean),desc:r.mo_ta,map:r.thanh||''};}
   }
   const info=i=>i&&items[i.type];
   const kind=i=>info(i)?info(i).kind:null;
@@ -127,7 +137,7 @@ const Player=(()=>{
     }
     return it;
   }
-  const BASE_DROP=()=>Object.keys(items).filter(k=>{const d=items[k];return !d.q&&d.slot&&d.slot!=='book'&&d.slot!=='mount'&&!d.wing;});
+  const BASE_DROP=()=>Object.keys(items).filter(k=>{const d=items[k];return !d.q&&d.slot&&d.slot!=='book'&&d.slot!=='mount'&&d.slot!=='cos'&&d.slot!=='quest'&&!d.wing;});
   const dropCap=()=>{const q=String(CFG.pham_chat_roi_toi_da||'').trim();return RAR[q]?RAR[q].tier:99;};
   function rollDrop(monId,rng=Math.random,luck=1){
     const M=MON[monId];if(!M)return {items:[],rubies:0};
@@ -150,7 +160,7 @@ const Player=(()=>{
   // Mỗi NPC gia cường loại đồ của mình: thợ rèn (vũ khí, giáp), người nuôi thú (thú cưỡi), đạo sĩ (sách)
   const SHOP_ENH={smith:d=>d.slot!=='book'&&d.slot!=='mount',trainer:d=>d.slot==='mount',wizard:d=>d.slot==='book'};
   // hiệu buôn thành trì (mã bắt đầu 'thanh-'): gia cường cả vũ khí, giáp, thú cưỡi
-  const shopEnh=id=>SHOP_ENH[id]||(/^thanh-/.test(String(id))?d=>d.slot!=='book':null);
+  const shopEnh=id=>SHOP_ENH[id]||(/^thanh-.*-thu$/.test(String(id))?d=>d.slot==='mount':/^thanh-/.test(String(id))?d=>d.slot!=='book'&&d.slot!=='cos'&&d.slot!=='quest':null);
   function enhance(s,ref,rng=Math.random,shop){
     const it=ref.where==='bag'?s.bag[ref.key]:ref.where==='skill'?s.skillSlots[ref.key]:s.equipment[ref.key];
     if(!canEnhance(it))throw Error('ITEM');
@@ -185,7 +195,7 @@ const Player=(()=>{
     const st=Object.fromEntries(STAT_KEYS.map(k=>[k,Math.max(0,Math.floor(num(ch&&ch.stats&&ch.stats[k],12)))]));st.command=num(CFG.menh_lenh_goc,10);
     const s={name:(ch&&ch.name)||'Lữ khách',gender:ch&&ch.gender==='f'?'f':'m',level:1,exp:0,points:0,alloc:Object.fromEntries([...STAT_KEYS,'command'].map(k=>[k,0])),stats:st,hp:1e9,mana:1e9,passive:0,copper:num(CFG.tien_thu_nghiem,0),rubies:num(CFG.hong_ngoc_thu_nghiem,0),
       flags:{river:false,hunted:false,kills:{},wells:{}},equipment:Object.fromEntries(slots.map(k=>[k,k==='right'?{uid:'training-sword',type:'sword'}:null])),bag,skillSlots:Array(SKILL_SLOTS).fill(null),activeBook:null,cooldowns:{},
-      quests:{active:{},done:{}},mercs:[],pets:[],avatar:'',avatars:[],rs:(Math.random()*2147483647)|0};
+      quests:{active:{},done:{}},mercs:[],pets:[],avatar:'',avatars:[],cos:newCos(),quiz:{},rs:(Math.random()*2147483647)|0};
     const D=derive(s);s.hp=D.tot.hp;s.mana=D.tot.mp;return s;
   }
   // Tính toàn bộ chỉ số: 5 chỉ số lớn + chỉ số nhỏ (base + phần cộng thêm từ đồ, bộ, sách)
@@ -233,13 +243,17 @@ const Player=(()=>{
   }
   const mountCmd=eq=>eq&&eq.mount&&info(eq.mount)?info(eq.mount).cmd||5:0;
   // Mệnh lệnh: thú cưỡi + mỗi lính đang đi theo tốn số điểm riêng của lính đó (lính gục chờ ở làng vẫn giữ chỗ)
+  // Lính thành trì: mỗi ngày (giờ Việt Nam) nhận một hệ sách ngẫu nhiên theo mã lính → đòn có hệ, mỗi đòn thứ 4 ra chiêu diện rộng
+  function mercDaily(m,now=Date.now()){const T=m&&MERCS[m.tpl];if(!T||!T.map)return null;const day=Math.floor((now+7*3600e3)/864e5);let h=0;for(const ch of String(m.mid))h=(h*31+ch.charCodeAt(0))>>>0;const keys=Object.keys(ELEMENTS),el=keys[(h+day)%keys.length];return {el,name:ELEMENTS[el].name,skill:'Sách '+ELEMENTS[el].name};}
   function mercCmd(s){return (s.mercs||[]).reduce((a,m)=>a+(m.on?num(m.cmd,5):0),0);}
   // Mệnh lệnh: tổng, đã dùng (thú cưỡi, lính), còn trống
   function cmdInfo(s){const total=derive(s).main.cmd,mount=mountCmd(s.equipment),merc=mercCmd(s);return {total,mount,merc,used:mount+merc,free:total-mount-merc};}
   function fitFollow(s,m){return (m.hpFrac===undefined||m.hpFrac>0)&&cmdInfo(s).free>=num(m.cmd,5);}
   function stash(bag,list,prefer){const b=bag.slice();for(const it of list){const i=prefer!=null&&b[prefer]===null?prefer:b.indexOf(null);if(i<0)throw Error('BAG_FULL');b[i]=it;prefer=null;}return b;}
+  const newCos=()=>({use:{avatar:'',khung:'',nen:'',ten:''},own:{avatar:[],khung:[],nen:[],ten:[]}});
+  const COS_KINDS=['avatar','khung','nen','ten'];
   function targets(s,item){
-    const d=info(item);if(!d||!d.slot||d.slot==='book')return [];
+    const d=info(item);if(!d||!d.slot||d.slot==='book'||d.slot==='cos'||d.slot==='quest')return [];
     if(d.gender&&d.gender!==s.gender)return [];
     if(d.slot!=='hand')return [d.slot];
     if(d.grip==='two')return ['right'];
@@ -288,8 +302,8 @@ const Player=(()=>{
   const shopRow=(type,shop)=>{if(shop&&SHOPS[shop])return SHOPS[shop].find(r=>r.id===type)||null;let row=null;for(const k in SHOPS){row=SHOPS[k].find(r=>r.id===type)||row;}return row;};
   // Giá: Đẹp ×he_so_gia_do_dep, Hoàn hảo ×he_so_gia_hoan_hao (%). Đồ phẩm chất cố định (huyền thoại, thần) bán trong cửa hàng thành trì thì tính theo giá dòng hàng
   function shopPrice(type,q='n',shop){const d=items[type];if(!d)return 0;const row=shopRow(type,shop),p=row&&row.price?row.price:d.price;if(d.q)return Math.round(p);return Math.round(p*(q==='g'?num(CFG.he_so_gia_do_dep,250)/100:q==='p'?num(CFG.he_so_gia_hoan_hao,600)/100:1));}
-  function buy(s,type,q='n',rng=Math.random,shop){const d=items[type];const row=shopRow(type,shop);if(!d||!(row&&row.price||d.price)||(d.q&&!row))throw Error('ITEM');if(row&&!row.q.includes(d.q||q))throw Error('ITEM');const price=shopPrice(type,q,shop);if(s.copper<price)throw Error('MONEY');const i=s.bag.indexOf(null);if(i<0)throw Error('BAG_FULL');s.copper-=price;s.bag[i]=roll(type,d.q?'n':q,rng,row&&row.t||0);return i;}
-  function sell(s,index){const it=s.bag[index];if(!it)throw Error('SLOT');const v=sellPrice(it);s.copper+=v;s.bag[index]=null;return v;}
+  function buy(s,type,q='n',rng=Math.random,shop){const d=items[type];const row=shopRow(type,shop);if(!d||!(row&&row.price||d.price||d.ruby)||(d.q&&!row))throw Error('ITEM');if(row&&!row.q.includes(d.q||q))throw Error('ITEM');const price=d.ruby?0:shopPrice(type,q,shop);if(s.copper<price)throw Error('MONEY');if(d.ruby&&s.rubies<d.ruby)throw Error('RUBY');const i=s.bag.indexOf(null);if(i<0)throw Error('BAG_FULL');s.copper-=price;if(d.ruby)s.rubies-=d.ruby;s.bag[i]=roll(type,d.q?'n':q,rng,row&&row.t||0);return i;}
+  function sell(s,index){const it=s.bag[index];if(!it)throw Error('SLOT');const dd=info(it);if(dd&&(dd.slot==='quest'||dd.slot==='cos'))throw Error('KHONG_BAN');const v=sellPrice(it);s.copper+=v;s.bag[index]=null;return v;}
   function addItem(s,it){const i=s.bag.indexOf(null);if(i<0)throw Error('BAG_FULL');s.bag[i]=it;return i;}
   // Mana kỹ năng theo loại vũ khí đang cầm (thú cưỡi không đổi)
   function skillCost(s,id,W){const k=skills[id];if(!k)return 0;return id==='mount'||!k.cost?k.cost:Math.round(k.cost*(W||weapon(stance(s).type)).mana);}
@@ -313,7 +327,7 @@ const Player=(()=>{
   const regionLv=id=>{const R=REGIONS.find(r=>r.id===id);return R?R.lv:1;};
   const regionOf=monId=>(MON[monId]&&MON[monId].map)||MON_REGION[monId]||'thanh-moc';
   const questLevel=Q=>Q?(Q.lv||mapLevel(regionOf(Q.target))):1;
-  function questAccept(s,id){const Q=QUESTS[id];if(!Q)throw Error('QUEST');if((s.level||1)<questLevel(Q))throw Error('LEVEL');if(s.quests.active[id]!=null)throw Error('QUEST_HAVE');if(Object.keys(s.quests.active).length>=MAX_ACTIVE_QUEST)throw Error('QUEST_FULL');if(!Q.repeat&&s.quests.done[id])throw Error('QUEST_DONE');s.quests.active[id]=0;}
+  function questAccept(s,id){const Q=QUESTS[id];if(!Q)throw Error('QUEST');if((s.level||1)<questLevel(Q))throw Error('LEVEL');if(s.quests.active[id]!=null)throw Error('QUEST_HAVE');if(Object.keys(s.quests.active).length>=MAX_ACTIVE_QUEST)throw Error('QUEST_FULL');if(!Q.repeat&&s.quests.done[id])throw Error('QUEST_DONE');if(Q.req&&!s.quests.done[Q.req])throw Error('QUEST_TRUOC');s.quests.active[id]=0;}
   function questProgress(s,monId){const out=[];for(const id of Object.keys(s.quests.active)){const Q=QUESTS[id];if(Q&&Q.target===monId&&s.quests.active[id]<Q.count){s.quests.active[id]++;out.push(id);}}return out;}
   function questTurnIn(s,id,rng=Math.random){
     const Q=QUESTS[id];if(!Q||s.quests.active[id]==null)throw Error('QUEST');if(s.quests.active[id]<Q.count)throw Error('QUEST_NOT_DONE');
@@ -341,7 +355,7 @@ const Player=(()=>{
     return m;
   }
   function hireNpc(s,id,rng=Math.random){
-    const T=MERCS[id];if(!T)throw Error('MERC');if(s.mercs.length>=MAX_MERC)throw Error('MERC_FULL');if(s.copper<T.price)throw Error('MONEY');
+    const T=MERCS[id];if(!T)throw Error('MERC');if(s.mercs.length>=MAX_MERC)throw Error('MERC_FULL');if(s.copper<T.price)throw Error('MONEY');if(T.map&&(s.level||1)<mapLevel(T.map))throw Error('LEVEL');
     const m=makeMerc({src:'npc',tpl:id,name:T.name,gender:T.gender,cmd:T.cmd,stats:T.stats},rng);
     let hand=0;for(const g of T.gear){const d=items[g];if(!d)continue;const it=roll(g,'n',rng);if(d.slot==='hand'){const sl=d.grip==='two'?'right':hand++?'left':'right';m.equipment[sl]=it;}else if(d.slot!=='mount')m.equipment[d.slot]=it;}
     s.copper-=T.price;m.on=fitFollow(s,m);s.mercs.push(m);return m;
@@ -391,6 +405,8 @@ const Player=(()=>{
     if(Array.isArray(p.mercs))s.mercs=p.mercs.slice(0,MAX_MERC).map(m=>{const x=makeMerc(m);x.mid=typeof m.mid==='string'?m.mid.slice(0,30):x.mid;x.hpFrac=n(m.hpFrac,0,1,1);x.on=!!m.on;return x;});
     if(Number.isInteger(p.activeMerc)&&s.mercs[p.activeMerc])s.mercs[p.activeMerc].on=true; // bản cũ: 1 lính
     s.avatars=(Array.isArray(p.avatars)?p.avatars:[]).filter(id=>AVATARS[id]).slice(0,60);const av=AVATARS[p.avatar];s.avatar=av&&(!av.gender||av.gender===s.gender)&&(s.avatars.includes(p.avatar)||!(av.price||av.ruby))?p.avatar:'';
+    s.cos=newCos();if(p.cos&&typeof p.cos==='object'){for(const k of COS_KINDS){const own=(p.cos.own&&Array.isArray(p.cos.own[k])?p.cos.own[k]:[]).filter(id=>k==='ten'?NAME_FX[id]:items[id]&&items[id].slot==='cos').slice(0,40);s.cos.own[k]=[...new Set(own)];const u=p.cos.use&&typeof p.cos.use[k]==='string'?p.cos.use[k]:'';s.cos.use[k]=s.cos.own[k].includes(u)?u:'';}}
+    s.quiz={};if(p.quiz&&typeof p.quiz==='object')for(const [k,v] of Object.entries(p.quiz)){if(!v||typeof v!=='object')continue;s.quiz[k]={done:Math.floor(n(v.done,0,99,0)),fail:Math.floor(n(v.fail,0,99,0)),hunt:v.hunt&&typeof v.hunt==='object'?{mon:String(v.hunt.mon||''),need:Math.floor(n(v.hunt.need,0,999,0)),got:Math.floor(n(v.hunt.got,0,999,0))}:null,reveal:!!v.reveal};}
     if(Array.isArray(p.pets))s.pets=p.pets.filter(x=>x&&MON[x.type]&&!MON[x.type].boss&&typeof x.pid==='string').slice(0,petMax()).map(x=>({pid:x.pid.slice(0,30),type:x.type,hpFrac:n(x.hpFrac,0,1,1)}));
     const D=derive(s);
     // lính vượt quá Mệnh lệnh đang có thì cho nghỉ (theo thứ tự trong danh sách)
@@ -437,7 +453,7 @@ const Player=(()=>{
   // Các lệnh làm thay đổi tiền/đồ, chạy trên máy chủ (và trên trình duyệt ở chế độ ngoại tuyến)
   // số lần hạ một loài quái trong một lượt hồi sinh: bãi quái lớn có nhiều con cùng loài (Sheet cau_hinh gioi_han_ha_quai)
   const KILL_LIMIT=id=>MON[id].boss?1:num(CFG.gioi_han_ha_quai,16);
-  const PREDICT=new Set(['kill','buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff','av','fuse']);
+  const PREDICT=new Set(['kill','buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff','av','fuse','use','cos','die']);
   function applyOp(s,op,srv,now=Date.now(),rng=Math.random){
     const t=op&&op.t;if(PREDICT.has(t))rng=seqRng(s);
     if(t==='kill'){
@@ -449,11 +465,13 @@ const Player=(()=>{
       const drop=rollDrop(op.mon,rng,1+num(F.luck)/100),items=[],lost=[];s.rubies+=drop.rubies;
       for(const it of drop.items){try{addItem(s,it);items.push(it);}catch(e){lost.push(it);}}
       const done=questProgress(s,op.mon).filter(id=>s.quests.active[id]>=QUESTS[id].count);
+      // Thầy đồ: việc săn quái lấy manh mối đáp án
+      let hunt=null;for(const [bo,z] of Object.entries(s.quiz||{}))if(z.hunt&&!z.reveal&&z.hunt.mon===op.mon&&z.hunt.got<z.hunt.need){z.hunt.got++;if(z.hunt.got>=z.hunt.need)z.reveal=true;hunt={bo,got:z.hunt.got,need:z.hunt.need,reveal:z.reveal};}
       let bonus=0;const k=s.flags.kills;if(!s.flags.hunted&&k.deer&&k.lion&&k.elephant&&k.croc){s.flags.hunted=true;s.copper+=100;bonus=100;}
       const up=gainExp(s,exp);
       // Sách Ma công: tỉ lệ thu phục quái (không áp dụng cho trùm), tăng theo Mệnh lệnh và cấp sách
       let pet=null;if(!M.boss&&(s.pets=s.pets||[]).length<petMax()){if(D.bfx.demon>=0){const ch=num(CFG.ma_ti_le_goc,2)+D.main.cmd*num(CFG.ma_phan_van_moi_menh_lenh,20)/100+num(CFG.sach_ti_le_cap,1)*D.bfx.demon;if(rng()*100<ch){pet={pid:'pet-'+rnd36(rng),type:op.mon,hpFrac:1};s.pets.push(pet);}}}
-      return {mon:op.mon,copper,rubies:drop.rubies,items,lost,done,bonus,exp,up,level:s.level,pet};
+      return {mon:op.mon,copper,rubies:drop.rubies,items,lost,done,bonus,exp,up,level:s.level,pet,hunt};
     }
     if(t==='buy'){const i=buy(s,String(op.type),op.q==='g'||op.q==='p'?op.q:'n',rng,op.shop?String(op.shop):undefined);return {i,item:s.bag[i]};}
     // Diện mạo (NPC Thợ truyền thần ở thành trì): mua rồi đổi; diện mạo giá 0 ai cũng đổi được
@@ -461,6 +479,24 @@ const Player=(()=>{
       if(!s.avatars.includes(id)&&(V.price||V.ruby)){if(s.copper<V.price)throw Error('MONEY');if(s.rubies<V.ruby)throw Error('RUBY');s.copper-=V.price;s.rubies-=V.ruby;s.avatars.push(id);}
       s.avatar=id;return {id,bought:!!(V.price||V.ruby)};}
     if(t==='sell'){const i=Math.floor(op.i),it=s.bag[i];const v=sell(s,i);return {v,item:it};}
+    // Mỹ phẩm: dùng thẻ / khung / nền / thuốc trong túi → vào bộ sưu tập và mặc luôn (thuốc đa nhiệm: chọn hiệu ứng tên op.fx)
+    if(t==='use'){const i=Math.floor(op.i),it=s.bag[i],d=info(it);if(!it||!d||d.slot!=='cos')throw Error('ITEM');s.cos=s.cos||newCos();
+      let kind=d.kind,id=it.type;if(kind==='thuoc'){kind='ten';id=String(op.fx||'');if(!NAME_FX[id])throw Error('FX');}
+      if(!COS_KINDS.includes(kind))throw Error('ITEM');if(!s.cos.own[kind].includes(id))s.cos.own[kind].push(id);s.cos.use[kind]=id;s.bag[i]=null;return {kind,id};}
+    if(t==='cos'){const kind=String(op.kind||''),id=String(op.id||'');if(!COS_KINDS.includes(kind))throw Error('ITEM');s.cos=s.cos||newCos();if(id&&!s.cos.own[kind].includes(id))throw Error('KHONG_CO');s.cos.use[kind]=id;return {kind,id};}
+    // Gục ngã: mất toàn bộ đồ đang mặc (cau_hinh chet_mat_do); cấp, sách, lính, thú, túi giữ nguyên
+    if(t==='die'){const lost=[];if(num(CFG.chet_mat_do,1)){for(const k of slots){if(s.equipment[k]){lost.push(s.equipment[k]);s.equipment[k]=null;}}}return {lost};}
+    // Thầy đồ: trả lời bộ câu hỏi (máy chủ chấm); sai quá thì giao việc săn quái; săn xong được chỉ đáp án, trả lời lại nhận thưởng giảm
+    if(t==='quizShow'){const bo=String(op.bo||''),Q=QUIZ[bo],z=s.quiz&&s.quiz[bo];if(!Q)throw Error('QUIZ');if(!(z&&z.reveal))throw Error('QUIZ_CHUA');return {show:Q.qs.map(q=>q.ans)};}
+    if(t==='quiz'||t==='quizHunt'){const bo=String(op.bo||''),Q=QUIZ[bo];if(!Q||!Q.qs.length)throw Error('QUIZ');s.quiz=s.quiz||{};const z=s.quiz[bo]=s.quiz[bo]||{done:0,fail:0,hunt:null,reveal:false};if(z.done)throw Error('QUIZ_XONG');
+      const order=Object.values(QUIZ).filter(x=>x.qs.length).sort((a,b)=>a.order-b.order),idx=order.findIndex(x=>x.id===bo),prev=idx>0?order[idx-1]:null;if(prev&&!(s.quiz[prev.id]&&s.quiz[prev.id].done))throw Error('QUIZ_TRUOC');
+      const startHunt=()=>{if(!z.hunt){const mon=Q.mon&&MON[Q.mon]?Q.mon:'';if(!mon)throw Error('QUIZ_QUAI');z.hunt={mon,need:Q.need||num(CFG.quiz_san_so_luong,8),got:0};}return {hunt:z.hunt,reveal:z.reveal};};
+      if(t==='quizHunt')return startHunt();
+      const ans=Array.isArray(op.ans)?op.ans.map(x=>String(x||'').toUpperCase()):[];let ok=0;const wrong=[];Q.qs.forEach((q,i)=>{if(ans[i]===q.ans)ok++;else wrong.push(i);});
+      const pass=wrong.length<=num(CFG.quiz_sai_toi_da,1);
+      if(!pass){z.fail++;const r={ok,total:Q.qs.length,wrong,pass:false,fail:z.fail};if(z.fail>=num(CFG.quiz_lan_thu,2)&&!z.hunt){startHunt();r.hunt=z.hunt;}return r;}
+      const k=z.reveal?num(CFG.quiz_thuong_lo,50)/100:1,rubies=Math.round(Q.rubies*k),exp=Math.round(num(CFG.quiz_kinh_nghiem,300)*Math.max(1,idx+1)*k);
+      s.rubies+=rubies;const up=gainExp(s,exp);z.done=1;z.hunt=null;return {ok,total:Q.qs.length,wrong,pass:true,rubies,exp,up,late:z.reveal};}
     if(t==='fuse'){const mi=Math.floor(op.m),xi=Math.floor(op.x);if(!(mi>=0&&mi<BAG_SIZE&&xi>=0&&xi<BAG_SIZE))throw Error('SLOT');return fuse(s,mi,xi,rng);}
     if(t==='enh'){const bag=op.where==='bag',key=bag?Math.floor(op.key):String(op.key);if(!bag&&!slots.includes(key))throw Error('SLOT');const r=enhance(s,{where:bag?'bag':'equipment',key},rng,op.shop);return {...r,item:bag?s.bag[key]:s.equipment[key]};}
     if(t==='enhSk'){const key=Math.floor(op.key);if(!(key>=0&&key<SKILL_SLOTS))throw Error('SLOT');const r=enhance(s,{where:'skill',key},rng,op.shop||'wizard');return {...r,item:s.skillSlots[key]};}
@@ -473,7 +509,7 @@ const Player=(()=>{
     throw Error('LENH');
   }
   load(typeof GAME_DATA!=='undefined'?GAME_DATA:{});
-  return {VERSION,BAG_SIZE,SKILL_SLOTS,MAX_LV,MAX_MERC,MAX_ACTIVE_QUEST,ELEMENTS,BEASTS,GROUPS,FX_NAMES,STAT_KEYS,CFG,RAR,ADD,SHOPS,SETS,MON,QUESTS,MERCS,AVATARS,TOPUPS,items,slots,skills,shopEnh,shopRow,fuse,
+  return {VERSION,BAG_SIZE,SKILL_SLOTS,MAX_LV,MAX_MERC,MAX_ACTIVE_QUEST,ELEMENTS,BEASTS,GROUPS,FX_NAMES,STAT_KEYS,CFG,RAR,ADD,SHOPS,SETS,MON,QUESTS,MERCS,AVATARS,TOPUPS,QUIZ,NAME_FX,items,slots,skills,shopEnh,shopRow,fuse,mercDaily,
     layout,relayout,load,info,kind,weapon,skillCost,cmdInfo,WEAPONS,PREDICT,seqRng,setFollow,fitFollow,mercCmd,petMax,SHOP_ENH,expNeed,maxLevel,gainExp,spendPoints,mountGain,bookStat,mountCmd,qOf,rar,nameOf,stat,canEnhance,tradeable,gainOf,enhRate,enhCost,enhance,roll,rollDrop,create,derive,targets,equip,unequip,stance,isTwo,pairOk,setSkill,unsetSkill,toggleBook,element,money,shopPrice,buy,sell,sellPrice,addItem,cast,
     aimAcc,isRanged,REGIONS,MON_REGION,SKILLS,mapLevel,regionLv,regionOf,questLevel,questAccept,questProgress,questTurnIn,hireNpc,addMerc,mercEquip,mercUnequip,dismissMerc,makeMerc,cleanItem,serialize,restore,restorePlayer,merge,applyOp,allItems};
 })();

@@ -36,6 +36,8 @@ const LH_IMG=(()=>{
   }
   function load(map){
     for(const k of Object.keys(MAP))delete MAP[k];Object.assign(MAP,map);
+    // ảnh riêng của vật phẩm (cột anh trong tab vat_pham: thẻ avatar, khung, nền, đồ cốt truyện) khi tab hinh_anh chưa có dòng riêng
+    if(typeof Player!=='undefined')for(const [k,d] of Object.entries(Player.items||{}))if(d.img&&!MAP['vat_pham:'+k])MAP['vat_pham:'+k]=d.img;
     for(const [k,u] of Object.entries(MAP)){if(/^bieu_tuong:/.test(k)||(PIC[k]&&PIC[k].src===u))continue;const im=new Image();im.referrerPolicy='no-referrer';im.src=u;PIC[k]=im;}
     applyIcons();
   }

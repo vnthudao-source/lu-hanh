@@ -246,3 +246,94 @@ linh:[
  ['nu-tuong','Nữ tướng','f',1200,10,18,14,14,6,'sword-iron,sword-iron,armor-leather','Song kiếm, đánh nhanh']
 ].map(([id,ten,gioi_tinh,gia,menh_lenh,suc_manh,nhanh_nhen,suc_khoe,tri_tue,trang_bi,mo_ta])=>({id,ten,gioi_tinh,gia,menh_lenh,suc_manh,nhanh_nhen,suc_khoe,tri_tue,trang_bi,mo_ta}))
 };
+
+/* ================= v10.11: Phấn Son (mỹ phẩm), cốt truyện "Tìm con", Thầy đồ hỏi thư pháp, lính thành trì ================= */
+{
+  const DRIVE=id=>'https://drive.google.com/file/d/'+id+'/view';
+  // Mỹ phẩm (ô 'cos'): thẻ avatar (thay ảnh chân dung), khung avatar (viền quanh chân dung), nền hồ sơ (nền khung trên của game), thuốc đa nhiệm (hiệu ứng tên nhân vật)
+  // Mua bằng hồng ngọc ở Chủ tiệm Phấn Son. Dùng xong vào bộ sưu tập, đổi qua lại ở bảng Diện mạo. Ảnh: link Drive (cột anh) — thay ảnh thì sửa link trong tab vat_pham.
+  const COS=[
+   ['av-tuong-quan','Thẻ avatar Tướng quân','avatar',40,'1LUSY5q3cEGNu4VECWZGa_VOalCcphoUx'],['av-hiep-khach','Thẻ avatar Hiệp khách','avatar',40,'1_9hVbAhxETPwldlFvRDfe9e68-cZu0Yu'],
+   ['av-phi-tan','Thẻ avatar Phi Tần','avatar',40,'1jVlcjR4RDojr-Q9LSx6ywwmElINgtMJd'],['av-my-nu-sen','Thẻ avatar Mỹ nữ bên hoa sen','avatar',40,'1Zjjc7Sqp_J-v0ckeA7UbamopSTXY_BQN'],
+   ['av-minh-hong','Thẻ avatar Minh Hồng','avatar',80,'1mHxTCbL1vxiveuALFl6cdY-Ajwew2vpJ'],['av-vuong-gia','Thẻ avatar Vương Gia Lãng Tử','avatar',80,'15dbYhpGHNrYIluqQy77_-ZLoNX4IK0Om'],
+   ['av-bach-kim','Thẻ avatar Bạch Kim Quang Mỹ Nữ','avatar',80,'11VnNVYq69-5o5MDsH4O4dzdJgUhmdQrL'],['av-mau-don','Thẻ avatar Mẫu Đơn','avatar',80,'18bul53I9se1-05F0SZ8yfmMmtlv5NaOH'],['av-cuu-vi','Thẻ avatar Cửu Vĩ Hồ Ly Tinh','avatar',200,'1DSHau53kj7bF2y7_NvLrUYroAR9RlylB'],
+   ['khung-go','Khung gỗ','khung',10,'1SGyFvI9Flqxj7IQhwadoaJc0Slab1Gjo'],['khung-giay','Khung giấy','khung',10,'1Ix74x_nuNOPVDbQ3GJXI-cikMAFelUZY'],['khung-but-long','Khung bút lông','khung',10,'1ygwWCRZGYd3uU3hMg36FVLnTJVZ7B4iP'],['khung-nghien-muc','Khung nghiên mực','khung',10,'16_yDZG070k4cZvOfhMNnCbj79BOOq5ze'],
+   ['khung-trang','Khung Trăng','khung',80,'1CS4Pn8ztHtckqqnsqJwGeiX8aD7LPXzD'],['khung-hoa','Khung Hoa','khung',80,'11hAghxxpgwfH3Yme0U7TzkbESfnL_N-7'],['khung-phuong-hoang','Khung Phượng hoàng','khung',80,'1fiapTdTEvF6KSrFYQt3TU_u_VWnl5_r6'],['khung-thanh-long','Khung Thanh Long','khung',80,'1t1HtNLCva4V_WHol0s9MOcKaAU7V32-t'],['khung-cuu-vi','Khung Cửu vĩ','khung',200,'1kWhOADayTMRDAZVfHqdcxr180x8kSj02'],
+   ['nen-ca','Nền hồ sơ Cá','nen',60,'1vKX-YFQvcFS-6R6L5cxIewU7bN58co4Z'],['nen-lau-dai','Nền hồ sơ Lâu đài','nen',60,'1e0BY_CCZOErhaiAcIIaQmv--gxYgC7R0'],['nen-nui','Nền hồ sơ Núi','nen',60,'1I9axl3vT4v4oooskc6slprQqOAV-Usqi'],['nen-trang','Nền hồ sơ Trăng','nen',60,'1ZVeQIWPwsMS66the145Tye9rlDgmViSJ'],
+   ['nen-hong-nhat','Nền hồ sơ Hồng Nhật','nen',120,'1VZ5c_m99jsLeUqQ2ulSonB67v4O203rD'],['nen-cuu-vi','Nền hồ sơ Cửu vĩ hồ ly','nen',200,'1KyQHKTBKXBu1mOBXTTCR2Uj22D4j4YoS'],
+   ['thuoc-da-nhiem','Thuốc đa nhiệm','thuoc',30,'1Jeb6RLbkOBphWIdBml68c0BgOAciYwnX']
+  ];
+  const COS_MOTA={avatar:'Dùng để thay ảnh chân dung trong khung trên và lều nhân vật (giữ mãi, đổi qua lại ở bảng Diện mạo)',khung:'Khung viền bao quanh chân dung, nằm ngoài vòng kinh nghiệm',nen:'Thay nền khung trên của game',thuoc:'Uống vào chọn một hiệu ứng cho tên nhân vật: ánh vàng, cầu vồng, lửa, băng, tím mộng'};
+  for(const [id,ten,loai,gia_hong_ngoc,drv] of COS)GAME_DATA.vat_pham.push({id,ten,o:'cos',loai,cam:'',cong:0,thu:0,toc:0,gia:0,mau:'',thu_cuoi:'',menh_lenh:0,he:'',pham_chat:'',hieu_ung:'',gia_tri:0,mo_ta:COS_MOTA[loai],gia_hong_ngoc,anh:DRIVE(drv)});
+  GAME_DATA.cua_hang.push(...COS.map(([id],i)=>({cua_hang:'phan-son',id,pham_chat:'n',gia:'',thu_tu:i+1,bac:0})));
+  // Vật phẩm cốt truyện (ô 'quest'): không mặc, không bán, không rơi — manh mối tìm con gái
+  const QI=[
+   ['but-long','Bút Lông','1hCTzUeg0kJM9bbiho5v-IaBQvfhfoUgA','Cây bút lông nhỏ, cán khắc chữ "An". Con bé vẫn hay cắn cán bút khi tập viết.'],
+   ['giay-muc','Giấy và mực','160eR2F_DzmffC3EN8z74NSC7-MC_xg7m','Tờ giấy dó còn vết mực loang, góc giấy có nét chữ con gái viết dở: "Bố ơi…"'],
+   ['gia-treo-but','Giá treo bút','12zNWrsPoBfv25BgP1PMpKI21WLA2eDuG','Giá treo bút bằng gỗ, mặt sau khắc hình con cá — món quà sinh nhật bố tặng con năm ngoái.'],
+   ['nghien-da','Nghiên đá','1AvnoWSoZx-1i00HZOgWOAczwoJ3h8LOU','Nghiên mực còn ẩm. Dưới đáy có vẽ mũi tên chỉ về hướng kinh thành.'],
+   ['an-thanh-dien','Ấn Thanh Điền Thạch','1yHTGPfsbLnGBVy-7GyVp_xhllt85TLOs','Phôi đá Thanh Điền khắc dở chữ "Bình An". Tướng giặc giữ nó trong ngực áo.'],
+   ['an-ba-lam','Ấn Ba Lâm Thạch','1xw9kNZjckB4LHseVwtAMjEggvnJ0zFIZ','Ấn đá Ba Lâm hình tròn, mặt khắc tên con bé. Ai đó đã dùng nó đóng lên một bức thư.'],
+   ['an-xuong-hoa','Ấn Xương Hoá Thạch','1o1UZagjjarAkLRHv78xOG_1iMfp0y1Gf','Ấn Xương Hoá vân đỏ như máu gà. Khắc trên đó: "Thiên Đình — tầng cao nhất".'],
+   ['an-tho-son','Ấn Thọ Sơn Thạch','1GtEYIXVVBPJ8sunCWL0lR-DzDJgSVCyq','Ấn Thọ Sơn — chìa khóa mở cửa Thiên Đình. Con gái đang ở ngay sau cánh cửa ấy.']
+  ];
+  for(const [id,ten,drv,mo_ta] of QI)GAME_DATA.vat_pham.push({id,ten,o:'quest',loai:'quest',cam:'',cong:0,thu:0,toc:0,gia:0,mau:'#e8c070',thu_cuoi:'',menh_lenh:0,he:'',pham_chat:'',hieu_ung:'',gia_tri:0,mo_ta,gia_hong_ngoc:0,anh:DRIVE(drv)});
+  // Cốt truyện "Tìm con": người cha xuyên vào game, phải đánh phá từng vùng để lần theo manh mối cứu con gái bị lạc. 8 việc nối tiếp nhau (yeu_cau = việc trước), rải từ vùng cấp 20 tới Thiên Đình.
+  const STORY=[ // [id, tên, vùng, quái, số, đồ thưởng, mô tả, lời kết (hiện khi trả việc)]
+   ['tc-1','Dấu vết đầu tiên','rung-truc','khi-rung',8,'but-long','Lũ khỉ rừng trúc cướp được một cây bút lông nhỏ. Bạn nhận ra cán bút khắc chữ "An" — tên con gái mình.','Bút của con bé! Nó đã đi qua đây. Trên cán bút còn dính vết bùn đầm lầy… không, là mây — nó bị kéo lên Đỉnh Mây.'],
+   ['tc-2','Nét chữ dở dang','dinh-may','ung-tuyet',8,'giay-muc','Ưng tuyết trên Đỉnh Mây tha về tổ những mẩu giấy. Một tờ có nét chữ con gái bạn.','"Bố ơi, người ta đưa con ra biển…" Chữ run run nhưng vẫn đúng bút thuận bố dạy. Ra Bãi Biển Hoang!'],
+   ['tc-3','Món quà sinh nhật','bien-dong','cua-khong-lo',8,'gia-treo-but','Cua khổng lồ ngoài bãi biển kẹp giữ một giá treo bút bằng gỗ, mặt sau khắc hình con cá.','Giá treo bút bố tặng con năm ngoái. Vết kéo lê trên cát dẫn vào Rừng Ma.'],
+   ['tc-4','Mũi tên dưới đáy nghiên','rung-ma','quy-cay',8,'nghien-da','Quỷ cây trong Rừng Ma nuốt một nghiên mực còn ẩm.','Đáy nghiên vẽ mũi tên chỉ về kinh thành. Thăng Long đang có phản loạn — con bé bị giữ ở đó.'],
+   ['tc-5','Trong ngực áo tướng giặc','thang-long','hac-long-tuong',1,'an-thanh-dien','Hắc Long Tướng cầm đầu phản quân Thăng Long giữ một phôi đá Thanh Điền khắc dở chữ "Bình An".','Hắn khai: "Con bé được đưa về Hoang Mạc Xương, cho Hắc Mộ Vương." Bạn siết chặt ấn đá, lên đường.'],
+   ['tc-6','Bức thư đóng ấn','hoang-mac-xuong','xuong-kho',8,'an-ba-lam','Xương khô ngoài hoang mạc ôm theo một bức thư đóng ấn Ba Lâm — ấn khắc tên con gái bạn.','Thư viết: "Đưa nó ra Đảo Rồng, đổi lấy chìa khóa Thiên Đình." Hải Long Vương là kẻ nhận hàng.'],
+   ['tc-7','Vân đỏ Xương Hoá','dao-rong','hai-long-vuong',1,'an-xuong-hoa','Hải Long Vương ngoài Đảo Rồng giữ ấn Xương Hoá vân đỏ.','Trên ấn khắc: "Thiên Đình — tầng cao nhất". Chỉ còn một cánh cửa nữa. Hắc Thiên Ma đang giữ chìa khóa.'],
+   ['tc-8','Cánh cửa Thiên Đình','thien-dinh','hac-thien-ma',1,'an-tho-son','Hắc Thiên Ma trên Thiên Đình giữ ấn Thọ Sơn — chìa khóa mở cánh cửa nơi con gái bạn bị nhốt.','Cánh cửa mở. Con bé ngồi giữa phòng, tay vẫn cầm bút tập viết. "Bố!" — Bạn đã phá đảo và tìm được con. Hành trình vẫn còn dài, nhưng từ nay hai cha con đi cùng nhau.']
+  ];
+  STORY.forEach(([id,ten,vung,muc_tieu,so_luong,thuong_do,mo_ta,loi_ket],i)=>GAME_DATA.nhiem_vu.push({id,ten,mo_ta,muc_tieu,so_luong,thuong_dong:2000*(i+1)*(i+1),thuong_hong_ngoc:5+i*5,thuong_do,pham_chat_do:'n',lap_lai:'khong',thuong_kinh_nghiem:800*(i+1)*(i+1),yeu_cau:i?STORY[i-1][0]:'',loi_ket,truyen:1}));
+  // Thầy đồ (làng, thành trì): bộ câu hỏi thư pháp từ sách "Thư pháp Việt". Máy chủ đọc tab CauHoi của bảng OCD_Quest (xem Code.gs LH_NGOAI); dưới đây là bộ mặc định khi chưa đọc được.
+  // Trả lời sai quá quiz_sai_toi_da hoặc chọn "chưa biết" → Thầy đồ giao việc săn quái (quai × so_luong, quái của vùng tương ứng); săn xong thầy chỉ đáp án đúng, chọn lại được thưởng (quiz_thuong_lo %).
+  const MAPSEQ=['rung-truc','dam-lay','dinh-may','co-loa','bien-dong','nui-lua','rung-ma','bang-nguyen','thang-long','cuu-trung','thuy-cung','hoang-mac-xuong','thien-son','hoa-lu','dia-nguc-mon','dao-rong','vuc-yeu-tinh','cung-trang','phu-xuan','thien-dinh'];
+  const MAPMOB={'rung-truc':'khi-rung','dam-lay':'dia-khong-lo','dinh-may':'ung-tuyet','co-loa':'am-binh','bien-dong':'cua-khong-lo','nui-lua':'nham-thach-thu','rung-ma':'ma-troi','bang-nguyen':'voi-ma-mut','thang-long':'phan-quan','cuu-trung':'thien-binh','thuy-cung':'tom-tuong','hoang-mac-xuong':'xuong-kho','thien-son':'tien-hac','hoa-lu':'tho-phi','dia-nguc-mon':'nguu-dau','dao-rong':'giao-long','vuc-yeu-tinh':'ho-ly','cung-trang':'tho-ngoc','phu-xuan':'ngu-lam-phan','thien-dinh':'thien-tuong'};
+  const BO=[['NV003','Lộ phong',5],['NV004','Thư phổ',6],['NV007','Thư pháp Việt — khái niệm',7],['NV011','Lâm mô',7],['NV014','Cơ bản công',7],['NV016','Tứ đại ấn thạch',7],['NV017','Dụng uyển — Khỏa thúc',7],['NV019','Nguyên tắc bút thuận',15],['NV023','Thể chữ — Kiểu chữ',60],['NV026','Thức thế',30],
+   ['NV029','Chương pháp (Bố cục)',8],['NV032','Bức thức — Bồi biểu',8],['NV035','Ấn chương — Lạc khoản',60],['NV038','Giống và khác — Đúng và sai',30],['NV041','Sự tự nhiên — Sự cân bằng',9],['NV044','Phi bạch',9],['NV046','Nhãn pháp',60],['DX_AN_CHUONG','Ấn chương',10],['DX_VUONG_HI_CHI','Vương Hi Chi',10],['DX_AU_DUONG_TUAN','Âu Dương Tuân',10]];
+  GAME_DATA.bo_cau_hoi=BO.map(([id,ten,thuong_hong_ngoc],i)=>({id,ten,thu_tu:i+1,thuong_hong_ngoc,quai:MAPMOB[MAPSEQ[i]],so_luong:8,ban_do:MAPSEQ[i]}));
+  const CH=[ // [bộ, câu, A, B, C, D, đáp án] — mẫu; đầy đủ đọc từ bảng OCD_Quest
+   ['NV003','Lộ phong là gì?','Là cách đặt bút để đầu bút lộ ra tự nhiên khi bắt đầu hoặc chuyển động nét viết','Là cách giữ toàn bộ đầu bút chìm trong lòng nét viết','Là kỹ thuật làm cho nét bút luôn có độ dày đồng đều','Là cách kết thúc nét bằng việc thu bút thật nhanh','A'],
+   ['NV003','Khi thực hiện nét lộ phong cần chú ý tới điều gì?','Chỉ cần quan tâm đến tốc độ đưa bút','Hướng đặt bút, trạng thái của đầu mao bút và phần mao bút được sử dụng','Chỉ cần giữ cổ tay cố định trong suốt quá trình viết','Chỉ cần điều chỉnh lượng mực trên đầu bút','B'],
+   ['NV003','Trái với lộ phong là nét gì?','Trung phong','Tật phong','Tàng phong','Hồi phong','C'],
+   ['NV003','Lộ phong thường thể hiện những ý vị nào?','Sự kín đáo, ổn định và thu mình','Sự mềm mại, chậm rãi và cân bằng','Sự tròn đầy, đều đặn và không biến hóa','Sự nguy hiểm, rõ ràng, không che giấu, hướng di chuyển và sự khởi đầu','D'],
+   ['NV003','Vì sao lộ phong được sử dụng nhiều trong thư pháp?','Vì tạo cảm giác tự nhiên và giúp nét chữ trở nên đa dạng hơn','Vì giúp mọi nét chữ có hình dạng giống hệt nhau','Vì loại bỏ hoàn toàn sự biến đổi của đầu bút','Vì không cần quan tâm đến hướng vận bút','A'],
+   ['NV004','Thư phổ là gì?','Là sách hướng dẫn viết chữ hoặc tập hợp những nội dung đặc sắc theo một chủ đề','Là danh sách các loại bút và mực được sử dụng trong thư pháp','Là bản ghi chép riêng về lịch sử của một triều đại','Là tập hợp các bài thơ không có hướng dẫn hoặc nhận định','A'],
+   ['NV004','Vì sao thư phổ quan trọng đối với người học thư pháp?','Vì có thể thay thế hoàn toàn mọi hình thức luyện tập','Vì là tài liệu cần có, đặc biệt với người mới khi không có thầy hướng dẫn trực tiếp','Vì chỉ dùng để tra cứu tên các danh gia thư pháp','Vì giúp người học không cần quan sát hoặc phân tích chữ viết','B'],
+   ['NV004','Ngoài việc tập hợp nội dung theo chủ đề, thư phổ nên cung cấp thêm những gì?','Các mẫu chữ được sắp xếp ngẫu nhiên','Hệ thống lý thuyết và những nhận định của người biên soạn hoặc người viết','Danh sách vật liệu dùng để làm giấy viết','Một bảng xếp hạng các kiểu chữ phổ biến','B'],
+   ['NV004','Thư phổ của thư pháp Việt Nam thời kỳ đầu tiên là cuốn nào?','"Thư pháp Việt - Dành cho người mới bắt đầu" của Thanh Phong Bùi Khắc Sáng','Nghệ thuật viết chữ Việt hiện đại của tác giả Đăng Học','Lịch sử thư pháp Việt Nam qua các thời kỳ của tác giả Đăng Học','"Thư pháp Việt - Lý thuyết và thực hành" của tác giả Đăng Học','D'],
+   ['NV004','Nếu được sử dụng đúng cách, thư phổ có thể giúp người học đạt được điều gì?','Chỉ ghi nhớ tên các tác phẩm mà không cần luyện viết','Gia tăng nhãn lực và mở rộng kiến thức trong quá trình học','Viết đúng mọi kiểu chữ ngay sau lần đọc đầu tiên','Không cần tiếp tục quan sát chữ mẫu hoặc thực hành','B'],
+   ['NV011','Theo sách, "Mô" được hiểu là cách nào?','Đặt giấy lên chữ mẫu rồi dùng bút đồ theo','Chỉ nhìn mẫu rồi viết lại','Học thuộc rồi viết không nhìn mẫu','Tự sáng tạo hoàn toàn','A'],
+   ['NV011','"Lâm" trong lâm mô được hiểu là gì?','Chỉ tô theo viền chữ','Viết lại theo mẫu chữ trên bi thiếp','Chỉ chép nội dung văn bản','Khắc chữ lên đá','B'],
+   ['NV011','Theo sách, "đối lâm" là gì?','Nhìn chữ trực tiếp và viết theo','Học thuộc rồi viết','Viết theo trí nhớ và thêm ý riêng','Đồ theo đường viền','A'],
+   ['NV011','Theo sách, nhận định nào đúng?','Lâm dễ được hình nhưng mất ý','Mô dễ được ý nhưng mất hình','Lâm dễ được ý nhưng mất hình','Lâm và Mô hoàn toàn giống nhau','C'],
+   ['NV011','Vì sao Thiếp có giá trị cảm thụ cao hơn Bi theo phần trình bày trong sách?','Thiếp luôn có kích thước lớn hơn','Thiếp là chân tích chưa qua xử lý, còn Bi có thể bị biến dạng','Thiếp chỉ dùng cho người mới','Bi không có chữ','B']
+  ];
+  {const n={};GAME_DATA.cau_hoi=CH.map(([bo,cau,a,b,c,d,dap_an])=>{n[bo]=(n[bo]||0)+1;return {id:bo+'-Q'+String(n[bo]).padStart(2,'0'),bo,thu_tu:n[bo],cau,a,b,c,d,dap_an};});}
+  // Lính thành trì (cột thanh): chỉ thuê được ở thành đó, chỉ số cao, đồ theo thành; mỗi ngày nhận ngẫu nhiên một kỹ năng sách (hệ) — xem Player.mercDaily
+  const ML=[ // [id, tên, giới, giá, mệnh lệnh, sức mạnh, nhanh nhẹn, sức khỏe, trí tuệ, trang bị, mô tả, thành]
+   ['linh-au-lac','Lính Âu Lạc','m',8000,12,34,22,30,10,'kiem-co-loa,khien-co-loa,giap-co-loa','Lính thành Cổ Loa, kiếm khiên vững chãi','co-loa'],
+   ['no-thu-co-loa','Nỏ thủ Cổ Loa','f',9000,12,24,36,24,12,'cung-co-loa,mu-co-loa,giay-co-loa','Nỏ thần Cổ Loa, bắn xa','co-loa'],
+   ['cam-ve-thang-long','Cấm vệ Thăng Long','m',30000,16,60,40,56,16,'kiem-thang-long,khien-thang-long,giap-thang-long,mu-thang-long','Cấm quân kinh thành, chịu đòn cực tốt','thang-long'],
+   ['phap-su-thang-long','Pháp sư hoàng cung','f',32000,16,20,36,40,70,'gay-thang-long,mu-thang-long,giay-thang-long','Phép thuật diện rộng','thang-long'],
+   ['vo-si-hoa-lu','Võ sĩ Hoa Lư','m',80000,20,90,60,86,20,'kiem-hoa-lu,kiem-hoa-lu,giap-hoa-lu,quan-hoa-lu','Song kiếm Trường Yên, đánh nhanh','hoa-lu'],
+   ['xa-thu-hoa-lu','Xạ thủ Hoa Lư','f',85000,20,50,96,60,30,'cung-hoa-lu,mu-hoa-lu,gang-hoa-lu,giay-hoa-lu','Bắn tỉa từ xa','hoa-lu'],
+   ['ngu-lam-phu-xuan','Ngự lâm Phú Xuân','m',200000,25,130,90,130,30,'giao-phu-xuan,giap-phu-xuan,mu-phu-xuan,quan-phu-xuan','Thương dài ngự lâm, sát thương cao nhất','phu-xuan'],
+   ['quoc-su-phu-xuan','Quốc sư Phú Xuân','m',220000,25,40,70,90,140,'gay-phu-xuan,mu-phu-xuan,gang-phu-xuan','Phép thuật thượng thừa','phu-xuan']
+  ];
+  for(const [id,ten,gioi_tinh,gia,menh_lenh,suc_manh,nhanh_nhen,suc_khoe,tri_tue,trang_bi,mo_ta,thanh] of ML)GAME_DATA.linh.push({id,ten,gioi_tinh,gia,menh_lenh,suc_manh,nhanh_nhen,suc_khoe,tri_tue,trang_bi,mo_ta,thanh});
+  GAME_DATA.cau_hinh.push(
+   {khoa:'quiz_sai_toi_da',gia_tri:1,ghi_chu:'Thầy đồ: số câu sai tối đa vẫn được thưởng (trong 5 câu)'},
+   {khoa:'quiz_lan_thu',gia_tri:2,ghi_chu:'Thầy đồ: trả lời sai quá số lần này thì phải đi săn quái lấy manh mối'},
+   {khoa:'quiz_san_so_luong',gia_tri:8,ghi_chu:'Thầy đồ: số quái phải săn để được chỉ đáp án (bỏ trống cột so_luong ở bo_cau_hoi thì dùng số này)'},
+   {khoa:'quiz_thuong_lo',gia_tri:50,ghi_chu:'Thầy đồ: % thưởng khi trả lời sau khi được chỉ đáp án'},
+   {khoa:'quiz_kinh_nghiem',gia_tri:300,ghi_chu:'Thầy đồ: kinh nghiệm thưởng mỗi bộ câu hỏi (nhân với thứ tự bộ)'},
+   {khoa:'chet_mat_do',gia_tri:1,ghi_chu:'Gục ngã thì mất toàn bộ đồ đang mặc (1 = bật, 0 = tắt). Cấp, sách, lính, thú thu phục, túi đồ giữ nguyên'},
+   {khoa:'linh_thanh_he_so',gia_tri:100,ghi_chu:'Lính thành trì: % chỉ số so với bảng linh (chỉnh độ mạnh chung)'}
+  );
+}

@@ -332,7 +332,12 @@ window.startGame=(session)=>{
     c.restore();
     label(n.name,n.x,n.y-(n.role==='wizard'?82:n.role==='guide'||n.role==='trainer'||n.role==='merchant'?70:66),'#ecdfb9');
   }
-  function label(t,x,y,color){ctx.font='12px system-ui';ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle='#22382bd0';ctx.strokeText(t,x,y);ctx.fillStyle=color;ctx.fillText(t,x,y);}
+  function label(t,x,y,color,fx){ctx.font='12px system-ui';ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle='#22382bd0';ctx.strokeText(t,x,y);
+    // Thuốc đa nhiệm: hiệu ứng tên — ánh vàng (lóe), cầu vồng (chuyển màu), lửa (đỏ cam nhấp nháy), băng (xanh phát sáng), tím mộng
+    if(fx){ctx.save();const tm=time;let col=color,glow='';
+      if(fx==='vang'){col='#ffe08a';glow='#ffd24a';}else if(fx==='cau-vong'){col=`hsl(${(tm*90)%360} 95% 70%)`;glow=col;}else if(fx==='lua'){col=tm%.3<.15?'#ff8a3d':'#ffd27a';glow='#ff5a1a';}else if(fx==='bang'){col='#dff6ff';glow='#5fc8ff';}else if(fx==='tim'){col='#f0c8ff';glow='#b060ff';}
+      ctx.shadowColor=glow;ctx.shadowBlur=8+Math.sin(tm*4)*3;ctx.fillStyle=col;ctx.fillText(t,x,y);ctx.restore();return;}
+    ctx.fillStyle=color;ctx.fillText(t,x,y);}
   // Biểu tượng trên đầu NPC: "!" khi còn nhiệm vụ, túi hàng khi đã xong và có bán đồ
   function npcMarkY(n){return n.y-(n.role==='wizard'?98:88);}
   function drawNPCMarks(){
@@ -663,7 +668,7 @@ window.startGame=(session)=>{
     if(myth.length)LH_Look.mythAura(c,myth,t);
     if(P.heal){c.save();c.globalAlpha=.7;c.fillStyle='#bff5c4';c.beginPath();c.arc(P.front.x,P.front.y,6,0,PI2);c.arc(P.back.x,P.back.y,6,0,PI2);c.fill();c.restore();}
     c.restore();c.restore();
-    if(opts.label!==false)label(h.name,h.x,h.y-(64+seat),opts.labelColor||'#fff2d1');
+    if(opts.label!==false)label(h.name,h.x,h.y-(64+seat),opts.labelColor||'#fff2d1',who===player&&player.cos&&player.cos.use.ten||null);
   }
 
   /* ---------- Quái vật ---------- */
@@ -851,7 +856,8 @@ window.startGame=(session)=>{
     if(r.pet){petSpawn[r.pet.pid]={x:sack.x,y:sack.y};const M=MON[r.pet.type];floater(x,y-dy-10,'Thu phục '+M.name+'!',EL.demon.glow,16);fx.push({kind:'ring',x:sack.x,y:sack.y,r0:8,r1:90,color:EL.demon.color,age:0,life:.7,lw:5});burst(sack.x,sack.y-20,EL.demon.color,30,200);message(svg('check')+`Thu phục ${M.name} · đi theo bạn`);syncMerc();}
     r.items.forEach(it=>{const R=Player.rar(it),nm=Player.nameOf(it);floater(x,y-dy,nm,R.color,14);dy+=16;message(svg('bag')+`Nhặt được <b style="color:${R.color}">${nm}</b> \u{00b7} ${R.name}`);});
     (r.lost||[]).forEach(it=>message(svg('close')+'Túi đầy, rơi mất '+Player.nameOf(it)));
-    (r.done||[]).forEach(id=>{const Q=Player.QUESTS[id];if(Q)LH_Audio.play('quest');if(Q)message(svg('quest')+`${Q.name}: xong, về gặp Lý trưởng`);});
+    (r.done||[]).forEach(id=>{const Q=Player.QUESTS[id];if(Q)LH_Audio.play('quest');if(Q)message(svg('quest')+`${Q.name}: xong, về gặp ${Q.story?'Lý trưởng (Tìm con)':'Lý trưởng'}`);});
+    if(r.hunt){const B=Player.QUIZ[r.hunt.bo];if(r.hunt.reveal){LH_Audio.play('quest');message(svg('quest')+`Đủ manh mối cho bài "${B?B.name:r.hunt.bo}" · về gặp Thầy đồ`);}else floater(x,y-dy-14,`Manh mối ${r.hunt.got}/${r.hunt.need}`,'#c8e0ff',12);}
     if(r.bonus)message(svg('check')+'Săn đủ 4 loài \u{00b7} +'+r.bonus+' đồng');
   }
   // Lên cấp: vòng sáng, hạt vàng, đầy máu và mana
@@ -915,7 +921,7 @@ window.startGame=(session)=>{
           const sentSig=JSON.stringify(Player.layout(player));
           const r=await Net.call('play',{charId:session.charId,bid:inflight.bid,sentAt:Date.now(),save:Player.serialize(player,hero,seen),ops:inflight.ops});
           sync.flushedSig=sentSig;
-          inflight=null;
+          inflight=null;sent.forEach((b,i)=>{b.res=(r.results||[])[i];});
           for(const b of sent)if(b.ent){const i=pending.indexOf(b.ent);if(i>=0)pending.splice(i,1);}
           adopt(r.state);
           const bad=(r.results||[]).filter(x=>!x.ok).length;if(bad)message(svg('close')+'Máy chủ không nhận '+bad+' lệnh, đã đồng bộ lại');
@@ -948,7 +954,8 @@ window.startGame=(session)=>{
       b.ent={op:o};pending.push(b.ent);refreshHD();syncMerc();window.GameUI?.refresh();
       return Promise.resolve({ok:true,...r});
     }
-    queueOp(o);return flush().then(()=>({ok:true}));
+    // lệnh máy chủ tự chấm (Thầy đồ…): chờ gửi xong, trả về đúng kết quả của lệnh đó; máy chủ từ chối thì báo lỗi
+    const b=queueOp(o);return flush().then(ok=>{if(!ok&&!b.res)throw Error('CHUA_LUU');const x=b.res;if(x&&x.ok===false)throw Error(x.error||'LOI');return x||{ok:true};});
   };
   function moveVector(){const x=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0)+joystick.x,y=(keys.has('s')||keys.has('arrowdown')?1:0)-(keys.has('w')||keys.has('arrowup')?1:0)+joystick.y;return {x,y,len:Math.hypot(x,y)};}
   function toggleLock(){lockOn=!lockOn;hero.lockT=null;try{localStorage.setItem('lh-lock',lockOn?'1':'0');}catch(e){}message(svg('aim')+(lockOn?'Khóa mục tiêu: bật':'Khóa mục tiêu: tắt'));window.GameUI?.refresh();}
@@ -1055,6 +1062,8 @@ window.startGame=(session)=>{
   function die(){
     if(HD.fx.revive&&time>=hero.reviveAt){player.hp=Math.round(HD.tot.hp*HD.fx.revive/100);hero.reviveAt=time+300;hero.invuln=time+2;LH_Audio.play('heal');message(svg('heart')+'Hồi sinh tại chỗ');burst(hero.x,hero.y-24,'#ffe0f0',30,200);return;}
     player.hp=0;hero.dead=time+2.2;hero.attack=null;hero.mountAct=null;route=[];LH_Audio.play('die');message(svg('heart')+'Bạn đã gục · về làng');
+    // mất toàn bộ đồ đang mặc (cau_hinh chet_mat_do): máy chủ xác nhận, cấp / sách / lính / túi giữ nguyên
+    op({t:'die'}).then(r=>{refreshHD();if(r.lost&&r.lost.length){window.GameUI?.refresh();setTimeout(()=>message(svg('close')+`Gục ngã: mất ${r.lost.length} món đang mặc (${r.lost.slice(0,3).map(it=>Player.nameOf(it)).join(', ')}${r.lost.length>3?'…':''})`),2600);}},()=>{});
   }
   /* ---------- Đổi bản đồ: lưu, tải gói dữ liệu bản đồ (lần đầu), dựng lại nền, quái, dân làng ---------- */
   let portalArmed=!World.portalAt(hero.x,hero.y),prefAt=0;
@@ -1154,8 +1163,11 @@ window.startGame=(session)=>{
   }
   const allyKey=()=>player.mercs.map(m=>m.mid+(m.on&&m.hpFrac>0?'+':'-')).join()+'|'+(player.pets||[]).map(x=>x.pid+(x.hpFrac>0?'+':'-')).join();
   function mercHit(e,a){
-    const d=ATK[a.type],atk={D:e.D,mul:d.dmg,el:null,owner:'merc',knock:d.knock},ang=Math.atan2(a.aim.y,a.aim.x),ox=e.x,oy=e.y-18;
-    if(d.kind==='melee'){hitArc(ox,oy,ang,d.range,d.arc,atk);fx.push({kind:'arc',x:ox,y:oy,ang,r:d.range*.8,arc:1.5,color:'#dfe8f0',age:0,life:.2});}
+    // lính thành trì: hệ sách theo ngày (Player.mercDaily); mỗi đòn thứ 4 ra chiêu diện rộng
+    const dl=!e.pet&&Player.mercDaily(e.data),el=dl?dl.el:null,col=el?EL[el].color:'#dfe8f0';e.hits=(e.hits||0)+1;
+    const d=ATK[a.type],atk={D:e.D,mul:d.dmg*(el?1.15:1),el,owner:'merc',knock:d.knock},ang=Math.atan2(a.aim.y,a.aim.x),ox=e.x,oy=e.y-18;
+    if(el&&e.hits%4===0){nova(e.x,e.y-12,110,{...atk,mul:atk.mul*1.6},null);fx.push({kind:'ring',x:e.x,y:e.y-12,r0:8,r1:110,color:col,age:0,life:.4,lw:4});burst(e.x,e.y-20,col,16,180);floater(e.x,e.y-70,dl.skill,col,12);return;}
+    if(d.kind==='melee'){hitArc(ox,oy,ang,d.range,d.arc,atk);fx.push({kind:'arc',x:ox,y:oy,ang,r:d.range*.8,arc:1.5,color:col,age:0,life:.2});}
     else if(d.kind==='thrust')hitLine(ox,oy,ang,d.range,d.width,atk);else spawnProjectile({x:e.x,y:e.y},ang,atk,d);
   }
   function nearestFoe(e,r){let t=null,bd=r;for(const m of monsters){if(m.dead)continue;const dd=Math.hypot(m.x-e.x,m.y-e.y);if(dd<bd&&Math.hypot(m.x-hero.x,m.y-hero.y)<420){bd=dd;t=m;}}return t;}
@@ -1372,7 +1384,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     shakeAmp=Math.max(0,shakeAmp-dt*25);
   }
   /* ---------- Trò chuyện: NPC còn lời dặn thì nói chuyện, sau đó mở thẳng bảng chức năng ---------- */
-  const PANEL_BTN={shop:'Mua bán',quests:'Nhận việc',mercs:'Thuê lính',market:'Chợ',avatar:'Đổi diện mạo',fuse:'Dung hợp',nap:'Nạp thẻ'};
+  const PANEL_BTN={shop:'Mua bán',quests:'Nhận việc',mercs:'Thuê lính',market:'Chợ',avatar:'Đổi diện mạo',fuse:'Dung hợp',nap:'Nạp thẻ',quiz:'Hỏi bài'};
   function nearby(){let best=null,bd=92;for(const n of World.npcs){const d=Math.hypot(n.x-hero.x,n.y-hero.y);if(d<bd){bd=d;best=n;}}return best;}
   function meet(n){
     route=[];targetNPC=null;if(n.id==='merchant')checkpoint();

@@ -12,7 +12,7 @@ window.startUI=(session)=>{
   const qdot=it=>{const q=Player.qOf(it);return q!=='n'?`<i class="qd" style="background:${qColor(it)}"></i>`:'';};
   const SLOT_NAMES={mount:'Thú cưỡi',hat:'Mũ',wings:'Cánh',left:'Tay trái',armor:'Áo giáp',right:'Tay phải',gloves:'Găng tay',pants:'Quần',shoes:'Giày'};
   const KIND_NAMES={sword:'Kiếm',shield:'Khiên',staff:'Gậy phép',bow:'Cung',spear:'Thương',crossbow:'Nỏ',punch:'Tay không'};
-  const ERR={BAG_FULL:'Túi đầy',PAIR:'Không cầm chung được',MONEY:'Không đủ tiền',SLOT:'Không mặc vào ô này được',RUBY:'Không đủ hồng ngọc',MAX:'Đã tối đa +15',BOOK:'Không phải sách',ITEM:'Món này không làm được việc này',GENDER:'Đồ này dành cho nhân vật khác giới',CMD:'Không đủ Mệnh lệnh',QUEST_FULL:'Chỉ nhận tối đa 3 việc cùng lúc',QUEST_HAVE:'Đã nhận việc này',QUEST_NOT_DONE:'Chưa làm xong',QUEST_DONE:'Việc này chỉ làm một lần',MERC_FULL:'Tối đa 3 lính đánh thuê',MERC:'Không tìm thấy lính',POINTS:'Không đủ điểm',STAT:'Chỉ số không hợp lệ',MERC_DOWN:'Lính đang chờ ở làng, về làng để dắt đi',SHOP:'Món này gia cường ở chỗ khác',PET:'Không tìm thấy quái',LEVEL:'Chưa đủ cấp'};
+  const ERR={BAG_FULL:'Túi đầy',PAIR:'Không cầm chung được',MONEY:'Không đủ tiền',SLOT:'Không mặc vào ô này được',RUBY:'Không đủ hồng ngọc',MAX:'Đã tối đa +15',BOOK:'Không phải sách',ITEM:'Món này không làm được việc này',GENDER:'Đồ này dành cho nhân vật khác giới',CMD:'Không đủ Mệnh lệnh',QUEST_FULL:'Chỉ nhận tối đa 3 việc cùng lúc',QUEST_HAVE:'Đã nhận việc này',QUEST_NOT_DONE:'Chưa làm xong',QUEST_DONE:'Việc này chỉ làm một lần',MERC_FULL:'Tối đa 3 lính đánh thuê',MERC:'Không tìm thấy lính',POINTS:'Không đủ điểm',STAT:'Chỉ số không hợp lệ',MERC_DOWN:'Lính đang chờ ở làng, về làng để dắt đi',SHOP:'Món này gia cường ở chỗ khác',PET:'Không tìm thấy quái',LEVEL:'Chưa đủ cấp',KHONG_BAN:'Món này không bán được',QUEST_TRUOC:'Phải xong việc trước đã',QUIZ_TRUOC:'Phải xong bài trước đã',QUIZ_XONG:'Bài này đã xong',QUIZ_CHUA:'Chưa đủ manh mối',QUIZ_QUAI:'Bài này chưa có quái để săn',KHONG_CO:'Chưa có món này trong bộ sưu tập',FX:'Chọn một hiệu ứng tên',CHUA_LUU:'Chưa gửi được lên máy chủ, thử lại'};
   const fail=err=>game.message(svg('close')+(ERR[err.message]||netMsg(err)));
   // Chạy lệnh máy chủ: khóa nút trong lúc chờ, báo lỗi nếu có
   const run=(btn,pr,after)=>{if(btn){btn.disabled=true;btn.classList.add('busy');}return pr.then(()=>refresh(),e=>{fail(e);if(btn){btn.disabled=false;btn.classList.remove('busy');}after&&after();});};
@@ -45,6 +45,7 @@ window.startUI=(session)=>{
   function gainText(d){if(d.slot==='mount')return `Tốc +${Player.mountGain(1).speed}; từ +7 thêm Công; từ +11 thêm Máu, Mana, Thủ`;if(d.slot==='book')return 'chỉ số +'+Player.gainOf(d).stat+(['thunder','wind','ice','demon','light'].includes(d.element)?`, tỉ lệ +${C.sach_ti_le_cap||1}%`:'');const g=Player.gainOf(d);return g.atk?'Công +2':g.def?'Thủ +1':g.speed?'Tốc +0.03':'';}
   function desc(it){
     const d=info(it);if(!d)return '';
+    if(d.slot==='cos'||d.slot==='quest')return d.desc||(d.slot==='quest'?'Vật phẩm cốt truyện':'Mỹ phẩm');
     if(d.slot==='book')return `Gắn vào ô kỹ năng · nhiều sách cộng dồn chỉ số, hiệu ứng mỗi hệ tính một lần · luyện ở Đạo sĩ: ${gainText(d)}/cấp`;
     if(!d.slot)return 'Nguyên liệu, mang bán cho thợ rèn.';
     let t;
@@ -94,8 +95,12 @@ window.startUI=(session)=>{
     if(md&&mb.dataset.beast!==md.beast){mb.dataset.beast=md.beast;const B=Player.BEASTS[md.beast];$('#mountIcon').innerHTML=`<use href="#i-${B.icon}"/>`;$('#mountName').textContent=B.skill;mb.title='4 · '+B.skill+' · 12 mana';}
     document.querySelectorAll('.skill-wheel .skill:not(.normal):not(.lockon)').forEach(b=>b.classList.toggle('locked',game.safe));
     // chân dung góc trái: theo giới tính + diện mạo đang dùng (ảnh giao_dien:chan_dung_<diện mạo> nếu có, không thì chan_dung_nam/nu, không thì hình vẽ đổi màu da, tóc, râu)
-    const avKey=p.gender+'|'+(p.avatar||'');
-    if(lastGender!==avKey){lastGender=avKey;const av=$('#avatarBtn'),A=Player.AVATARS[p.avatar]||null,u=(A&&LH_IMG.url('giao_dien:chan_dung_'+A.id))||LH_IMG.url('giao_dien:chan_dung_'+(p.gender==='f'?'nu':'nam'));av.querySelector('.pf-img')?.remove();if(u)av.querySelector('.portrait').insertAdjacentHTML('afterend',`<img class="pf-img" src="${esc(u)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`);
+    const C=p.cos&&p.cos.use||{},avKey=p.gender+'|'+(p.avatar||'')+'|'+(C.avatar||'')+'|'+(C.khung||'')+'|'+(C.nen||'')+'|'+(C.ten||'');
+    if(lastGender!==avKey){lastGender=avKey;const av=$('#avatarBtn'),A=Player.AVATARS[p.avatar]||null,cosAv=C.avatar&&info({type:C.avatar}),u=(cosAv&&cosAv.img)||(A&&LH_IMG.url('giao_dien:chan_dung_'+A.id))||LH_IMG.url('giao_dien:chan_dung_'+(p.gender==='f'?'nu':'nam'));
+      // khung quanh chân dung (ngoài vòng kinh nghiệm), nền khung trên, hiệu ứng tên (Thuốc đa nhiệm)
+      av.querySelector('.pf-frame')?.remove();const fr=C.khung&&info({type:C.khung});if(fr&&fr.img)av.insertAdjacentHTML('beforeend',`<img class="pf-frame" src="${esc(fr.img)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`);
+      const bg=C.nen&&info({type:C.nen}),hd=document.querySelector('#lu-hanh header');if(hd){hd.style.backgroundImage=bg&&bg.img?`linear-gradient(#14231d99,#14231dcc),url("${bg.img}")`:'';hd.style.backgroundSize='cover';hd.style.backgroundPosition='center';}
+      $('#playerName').className='player-name'+(C.ten?' fx-'+C.ten:'');av.querySelector('.pf-img')?.remove();if(u)av.querySelector('.portrait').insertAdjacentHTML('afterend',`<img class="pf-img" src="${esc(u)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`);
       const skin=A?A.skin:'#e4c69b',hair=A?A.hair:'#2a2622',sh=(h,k)=>LH_Look.shade?LH_Look.shade(h,k):h;$('#pfFace').setAttribute('fill',skin);$('#pfNeck').setAttribute('fill',sh(skin,-.06));$('#pfBody').setAttribute('fill',sh(skin,-.1));$('#pfTop').setAttribute('fill',hair);$('#pfHair').setAttribute('fill',hair);$('#pfBeard').setAttribute('fill',A&&A.beard||hair);
       $('#pfTop').style.display=A&&A.style==='troc'?'none':'';$('#pfHair').style.display=p.gender==='f'||(A&&A.style==='xoa')?'':'none';$('#pfYem').style.display=p.gender==='f'?'':'none';$('#pfBeard').style.display=A&&A.beard?'':'none';}
   }
@@ -115,8 +120,9 @@ window.startUI=(session)=>{
     const need=Player.expNeed(p.level),maxed=p.level>=Player.maxLevel();
     const xp=`<div class="exp-line">${svg('spark')}<span>Kinh nghiệm</span><span class="xb"><i style="width:${maxed?100:Math.min(100,(p.exp||0)/need*100)}%"></i></span><b>${maxed?'Tối đa':`${p.exp||0} / ${need}`}</b></div>`;
     const pts=p.points>0?`<div class="pts">${svg('check')}<span>Điểm cộng chưa dùng</span><b>${p.points}</b></div>`:'';
-    openModal(ttl('user','Thuộc tính'),`<div class="attr-head"><b>${esc(p.name)}</b><small>${p.gender==='f'?'Nữ':'Nam'} · Lv. ${p.level}</small></div>${xp}${pts}<div class="attr-list">${rows}</div>${sets||fxs||books?`<span class="chips" style="justify-content:flex-start;margin-top:8px">${sets}${fxs}${books}</span>`:''}`);
+    openModal(ttl('user','Thuộc tính'),`<div class="attr-head"><b>${esc(p.name)}</b><small>${p.gender==='f'?'Nữ':'Nam'} · Lv. ${p.level}</small><button id="cosBtn" class="mini-btn">${svg('orb')}Phấn Son</button></div>${xp}${pts}<div class="attr-list">${rows}</div>${sets||fxs||books?`<span class="chips" style="justify-content:flex-start;margin-top:8px">${sets}${fxs}${books}</span>`:''}`);
     document.querySelectorAll('[data-pt]').forEach(b=>b.onclick=()=>run(b,game.op({t:'pt',k:b.dataset.pt,n:Number(b.dataset.n||1)}).then(()=>{game.refreshHD();showAttributes();})));
+    const cb=$('#cosBtn');if(cb)cb.onclick=showCosmetics;
   }
   function previewElem(){const sel=selected!==null?p.bag[selected]:null;if(info(sel)&&info(sel).element)return info(sel).element;const f=skillFocus!==null?p.skillSlots[skillFocus]:null;if(info(f)&&info(f).element)return info(f).element;return Player.element(p);}
   const slotHtml=(who,slot,canFn)=>{
@@ -133,7 +139,8 @@ window.startUI=(session)=>{
     const money=Player.money(p.copper);
     let bar='';
     if(sel){
-      bar=`<span class="big" style="color:${tintOf(sel)||'#e4cc8d'}">${icon(sel.type)}</span>${itemInfo(sel)}`+(sd.slot==='book'?`<button class="primary" data-act="book">${svg('book')}Gắn sách</button>`:'')+`<button data-act="clear">${svg('close')}Bỏ chọn</button>`;
+      bar=`<span class="big" style="color:${tintOf(sel)||'#e4cc8d'}">${icon(sel.type)}</span>${itemInfo(sel)}`+(sd.slot==='book'?`<button class="primary" data-act="book">${svg('book')}Gắn sách</button>`:'')
+        +(sd.slot==='cos'?(sd.kind==='thuoc'?Object.entries(Player.NAME_FX).map(([k,v])=>`<button class="primary fx-${k}" data-usefx="${k}">${svg('orb')}${v}</button>`).join(''):`<button class="primary" data-use="1">${svg('check')}Dùng</button>`):'')+`<button data-act="clear">${svg('close')}Bỏ chọn</button>`;
       if(tg.length)bar=bar.replace('</small></div>',' · chạm ô sáng để mặc</small></div>');
     }else if(skillFocus!==null&&p.skillSlots[skillFocus]){
       const it=p.skillSlots[skillFocus],on=p.activeBook===skillFocus;
@@ -157,6 +164,7 @@ window.startUI=(session)=>{
       selected=null;if(!p.skillSlots[i]){skillFocus=null;return;}
       skillFocus=i;if(p.activeBook!==i){p.activeBook=i;game.activateBurst(Player.element(p));burstAt=game.now();}
     }));
+    document.querySelectorAll('[data-use],[data-usefx]').forEach(btn=>btn.onclick=()=>{const i=selected;run(btn,game.op({t:'use',i,...(btn.dataset.usefx?{fx:btn.dataset.usefx}:{})}).then(r=>{LH_Audio.play('rare');game.message(svg('check')+({avatar:'Đã đổi ảnh chân dung',khung:'Đã đeo khung',nen:'Đã đổi nền hồ sơ',ten:'Tên nhân vật đã có hiệu ứng '+(Player.NAME_FX[r.id]||'')}[r.kind]||'Đã dùng')+' · đổi qua lại ở bảng Diện mạo');selected=null;game.refreshHD();renderBag();}));});
     document.querySelectorAll('[data-act]').forEach(btn=>btn.onclick=()=>act(()=>{
       const a=btn.dataset.act;
       if(a==='book'){Player.setSkill(p,selected,null);skillFocus=p.activeBook;selected=null;game.activateBurst(Player.element(p));burstAt=game.now();}
@@ -183,17 +191,18 @@ window.startUI=(session)=>{
   }
   function showShop(id,tab='buy'){
     // hiệu buôn thành trì (thanh-<vùng>): tên theo vùng, có gia cường; món nào cũng ghi bậc (· cấp N) = cấp thành
-    const RG=/^thanh-/.test(id)?Player.REGIONS.find(r=>'thanh-'+r.id===id):null;
-    const list=Player.SHOPS[id]||[],META={smith:{icon:'sword',title:'Lò rèn',enh:'Gia cường'},trainer:{icon:'mount',title:'Thú cưỡi',enh:'Nâng thú'},wizard:{icon:'book',title:'Sách ngũ hành',enh:'Luyện sách'}}[id]||(RG?{icon:'bag',title:'Hiệu buôn '+RG.name.replace(/^(Thành|Kinh Thành|Cố Đô) /,''),enh:'Gia cường'}:{icon:'bag',title:'Cửa hàng'});
+    const RG=/^thanh-/.test(id)?Player.REGIONS.find(r=>id.startsWith('thanh-'+r.id)):null;
+    const RG2=/^thanh-/.test(id)?Player.REGIONS.find(r=>id.startsWith('thanh-'+r.id)):null,RGN=RG2?RG2.name.replace(/^(Thành|Kinh Thành|Cố Đô) /,''):'';
+    const list=Player.SHOPS[id]||[],META={smith:{icon:'sword',title:'Lò rèn',enh:'Gia cường'},trainer:{icon:'mount',title:'Thú cưỡi',enh:'Nâng thú'},wizard:{icon:'book',title:'Sách ngũ hành',enh:'Luyện sách'},'phan-son':{icon:'orb',title:'Tiệm Phấn Son · mua bằng hồng ngọc'}}[id]||(RG2?(/-ren$/.test(id)?{icon:'sword',title:'Lò rèn '+RGN,enh:'Gia cường'}:/-thu$/.test(id)?{icon:'mount',title:'Chuồng thú '+RGN,enh:'Nâng thú'}:{icon:'bag',title:'Hiệu buôn '+RGN,enh:'Gia cường'}):{icon:'bag',title:'Cửa hàng'});
     if(tab==='enh'&&!META.enh)tab='buy';
     const qs=[...new Set(list.flatMap(r=>r.q))],full=p.bag.indexOf(null)<0;if(!qs.includes(shopQ))shopQ=qs[0]||'n';
-    const tile=(attr,type,it,price,go,goTxt,off,sel)=>`<button class="tile${off?' off':''}${sel?' sel':''}" ${attr} title="${esc(desc(it))}" style="${Player.qOf(it)!=='n'?`border-color:${qColor(it)}`:''}"><span class="ti" style="color:${tintOf(it)||'#e4cc8d'}">${icon(type)}</span>${lvb(it)}<b class="nm" style="color:${qColor(it)}">${esc(Player.nameOf(it))}</b>${chips(it)}<span class="price">${coins(price)}</span><span class="go">${svg(go)}${goTxt}</span></button>`;
+    const tile=(attr,type,it,price,go,goTxt,off,sel)=>{const dd=info(it)||{};return `<button class="tile${off?' off':''}${sel?' sel':''}${dd.img?' pic':''}" ${attr} title="${esc(desc(it))}" style="${Player.qOf(it)!=='n'?`border-color:${qColor(it)}`:''}"><span class="ti" style="color:${tintOf(it)||'#e4cc8d'}">${icon(type)}</span>${lvb(it)}<b class="nm" style="color:${qColor(it)}">${esc(Player.nameOf(it))}</b>${chips(it)}${dd.desc?`<small>${esc(dd.desc)}</small>`:''}<span class="price">${dd.ruby&&go==='bag'?ruby(dd.ruby):coins(price)}</span><span class="go">${svg(go)}${goTxt}</span></button>`;};
     let body;
     if(tab==='buy'){
       const qbar=qs.length>1?`<div class="qbar">${qs.map(q=>`<button data-q="${q}" class="${q===shopQ?'on':''}" style="color:${Player.RAR[q].color}">${Player.RAR[q].name}</button>`).join('')}${shopQ!=='n'?`<small>Mỗi món có ${Player.RAR[shopQ].lines} dòng thuộc tính ngẫu nhiên</small>`:''}</div>`:'';
-      body=qbar+`<div class="shop-grid">${list.filter(r=>r.q.includes(shopQ)||(info({type:r.id})||{}).q&&r.q.includes(info({type:r.id}).q)).map(r=>{const d=info({type:r.id}),q=d&&d.q?d.q:shopQ,price=Player.shopPrice(r.id,q,id),it={type:r.id,q,...(r.t?{t:r.t}:{})};return tile(`data-buy="${r.id}"`,r.id,it,price,'bag','Mua',p.copper<price||full,shopSel===r.id);}).join('')}</div>`;
+      body=qbar+`<div class="shop-grid">${list.filter(r=>r.q.includes(shopQ)||(info({type:r.id})||{}).q&&r.q.includes(info({type:r.id}).q)).map(r=>{const d=info({type:r.id}),q=d&&d.q?d.q:shopQ,price=Player.shopPrice(r.id,q,id),it={type:r.id,q,...(r.t?{t:r.t}:{})};return tile(`data-buy="${r.id}"`,r.id,it,price,'bag','Mua',(d&&d.ruby?p.rubies<d.ruby:p.copper<price)||full,shopSel===r.id);}).join('')}</div>`;
     }
-    else if(tab==='sell'){const t=p.bag.map((it,i)=>it?tile(`data-sell="${i}"`,it.type,it,Player.sellPrice(it),'coin','Bán',false,shopSel===String(i)):'').join('');body=`<div class="shop-grid">${t||`<div class="shop-empty">${svg('bag')}<span>Túi trống</span></div>`}</div>`;}
+    else if(tab==='sell'){const t=p.bag.map((it,i)=>it&&info(it)&&info(it).slot!=='cos'&&info(it).slot!=='quest'?tile(`data-sell="${i}"`,it.type,it,Player.sellPrice(it),'coin','Bán',false,shopSel===String(i)):'').join('');body=`<div class="shop-grid">${t||`<div class="shop-empty">${svg('bag')}<span>Túi trống</span></div>`}</div>`;}
     else body=enhHtml(id);
     const tabs=[['buy',META.icon,'Mua'],['sell','coin','Bán'],...(META.enh?[['enh',id==='wizard'?'book':'anvil',META.enh]]:[])];
     openModal(`<div class="shop-tabs">${tabs.map(([k,ic,tx])=>`<button data-tab="${k}" class="${tab===k?'on':''}">${svg(ic)}${tx}</button>`).join('')}</div><div class="purse">${coins(p.copper)}${ruby(p.rubies)}</div>`,`<div class="shop-sub">${svg(META.icon)}${META.title}${tab==='enh'?'':' · chạm 2 lần để '+(tab==='buy'?'mua':'bán')}</div>${body}`,true);
@@ -210,18 +219,20 @@ window.startUI=(session)=>{
     // việc làm một lần đã xong thì không hiện nữa; xếp theo cấp, nhóm theo vùng; vùng chưa đủ cấp hiện khóa
     const lv=p.level||1,R=id=>Player.REGIONS.find(r=>r.id===id)||Player.REGIONS[0];
     const list=Object.values(Player.QUESTS).filter(Q=>Q.repeat||!p.quests.done[Q.id]||p.quests.active[Q.id]!=null)
-      .map(Q=>({Q,need:Player.questLevel(Q),reg:R(Player.regionOf(Q.target))})).sort((a,b)=>a.need-b.need);
+      .filter(Q=>!Q.story||!Q.req||p.quests.done[Q.req]||p.quests.active[Q.id]!=null||(Player.QUESTS[Q.req]&&p.quests.active[Q.req]!=null)) // cốt truyện: chỉ lộ việc kế tiếp
+      .map(Q=>({Q,need:Player.questLevel(Q),reg:R(Player.regionOf(Q.target))})).sort((a,b)=>(a.Q.story?-1:0)-(b.Q.story?-1:0)||a.need-b.need);
     let last='',rows='';
     for(const {Q,need,reg} of list){
-      const key=need+'|'+reg.id,lock=lv<need;
-      if(key!==last){last=key;rows+=`<div class="qgroup${lock?' qlock':''}">${svg(lock?'lock':reg.icon)}<b>${esc(reg.name)}</b><span>${lock?'Cần cấp '+need:'Cấp '+need+'+'}</span></div>`;}
+      const key=(Q.story?'truyen':need+'|'+reg.id),lock=lv<need;
+      if(key!==last){last=key;rows+=Q.story?`<div class="qgroup story">${svg('heart')}<b>Tìm con</b><span>Lần theo manh mối qua từng vùng để cứu con gái</span></div>`:`<div class="qgroup${lock?' qlock':''}">${svg(lock?'lock':reg.icon)}<b>${esc(reg.name)}</b><span>${lock?'Cần cấp '+need:'Cấp '+need+'+'}</span></div>`;}
       const n=p.quests.active[Q.id],done=p.quests.done[Q.id]||0,M=Player.MON[Q.target],act=n!=null,ready=act&&n>=Q.count;
-      const btn=ready?`<button class="primary" data-turnin="${Q.id}">${svg('check')}Trả việc</button>`:act?`<span class="qprog">${n}/${Q.count}</span>`:(!Q.repeat&&done)?`<span class="qprog">Đã xong</span>`:lock?`<span class="qprog">${svg('lock')}${need}</span>`:`<button data-accept="${Q.id}">${svg('next')}Nhận</button>`;
+      const needPrev=Q.req&&!p.quests.done[Q.req];
+      const btn=ready?`<button class="primary" data-turnin="${Q.id}">${svg('check')}Trả việc</button>`:act?`<span class="qprog">${n}/${Q.count}</span>`:(!Q.repeat&&done)?`<span class="qprog">Đã xong</span>`:needPrev?`<span class="qprog">${svg('lock')}Xong việc trước</span>`:lock?`<span class="qprog">${svg('lock')}${need}</span>`:`<button data-accept="${Q.id}">${svg('next')}Nhận</button>`;
       rows+=`<div class="qrow${act?' act':''}${lock&&!act?' dim':''}">${LH_IMG.icon('quai:'+Q.target,monIc(Q.target,'flag'))}<div><b>${esc(Q.name)}</b><small>${esc(Q.desc)} · ${M?esc(M.name):''} ×${Q.count}${done?` · đã làm ${done} lần`:''}</small><span class="chips">${rewardChips(Q)}</span></div>${btn}</div>`;
     }
     openModal(ttl('quest','Lý trưởng giao việc'),`<small class="sel-desc">Lv. ${lv} · nhận tối đa ${Player.MAX_ACTIVE_QUEST} việc cùng lúc. Xong việc quay về gặp Lý trưởng để nhận thưởng.</small><div class="quest-rows" style="margin-top:8px">${rows||`<div class="cho-note">${svg('check')}<span>Đã làm xong mọi việc của làng. Hãy ra Đông Ngạn săn quái, luyện cấp.</span></div>`}</div>`,true);
     document.querySelectorAll('[data-accept]').forEach(b=>b.onclick=()=>run(b,game.op({t:'qa',id:b.dataset.accept}).then(()=>showQuestBoard())));
-    document.querySelectorAll('[data-turnin]').forEach(b=>b.onclick=()=>run(b,game.op({t:'qt',id:b.dataset.turnin}).then(r=>{game.message(svg('check')+'Nhận thưởng'+(r.copper?' '+coins(r.copper):'')+(r.rubies?' '+ruby(r.rubies):'')+(r.exp?' · +'+r.exp+' kinh nghiệm':'')+(r.item?` \u{00b7} <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b>`:''));if(r.up)game.levelUp(r.up);showQuestBoard();})));
+    document.querySelectorAll('[data-turnin]').forEach(b=>b.onclick=()=>run(b,game.op({t:'qt',id:b.dataset.turnin}).then(r=>{game.message(svg('check')+'Nhận thưởng'+(r.copper?' '+coins(r.copper):'')+(r.rubies?' '+ruby(r.rubies):'')+(r.exp?' · +'+r.exp+' kinh nghiệm':'')+(r.item?` \u{00b7} <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b>`:''));if(r.up)game.levelUp(r.up);const Q=Player.QUESTS[b.dataset.turnin];if(Q&&Q.end)setTimeout(()=>openModal(ttl('heart','Tìm con · '+Q.name),`<div class="story-end">${svg('quest')}<p>${esc(Q.end)}</p></div><button class="primary big-btn" id="storyOk">${svg('next')}Tiếp tục</button>`),50);else showQuestBoard();if(Q&&Q.end)setTimeout(()=>{const b2=$('#storyOk');if(b2)b2.onclick=()=>showQuestBoard();},80);})));
   }
   /* ---------- Người dẫn đường: lính đánh thuê ---------- */
   const statLine=st=>`<small class="sel-desc">Sức mạnh ${st.strength} · Nhanh nhẹn ${st.agility} · Sức khỏe ${st.vitality} · Trí tuệ ${st.intelligence}</small>`;
@@ -231,7 +242,7 @@ window.startUI=(session)=>{
     let body='';
     if(tab==='hire'){
       const c=Player.cmdInfo(p);
-      const npc=Object.values(Player.MERCS).map(M=>`<div class="mrow"><span class="mg">${M.gender==='f'?'Nữ':'Nam'}</span><div><b>${esc(M.name)}</b><small class="sel-desc">${esc(M.desc||'')}</small>${statLine(M.stats)}<small class="need${M.cmd>c.free?' no':''}">${svg('flag')}Đi theo cần ${M.cmd} Mệnh lệnh / còn ${c.free}${M.cmd>c.free?' · thuê xong để nghỉ':''}</small></div><button data-hire="${M.id}"${p.copper<M.price?' disabled':''}>${coins(M.price)}Thuê</button></div>`).join('');
+      const here=World.id,npc=Object.values(Player.MERCS).filter(M=>M.map?M.map===here:true).map(M=>`<div class="mrow"><span class="mg">${M.gender==='f'?'Nữ':'Nam'}</span><div><b>${esc(M.name)}</b>${M.map?`<small class="qtag" style="color:#c8e0ff">${svg('book')}Lính thành trì · mỗi ngày nhận ngẫu nhiên một hệ sách (đòn có hệ, mỗi 4 đòn ra chiêu diện rộng)</small>`:''}<small class="sel-desc">${esc(M.desc||'')}</small>${statLine(M.stats)}<small class="need${M.cmd>c.free?' no':''}">${svg('flag')}Đi theo cần ${M.cmd} Mệnh lệnh / còn ${c.free}${M.cmd>c.free?' · thuê xong để nghỉ':''}</small></div><button data-hire="${M.id}"${p.copper<M.price?' disabled':''}>${coins(M.price)}Thuê</button></div>`).join('');
       body=`<h4 class="sec">Lính trong vùng</h4>${npc}<div class="cho-note">${svg('user')}<span>Muốn thuê nhân vật của người chơi khác? Gặp <b>Thương nhân</b> ở cuối làng.</span></div>`;
     }else{
       const m=mercSel!=null?p.mercs[mercSel]:null;
@@ -239,7 +250,7 @@ window.startUI=(session)=>{
       const cmdLine=`<div class="cmd-line">${svg('flag')}<span>Mệnh lệnh</span><b>${c.used} / ${c.total}</b><div class="cmd-bar"><i class="m" style="width:${pct(c.mount)}"></i><i class="l" style="width:${pct(c.merc)}"></i></div><small>Thú cưỡi ${c.mount} · Lính ${c.merc} · Còn trống <b>${c.free}</b></small></div>`;
       const stat=M=>!(M.hpFrac>0)?'<small class="qtag" style="color:#ffb0a0">Chờ ở làng</small>':M.on?'<small class="qtag" style="color:#9fe8a8">Đang đi theo</small>':'';
       const need=M=>{const n=Number(M.cmd)||5;return M.on?`<small class="need on">${svg('flag')}${n}</small>`:`<small class="need${n>c.free?' no':''}">${svg('flag')}Cần ${n} / còn ${c.free}</small>`;};
-      const list=cmdLine+(p.mercs.map((M,i)=>{const n=Number(M.cmd)||5,can=M.on||(n<=c.free&&M.hpFrac>0);return `<div class="mrow${M.on?' act':''}${mercSel===i?' sel':''}"><span class="mg">${M.gender==='f'?'Nữ':'Nam'}</span><div><b>${esc(M.name)}</b>${stat(M)}${need(M)}<span class="gear">${gearIcons(M.equipment)}</span></div><span class="mbtns"><button data-follow="${i}"${can?'':' disabled'}>${M.on?'Cho nghỉ':'Đi theo'}</button><button data-gear="${i}">Đồ</button><button data-dismiss="${i}">Giải tán</button></span></div>`;}).join('')||'<small class="sel-desc">Chưa có lính. Qua mục Thuê lính để thuê.</small>');
+      const list=cmdLine+(p.mercs.map((M,i)=>{const n=Number(M.cmd)||5,can=M.on||(n<=c.free&&M.hpFrac>0);const dl=Player.mercDaily(M);return `<div class="mrow${M.on?' act':''}${mercSel===i?' sel':''}"><span class="mg">${M.gender==='f'?'Nữ':'Nam'}</span><div><b>${esc(M.name)}</b>${dl?`<small class="qtag" style="color:${EL[dl.el].color}">${svg(EL[dl.el].icon)}Hôm nay: ${esc(dl.skill)}</small>`:''}${stat(M)}${need(M)}<span class="gear">${gearIcons(M.equipment)}</span></div><span class="mbtns"><button data-follow="${i}"${can?'':' disabled'}>${M.on?'Cho nghỉ':'Đi theo'}</button><button data-gear="${i}">Đồ</button><button data-dismiss="${i}">Giải tán</button></span></div>`;}).join('')||'<small class="sel-desc">Chưa có lính. Qua mục Thuê lính để thuê.</small>');
       const pets=p.pets&&p.pets.length?`<h4 class="sec">Quái thu phục (${p.pets.length}/${Player.petMax()})</h4>`+p.pets.map(x=>{const M=Player.MON[x.type];return `<div class="mrow"><span class="mg pet">${LH_IMG.icon('quai:'+x.type,monIc(x.type,'demon'))}</span><div><b>${esc(M.name)}</b><small class="sel-desc">Máu ${Math.round(M.hp*x.hpFrac)} / ${M.hp} · chết là mất hẳn</small></div><span class="mbtns"><button data-petoff="${x.pid}">Thả đi</button></span></div>`;}).join(''):'';
       let gear='';
       if(m){previewWho={equipment:m.equipment,gender:m.gender,stats:m.stats};const P2={equipment:m.equipment,gender:m.gender,isMerc:true};
@@ -347,6 +358,46 @@ window.startUI=(session)=>{
     document.querySelectorAll('[data-av]').forEach(b=>b.onclick=()=>{avSel=b.dataset.av;showAvatars();});
     const go=$('#avGo');if(go)go.onclick=()=>run(go,game.op({t:'av',id:cur}).then(()=>{game.message(svg('check')+'Đã đổi diện mạo');avSel=null;refresh();showAvatars();}));
   }
+  /* ---------- Bộ sưu tập Phấn Son: đổi qua lại thẻ avatar, khung, nền, hiệu ứng tên đã có (op cos) ---------- */
+  const COS_T={avatar:['Ảnh chân dung','user'],khung:['Khung chân dung','shield'],nen:['Nền hồ sơ','map'],ten:['Hiệu ứng tên','orb']};
+  function showCosmetics(){
+    const C=p.cos||{use:{},own:{}};
+    const sec=Object.entries(COS_T).map(([k,[tt,ic]])=>{const own=C.own[k]||[],use=C.use[k]||'';
+      const tiles=[`<button class="tile cos${!use?' sel':''}" data-cos="${k}:"><span class="ti">${svg('close')}</span><b class="nm">Không dùng</b></button>`,...own.map(id=>{const d=k==='ten'?{name:Player.NAME_FX[id]||id}:info({type:id})||{name:id};return `<button class="tile cos${use===id?' sel':''}" data-cos="${k}:${id}">${d.img?`<img src="${esc(d.img)}" alt="" referrerpolicy="no-referrer">`:`<span class="ti">${svg(ic)}</span>`}<b class="nm${k==='ten'?' fx-'+id:''}">${esc(d.name)}</b>${use===id?`<span class="price">${svg('check')}Đang dùng</span>`:''}</button>`;})].join('');
+      return `<h4 class="mk-h">${svg(ic)}${tt}${own.length?'':' <small>— chưa có, mua ở Cô hàng Phấn Son (làng Thanh Mộc)</small>'}</h4><div class="shop-grid cos-grid">${tiles}</div>`;}).join('');
+    openModal(ttl('orb','Phấn Son · bộ sưu tập')+`<div class="purse">${ruby(p.rubies)}</div>`,`<small class="sel-desc">Đồ đã mua giữ mãi trong bộ sưu tập; chạm để đổi. Ảnh chân dung thay cho diện mạo ở khung trên và lều nhân vật.</small>${sec}`,true);
+    document.querySelectorAll('[data-cos]').forEach(b=>b.onclick=()=>{const [kind,id]=b.dataset.cos.split(':');run(b,game.op({t:'cos',kind,id}).then(()=>{refresh();showCosmetics();}));});
+  }
+  /* ---------- Thầy đồ: hỏi bài thư pháp (máy chủ chấm). Sai quá → săn quái lấy manh mối → thầy chỉ đáp án → trả lời lại nhận thưởng giảm ---------- */
+  let quizSt={bo:null,ans:{}};
+  function showQuiz(){
+    const sets=Object.values(Player.QUIZ).filter(Q=>Q.qs.length).sort((a,b)=>a.order-b.order),Z=p.quiz||{},maxWrong=Number(Player.CFG.quiz_sai_toi_da)||1,tries=Number(Player.CFG.quiz_lan_thu)||2,lo=Number(Player.CFG.quiz_thuong_lo)||50;
+    const st=id=>Z[id]||{done:0,fail:0,hunt:null,reveal:false};
+    let firstOpen=null;sets.forEach((Q,i)=>{if(firstOpen==null&&!st(Q.id).done)firstOpen=i;});
+    if(quizSt.bo==null){
+      const rows=sets.map((Q,i)=>{const z=st(Q.id),locked=i>(firstOpen==null?sets.length:firstOpen),M=Player.MON[Q.mon];
+        const tag=z.done?`<span class="qprog">${svg('check')}Đã xong</span>`:locked?`<span class="qprog">${svg('lock')}Bài trước</span>`:z.reveal?`<button class="primary" data-quiz="${Q.id}">${svg('eye')}Xem đáp án</button>`:z.hunt?`<span class="qprog">${svg('quest')}Manh mối ${z.hunt.got}/${z.hunt.need}</span>`:`<button data-quiz="${Q.id}">${svg('next')}Trả lời</button>`;
+        return `<div class="qrow${z.done?' dim':''}">${svg('book')}<div><b>${esc(Q.name)}</b><small>${Q.qs.length} câu${z.hunt&&!z.done?` · săn ${M?esc(M.name):Q.mon} ${z.hunt.got}/${z.hunt.need}${Q.map?' ở '+esc((Player.REGIONS.find(r=>r.id===Q.map)||{}).name||Q.map):''}`:''}${z.fail&&!z.done?` · sai ${z.fail} lần`:''}</small><span class="chips">${chip('orb','+'+Q.rubies+' hồng ngọc','#ff7aa0')}</span></div>${tag}</div>`;}).join('');
+      openModal(ttl('book','Thầy đồ hỏi bài')+`<div class="purse">${ruby(p.rubies)}</div>`,`<small class="sel-desc">Sách "Thư pháp Việt". Mỗi bài ${sets[0]?sets[0].qs.length:5} câu, sai tối đa ${maxWrong} câu vẫn được thưởng. Sai quá ${tries} lần hoặc chọn "chưa biết" thì đi săn quái lấy manh mối, thầy sẽ chỉ đáp án (thưởng còn ${lo}%).</small><div class="quest-rows" style="margin-top:8px">${rows||'<div class="cho-note">Chưa có câu hỏi</div>'}</div>`,true);
+      document.querySelectorAll('[data-quiz]').forEach(b=>b.onclick=()=>{quizSt={bo:b.dataset.quiz,ans:{}};showQuiz();});
+      return;
+    }
+    const Q=Player.QUIZ[quizSt.bo],z=st(Q.id),wrongSet=new Set(quizSt.wrong||[]);
+    if(z.reveal&&!quizSt.show){game.op({t:'quizShow',bo:Q.id}).then(r=>{quizSt.show=r.show;r.show.forEach((K,i)=>{quizSt.ans[i]=K;});showQuiz();},()=>{});}
+    const qs=Q.qs.map((q,i)=>`<div class="quiz-q${wrongSet.has(i)?' wrong':''}"><b>${i+1}. ${esc(q.q)}</b><div class="quiz-opts">${['a','b','c','d'].map(k=>{const K=k.toUpperCase(),on=quizSt.ans[i]===K,isAns=z.reveal&&quizSt.show&&quizSt.show[i]===K;return `<button data-qa="${i}:${K}" class="${on?'on':''}${isAns?' ans':''}"><i>${K}</i>${esc(q[k])}</button>`;}).join('')}</div></div>`).join('');
+    const n=Q.qs.length,picked=Object.keys(quizSt.ans).length;
+    openModal(ttl('book',Q.name)+`<div class="purse">${ruby(p.rubies)}</div>`,`<div class="quiz-wrap">${z.reveal?`<small class="sel-desc">${svg('eye')}Thầy đồ đã chỉ đáp án (viền sáng). Chọn đúng để nhận ${lo}% thưởng.</small>`:`<small class="sel-desc">Chọn đáp án cho ${n} câu rồi nộp bài. Sai tối đa ${maxWrong} câu.</small>`}${qs}
+      <div class="quiz-bar"><button id="quizBack">${svg('close')}Quay lại</button>${z.reveal||z.hunt?'':`<button id="quizHunt">${svg('quest')}Chưa biết, xin việc săn</button>`}<button id="quizGo" class="primary"${picked<n?' disabled':''}>${svg('check')}Nộp bài (${picked}/${n})</button></div></div>`,true);
+    document.querySelectorAll('[data-qa]').forEach(b=>b.onclick=()=>{const [i,K]=b.dataset.qa.split(':');quizSt.ans[i]=K;showQuiz();});
+    $('#quizBack').onclick=()=>{quizSt={bo:null,ans:{}};showQuiz();};
+    const h=$('#quizHunt');if(h)h.onclick=()=>run(h,game.op({t:'quizHunt',bo:Q.id}).then(r=>{const M=Player.MON[r.hunt.mon];game.message(svg('quest')+`Thầy đồ: săn ${r.hunt.need} ${M?M.name:r.hunt.mon} mang manh mối về`);quizSt={bo:null,ans:{}};showQuiz();}));
+    $('#quizGo').onclick=()=>{const go=$('#quizGo');run(go,game.op({t:'quiz',bo:Q.id,ans:Q.qs.map((q,i)=>quizSt.ans[i]||'')}).then(r=>{
+      if(r.pass){LH_Audio.play('levelup');game.message(svg('check')+`Đúng ${r.ok}/${r.total} · +${r.rubies} hồng ngọc · +${r.exp} kinh nghiệm`);if(r.up)game.levelUp(r.up);game.refreshHD();quizSt={bo:null,ans:{}};showQuiz();return;}
+      LH_Audio.play('enhanceFail');quizSt.wrong=r.wrong;
+      if(r.hunt){const M=Player.MON[r.hunt.mon];game.message(svg('quest')+`Sai ${r.wrong.length} câu. Thầy đồ: đi săn ${r.hunt.need} ${M?M.name:r.hunt.mon} lấy manh mối, ta sẽ chỉ đáp án`);quizSt={bo:null,ans:{}};}
+      else game.message(svg('close')+`Sai ${r.wrong.length} câu (câu ${r.wrong.map(i=>i+1).join(', ')}). Thử lại, còn ${Math.max(0,tries-r.fail)} lần`);
+      showQuiz();}));};
+  }
   /* ---------- Luyện khí sư (thành trì): dung hợp thú cưỡi +9 với một món huyền thoại / thần + hồng ngọc → cánh (tỉ lệ dung_hop_ti_le) ---------- */
   let fuseSel={m:null,x:null};
   function showFuse(){
@@ -383,6 +434,7 @@ window.startUI=(session)=>{
     if(n.panel==='fuse'){fuseSel={m:null,x:null};return showFuse();}
     if(n.panel==='nap'){napSel=null;return showTopup();}
     if(n.panel==='avatar'){avSel=null;return showAvatars();}
+    if(n.panel==='quiz'){quizSt={bo:null,ans:{}};return showQuiz();}
     if(n.panel==='shop')return showShop(n.shop);
     if(n.panel==='quests')return showQuestBoard();
     if(n.panel==='mercs')return showMercBoard('hire');

@@ -476,7 +476,7 @@
    "x": 18,
    "y": 17,
    "panel": "shop",
-   "shop": "smith",
+   "shop": "thanh-co-loa-ren",
    "lines": [
     "Rèn của thành dùng sắt núi, bền hơn rèn làng.",
     "Đồ nhặt ở vùng cao mang về đây gia cường cũng được."
@@ -492,6 +492,19 @@
    "panel": "mercs",
    "lines": [
     "Muốn thuê quân? Lính của ta đã qua trận mạc."
+   ]
+  },
+  {
+   "id": "thay-do-co-loa",
+   "role": "thay-do",
+   "name": "Thầy đồ",
+   "act": "stand",
+   "x": 14,
+   "y": 21,
+   "panel": "quiz",
+   "lines": [
+    "Ta là thầy đồ, dạy chữ dạy người. Muốn thử sức với sách \"Thư pháp Việt\" thì ngồi xuống.",
+    "Trả lời đúng ta thưởng hồng ngọc. Không biết thì đi săn quái lấy manh mối, ta sẽ chỉ cho."
    ]
   },
   {

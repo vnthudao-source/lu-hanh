@@ -1033,6 +1033,33 @@
     "Đồ Hoàn hảo, Huyền thoại và đồ Thần, ta bán hộ cho người chơi khác.",
     "Bán được ta giữ một ít tiền công."
    ]
+  },
+  {
+   "id": "thay-do",
+   "role": "elder",
+   "name": "Thầy đồ",
+   "x": 13,
+   "y": 17.2,
+   "panel": "quiz",
+   "facing": 1,
+   "lines": [
+    "Ta là thầy đồ, dạy chữ dạy người. Muốn thử sức với sách \"Thư pháp Việt\" thì ngồi xuống.",
+    "Trả lời đúng ta thưởng hồng ngọc. Không biết thì đi săn quái lấy manh mối, ta sẽ chỉ cho."
+   ]
+  },
+  {
+   "id": "phan-son",
+   "role": "merchant",
+   "name": "Cô hàng Phấn Son",
+   "x": 24.5,
+   "y": 18.2,
+   "panel": "shop",
+   "shop": "phan-son",
+   "facing": -1,
+   "lines": [
+    "Thẻ đổi ảnh chân dung, khung viền, nền hồ sơ, thuốc đa nhiệm… toàn đồ làm đẹp, chỉ lấy hồng ngọc.",
+    "Mua về dùng một lần là giữ mãi, muốn đổi qua lại thì mở bảng Diện mạo."
+   ]
   }
  ],
  "monsters": [

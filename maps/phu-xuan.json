@@ -503,9 +503,22 @@
    "x": 16,
    "y": 17,
    "panel": "shop",
-   "shop": "smith",
+   "shop": "thanh-phu-xuan-ren",
    "lines": [
     "Ngự xưởng rèn cho vua. Đồ của ngươi đưa đây ta gia cường."
+   ]
+  },
+  {
+   "id": "thay-do-phu-xuan",
+   "role": "thay-do",
+   "name": "Thầy đồ",
+   "act": "stand",
+   "x": 14,
+   "y": 21,
+   "panel": "quiz",
+   "lines": [
+    "Ta là thầy đồ, dạy chữ dạy người. Muốn thử sức với sách \"Thư pháp Việt\" thì ngồi xuống.",
+    "Trả lời đúng ta thưởng hồng ngọc. Không biết thì đi săn quái lấy manh mối, ta sẽ chỉ cho."
    ]
   },
   {
@@ -566,7 +579,7 @@
    "x": 28,
    "y": 12,
    "panel": "shop",
-   "shop": "trainer",
+   "shop": "thanh-phu-xuan-thu",
    "lines": [
     "Ngựa chiến của Ngự lâm, muốn mua thì xem."
    ]

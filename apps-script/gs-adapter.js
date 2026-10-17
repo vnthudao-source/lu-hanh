@@ -20,7 +20,10 @@
 */
 const LH_SHEETS=@@IDS@@;
 // Tab dữ liệu tĩnh → file Sheet chứa nó
-const LH_STATIC={cau_hinh:'cau_hinh',gia_cuong:'cau_hinh',pham_chat:'pham_chat',thuoc_tinh:'pham_chat',vat_pham:'vat_pham',cua_hang:'cua_hang',bo_huyen_thoai:'bo_huyen_thoai',do_than:'do_than',quai:'quai',nhiem_vu:'nhiem_vu',linh:'linh',vu_khi:'vat_pham',ban_do:'cau_hinh',dien_mao:'cau_hinh',goi_nap:'cau_hinh',hinh_anh:'hinh_anh'};
+const LH_STATIC={cau_hinh:'cau_hinh',gia_cuong:'cau_hinh',pham_chat:'pham_chat',thuoc_tinh:'pham_chat',vat_pham:'vat_pham',cua_hang:'cua_hang',bo_huyen_thoai:'bo_huyen_thoai',do_than:'do_than',quai:'quai',nhiem_vu:'nhiem_vu',linh:'linh',vu_khi:'vat_pham',ban_do:'cau_hinh',dien_mao:'cau_hinh',goi_nap:'cau_hinh',bo_cau_hoi:'nhiem_vu',cau_hoi:'nhiem_vu',hinh_anh:'hinh_anh'};
+// Bảng ngoài (v10.11): câu hỏi Thầy đồ đọc thẳng từ tab CauHoi của bảng OCD_Quest (cột QuestionID, QuestID, StepID, ThuTu, CauHoi, A, B, C, D, DapAn).
+// Đọc được thì thay cho tab cau_hoi; không đọc được (chưa chia sẻ quyền) thì dùng tab cau_hoi / số mặc định. Để trống id để tắt.
+const LH_NGOAI={cau_hoi:{id:'10EjfikAuPyc1t_aGDDsUlq0eewo0WUl5qOyXjkVG28M',tab:'CauHoi',cot:{id:'QuestionID',bo:'QuestID',thu_tu:'ThuTu',cau:'CauHoi',a:'A',b:'B',c:'C',d:'D',dap_an:'DapAn'}}};
 // Cột của các bảng người chơi (file "LH · Người chơi")
 const LH_COLS={
   tai_khoan:['id','username','email','muoi','mat_khau','tao_luc','token','token_het_han','ma_khoi_phuc','ma_het_han','token_cu'],
@@ -55,13 +58,18 @@ function lhStatic_(){
   }
   // Quái, nhiệm vụ mới của bản cập nhật (vùng mới) mà Sheet chưa có dòng: dùng số liệu mặc định cho tới khi chạy kiemTra để chép vào Sheet
   for(const tab of LH_BO_SUNG)if(LH_SHEETS[LH_STATIC[tab]]&&Array.isArray(out[tab])&&out[tab].length){const has=new Set(out[tab].map(r=>lhKhoa_(tab,r)));for(const r of LH_DEFAULT[tab]||[])if(!has.has(lhKhoa_(tab,r)))out[tab].push(r);}
+  // Câu hỏi Thầy đồ từ bảng ngoài
+  for(const [tab,N] of Object.entries(LH_NGOAI)){if(!N.id)continue;try{const sh=SpreadsheetApp.openById(N.id).getSheetByName(N.tab);if(!sh||sh.getLastRow()<2)continue;
+    const rows=lhRows_(sh).map(r=>Object.fromEntries(Object.entries(N.cot).map(([k,c])=>[k,r[c]===undefined?'':r[c]]))).filter(r=>r.id&&r.cau);if(rows.length)out[tab]=rows;}catch(e){Logger.log('Không đọc được bảng ngoài '+tab+': '+e);}}
+  // Mã băm nội dung (trình duyệt lưu đệm, gửi lại h để khỏi tải lại)
+  {const s0=JSON.stringify(out);let h=5381;for(let i=0;i<s0.length;i++)h=((h*33)^s0.charCodeAt(i))>>>0;out._h=s0.length.toString(36)+'-'+h.toString(36);}
   // Ảnh tĩnh: chỉ gửi các dòng đã dán link
   out.hinh_anh=(out.hinh_anh||[]).filter(r=>String(r.link_anh||'').trim()).map(r=>({nhom:r.nhom,ma:r.ma,link_anh:String(r.link_anh).trim(),...(String(r.phien_ban||'').trim()?{v:String(r.phien_ban).trim()}:{})}));
   lhCachePut_('lh-data',JSON.stringify(out));
   return out;
 }
 // Tab được bổ sung dòng mới (theo cột id) khi game thêm quái, nhiệm vụ, hàng hóa thành trì, diện mạo
-const LH_BO_SUNG=['quai','nhiem_vu','cau_hinh','ban_do','vat_pham','cua_hang','dien_mao','goi_nap','thuoc_tinh'];
+const LH_BO_SUNG=['quai','nhiem_vu','cau_hinh','ban_do','vat_pham','cua_hang','dien_mao','goi_nap','thuoc_tinh','bo_cau_hoi','cau_hoi','linh'];
 // khóa một dòng: cau_hinh theo khoa; cua_hang theo cửa hàng + mã hàng (một món có thể bán ở nhiều cửa hàng); còn lại theo id
 const lhKhoa_=(tab,r)=>tab==='cau_hinh'?String(r.khoa):tab==='thuoc_tinh'?String(r.ma):tab==='cua_hang'?String(r.cua_hang)+'|'+String(r.id):String(r.id);
 // Chép các dòng mặc định còn thiếu (quái, nhiệm vụ của vùng mới) xuống cuối tab; không sửa dòng đã có
@@ -111,6 +119,8 @@ const LH=LH_Core({
   hash:s=>Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,s,Utilities.Charset.UTF_8).map(b=>((b+256)%256).toString(16).padStart(2,'0')).join(''),
   now:()=>Date.now(),uid:()=>Utilities.getUuid().replace(/-/g,'').slice(0,12),staticData:lhStatic_,
   rules:()=>{if(!LH_RULES.ok){Player.load(lhStatic_());LH_RULES.ok=true;}},
+  // không gửi đáp án Thầy đồ xuống trình duyệt (máy chủ chấm)
+  hideAnswers:d=>({...d,cau_hoi:(d.cau_hoi||[]).map(r=>{const o={...r};delete o.dap_an;delete o.DapAn;return o;})}),
   lock:fn=>{const l=LockService.getScriptLock();l.waitLock(15000);try{return fn();}finally{l.releaseLock();}}
 });
 // Lệnh ghi có mã rid: gửi lại cùng mã (mạng rớt, đổi đường GET/POST) thì trả lại kết quả cũ, không chạy lần hai

@@ -31,8 +31,9 @@ const MAPS=[
    {id:'su-thay',role:'su-thay',name:'Sư thầy',act:'turn',x:28,y:12,lines:['A di đà Phật. Giữ tâm sáng thì âm binh không dám lại gần.','Thí chủ đi xa về, nghỉ bên giếng cổ cho lại sức.']},
    {id:'vu-cong',role:'vu-cong',name:'Vũ công',act:'dance',x:23,y:17,lines:['Hội thành đêm nay có múa đèn, ở lại xem nhé!']},
    {id:'trong-hoi',role:'trong-hoi',name:'Người đánh trống',act:'drum',x:26,y:17,lines:['Tùng! Tùng! Trống thành đánh ba hồi là lính đổi ca.']},
-   {id:'tho-ren-thanh',role:'tho-ren-thanh',name:'Thợ rèn thành',act:'stand',x:18,y:17,panel:'shop',shop:'smith',lines:['Rèn của thành dùng sắt núi, bền hơn rèn làng.','Đồ nhặt ở vùng cao mang về đây gia cường cũng được.']},
+   {id:'tho-ren-thanh',role:'tho-ren-thanh',name:'Thợ rèn thành',act:'stand',x:18,y:17,panel:'shop',shop:'thanh-co-loa-ren',lines:['Rèn của thành dùng sắt núi, bền hơn rèn làng.','Đồ nhặt ở vùng cao mang về đây gia cường cũng được.']},
    {id:'tuong-quan',role:'tuong-quan',name:'Tướng quân',act:'stand',x:30,y:17,panel:'mercs',lines:['Muốn thuê quân? Lính của ta đã qua trận mạc.']},
+   {id:'thay-do-co-loa',role:'thay-do',name:'Thầy đồ',act:'stand',x:14,y:21,panel:'quiz',lines:['Ta là thầy đồ, dạy chữ dạy người. Muốn thử sức với sách "Thư pháp Việt" thì ngồi xuống.','Trả lời đúng ta thưởng hồng ngọc. Không biết thì đi săn quái lấy manh mối, ta sẽ chỉ cho.']},
    {id:'hieu-buon-co-loa',role:'hieu-buon',name:'Chủ hiệu Âu Lạc',act:'turn',x:24,y:21,panel:'shop',shop:'thanh-co-loa',lines:['Hiệu Âu Lạc có binh khí đúc theo lối Cổ Loa, nỏ Liên Châu bắn một phát ba mũi.','Hàng thành trì đắt hơn hàng làng, nhưng mỗi món đều có chỉ số riêng.']},
    {id:'nap-the-co-loa',role:'nap-the',name:'Người giữ kho',act:'turn',x:33,y:21,panel:'nap',lines:['Muốn thêm hồng ngọc? Chọn gói, quét mã, ta ghi sổ rồi kho mở ngay.']},
    {id:'tre-con-co-loa-1',role:'tre-con',name:'Cu Tí',act:'patrol',x0:19,x1:27,y:14,spd:70,lines:['Anh ơi chơi đuổi bắt với bọn em không?']},
@@ -63,10 +64,11 @@ const MAPS=[
    {id:'quan-van',role:'quan-van',name:'Quan văn',act:'turn',x:18,y:12,panel:'quests',lines:['Triều đình cần người dẹp loạn. Việc ghi trong sổ này, ngươi xem rồi nhận.','Dẹp xong Hắc Long Tướng, ta tâu lên ban thưởng.']},
    {id:'ca-nu',role:'ca-nu',name:'Ca nữ',act:'dance',x:24,y:17,lines:['Khúc ca Thăng Long này, người đi xa nghe mà nhớ nhà…']},
    {id:'nghe-nhan',role:'nghe-nhan',name:'Nghệ nhân đèn',act:'turn',x:30,y:12,lines:['Đèn lồng ta làm bằng lụa Hà Đông, thắp cả đêm không tắt.']},
-   {id:'tho-ren-hoang-cung',role:'tho-ren-hoang-cung',name:'Thợ rèn hoàng cung',act:'stand',x:16,y:17,panel:'shop',shop:'smith',lines:['Lò rèn hoàng cung rèn binh khí cho cấm quân. Ngươi có đồ quý thì đưa ta gia cường.']},
+   {id:'tho-ren-hoang-cung',role:'tho-ren-hoang-cung',name:'Thợ rèn hoàng cung',act:'stand',x:16,y:17,panel:'shop',shop:'thanh-thang-long-ren',lines:['Lò rèn hoàng cung rèn binh khí cho cấm quân. Ngươi có đồ quý thì đưa ta gia cường.']},
    {id:'phap-su',role:'phap-su',name:'Pháp sư',act:'turn',x:32,y:17,panel:'shop',shop:'wizard',lines:['Sách ngũ hành của ta luyện tới tầng cao mới thấy uy lực.']},
    {id:'thuong-gia',role:'thuong-gia',name:'Thương gia kinh thành',act:'stand',x:20,y:21,panel:'market',lines:['Chợ kinh thành thông với chợ làng, ngươi ký gửi ở đâu cũng bán được.']},
-   {id:'nguoi-nuoi-ngua',role:'nguoi-nuoi-ngua',name:'Quan mục',act:'stand',x:28,y:21,panel:'shop',shop:'trainer',lines:['Ngựa của hoàng cung toàn tuấn mã, muốn mua thì xem.']},
+   {id:'nguoi-nuoi-ngua',role:'nguoi-nuoi-ngua',name:'Quan mục',act:'stand',x:28,y:21,panel:'shop',shop:'thanh-thang-long-thu',lines:['Ngựa của hoàng cung toàn tuấn mã, muốn mua thì xem.']},
+   {id:'thay-do-thang-long',role:'thay-do',name:'Thầy đồ',act:'stand',x:14,y:21,panel:'quiz',lines:['Ta là thầy đồ, dạy chữ dạy người. Muốn thử sức với sách "Thư pháp Việt" thì ngồi xuống.','Trả lời đúng ta thưởng hồng ngọc. Không biết thì đi săn quái lấy manh mối, ta sẽ chỉ cho.']},
    {id:'hieu-buon-thang-long',role:'hieu-buon',name:'Chủ hiệu Long Thành',act:'turn',x:24,y:21,panel:'shop',shop:'thanh-thang-long',lines:['Hiệu Long Thành: binh khí hoàng cung, hổ trắng Tây Bắc, cờ Phú Quý. Giá cao nhưng đáng đồng tiền.']},
    {id:'tho-truyen-than',role:'tho-truyen-than',name:'Thợ truyền thần',act:'turn',x:14,y:17,panel:'avatar',lines:['Ta vẽ truyền thần cho vua quan trong triều. Muốn đổi diện mạo, ta tô lại cho: da, tóc, râu, mắt… mua một lần, đổi mãi.']},
    {id:'luyen-khi-su',role:'luyen-khi-su',name:'Luyện khí sư',act:'turn',x:33,y:12,panel:'fuse',lines:['Thú cưỡi luyện tới +9, thêm một báu vật huyền thoại hay thần, thêm hồng ngọc… ta dung hợp thành đôi cánh. Mười lần được bốn, chịu không?']},
@@ -96,7 +98,8 @@ const MAPS=[
   npcs:[{id:'vo-si-hoa-lu-1',role:'vo-si',name:'Võ sĩ Hoa Lư',act:'patrol',x0:14,x1:33,y:9,lines:['Cố đô tuy cũ nhưng tường còn vững. Ngươi đến đúng lúc, sứ quân lại nổi loạn.']},
    {id:'vo-si-hoa-lu-2',role:'vo-si',name:'Võ sĩ Hoa Lư',act:'patrol',x0:14,x1:33,y:22,lines:['Cờ lau năm xưa phất ở chính nơi này.']},
    {id:'quan-thai-su',role:'thai-su',name:'Thái sư',act:'turn',x:18,y:12,panel:'quests',lines:['Việc nước rối ren, ta cần người dẹp loạn. Sổ việc đây.']},
-   {id:'tho-ren-hoa-lu',role:'tho-ren-hoang-cung',name:'Thợ rèn Hoa Lư',act:'stand',x:16,y:17,panel:'shop',shop:'smith',lines:['Rèn Hoa Lư luyện bằng than đá Tràng An, lưỡi bền gấp đôi.']},
+   {id:'tho-ren-hoa-lu',role:'tho-ren-hoang-cung',name:'Thợ rèn Hoa Lư',act:'stand',x:16,y:17,panel:'shop',shop:'thanh-hoa-lu-ren',lines:['Rèn Hoa Lư luyện bằng than đá Tràng An, lưỡi bền gấp đôi.']},
+   {id:'thay-do-hoa-lu',role:'thay-do',name:'Thầy đồ',act:'stand',x:14,y:21,panel:'quiz',lines:['Ta là thầy đồ, dạy chữ dạy người. Muốn thử sức với sách "Thư pháp Việt" thì ngồi xuống.','Trả lời đúng ta thưởng hồng ngọc. Không biết thì đi săn quái lấy manh mối, ta sẽ chỉ cho.']},
    {id:'hieu-buon-hoa-lu',role:'hieu-buon',name:'Chủ hiệu Trường Yên',act:'turn',x:24,y:21,panel:'shop',shop:'thanh-hoa-lu',lines:['Hiệu Trường Yên: kỳ lân Tràng An, giáp Cuồng Nộ… hàng hiếm, giá không rẻ.']},
    {id:'thuong-gia-hoa-lu',role:'thuong-gia',name:'Thương gia Hoa Lư',act:'stand',x:30,y:21,panel:'market',lines:['Chợ cố đô thông với chợ các vùng.']},
    {id:'tuong-hoa-lu',role:'tuong-quan',name:'Đại tướng',act:'stand',x:30,y:17,panel:'mercs',lines:['Quân Hoa Lư từng đánh dẹp 12 sứ quân. Thuê đi.']},
@@ -129,12 +132,13 @@ const MAPS=[
   npcs:[{id:'ngu-lam-1',role:'ngu-lam',name:'Ngự lâm quân',act:'patrol',x0:14,x1:33,y:9,lines:['Kinh thành Phú Xuân, cấm địa của Hoàng thượng. Khách phương xa cứ vào, chớ rút gươm trong thành.']},
    {id:'ngu-lam-2',role:'ngu-lam',name:'Ngự lâm quân',act:'patrol',x0:14,x1:33,y:22,lines:['Bên kia sông Hương là phản quân của Hắc Đế, đêm nào cũng kéo tới.']},
    {id:'quan-thuong-thu',role:'thai-su',name:'Thượng thư',act:'turn',x:18,y:12,panel:'quests',lines:['Triều đình treo thưởng lớn cho ai dẹp được Hắc Đế. Sổ việc đây.']},
-   {id:'tho-ren-phu-xuan',role:'tho-ren-hoang-cung',name:'Thợ rèn Ngự xưởng',act:'stand',x:16,y:17,panel:'shop',shop:'smith',lines:['Ngự xưởng rèn cho vua. Đồ của ngươi đưa đây ta gia cường.']},
+   {id:'tho-ren-phu-xuan',role:'tho-ren-hoang-cung',name:'Thợ rèn Ngự xưởng',act:'stand',x:16,y:17,panel:'shop',shop:'thanh-phu-xuan-ren',lines:['Ngự xưởng rèn cho vua. Đồ của ngươi đưa đây ta gia cường.']},
+   {id:'thay-do-phu-xuan',role:'thay-do',name:'Thầy đồ',act:'stand',x:14,y:21,panel:'quiz',lines:['Ta là thầy đồ, dạy chữ dạy người. Muốn thử sức với sách "Thư pháp Việt" thì ngồi xuống.','Trả lời đúng ta thưởng hồng ngọc. Không biết thì đi săn quái lấy manh mối, ta sẽ chỉ cho.']},
    {id:'hieu-buon-phu-xuan',role:'hieu-buon',name:'Chủ hiệu Thuận Hóa',act:'turn',x:24,y:21,panel:'shop',shop:'thanh-phu-xuan',lines:['Hiệu Thuận Hóa: rồng cưỡi, kiếm Thiên Mệnh… vật quý nhất Đại Việt, giá cũng nhất Đại Việt.']},
    {id:'tho-truyen-than-phu-xuan',role:'tho-truyen-than',name:'Họa sư cung đình',act:'turn',x:14,y:17,panel:'avatar',lines:['Họa sư cung đình tô lại diện mạo cho ngươi: da, tóc, râu, mắt. Mua một lần, đổi mãi.']},
    {id:'phap-su-phu-xuan',role:'phap-su',name:'Pháp sư',act:'turn',x:32,y:17,panel:'shop',shop:'wizard',lines:['Sách ngũ hành luyện ở đây lên tầng cao nhất.']},
    {id:'thuong-gia-phu-xuan',role:'thuong-gia',name:'Thương gia Phú Xuân',act:'stand',x:30,y:21,panel:'market',lines:['Chợ Đông Ba thông với chợ mọi vùng.']},
-   {id:'nguoi-nuoi-ngua-phu-xuan',role:'nguoi-nuoi-ngua',name:'Quan mục',act:'stand',x:28,y:12,panel:'shop',shop:'trainer',lines:['Ngựa chiến của Ngự lâm, muốn mua thì xem.']},
+   {id:'nguoi-nuoi-ngua-phu-xuan',role:'nguoi-nuoi-ngua',name:'Quan mục',act:'stand',x:28,y:12,panel:'shop',shop:'thanh-phu-xuan-thu',lines:['Ngựa chiến của Ngự lâm, muốn mua thì xem.']},
    {id:'tuong-phu-xuan',role:'tuong-quan',name:'Thống chế',act:'stand',x:30,y:17,panel:'mercs',lines:['Quân Phú Xuân tinh nhuệ nhất nước. Thuê thì nói.']},
    {id:'cung-nu',role:'ca-nu',name:'Cung nữ',act:'dance',x:23,y:17,lines:['Nhã nhạc cung đình, nghe một lần nhớ mãi…']},
    {id:'trong-phu-xuan',role:'trong-hoi',name:'Người đánh trống',act:'drum',x:27,y:17,lines:['Trống Ngọ Môn điểm canh.']},
@@ -195,6 +199,7 @@ const NPC_LOOK={
  'nguoi-nuoi-ngua':{robe:'#6a5a3a',trim:'#a08a40',hat:'non'},
  // v10.3
  'hieu-buon':{robe:'#2a6a5a',trim:'#e0b040',hat:'khan',hatc:'#1e1b19',item:'scroll',beard:'#3a3030'},
+ 'thay-do':{robe:'#1e1b19',trim:'#c0a060',hat:'khan',hatc:'#1e1b19',item:'scroll',beard:'#d8d0c0',skin:'#e8c8a0'}, // v10.11: thầy đồ hỏi thư pháp
  'tho-truyen-than':{robe:'#7a5a8a',trim:'#f0e0c0',hat:'khan',hatc:'#4a3a5a',item:'fan',beard:'#5a4a4a'},
  'vo-si':{robe:'#5a3a2a',trim:'#c0a060',hat:'khan',hatc:'#8a2a1a',item:'spear'},
  'thai-su':{robe:'#4a2a6a',trim:'#e0b040',hat:'quan',hatc:'#2a1a3a',item:'scroll',beard:'#d8d0c0'},
@@ -216,9 +221,9 @@ const GOODS_NAME={'co-loa':['Âu Lạc','#8a9a5a'],'thang-long':['Long Thành','
 function goodsRows(){
   const vp=[],ch=[];
   for(const M of MAPS){if(!M.goods)continue;const [nm,col]=GOODS_NAME[M.id],G=M.goods;let o=1;
-    for(const [suf,ten,oo,loai,cam,cong,thu,gia] of GOODS_BASE){const id=suf+'-'+M.id;vp.push({id,ten:ten+' '+nm,o:oo,loai,cam,cong,thu,toc:0,gia:R(gia*G.mul),mau:col,thu_cuoi:'',menh_lenh:0,he:'',pham_chat:'',hieu_ung:'',gia_tri:0,mo_ta:''});ch.push({cua_hang:'thanh-'+M.id,id,pham_chat:'n,g,p',gia:'',thu_tu:o++,bac:M.lv});}
-    for(const [id,ten,beast,toc,cmd,mau] of G.mount){vp.push({id,ten,o:'mount',loai:'mount',cam:'',cong:beast==='kylan'||beast==='rong'?6:0,thu:beast==='elephant'||beast==='rong'?10:0,toc:Math.round(toc*100),gia:R(4000*G.mul),mau,thu_cuoi:beast,menh_lenh:cmd,he:'',pham_chat:'',hieu_ung:'',gia_tri:0,mo_ta:''});ch.push({cua_hang:'thanh-'+M.id,id,pham_chat:'n',gia:'',thu_tu:o++,bac:M.lv});}
-    for(const [id,ten,loai,cam,cong,thu,mau,fx,v,mo] of G.fx){const oo=loai==='sword'||loai==='shield'||loai==='staff'||loai==='bow'||loai==='spear'||loai==='crossbow'?'hand':loai;vp.push({id,ten,o:oo,loai,cam,cong,thu,toc:0,gia:R(8000*G.mul),mau,thu_cuoi:'',menh_lenh:0,he:'',pham_chat:'p',hieu_ung:fx,gia_tri:v,mo_ta:mo});ch.push({cua_hang:'thanh-'+M.id,id,pham_chat:'p',gia:'',thu_tu:o++,bac:M.lv});}
+    for(const [suf,ten,oo,loai,cam,cong,thu,gia] of GOODS_BASE){const id=suf+'-'+M.id;vp.push({id,ten:ten+' '+nm,o:oo,loai,cam,cong,thu,toc:0,gia:R(gia*G.mul),mau:col,thu_cuoi:'',menh_lenh:0,he:'',pham_chat:'',hieu_ung:'',gia_tri:0,mo_ta:''});ch.push({cua_hang:'thanh-'+M.id+(oo==='wings'?'':'-ren'),id,pham_chat:'n,g,p',gia:'',thu_tu:o++,bac:M.lv});}
+    for(const [id,ten,beast,toc,cmd,mau] of G.mount){vp.push({id,ten,o:'mount',loai:'mount',cam:'',cong:beast==='kylan'||beast==='rong'?6:0,thu:beast==='elephant'||beast==='rong'?10:0,toc:Math.round(toc*100),gia:R(4000*G.mul),mau,thu_cuoi:beast,menh_lenh:cmd,he:'',pham_chat:'',hieu_ung:'',gia_tri:0,mo_ta:''});ch.push({cua_hang:'thanh-'+M.id+(M.npcs.some(n=>n.role==='nguoi-nuoi-ngua')?'-thu':''),id,pham_chat:'n',gia:'',thu_tu:o++,bac:M.lv});}
+    for(const [id,ten,loai,cam,cong,thu,mau,fx,v,mo] of G.fx){const oo=loai==='sword'||loai==='shield'||loai==='staff'||loai==='bow'||loai==='spear'||loai==='crossbow'?'hand':loai;vp.push({id,ten,o:oo,loai,cam,cong,thu,toc:0,gia:R(8000*G.mul),mau,thu_cuoi:'',menh_lenh:0,he:'',pham_chat:'p',hieu_ung:fx,gia_tri:v,mo_ta:mo});ch.push({cua_hang:'thanh-'+M.id+(oo==='hand'||['hat','armor','pants','gloves','shoes'].includes(oo)?'-ren':oo==='mount'&&M.npcs.some(n=>n.role==='nguoi-nuoi-ngua')?'-thu':''),id,pham_chat:'p',gia:'',thu_tu:o++,bac:M.lv});}
   }
   return {vat_pham:vp,cua_hang:ch};
 }
