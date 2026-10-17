@@ -24,6 +24,7 @@ Mỗi bản đồ là một file `maps/<mã>.json`. Game dùng chung một bộ 
 | `npcs` | dân làng `{id,role,name,x,y,lines,panel?,shop?,x0?,x1?,facing?}` — `id` không trùng giữa các bản đồ; `role` chọn hình vẽ (elder, smith, guide, trainer, wizard, merchant) hoặc dùng ảnh `npc:<id>` trong Sheet Hình ảnh |
 | `monsters` | `{type,x,y}` — `type` là mã quái trong Sheet quai |
 | `portals` | cổng `{x,y,w,h,to,tx,ty}`: bước vào thì lưu rồi sang bản đồ `to`, đứng ở ô `tx,ty` |
+| `camps` | bãi quái lớn `[{name,x,y,r,mon:{<mã quái>:số con}}]`: rải quái trên các ô trống trong bán kính `r` ô quanh tâm; tên bãi hiện ở bản đồ nhỏ; người chơi ảo đi săn quanh các bãi |
 | `ambient` | `"village"`: có chó, mèo, chuột chạy quanh (chỉ Thanh Mộc) |
 | `theme` | bộ nền vẽ từng ô trong `<mã>.art.js` (`sand`, `snow`, `cave`); bỏ trống = nền cỏ của làng |
 | `sky` | hiệu ứng phủ màn hình (`sand` cát bay, `snow` tuyết rơi, `cave` bóng tối, chỉ sáng quanh người và vật có `light`) |

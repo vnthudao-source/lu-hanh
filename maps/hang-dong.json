@@ -381,5 +381,26 @@
    "y": 7,
    "light": "#7fffc4"
   }
+ ],
+ "camps": [
+  {
+   "name": "Bãi dơi quỷ",
+   "x": 11,
+   "y": 6,
+   "r": 3,
+   "mon": {
+    "doi-quy": 7
+   }
+  },
+  {
+   "name": "Ổ nhện độc",
+   "x": 37,
+   "y": 12,
+   "r": 3,
+   "mon": {
+    "nhen-doc": 5,
+    "doi-quy": 2
+   }
+  }
  ]
 }

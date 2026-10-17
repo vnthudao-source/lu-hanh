@@ -1109,5 +1109,27 @@
    "label": "Hang động"
   }
  ],
- "ambient": "village"
+ "ambient": "village",
+ "camps": [
+  {
+   "name": "Bãi hươu nai",
+   "x": 40,
+   "y": 22,
+   "r": 3,
+   "mon": {
+    "deer": 6,
+    "lion": 2
+   }
+  },
+  {
+   "name": "Bãi thú dữ",
+   "x": 55,
+   "y": 18,
+   "r": 3,
+   "mon": {
+    "lion": 3,
+    "elephant": 2
+   }
+  }
+ ]
 }

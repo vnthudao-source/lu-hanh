@@ -463,5 +463,26 @@
    "x": 25,
    "y": 28
   }
+ ],
+ "camps": [
+  {
+   "name": "Bãi sói tuyết",
+   "x": 6,
+   "y": 17,
+   "r": 3,
+   "mon": {
+    "soi-tuyet": 7
+   }
+  },
+  {
+   "name": "Bãi gấu ngựa",
+   "x": 43,
+   "y": 29,
+   "r": 3,
+   "mon": {
+    "gau-nui": 4,
+    "soi-tuyet": 2
+   }
+  }
  ]
 }

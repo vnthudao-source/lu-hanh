@@ -5,7 +5,7 @@
 const LH_MAPS=(typeof window!=='undefined'&&(window.LH_MAPS=window.LH_MAPS||{}))||{};
 const World=(()=>{
   const T=48,TILE={'.':0,'#':1,'~':2,'=':3,':':4,',':5,'"':6};
-  let M=null,grid=[],base=[],objects=[],npcs=[],wells=[],fires=[],ripples=[],lights=[],W=0,H=0;
+  let M=null,grid=[],base=[],objects=[],npcs=[],wells=[],fires=[],ripples=[],lights=[],W=0,H=0,campSpawns=[],camps=[],zones=[];
   const DEFAULT='thanh-moc';
   // Dựng bản đồ từ dữ liệu
   function use(def){
@@ -27,6 +27,18 @@ const World=(()=>{
     }
     npcs=(def.npcs||[]).map(n=>({...n,x:n.x*T,y:n.y*T,...(n.x0!=null?{x0:n.x0*T,x1:n.x1*T}:{}),lines:n.lines||[],hx:n.x*T,hy:n.y*T,facing:n.facing||-1,moving:false,walk:0,dir:1,pause:0,turnAt:0,phase:Math.random()}));
     // gợn nước: ô nước đầu tiên mỗi hàng (bỏ hàng có cầu)
+    // Bãi quái (camps): rải n con mỗi loài trên các ô trống trong bán kính r quanh tâm (cố định theo vị trí, mọi máy như nhau)
+    // (lúc khởi động Player chưa sẵn: chỉ dùng khung vùng an toàn ghi trong bản đồ)
+    const sf=def.safe,inSafeRect=(x,y)=>!!sf&&x>=sf.x0&&x<=sf.x1&&y>=sf.y0&&y<=sf.y1;
+    campSpawns=[];camps=[];
+    for(const cp of def.camps||[]){
+      const r=cp.r||3,spots=[];
+      for(let y=cp.y-r;y<=cp.y+r;y++)for(let x=cp.x-r;x<=cp.x+r;x++){if((x-cp.x)**2+(y-cp.y)**2>r*r+1||blocked(x,y)||grid[y][x]===3)continue;if(inSafeRect(x,y))continue;spots.push({x,y,h:((x*73856093)^(y*19349663))>>>0});}
+      spots.sort((a,b)=>a.h-b.h);let k=0;
+      for(const [type,n] of Object.entries(cp.mon||{}))for(let i=0;i<n&&spots.length;i++){const p=spots[k++%spots.length];campSpawns.push({type,x:p.x,y:p.y,camp:cp.name});}
+      camps.push({name:cp.name,x:(cp.x+.5)*T,y:(cp.y+.5)*T,r:r*T});
+    }
+    zones=[...(def.camps||[]).map(cp=>({name:cp.name,x0:cp.x-(cp.r||3)-1,y0:cp.y-(cp.r||3)-1,x1:cp.x+(cp.r||3)+1,y1:cp.y+(cp.r||3)+1})),...(def.zones||[])];
     ripples=[];for(let y=1;y<H-1;y++){const x=grid[y].indexOf(2);if(x>0&&!grid[y].includes(3))ripples.push({x,y});}
     return World;
   }
@@ -56,7 +68,7 @@ const World=(()=>{
     const s=S();if(!s)return false;const x1=s.cfg&&typeof Player!=='undefined'&&Number(Player.CFG[s.cfg])?Number(Player.CFG[s.cfg]):s.x1;
     return x>=s.x0*T&&x<(x1+1)*T&&(y==null||(y>=s.y0*T&&y<(s.y1+1)*T));
   }
-  const zoneAt=(x,y)=>{for(const z of M.zones||[])if(x>=z.x0*T&&x<(z.x1+1)*T&&y>=z.y0*T&&y<(z.y1+1)*T)return z.name;return M.name;};
+  const zoneAt=(x,y)=>{for(const z of zones)if(x>=z.x0*T&&x<(z.x1+1)*T&&y>=z.y0*T&&y<(z.y1+1)*T)return z.name;return M.name;};
   const portalAt=(x,y)=>(M.portals||[]).find(p=>x>=p.x*T&&x<(p.x+(p.w||1))*T&&y>=p.y*T&&y<(p.y+(p.h||1))*T)||null;
   const blocked=(x,y)=>x<0||y<0||x>=W||y>=H||grid[y][x]===1||grid[y][x]===2;
   function canStand(x,y,r=11){
@@ -95,7 +107,7 @@ const World=(()=>{
   const api={T,DEFAULT,use,load,prefetch,monPack,enter,isSafe,zoneAt,portalAt,blocked,canStand,move,findPath,nearestOpen,
     get id(){return M.id;},get name(){return M.name;},get def(){return M;},get W(){return W;},get H(){return H;},get grid(){return grid;},get base(){return base;},get objects(){return objects;},
     get npcs(){return npcs;},get wells(){return wells;},get fires(){return fires;},get ripples(){return ripples;},get lights(){return lights;},get theme(){return M.theme||null;},get decor(){return M.decor||[];},get bridges(){return M.bridges||[];},get portals(){return M.portals||[];},
-    get spawn(){return {x:M.spawn.x*T,y:M.spawn.y*T};},get monsterSpawns(){return M.monsters||[];}};
+    get spawn(){return {x:M.spawn.x*T,y:M.spawn.y*T};},get monsterSpawns(){return [...(M.monsters||[]),...campSpawns];},get camps(){return camps;}};
   return api;
 })();
 if(LH_MAPS[World.DEFAULT])World.use(LH_MAPS[World.DEFAULT]);

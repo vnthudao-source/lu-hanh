@@ -479,5 +479,27 @@
    "y": 18,
    "solid": false
   }
+ ],
+ "camps": [
+  {
+   "name": "Bãi bọ cạp",
+   "x": 42,
+   "y": 26,
+   "r": 3,
+   "mon": {
+    "bo-cap": 6,
+    "ken-ken": 2
+   }
+  },
+  {
+   "name": "Bãi kền kền",
+   "x": 44,
+   "y": 3,
+   "r": 2,
+   "mon": {
+    "ken-ken": 5,
+    "bo-cap": 2
+   }
+  }
  ]
 }

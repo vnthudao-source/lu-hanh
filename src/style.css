@@ -281,3 +281,7 @@ button.busy{opacity:.6;pointer-events:none}
 .qgroup{display:flex;align-items:center;gap:6px;margin:8px 2px 0;font-size:12px;color:#d8c48f}.qgroup:first-child{margin-top:0}.qgroup svg{width:16px;height:16px}.qgroup span{margin-left:auto;color:#a8b4a7}.qgroup.qlock{color:#8c958a}
 .qrow.dim{opacity:.5}.qprog svg{width:14px;height:14px;vertical-align:-2px;margin-right:2px}
 .map-ic{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:#ffffff0d;color:var(--gold);flex:none}.map-ic svg{width:22px;height:22px}
+/* v10.0: khung thông tin món đang chọn không bị ép chữ: phần chữ giữ tối thiểu ~200px, các nút xuống hàng dưới */
+.sel-bar .sel-info{flex:1 1 200px}.sel-bar>button{flex:0 0 auto}
+@media(max-width:760px){.sel-bar>button{flex:1 1 auto;justify-content:center}}
+.skill.lockon{right:88px;bottom:228px;width:44px;height:44px;color:#c9d2c4}.skill.lockon svg{width:22px;height:22px}.skill.lockon.on{color:#ff8a6a;border-color:#ff8a6a;box-shadow:0 0 12px #ff6a4a99,inset 0 0 0 4px #0c181b77}

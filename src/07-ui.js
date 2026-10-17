@@ -35,6 +35,7 @@ window.startUI=(session)=>{
     if(d.element)o.push(chip(EL[d.element].icon,elInfo(d.element),EL[d.element].color));
     if(d.grip==='two')o.push(chip('hand2','Hai tay'));
     const W=d.slot==='hand'&&Player.WEAPONS[d.kind];if(W)o.push(chip('eye','Tầm '+W.range,'#bfe3ff'),chip('speed','Đánh '+String(W.dur).replace('.',',')+' giây','#bfe3ff'),chip('sword','Sát thương '+Math.round(W.dmg*100)+'%','#bfe3ff'),chip('orb','Mana '+Math.round(W.mana*100)+'% · hồi chiêu '+Math.round(W.cd*100)+'%','#bfe3ff'));
+    if(Player.isRanged(d.kind))o.push(chip('aim','Chính xác '+Player.aimAcc(it)+'% (khóa mục tiêu)','#ffb49a'),chip('spark','x2 +'+(Number(Player.CFG.cung_no_x2)||15)+'%','#ffb49a'));
     if(d.beast)o.push(chip('spark',Player.BEASTS[d.beast].skill,'#ffe0a0'));
     for(const [k,v] of Object.entries(it.add||{}))o.push(`<i class="ch add">${addLine(k,v)}</i>`);
     return `<span class="chips">${o.join('')}</span>`;
@@ -89,8 +90,9 @@ window.startUI=(session)=>{
     const el=Player.element(p);$('#skill-normal').style.setProperty('--elem',el?EL[el].color:'#dfc480');
     const books=Object.keys(D.books),key=books.join();if(key!==lastBuffs){lastBuffs=key;$('#buffs').innerHTML=books.map(b=>`<span class="buff" style="color:${EL[b].color}" title="${EL[b].name}: ${elInfo(b)}">${svg(EL[b].icon)}</span>`).join('');}
     const md=p.equipment.mount&&info(p.equipment.mount),mb=$('#skill-mount');mb.hidden=!md||game.safe;
+    {const lb=$('#lockBtn'),rg=Player.isRanged(Player.stance(p).type);lb.hidden=!rg;lb.classList.toggle('on',rg&&game.lockOn);lb.setAttribute('aria-pressed',String(rg&&game.lockOn));}
     if(md&&mb.dataset.beast!==md.beast){mb.dataset.beast=md.beast;const B=Player.BEASTS[md.beast];$('#mountIcon').innerHTML=`<use href="#i-${B.icon}"/>`;$('#mountName').textContent=B.skill;mb.title='4 · '+B.skill+' · 12 mana';}
-    document.querySelectorAll('.skill-wheel .skill:not(.normal)').forEach(b=>b.classList.toggle('locked',game.safe));
+    document.querySelectorAll('.skill-wheel .skill:not(.normal):not(.lockon)').forEach(b=>b.classList.toggle('locked',game.safe));
     if(lastGender!==p.gender){lastGender=p.gender;const av=$('#avatarBtn'),u=LH_IMG.url('giao_dien:chan_dung_'+(p.gender==='f'?'nu':'nam'));av.querySelector('.pf-img')?.remove();if(u)av.querySelector('.portrait').insertAdjacentHTML('afterend',`<img class="pf-img" src="${esc(u)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`);$('#pfHair').style.display=p.gender==='f'?'':'none';$('#pfYem').style.display=p.gender==='f'?'':'none';}
   }
   /* ---------- Bảng thuộc tính: 5 chỉ số lớn, chỉ số nhỏ chỉ hiện khi có cộng thêm ---------- */
@@ -345,7 +347,7 @@ window.startUI=(session)=>{
   async function save(){closeMenu();const ok=await game.save();game.message(ok?svg('save')+'Đã lưu':svg('close')+'Không lưu được');}
   $('#avatarBtn').onclick=showAttributes;
   $('#settingsBtn').onclick=()=>{menu.hidden=!menu.hidden;$('#settingsBtn').setAttribute('aria-expanded',String(!menu.hidden));};
-  $('#saveBtn').onclick=save;$('#mapBtn').onclick=showMaps;$('#homeBtn').onclick=()=>{closeMenu();closeModal();game.home();refresh();};
+  $('#lockBtn').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();game.toggleLock();});$('#saveBtn').onclick=save;$('#mapBtn').onclick=showMaps;$('#homeBtn').onclick=()=>{closeMenu();closeModal();game.home();refresh();};
   // Tình trạng: phiên bản, phần chơi chưa lưu, lần gọi máy chủ và lỗi gần đây (chụp màn hình gửi khi game có vấn đề)
   function showDiag(){
     closeMenu();const D=LH_DIAG.data,v=document.querySelector('.version');
@@ -358,7 +360,6 @@ window.startUI=(session)=>{
   }
   $('#diagBtn').onclick=showDiag;
   $('#questBtn').onclick=showQuests;$('#bagBtn').onclick=()=>{selected=null;skillFocus=null;renderBag();};
-  $('#switchBtn').onclick=async()=>{closeMenu();await game.save();location.reload();};
   $('#closeOverlay').onclick=closeModal;$('#overlay').onclick=evt=>{if(evt.target.id==='overlay')closeModal();};
   document.querySelectorAll('[data-skill]').forEach(btn=>{
     const id=btn.dataset.skill,up=()=>{btn.classList.remove('pressed');if(id==='normal')game.setHold(false);};

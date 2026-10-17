@@ -124,12 +124,22 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 - **Cấp tối thiểu** (Sheet `cau_hinh`: `cap_hang_dong` 5, `cap_sa_mac` 10, `cap_nui_tuyet` 15; chạy `kiemTra` để thêm các dòng này): chặn ở bảng Bản đồ, ở cổng vào vùng, và máy chủ đưa nhân vật về làng nếu vị trí lưu ở vùng chưa đủ cấp.
 - **Lý trưởng** xếp việc theo cấp, nhóm theo vùng; việc ở vùng chưa đủ cấp hiện khóa, không nhận được (máy chủ cũng kiểm tra). Cột tùy chọn `cap_toi_thieu` ở tab `nhiem_vu` đặt cấp riêng cho từng việc.
 
+## Bản 10.0: dáng người mới, khóa mục tiêu, bãi quái, người chơi ảo
+
+- Khung thông tin món đang chọn trong túi (nhất là sách) không còn bị ép chữ thành cột dọc: phần chữ giữ chiều rộng tối thiểu, các nút xuống hàng dưới.
+- Nhân vật và lính vẽ lại theo dáng 3/4 nhìn về phía trước: quay phải là hướng 5 giờ, quay trái hướng 7 giờ (thấy hai mắt, mũi, miệng, mái tóc lệch).
+- Bỏ mục "Đổi nhân vật" trong menu.
+- **Khóa mục tiêu** (cầm cung hoặc nỏ): nút Khóa (phím T) cạnh nút kỹ năng. Bật thì mỗi phát bắn tự tìm quái đã chạm chọn (hoặc quái gần nhất), có vòng ngắm đỏ; mũi tên bay đuổi theo mục tiêu nếu trúng theo **tỉ lệ chính xác**, trượt thì lệch hướng và hiện chữ "Trượt". Chính xác: cung 70%, nỏ 76%, mỗi cấp gia cường +2% (tối đa 100%), Sheet `cau_hinh`: `cung_chinh_xac`, `no_chinh_xac`, `chinh_xac_moi_cap`.
+- Cung, nỏ được cộng thêm 15% tỉ lệ sát thương x2 (`cung_no_x2`), vũ khí khác không có.
+- **Bãi quái lớn**: mỗi bản đồ 2 bãi (trường `camps` trong `maps/*.json`), quái tụ đông để luyện cấp, tên bãi hiện ở góc bản đồ nhỏ. Giới hạn hạ quái cùng loài trong một lượt hồi sinh nâng lên 16 (`gioi_han_ha_quai`).
+- **Người chơi ảo** (`nguoi_choi_ao`, mặc định 4 mỗi bản đồ, 0 = tắt): đi săn quanh các bãi quái, bị quái đánh, gục thì 20 giây sau quay lại. Tên, giới tính, đồ lấy từ nhân vật người chơi đang rao cho thuê ở Thương nhân; chưa có thì dùng 8 người chơi mặc định với vũ khí, đồ khác nhau (đồ tốt hơn ở vùng cấp cao). Không đánh trùm. Quái do người chơi ảo hạ không cho thưởng, trừ khi mình đã gây từ 30% máu quái.
+
 ## Ra bản mới
 
 1. Sửa trong `src/` (và `VERSION`).
 2. `node tools/build.mjs`
-3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-10.0`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
-4. Trên Blogspot đổi `@ban-9.9` thành `@ban-10.0` (trang game và trang Chợ phiên).
+3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-10.1`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
+4. Trên Blogspot đổi `@ban-10.0` thành `@ban-10.1` (trang game và trang Chợ phiên).
 5. Nếu `Code.gs` đổi: dán lại vào Apps Script, Triển khai → Quản lý triển khai → Sửa → Phiên bản mới (giữ nguyên URL).
 
 ## Dữ liệu trong Sheet

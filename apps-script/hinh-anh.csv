@@ -56,6 +56,7 @@ bieu_tuong,bag,Túi đồ,"Nút túi đồ, nhặt đồ",,"64×64, định dạ
 bieu_tuong,home,Ngôi nhà,Về làng,,"64×64, định dạng webp, nền trong suốt, nét đơn giản một màu (game tô màu theo chỗ dùng)",,
 bieu_tuong,save,Lưu,Nút lưu,,"64×64, định dạng webp, nền trong suốt, nét đơn giản một màu (game tô màu theo chỗ dùng)",,
 bieu_tuong,quest,Nhiệm vụ,"Nút nhiệm vụ, theo dõi việc",,"64×64, định dạng webp, nền trong suốt, nét đơn giản một màu (game tô màu theo chỗ dùng)",,
+bieu_tuong,aim,Khóa mục tiêu,"Nút khóa mục tiêu khi cầm cung, nỏ; chỉ số chính xác",,"64×64, định dạng webp, nền trong suốt, nét đơn giản một màu (game tô màu theo chỗ dùng)",,
 bieu_tuong,menu,Menu,Nút menu góc trên (ba gạch),,"64×64, định dạng webp, nền trong suốt, nét đơn giản một màu (game tô màu theo chỗ dùng)",,
 bieu_tuong,map,Bản đồ,Nút chọn bản đồ trong menu,,"64×64, định dạng webp, nền trong suốt, nét đơn giản một màu (game tô màu theo chỗ dùng)",,
 vat_pham,sword,Kiếm tập,Vũ khí / tay,,"128×128, định dạng webp, nền trong suốt. Vũ khí vẽ chéo 45°: tay cầm ở góc dưới trái (14% từ trái, 86% từ trên), mũi hướng góc trên phải — game đặt đúng điểm này vào tay nhân vật. Màu: chính #7a6a55, phụ #554a3b, viền #a99e91.",Chung,
