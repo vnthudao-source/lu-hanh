@@ -199,6 +199,13 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
 
+## Bản 10.9: dáng tay / vũ khí thống nhất (tác giả duyệt theo bảng 18 dáng)
+
+- **Quay trái là ảnh gương của quay phải** cho: tay không, trong làng (kiếm dắt hông, khiên / cung / nỏ / giáo / gậy đeo lưng), vũ khí hai tay (cung, nỏ, giáo) và **mọi lúc ra đòn** (`handSide`: `mirror`). Riêng lúc đứng / đi / đỡ có cầm đồ một tay (kiếm + khiên, gậy + khiên, song đao, cưỡi thú) quay trái giữ dáng riêng `LEFT_POSE` (khiên trước ngực, kiếm buông thấp) đã chốt ở 10.6.
+- Trong làng / thành: tay như lúc tay không (một tay co trước bụng, tay kia buông, vung theo bước); kiếm trong vỏ ở hông, chuôi ở thắt lưng, lưỡi chúc dọc chân (vẽ nhỏ 0,8); khiên đeo lưng nhô lên sau vai; đồ dài đeo chéo sau lưng, đầu trên nhô qua vai, đầu dưới ló dưới hông (cung / nỏ xoay thêm 90° vì vẽ vuông góc hướng ngắm).
+- Khi chém: khiên giữ nguyên vị trí lúc đứng (không nhảy lên ngực). Cung đứng: hạ thấp, dựng đứng bên hông trước. Giáo đứng: cầm chếch trước mặt, không đè lên mặt khi quay phải. `drawHeld` nhận `hp.s` (tỉ lệ).
+- Áp dụng chung cho nhân vật, lính đi theo, người chơi ảo (cùng `drawHero`). Bảng duyệt: `scratchpad/v103/v109.jpg` (18 hàng × 2 hướng).
+
 ## Bản 10.8: âm thanh
 
 - Toàn bộ âm thanh **tổng hợp bằng Web Audio** trong trình duyệt (`src/03-audio.js`, không tải file, không tốn băng thông): bật / tắt ở menu **Âm thanh** (lưu trong máy, khóa `lh-am`). iPhone chỉ phát sau thao tác chạm đầu tiên.

@@ -396,8 +396,8 @@ window.startGame=(session)=>{
     // song kiếm: kiếm tay trước chĩa ra trước, kiếm tay sau giơ chéo sau vai — nhìn rõ hai thanh
     if(st.dual&&st.type==='sword'){P.front={x:12+sw*2,y:-13,ang:-.55};P.back={x:-12-sw*2,y:-17,ang:-2.3};}
     if(st.two){
-      if(st.type==='spear'){P.front={x:10,y:-14,ang:-1.25};P.back={x:10-Math.cos(-1.25)*17,y:-14-Math.sin(-1.25)*17,ang:-1.25};}
-      if(st.type==='bow'){P.front={x:13,y:-12,ang:1.15};P.back={x:-8,y:-11,ang:0};}
+      if(st.type==='spear'){P.front={x:14,y:-14,ang:-1.25};P.back={x:14-Math.cos(-1.25)*17,y:-14-Math.sin(-1.25)*17,ang:-1.25};}
+      if(st.type==='bow'){P.front={x:13,y:-6,ang:.12};P.back={x:-6,y:-12,ang:0};} // cung hạ thấp, dựng đứng bên hông trước
       if(st.type==='crossbow'){P.front={x:13,y:-12,ang:.45};P.back={x:1,y:-17,ang:.45};}
     }
     if(t<h.blockUntil){const sh=st.right==='shield'?P.front:P.back;sh.x=16+Math.sin(t*40)*.6;sh.y=-20;P.crouch=3;P.block=true;}
@@ -460,12 +460,14 @@ window.startGame=(session)=>{
   const LEFT_POSE={sw:{x:12,y:-8,ang:.35},sh:{x:-7,y:-14},face:true,swBack:true};
   const HIDE_ANG={sword:-.78,staff:-1.0,punch:-1.6};
   function handSide(P,st,facing,a){
-    if(facing>0){const dW=st.two?-5:-15,dO=st.two?-5:15;P.front.x+=dW;P.back.x+=dO;if(P.trail)P.trail.cx+=dW;P.sh={front:{x:-8,y:-23},back:{x:8,y:-23}};}
+    const ah=atkHand(a,st);
+    // Quay trái chỉ dùng dáng riêng (LEFT_POSE) khi đứng / đi / đỡ có cầm đồ một tay; tay không, vũ khí hai tay và lúc ra đòn thì vẽ đối xứng gương với quay phải
+    const mirror=facing>0||st.two||P.heal||!(st.right||st.left)||(ah&&!P.block);
+    if(mirror){const dW=st.two?0:-15,dO=st.two?0:15;P.front.x+=dW;P.back.x+=dO;if(P.trail)P.trail.cx+=dW;P.sh={front:{x:-8,y:-23},back:{x:8,y:-23}};}
     else{P.sh={front:{x:8,y:-23},back:{x:-8,y:-23}};
-      const ah=atkHand(a,st);
-      if(!st.two&&ah!=='front'&&ah!=='both'&&!P.heal&&!(P.block&&st.right==='shield')){const V=LEFT_POSE;P.hide=true;P.lp=V;
+      if(!(P.block&&st.right==='shield')){const V=LEFT_POSE;P.hide=true;P.lp={...V};
         P.front={x:V.sw.x,y:V.sw.y,ang:st.right==='sword'?V.sw.ang:(HIDE_ANG[st.right]!==undefined?HIDE_ANG[st.right]:-1.1)};
-        if(ah!=='back'&&!P.block)P.back={x:V.sh.x,y:V.sh.y,ang:P.back.ang};}}
+        if(!P.block)P.back={x:V.sh.x,y:V.sh.y,ang:P.back.ang};}}
     return P;
   }
   function drawArm(c,sx,sy,hx,hy,sleeve,skin){
@@ -501,7 +503,7 @@ window.startGame=(session)=>{
   // Ảnh vũ khí trong Sheet Hình ảnh (vat_pham:<mã>): vẽ ảnh thay hình mặc định. Ảnh vẽ chéo, chuôi ở góc dưới trái, mũi ở góc trên phải.
   const PIC_LEN={sword:36,spear:62,staff:46};
   function drawHeld(c,type,hp,P,el,t,role,tint,it){
-    if(!type)return;c.save();c.translate(hp.x,hp.y);curLook=it?LH_Look.of(it):null;
+    if(!type)return;c.save();c.translate(hp.x,hp.y);if(hp.s)c.scale(hp.s,hp.s);curLook=it?LH_Look.of(it):null;
     const pic=it&&type!=='bow'&&type!=='crossbow'?LH_IMG.pic('vat_pham:'+it):null;
     if(pic){
       if(type==='shield'){const sz=P.block?26:22;c.drawImage(pic,-sz/2,-sz/2,sz,sz);}
@@ -587,7 +589,7 @@ window.startGame=(session)=>{
   // Mặc định: nam cởi trần đóng khố, nữ mặc yếm váy
   function drawHero(c,h,st,el,t,opts={}){
     // Trong vùng an toàn (làng, thành): thu vũ khí — kiếm dắt bên hông, khiên / cung / nỏ / giáo / gậy đeo sau lưng; tay vung theo bước đi. Đang ra đòn hoặc xem trước (túi đồ, chân dung) thì vẫn cầm.
-    const who=opts.who||player,eq=who.equipment,info=Player.info,a=h.attack,sheathed=safe&&!a&&!opts.armed&&t>=h.blockUntil,P=handSide(heroPose(h,st,a,t),st,h.facing,a),flash=t-h.hurt<.12,md=!safe&&eq.mount&&info(eq.mount),mounted=!!md,seat=mounted?Player.BEASTS[md.beast].seat:0,big=mounted&&md.beast==='elephant',fem=who.gender==='f';
+    const who=opts.who||player,eq=who.equipment,info=Player.info,a=h.attack,sheathed=safe&&!a&&!opts.armed&&t>=h.blockUntil,stP=sheathed?{...st,right:null,left:null,two:false,dual:false,type:'punch'}:st,P=handSide(heroPose(h,stP,a,t),stP,h.facing,a),flash=t-h.hurt<.12,md=!safe&&eq.mount&&info(eq.mount),mounted=!!md,seat=mounted?Player.BEASTS[md.beast].seat:0,big=mounted&&md.beast==='elephant',fem=who.gender==='f';
     // đeo cánh (không phải áo choàng / cờ) và không cưỡi thú: lơ lửng cách đất, di chuyển thì lướt, chân không bước
     const LWk=eq.wings&&LH_Look.of(eq.wings.type),flying=!!(LWk&&LWk.kind==='wings'&&!mounted&&!h.dead),hover=flying?-9+Math.sin(t*2.6+h.x*.01)*2.2:0;
     const AV=Player.AVATARS[who.avatar]||null,bob=flying?hover:h.moving?-Math.abs(Math.sin(h.walk))*(mounted?1.4:2.2):Math.sin(t*2)*.6,SKIN=AV?shade(AV.skin,-.07):'#d9ad80';
@@ -605,20 +607,22 @@ window.startGame=(session)=>{
     const sleeve=LA?LA.main:SKIN,skin=LG?LG.main:SKIN;
     const held=(type,hp,role,tn,lv,it)=>{c.save();if(lv>=7){c.shadowColor=lv>=10?'#ff6a3a':'#ffd77a';c.shadowBlur=6+lv;}const L=it&&LH_Look.of(it);if(L&&L.fx)LH_Look.mythGlow(c,L);drawHeld(c,type,hp,P,el,t,role,tn,it);c.restore();};
     const backTop=a&&a.hand==='left'&&a.type==='sword',hide=!!P.hide&&!sheathed;
-    if(sheathed){const sw=h.moving&&!flying?Math.sin(h.walk):0;P.hide=false;P.front={x:(h.facing>0?-9:10)+sw*4,y:-7,ang:0};P.back={x:(h.facing>0?9:-10)-sw*4,y:-7,ang:0};P.trail=null;}
+    if(sheathed){P.hide=false;P.trail=null;} // trong làng: tay như lúc tay không (một tay co trước bụng, tay kia buông), vũ khí dắt / đeo
     if(fem)ell(c,-7,-31,6,11,'#2a2622'); // tóc dài sau lưng
     // đồ đeo sau lưng (vẽ trước thân): khiên, cung, nỏ, giáo, gậy, kiếm thứ hai; kiếm chính dắt bên hông (vẽ trước thân, hé chuôi và mũi)
     if(sheathed){
-      const carry=(type,it,tn,lv,x,y,ang,role)=>{if(!type)return;held(type,{x,y,ang},role||'carry',tn,lv,it);};
+      // Kiếm dắt hông, đồ đeo lưng: vẽ cùng tọa độ cục bộ cho hai hướng → quay trái là ảnh gương của quay phải
+      const f=1,carry=(type,it,tn,lv,x,y,ang)=>{if(type)held(type,{x,y,ang},'carry',tn,lv,it);}; // hai hướng đối xứng gương (tác giả chốt v10.9)
       const R=st.right,L=st.left;
-      if(L==='shield')carry(L,st.itL,st.tintL,st.lvL,-12,-23,0,'carry');
-      else if(L==='sword')carry(L,st.itL,st.tintL,st.lvL,-13,-32,2.2);
-      else if(L)carry(L,st.itL,st.tintL,st.lvL,-4,-22,-1.1);
-      if(R==='shield')carry(R,st.itR,st.tintR,st.lvR,-12,-23,0,'carry');
-      else if(R&&R!=='sword')carry(R,st.itR,st.tintR,st.lvR,-4,-20,-1.15);
+      // đồ dài (cung, nỏ, giáo, gậy, kiếm thứ hai) đeo chéo sau lưng: đầu trên nhô qua vai phải (bên trái màn hình), đầu dưới ló dưới hông trái
+      const diag=(type,it,tn,lv)=>{const d=f>0?.9:Math.PI-.9,bow=type==='bow'||type==='crossbow',off=type==='spear'?-9:type==='sword'?-16:0;carry(type,it,tn,lv,-f*4+Math.cos(d)*off,-26+Math.sin(d)*off,bow?d-Math.PI/2:d);}; // cung / nỏ vẽ vuông góc với hướng ngắm nên xoay thêm 90°
+      // khiên đeo lưng: nhô lên sau vai trái, nhìn thẳng mặt ngoài
+      if(L==='shield')carry('shield',st.itL,st.tintL,st.lvL,f*8,-30,0);else if(R==='shield')carry('shield',st.itR,st.tintR,st.lvR,f*8,-30,0);
+      if(L&&L!=='shield')diag(L,st.itL,st.tintL,st.lvL);
+      if(R&&R!=='shield'&&R!=='sword')diag(R,st.itR,st.tintR,st.lvR);
       drawArm(c,P.sh.back.x,P.sh.back.y,P.back.x,P.back.y,sleeve,skin);
     }
-    const hipSword=()=>{if(sheathed&&st.right==='sword')held('sword',{x:-6,y:-9,ang:2.75},'carry',st.tintR,st.lvR,st.itR);};
+    const hipSword=()=>{if(sheathed&&st.right==='sword')held('sword',{x:9,y:-11,ang:1.42,s:.8},'carry',st.tintR,st.lvR,st.itR);};
     // quay trái: món tay phải (kiếm, gậy) vẽ trước thân → khuất sau người, chỉ lộ phần lưỡi nhô lên vai
     const LPZ=hide?P.lp:null;
     if(sheathed){}
