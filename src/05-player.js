@@ -9,15 +9,17 @@ const Player=(()=>{
     thunder:{name:'Lôi',icon:'thunder',color:'#c9a7ff',glow:'#f4ecff',st:['str']},wind:{name:'Phong',icon:'wind',color:'#8fe3c4',glow:'#e6fff5',st:['agi']},
     ice:{name:'Băng',icon:'ice',color:'#8fd3ff',glow:'#effaff',st:['int']},demon:{name:'Ma công',icon:'demon',color:'#c0508a',glow:'#ffb8dc',st:['cmd']},light:{name:'Ánh sáng',icon:'light',color:'#ffe680',glow:'#fffbe0',st:['vit']}
   };
-  const BEASTS={horse:{seat:24,skill:'Đá hậu',icon:'mount',cmd:5},tiger:{seat:28,skill:'Vồ mồi',icon:'tiger',cmd:10},elephant:{seat:46,skill:'Dày xéo',icon:'elephant',cmd:15}};
+  const BEASTS={horse:{seat:24,skill:'Đá hậu',icon:'mount',cmd:5},tiger:{seat:28,skill:'Vồ mồi',icon:'tiger',cmd:10},elephant:{seat:46,skill:'Dày xéo',icon:'elephant',cmd:15},
+    kylan:{seat:26,skill:'Lân hỏa',icon:'spark',cmd:12},rong:{seat:40,skill:'Long tức',icon:'demon',cmd:20}}; // v10.3: kỳ lân (lửa quanh mình), rồng (phun lửa phía trước)
   const GROUPS=[['str','Sức mạnh','punch'],['agi','Nhanh nhẹn','feather'],['vit','Sức khỏe','heart'],['int','Trí tuệ','spark'],['cmd','Mệnh lệnh','flag']];
-  const FX_NAMES={stun:'Choáng',execute:'Kết liễu',shield:'Lá chắn',wave:'Sóng chém',aura:'Hào khí',cleave:'Chém lan',manaShield:'Khiên mana',lifesteal:'Hút máu',haste:'Thần tốc',burn:'Thiêu đốt',counter:'Phản công',heal:'Hồi phục',revive:'Hồi sinh'};
+  const FX_NAMES={stun:'Choáng',execute:'Kết liễu',shield:'Lá chắn',wave:'Sóng chém',aura:'Hào khí',cleave:'Chém lan',manaShield:'Khiên mana',lifesteal:'Hút máu',haste:'Thần tốc',burn:'Thiêu đốt',counter:'Phản công',heal:'Hồi phục',revive:'Hồi sinh',
+    frost:'Băng giá',venom:'Độc',rage:'Cuồng nộ',luck:'May mắn',expUp:'Tinh thông',coinUp:'Phú quý'}; // v10.3: hiệu ứng đồ thành trì
   const SLOT_OF={vu_khi:'right',tay_trai:'left',mu:'hat',ao:'armor',quan:'pants',gang:'gloves',giay:'shoes',canh:'wings',thu_cuoi:'mount'};
   const PAIRS=new Set(['sword|sword','shield|shield','staff|staff','shield|staff','shield|sword']);
   const ALIAS={'book-ice':'book-water','book-wind':'book-metal','book-thunder':'book-earth'};
   const skills={normal:{cost:0,cooldown:450},basic:{cost:10,cooldown:3000},intermediate:{cost:18,cooldown:6000},advanced:{cost:28,cooldown:10000},mount:{cost:12,cooldown:6000}};
   // Bảng sinh từ dữ liệu (Sheet)
-  const CFG={},RAR={},ADD={},items={},SHOPS={},SETS={},MON={},QUESTS={},MERCS={},ENH=[],WEAPONS={},REGIONS=[];
+  const CFG={},RAR={},ADD={},items={},SHOPS={},SETS={},MON={},QUESTS={},MERCS={},ENH=[],WEAPONS={},REGIONS=[],AVATARS={};
   // Kỹ năng trùm (cột ky_nang ở tab quai, cách nhau dấu phẩy): tên hiện, màu, thời gian hiệu ứng (giây)
   const SKILLS={slow:{name:'Trì trệ',desc:'giảm tốc đánh 40%',color:'#c8b060',dur:6},freeze:{name:'Đóng băng',desc:'đứng yên',color:'#80d8ff',dur:1.6},stun:{name:'Sét giật',desc:'choáng',color:'#ffe060',dur:1.4},
     weak:{name:'Suy nhược',desc:'giảm sát thương 40%',color:'#c060ff',dur:6},armor:{name:'Phá giáp',desc:'giảm phòng ngự 50%',color:'#ff9040',dur:6},poison:{name:'Trúng độc',desc:'mất máu dần',color:'#80e060',dur:5},
@@ -41,9 +43,11 @@ const Player=(()=>{
       if(slot==='mount'){d.beast=r.thu_cuoi||'horse';d.cmd=num(r.menh_lenh,BEASTS[d.beast].cmd);if(d.beast!=='horse')d.icon=d.beast;}
       if(slot==='book'){d.icon='book';d.element=r.he;}
       if(!slot)d.icon=r.loai||'ore';
+      if(r.pham_chat&&RAR[r.pham_chat]&&r.pham_chat!=='n')d.q=r.pham_chat; // phẩm chất cố định (hàng hiệu buôn thành trì)
+      if(r.hieu_ung){d.fx=r.hieu_ung;d.fxv=num(r.gia_tri);d.fxText=r.mo_ta||'';}
       items[r.id]=d;
     }
-    for(const r of data.cua_hang||[]){(SHOPS[r.cua_hang]=SHOPS[r.cua_hang]||[]).push({id:r.id,q:String(r.pham_chat||'n').split(',').map(x=>x.trim()),price:num(r.gia),order:num(r.thu_tu)});}
+    for(const r of data.cua_hang||[]){(SHOPS[r.cua_hang]=SHOPS[r.cua_hang]||[]).push({id:r.id,q:String(r.pham_chat||'n').split(',').map(x=>x.trim()).filter(q=>RAR[q]||q==='n'),price:num(r.gia),order:num(r.thu_tu),t:num(r.bac)});}
     for(const k of Object.keys(SHOPS))SHOPS[k].sort((a,b)=>a.order-b.order);
     for(const r of data.bo_huyen_thoai||[]){
       const S={id:r.id,hero:r.nhan_vat,gender:r.gioi_tinh,name:r.ten_bo,tiers:{3:parseBonus(r.moc_3),5:parseBonus(r.moc_5),7:parseBonus(r.moc_7)},fx:r.hieu_ung_9,fxv:num(r.gia_tri_9),fxText:r.mo_ta_9,pieces:[]};
@@ -64,6 +68,7 @@ const Player=(()=>{
     for(const r of data.quai||[])MON[r.id]={name:r.ten,hp:num(r.mau),dmg:num(r.sat_thuong),speed:num(r.toc_do),run:num(r.toc_chay),r:num(r.ban_kinh),h:num(r.cao),aggro:num(r.tam_danh),range:num(r.tam_gan),cd:num(r.hoi_chieu_ms)/1000,windup:num(r.vung_tay_ms)/1000,copper:num(r.dong),knock:num(r.day_lui_phan_tram)/100,boss:num(r.boss),respawn:num(r.hoi_sinh_giay,15),drops:{g:num(r.dep_phan_van)/1e4,p:num(r.hoan_hao_phan_van)/1e4,l:num(r.huyen_thoai_phan_van)/1e4,m:num(r.than_phan_van)/1e4},rubies:[num(r.hong_ngoc_it),num(r.hong_ngoc_nhieu)],dtype:r.loai_sat_thuong||'thuong',crit:num(r.ti_le_x2),exp:num(r.kinh_nghiem,Math.max(1,Math.round(num(r.mau)/8))),map:String(r.ban_do||'').trim()||undefined,skills:String(r.ky_nang||'').split(/[,\s]+/).filter(k=>SKILLS[k])};
     for(const r of data.nhiem_vu||[])QUESTS[r.id]={id:r.id,name:r.ten,desc:r.mo_ta,target:r.muc_tieu,count:num(r.so_luong,1),copper:num(r.thuong_dong),rubies:num(r.thuong_hong_ngoc),item:r.thuong_do||'',itemQ:r.pham_chat_do||'n',repeat:r.lap_lai!=='khong',lv:num(r.cap_toi_thieu),exp:num(r.thuong_kinh_nghiem,Math.round(num(r.thuong_dong)/10))};
     REGIONS.length=0;for(const r of data.ban_do||[])REGIONS.push({id:String(r.id),name:r.ten,lv:num(r.cap,1),icon:r.bieu_tuong||'pin',order:num(r.thu_tu,99)});REGIONS.sort((a,b)=>a.order-b.order);
+    clear(AVATARS);for(const r of data.dien_mao||[])AVATARS[r.id]={id:r.id,name:r.ten,gender:r.gioi_tinh||'',price:num(r.gia),ruby:num(r.hong_ngoc),skin:r.mau_da||'#e1c295',hair:r.mau_toc||'#2a2622',style:r.kieu_toc||'',beard:r.rau||'',eye:r.mau_mat||'#2a2018',mark:r.dau||'',order:num(r.thu_tu,99)};
     for(const r of data.linh||[])MERCS[r.id]={id:r.id,name:r.ten,gender:r.gioi_tinh==='f'?'f':'m',price:num(r.gia),cmd:num(r.menh_lenh,5),stats:{strength:num(r.suc_manh),agility:num(r.nhanh_nhen),vitality:num(r.suc_khoe),intelligence:num(r.tri_tue),command:0},gear:String(r.trang_bi||'').split(',').map(x=>x.trim()).filter(Boolean),desc:r.mo_ta};
   }
   const info=i=>i&&items[i.type];
@@ -121,11 +126,11 @@ const Player=(()=>{
   }
   const BASE_DROP=()=>Object.keys(items).filter(k=>{const d=items[k];return !d.q&&d.slot&&d.slot!=='book'&&d.slot!=='mount';});
   const dropCap=()=>{const q=String(CFG.pham_chat_roi_toi_da||'').trim();return RAR[q]?RAR[q].tier:99;};
-  function rollDrop(monId,rng=Math.random){
+  function rollDrop(monId,rng=Math.random,luck=1){
     const M=MON[monId];if(!M)return {items:[],rubies:0};
     const lvl=regionLv(regionOf(monId)),tier=lvl>=20?lvl:0,out=[],tries=M.boss===2?3:M.boss?2:1,cap=Math.max(dropCap(),lvl>=60?4:lvl>=44?3:0),R=q=>RAR[q]?RAR[q].tier<=cap:true;
     // phẩm chất rơi cao nhất của bản đồ (cau_hinh: pham_chat_roi_toi_da); phẩm chất vượt mức thì không rơi
-    const dm=R('m')?M.drops.m:0,dl=R('l')?M.drops.l:0,dp=R('p')?M.drops.p:0,dg=R('g')?M.drops.g:0;
+    const dm=(R('m')?M.drops.m:0)*luck,dl=(R('l')?M.drops.l:0)*luck,dp=(R('p')?M.drops.p:0)*luck,dg=(R('g')?M.drops.g:0)*luck; // luck: hiệu ứng May mắn (×)
     for(let k=0;k<tries;k++){
       const x=rng();let acc=0;
       if(x<(acc+=dm)){const pool=Object.keys(items).filter(k=>items[k].myth);if(pool.length)out.push(roll(pool[Math.floor(rng()*pool.length)],'m',rng,tier));}
@@ -141,10 +146,12 @@ const Player=(()=>{
   function enhFail(lv,rng){const f=ENH[lv]?ENH[lv].fail:null;if(!f)return lv;const [a,b]=f;return a+Math.floor(rng()*(b-a+1));}
   // Mỗi NPC gia cường loại đồ của mình: thợ rèn (vũ khí, giáp), người nuôi thú (thú cưỡi), đạo sĩ (sách)
   const SHOP_ENH={smith:d=>d.slot!=='book'&&d.slot!=='mount',trainer:d=>d.slot==='mount',wizard:d=>d.slot==='book'};
+  // hiệu buôn thành trì (mã bắt đầu 'thanh-'): gia cường cả vũ khí, giáp, thú cưỡi
+  const shopEnh=id=>SHOP_ENH[id]||(/^thanh-/.test(String(id))?d=>d.slot!=='book':null);
   function enhance(s,ref,rng=Math.random,shop){
     const it=ref.where==='bag'?s.bag[ref.key]:ref.where==='skill'?s.skillSlots[ref.key]:s.equipment[ref.key];
     if(!canEnhance(it))throw Error('ITEM');
-    if(shop&&SHOP_ENH[shop]&&!SHOP_ENH[shop](info(it)))throw Error('SHOP');
+    if(shop&&shopEnh(shop)&&!shopEnh(shop)(info(it)))throw Error('SHOP');
     const lv=it.lv||0;if(lv>=MAX_LV)throw Error('MAX');
     const cost=enhCost(lv);if(s.rubies<cost)throw Error('RUBY');
     s.rubies-=cost;const ok=rng()<enhRate(lv);it.lv=ok?lv+1:enhFail(lv,rng);
@@ -157,7 +164,7 @@ const Player=(()=>{
     const st=Object.fromEntries(STAT_KEYS.map(k=>[k,Math.max(0,Math.floor(num(ch&&ch.stats&&ch.stats[k],12)))]));st.command=num(CFG.menh_lenh_goc,10);
     const s={name:(ch&&ch.name)||'Lữ khách',gender:ch&&ch.gender==='f'?'f':'m',level:1,exp:0,points:0,alloc:Object.fromEntries([...STAT_KEYS,'command'].map(k=>[k,0])),stats:st,hp:1e9,mana:1e9,passive:0,copper:num(CFG.tien_thu_nghiem,0),rubies:num(CFG.hong_ngoc_thu_nghiem,0),
       flags:{river:false,hunted:false,kills:{},wells:{}},equipment:Object.fromEntries(slots.map(k=>[k,k==='right'?{uid:'training-sword',type:'sword'}:null])),bag,skillSlots:Array(SKILL_SLOTS).fill(null),activeBook:null,cooldowns:{},
-      quests:{active:{},done:{}},mercs:[],pets:[],rs:(Math.random()*2147483647)|0};
+      quests:{active:{},done:{}},mercs:[],pets:[],avatar:'',avatars:[],rs:(Math.random()*2147483647)|0};
     const D=derive(s);s.hp=D.tot.hp;s.mana=D.tot.mp;return s;
   }
   // Tính toàn bộ chỉ số: 5 chỉ số lớn + chỉ số nhỏ (base + phần cộng thêm từ đồ, bộ, sách)
@@ -256,8 +263,11 @@ const Player=(()=>{
   function toggleBook(s,i){if(!s.skillSlots[i])return;s.activeBook=s.activeBook===i?null:i;}
   function element(s){const b=s.activeBook!=null?s.skillSlots[s.activeBook]:null;return b&&info(b)?info(b).element:null;}
   function money(c){return {gold:Math.floor(c/10000),silver:Math.floor(c/100)%100,copper:c%100};}
-  function shopPrice(type,q='n'){const d=items[type];if(!d)return 0;let row=null;for(const k in SHOPS){row=SHOPS[k].find(r=>r.id===type)||row;}const p=row&&row.price?row.price:d.price;return Math.round(p*(q==='g'?num(CFG.he_so_gia_do_dep,250)/100:1));}
-  function buy(s,type,q='n',rng=Math.random){const d=items[type];if(!d||!d.price||d.q)throw Error('ITEM');const price=shopPrice(type,q);if(s.copper<price)throw Error('MONEY');const i=s.bag.indexOf(null);if(i<0)throw Error('BAG_FULL');s.copper-=price;s.bag[i]=roll(type,q,rng);return i;}
+  // Dòng hàng của một cửa hàng (shop = mã cửa hàng; không có thì tìm trong mọi cửa hàng)
+  const shopRow=(type,shop)=>{if(shop&&SHOPS[shop])return SHOPS[shop].find(r=>r.id===type)||null;let row=null;for(const k in SHOPS){row=SHOPS[k].find(r=>r.id===type)||row;}return row;};
+  // Giá: Đẹp ×he_so_gia_do_dep, Hoàn hảo ×he_so_gia_hoan_hao (%). Đồ phẩm chất cố định (huyền thoại, thần) bán trong cửa hàng thành trì thì tính theo giá dòng hàng
+  function shopPrice(type,q='n',shop){const d=items[type];if(!d)return 0;const row=shopRow(type,shop),p=row&&row.price?row.price:d.price;if(d.q)return Math.round(p);return Math.round(p*(q==='g'?num(CFG.he_so_gia_do_dep,250)/100:q==='p'?num(CFG.he_so_gia_hoan_hao,600)/100:1));}
+  function buy(s,type,q='n',rng=Math.random,shop){const d=items[type];const row=shopRow(type,shop);if(!d||!(row&&row.price||d.price)||(d.q&&!row))throw Error('ITEM');if(row&&!row.q.includes(d.q||q))throw Error('ITEM');const price=shopPrice(type,q,shop);if(s.copper<price)throw Error('MONEY');const i=s.bag.indexOf(null);if(i<0)throw Error('BAG_FULL');s.copper-=price;s.bag[i]=roll(type,d.q?'n':q,rng,row&&row.t||0);return i;}
   function sell(s,index){const it=s.bag[index];if(!it)throw Error('SLOT');const v=sellPrice(it);s.copper+=v;s.bag[index]=null;return v;}
   function addItem(s,it){const i=s.bag.indexOf(null);if(i<0)throw Error('BAG_FULL');s.bag[i]=it;return i;}
   // Mana kỹ năng theo loại vũ khí đang cầm (thú cưỡi không đổi)
@@ -359,6 +369,7 @@ const Player=(()=>{
     if(p.quests){for(const [k,v] of Object.entries(p.quests.active||{}))if(QUESTS[k])s.quests.active[k]=Math.floor(n(v,0,999,0));for(const [k,v] of Object.entries(p.quests.done||{}))if(QUESTS[k])s.quests.done[k]=Math.floor(n(v,0,1e6,0));}
     if(Array.isArray(p.mercs))s.mercs=p.mercs.slice(0,MAX_MERC).map(m=>{const x=makeMerc(m);x.mid=typeof m.mid==='string'?m.mid.slice(0,30):x.mid;x.hpFrac=n(m.hpFrac,0,1,1);x.on=!!m.on;return x;});
     if(Number.isInteger(p.activeMerc)&&s.mercs[p.activeMerc])s.mercs[p.activeMerc].on=true; // bản cũ: 1 lính
+    s.avatars=(Array.isArray(p.avatars)?p.avatars:[]).filter(id=>AVATARS[id]).slice(0,60);const av=AVATARS[p.avatar];s.avatar=av&&(!av.gender||av.gender===s.gender)&&(s.avatars.includes(p.avatar)||!(av.price||av.ruby))?p.avatar:'';
     if(Array.isArray(p.pets))s.pets=p.pets.filter(x=>x&&MON[x.type]&&!MON[x.type].boss&&typeof x.pid==='string').slice(0,petMax()).map(x=>({pid:x.pid.slice(0,30),type:x.type,hpFrac:n(x.hpFrac,0,1,1)}));
     const D=derive(s);
     // lính vượt quá Mệnh lệnh đang có thì cho nghỉ (theo thứ tự trong danh sách)
@@ -405,24 +416,29 @@ const Player=(()=>{
   // Các lệnh làm thay đổi tiền/đồ, chạy trên máy chủ (và trên trình duyệt ở chế độ ngoại tuyến)
   // số lần hạ một loài quái trong một lượt hồi sinh: bãi quái lớn có nhiều con cùng loài (Sheet cau_hinh gioi_han_ha_quai)
   const KILL_LIMIT=id=>MON[id].boss?1:num(CFG.gioi_han_ha_quai,16);
-  const PREDICT=new Set(['kill','buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff']);
+  const PREDICT=new Set(['kill','buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff','av']);
   function applyOp(s,op,srv,now=Date.now(),rng=Math.random){
     const t=op&&op.t;if(PREDICT.has(t))rng=seqRng(s);
     if(t==='kill'){
       const M=MON[op.mon];if(!M)throw Error('MON');
       srv.kills=srv.kills||{};const win=Math.max(5,M.respawn)*1000,log=(srv.kills[op.mon]||[]).filter(x=>now-x<win);
       if(log.length>=KILL_LIMIT(op.mon))throw Error('NHANH_QUA');log.push(now);srv.kills[op.mon]=log;
-      s.copper+=M.copper;s.flags.kills[op.mon]=(s.flags.kills[op.mon]||0)+1;
-      const drop=rollDrop(op.mon,rng),items=[],lost=[];s.rubies+=drop.rubies;
+      const D=derive(s),F=D.fx||{},copper=Math.round(M.copper*(1+num(F.coinUp)/100)),exp=Math.round(M.exp*(1+num(F.expUp)/100));
+      s.copper+=copper;s.flags.kills[op.mon]=(s.flags.kills[op.mon]||0)+1;
+      const drop=rollDrop(op.mon,rng,1+num(F.luck)/100),items=[],lost=[];s.rubies+=drop.rubies;
       for(const it of drop.items){try{addItem(s,it);items.push(it);}catch(e){lost.push(it);}}
       const done=questProgress(s,op.mon).filter(id=>s.quests.active[id]>=QUESTS[id].count);
       let bonus=0;const k=s.flags.kills;if(!s.flags.hunted&&k.deer&&k.lion&&k.elephant&&k.croc){s.flags.hunted=true;s.copper+=100;bonus=100;}
-      const up=gainExp(s,M.exp);
+      const up=gainExp(s,exp);
       // Sách Ma công: tỉ lệ thu phục quái (không áp dụng cho trùm), tăng theo Mệnh lệnh và cấp sách
-      let pet=null;if(!M.boss&&(s.pets=s.pets||[]).length<petMax()){const D=derive(s);if(D.bfx.demon>=0){const ch=num(CFG.ma_ti_le_goc,2)+D.main.cmd*num(CFG.ma_phan_van_moi_menh_lenh,20)/100+num(CFG.sach_ti_le_cap,1)*D.bfx.demon;if(rng()*100<ch){pet={pid:'pet-'+rnd36(rng),type:op.mon,hpFrac:1};s.pets.push(pet);}}}
-      return {mon:op.mon,copper:M.copper,rubies:drop.rubies,items,lost,done,bonus,exp:M.exp,up,level:s.level,pet};
+      let pet=null;if(!M.boss&&(s.pets=s.pets||[]).length<petMax()){if(D.bfx.demon>=0){const ch=num(CFG.ma_ti_le_goc,2)+D.main.cmd*num(CFG.ma_phan_van_moi_menh_lenh,20)/100+num(CFG.sach_ti_le_cap,1)*D.bfx.demon;if(rng()*100<ch){pet={pid:'pet-'+rnd36(rng),type:op.mon,hpFrac:1};s.pets.push(pet);}}}
+      return {mon:op.mon,copper,rubies:drop.rubies,items,lost,done,bonus,exp,up,level:s.level,pet};
     }
-    if(t==='buy'){const i=buy(s,String(op.type),op.q==='g'?'g':'n',rng);return {i,item:s.bag[i]};}
+    if(t==='buy'){const i=buy(s,String(op.type),op.q==='g'||op.q==='p'?op.q:'n',rng,op.shop?String(op.shop):undefined);return {i,item:s.bag[i]};}
+    // Diện mạo (NPC Thợ truyền thần ở thành trì): mua rồi đổi; diện mạo giá 0 ai cũng đổi được
+    if(t==='av'){const id=String(op.id||'');if(!id){s.avatar='';return {id};}const V=AVATARS[id];if(!V)throw Error('AV');if(V.gender&&V.gender!==s.gender)throw Error('GENDER');s.avatars=s.avatars||[];
+      if(!s.avatars.includes(id)&&(V.price||V.ruby)){if(s.copper<V.price)throw Error('MONEY');if(s.rubies<V.ruby)throw Error('RUBY');s.copper-=V.price;s.rubies-=V.ruby;s.avatars.push(id);}
+      s.avatar=id;return {id,bought:!!(V.price||V.ruby)};}
     if(t==='sell'){const i=Math.floor(op.i),it=s.bag[i];const v=sell(s,i);return {v,item:it};}
     if(t==='enh'){const bag=op.where==='bag',key=bag?Math.floor(op.key):String(op.key);if(!bag&&!slots.includes(key))throw Error('SLOT');const r=enhance(s,{where:bag?'bag':'equipment',key},rng,op.shop);return {...r,item:bag?s.bag[key]:s.equipment[key]};}
     if(t==='enhSk'){const key=Math.floor(op.key);if(!(key>=0&&key<SKILL_SLOTS))throw Error('SLOT');const r=enhance(s,{where:'skill',key},rng,op.shop||'wizard');return {...r,item:s.skillSlots[key]};}
@@ -435,7 +451,7 @@ const Player=(()=>{
     throw Error('LENH');
   }
   load(typeof GAME_DATA!=='undefined'?GAME_DATA:{});
-  return {VERSION,BAG_SIZE,SKILL_SLOTS,MAX_LV,MAX_MERC,MAX_ACTIVE_QUEST,ELEMENTS,BEASTS,GROUPS,FX_NAMES,STAT_KEYS,CFG,RAR,ADD,SHOPS,SETS,MON,QUESTS,MERCS,items,slots,skills,
+  return {VERSION,BAG_SIZE,SKILL_SLOTS,MAX_LV,MAX_MERC,MAX_ACTIVE_QUEST,ELEMENTS,BEASTS,GROUPS,FX_NAMES,STAT_KEYS,CFG,RAR,ADD,SHOPS,SETS,MON,QUESTS,MERCS,AVATARS,items,slots,skills,shopEnh,shopRow,
     layout,relayout,load,info,kind,weapon,skillCost,cmdInfo,WEAPONS,PREDICT,seqRng,setFollow,fitFollow,mercCmd,petMax,SHOP_ENH,expNeed,maxLevel,gainExp,spendPoints,mountGain,bookStat,mountCmd,qOf,rar,nameOf,stat,canEnhance,tradeable,gainOf,enhRate,enhCost,enhance,roll,rollDrop,create,derive,targets,equip,unequip,stance,isTwo,pairOk,setSkill,unsetSkill,toggleBook,element,money,shopPrice,buy,sell,sellPrice,addItem,cast,
     aimAcc,isRanged,REGIONS,MON_REGION,SKILLS,mapLevel,regionLv,regionOf,questLevel,questAccept,questProgress,questTurnIn,hireNpc,addMerc,mercEquip,mercUnequip,dismissMerc,makeMerc,cleanItem,serialize,restore,restorePlayer,merge,applyOp,allItems};
 })();

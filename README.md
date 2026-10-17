@@ -167,12 +167,35 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 - **Gọn nhẹ**: nền, vật trang trí, quái, NPC của các vùng mới vẽ bằng bộ sinh theo tham số `src/04-gen.js` (dáng quad / bird / snake / human / blob / bug / golem / dragon, nền theo bảng màu…), nên mỗi gói bản đồ mới chỉ 4–8 KB (vùng vẽ tay cũ 13–15 KB) và vẫn chỉ tải khi tới gần cổng. Toàn bộ 10 vùng sinh từ một bảng tham số: `node tools/genmaps.mjs` (ghi `maps/*.json`, `maps/*.art.js`, `src/01-data-vung.js`, thêm cổng vào 3 vùng cũ).
 - Tab mới `ban_do` (file cấu hình): mã, tên, cấp tối thiểu, biểu tượng của từng vùng; `kiemTra` tự tạo tab này và thêm cột `ban_do`, `ky_nang` vào tab `quai` cùng 30 quái, 20 việc mới.
 
+## Bản 10.3: mười vùng cấp 105–150, hiệu buôn thành trì, diện mạo, dáng quay trái
+
+- **Dáng nhân vật quay trái** (nhân vật chính, lính đi theo, người chơi ảo): học theo dáng quay phải — món tay phải (kiếm, gậy) khuất sau người, chỉ lộ phần lưỡi nhô lên vai; món tay trái (khiên) đưa ra trước, thấy trọn. Khi tay phải ra đòn thì vũ khí vung ra trước như thường; chặn khiên, vũ khí hai tay (giáo, cung, nỏ) giữ nguyên.
+- **10 bản đồ mới** nối tiếp Cửu Trùng Đài, 2 thành trì (Cố Đô Hoa Lư, Kinh Thành Phú Xuân). Từ bản đồ thứ 11 quái mỗi vùng máu ×1,5, sát thương ×1,25, đồng ×1,5 so với vùng trước (10 vùng đầu vẫn ×2 / ×1,5 / ×1,8); quái thường từ cấp 125 có một chiêu; trùm cấp 145–150 là trùm cuối (rơi 3 lượt). Cấp tối đa 150.
+
+  | Cấp | Vùng | Đi từ | Trùm · chiêu |
+  |---|---|---|---|
+  | 105 | Thủy Cung | Cửu Trùng Đài | Long Vương Thủy Phủ · Đóng băng, Trì trệ, Độc |
+  | 110 | Hoang Mạc Xương | Thủy Cung | Hắc Mộ Vương · Phá giáp, Suy nhược, Nổ |
+  | 115 | Thiên Sơn | Hoang Mạc Xương | Phong Vương · Sét giật, Trì trệ, Suy nhược |
+  | 120 | **Cố Đô Hoa Lư** (thành trì) | Thiên Sơn | Sứ Quân Phản Loạn · Phá giáp, Sét giật, Suy nhược, Nổ |
+  | 125 | Địa Ngục Môn | Hoa Lư | Diêm La Tướng · Suy nhược, Phá giáp, Độc, Nổ, Tự bạo |
+  | 130 | Đảo Rồng | Địa Ngục Môn | Hải Long Vương · Đóng băng, Trì trệ, Độc, Nổ |
+  | 135 | Vực Yêu Tinh | Đảo Rồng | Cửu Vĩ Hồ · Suy nhược, Đóng băng, Độc, Sét giật |
+  | 140 | Cung Trăng | Vực Yêu Tinh | Nguyệt Thần · Đóng băng, Sét giật, Suy nhược, Trì trệ |
+  | 145 | **Kinh Thành Phú Xuân** (thành trì) | Cung Trăng | Hắc Đế · Phá giáp, Sét giật, Suy nhược, Nổ, Tự bạo |
+  | 150 | Thiên Đình | Phú Xuân và Cung Trăng | Hắc Thiên Ma · Đóng băng, Suy nhược, Phá giáp, Nổ, Tự bạo |
+
+- **Hiệu buôn thành trì** (NPC Chủ hiệu ở cả 4 thành: Âu Lạc 44, Long Thành 90, Trường Yên 120, Thuận Hóa 145; mã cửa hàng `thanh-<vùng>`): 12 món vũ khí / đồ mặc mang tên thành, bán ba phẩm chất Thường / Đẹp / Hoàn hảo (giá ×1 / ×2,5 / ×6, `he_so_gia_hoan_hao`), mọi món mang bậc = cấp thành (cột `bac` tab `cua_hang`) nên chỉ số nhân theo bậc như đồ rơi; thú cưỡi mới (Ngựa chiến Cổ Loa, Hổ trắng Tây Bắc, Ngựa Ngự Lâm, **Kỳ lân** Tràng An / hoàng gia — chiêu Lân hỏa nổ lửa quanh mình, Voi trắng, **Rồng** Thuận Hóa — chiêu Long tức phun lửa phía trước); đồ hiệu ứng phẩm chất Hoàn hảo cố định với hiệu ứng mới: `frost` Băng giá (đòn đánh có X% làm quái chậm nửa tốc 2 giây), `venom` Độc (gây độc thêm X% sát thương trong 4 giây), `rage` Cuồng nộ (dưới 30% máu sát thương +X%), `luck` May mắn (tỉ lệ rơi đồ ×(1+X%)), `expUp` Tinh thông (+X% kinh nghiệm), `coinUp` Phú quý (+X% đồng). Hiệu buôn gia cường được vũ khí, giáp, thú cưỡi. Giá tăng dần theo thành (Cổ Loa vài chục nghìn → Phú Xuân hàng chục triệu đồng).
+- **Diện mạo**: NPC Thợ truyền thần (Thăng Long) / Họa sư cung đình (Phú Xuân) mở bảng đổi da, tóc, râu, màu mắt, dấu trên mặt; tab mới `dien_mao` (file cấu hình: giá đồng / hồng ngọc, màu da, màu tóc, kiểu tóc `xoa` `dung` `khan` `troc`, râu, màu mắt, dấu `seo` `not` `ve` `hoa`, giới tính). Mua một lần (lệnh `av`, máy chủ giữ danh sách đã mua), đổi lại bao nhiêu lần cũng được; chân dung góc trái đổi màu theo, hoặc dùng ảnh `giao_dien:chan_dung_<mã diện mạo>` nếu dán trong file Hình ảnh. Sau này bán avatar chỉ cần thêm dòng vào tab này.
+- `vat_pham` có thêm cột `pham_chat` (phẩm chất cố định), `hieu_ung`, `gia_tri`, `mo_ta` (hiệu ứng riêng như đồ thần); `cua_hang` thêm cột `bac`. `kiemTra` tự thêm cột, tab `dien_mao` và các dòng mới (quái, việc, hàng hóa, diện mạo).
+- **Nhân vật thử**: hàm `taoNhanVatThu()` trong Apps Script tạo cho tài khoản `vnthudao` hai nhân vật cấp 100 (Thử Nam 100, Thử Nữ 100): mặc đủ 9 món một bộ huyền thoại +9 bậc 100, túi có bộ huyền thoại thứ hai, 11 món đồ thần, hổ, voi, 4 sách, 50 triệu đồng, 5000 hồng ngọc. `taoNhanVatThu('ten_khac',120)` cho tài khoản / cấp khác.
+
 ## Ra bản mới
 
 1. Sửa trong `src/` (và `VERSION`).
 2. `node tools/build.mjs`
-3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-10.3`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
-4. Trên Blogspot đổi `@ban-10.2` thành `@ban-10.3` (trang game và trang Chợ phiên).
+3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-10.4`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
+4. Trên Blogspot đổi `@ban-10.3` thành `@ban-10.4` (trang game và trang Chợ phiên).
 5. Nếu `Code.gs` đổi: dán lại vào Apps Script, Triển khai → Quản lý triển khai → Sửa → Phiên bản mới (giữ nguyên URL).
 
 ## Dữ liệu trong Sheet

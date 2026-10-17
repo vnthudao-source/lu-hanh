@@ -20,7 +20,7 @@
 */
 const LH_SHEETS=@@IDS@@;
 // Tab dữ liệu tĩnh → file Sheet chứa nó
-const LH_STATIC={cau_hinh:'cau_hinh',gia_cuong:'cau_hinh',pham_chat:'pham_chat',thuoc_tinh:'pham_chat',vat_pham:'vat_pham',cua_hang:'cua_hang',bo_huyen_thoai:'bo_huyen_thoai',do_than:'do_than',quai:'quai',nhiem_vu:'nhiem_vu',linh:'linh',vu_khi:'vat_pham',ban_do:'cau_hinh',hinh_anh:'hinh_anh'};
+const LH_STATIC={cau_hinh:'cau_hinh',gia_cuong:'cau_hinh',pham_chat:'pham_chat',thuoc_tinh:'pham_chat',vat_pham:'vat_pham',cua_hang:'cua_hang',bo_huyen_thoai:'bo_huyen_thoai',do_than:'do_than',quai:'quai',nhiem_vu:'nhiem_vu',linh:'linh',vu_khi:'vat_pham',ban_do:'cau_hinh',dien_mao:'cau_hinh',hinh_anh:'hinh_anh'};
 // Cột của các bảng người chơi (file "LH · Người chơi")
 const LH_COLS={
   tai_khoan:['id','username','email','muoi','mat_khau','tao_luc','token','token_het_han','ma_khoi_phuc','ma_het_han','token_cu'],
@@ -41,14 +41,16 @@ function lhStatic_(){
     const sh=ss.getSheetByName(tab)||(tab==='hinh_anh'?ss.getSheets()[0]:null);if(!sh||sh.getLastRow()<2){out[tab]=LH_DEFAULT[tab]||[];continue;}out[tab]=sh?lhRows_(sh).filter(r=>Object.keys(r).some(k=>k!=='_r'&&r[k]!=='')).map(r=>{delete r._r;return r;}):[];
   }
   // Quái, nhiệm vụ mới của bản cập nhật (vùng mới) mà Sheet chưa có dòng: dùng số liệu mặc định cho tới khi chạy kiemTra để chép vào Sheet
-  for(const tab of LH_BO_SUNG)if(LH_SHEETS[LH_STATIC[tab]]&&Array.isArray(out[tab])&&out[tab].length){const key=tab==='cau_hinh'?'khoa':'id',has=new Set(out[tab].map(r=>String(r[key])));for(const r of LH_DEFAULT[tab]||[])if(!has.has(String(r[key])))out[tab].push(r);}
+  for(const tab of LH_BO_SUNG)if(LH_SHEETS[LH_STATIC[tab]]&&Array.isArray(out[tab])&&out[tab].length){const has=new Set(out[tab].map(r=>lhKhoa_(tab,r)));for(const r of LH_DEFAULT[tab]||[])if(!has.has(lhKhoa_(tab,r)))out[tab].push(r);}
   // Ảnh tĩnh: chỉ gửi các dòng đã dán link
   out.hinh_anh=(out.hinh_anh||[]).filter(r=>String(r.link_anh||'').trim()).map(r=>({nhom:r.nhom,ma:r.ma,link_anh:String(r.link_anh).trim(),...(String(r.phien_ban||'').trim()?{v:String(r.phien_ban).trim()}:{})}));
   const s=JSON.stringify(out);if(s.length<95000)cache.put('lh-data',s,120);
   return out;
 }
-// Tab được bổ sung dòng mới (theo cột id) khi game thêm quái, nhiệm vụ
-const LH_BO_SUNG=['quai','nhiem_vu','cau_hinh','ban_do'];
+// Tab được bổ sung dòng mới (theo cột id) khi game thêm quái, nhiệm vụ, hàng hóa thành trì, diện mạo
+const LH_BO_SUNG=['quai','nhiem_vu','cau_hinh','ban_do','vat_pham','cua_hang','dien_mao'];
+// khóa một dòng: cau_hinh theo khoa; cua_hang theo cửa hàng + mã hàng (một món có thể bán ở nhiều cửa hàng); còn lại theo id
+const lhKhoa_=(tab,r)=>tab==='cau_hinh'?String(r.khoa):tab==='cua_hang'?String(r.cua_hang)+'|'+String(r.id):String(r.id);
 // Chép các dòng mặc định còn thiếu (quái, nhiệm vụ của vùng mới) xuống cuối tab; không sửa dòng đã có
 function lhDuLieuBoSung_(){
   let n=0;
@@ -57,10 +59,10 @@ function lhDuLieuBoSung_(){
     // tab mới của bản cập nhật (ban_do) chưa có: tạo và đổ dữ liệu mặc định
     if(!sh){const rows=LH_DEFAULT[tab]||[];if(!rows.length)continue;const h0=Object.keys(rows[0]);sh=ss.insertSheet(tab);sh.getRange(1,1,rows.length+1,h0.length).setValues([h0,...rows.map(r=>h0.map(k=>r[k]===undefined||r[k]===null?'':r[k]))]);sh.setFrozenRows(1);sh.getRange(1,1,1,h0.length).setFontWeight('bold').setBackground('#2b4d38').setFontColor('#ffffff');n+=rows.length;Logger.log('Tạo tab '+tab);continue;}
     if(sh.getLastRow()<2)continue;
-    const v=sh.getDataRange().getValues(),h=v[0].map(String),key=h.indexOf('id')>=0?'id':'khoa',ci=h.indexOf(key);if(ci<0)continue;const has=new Set(v.slice(1).map(r=>String(r[ci])));
+    const v=sh.getDataRange().getValues(),h=v[0].map(String);if(h.indexOf('id')<0&&h.indexOf('khoa')<0)continue;const has=new Set(v.slice(1).map(r=>lhKhoa_(tab,Object.fromEntries(h.map((k,i)=>[k,r[i]])))));
     // cột mới của bản cập nhật (ban_do, ky_nang…) chưa có trên Sheet: thêm vào cuối tiêu đề
     for(const k of Object.keys((LH_DEFAULT[tab]||[])[0]||{}))if(h.indexOf(k)<0){h.push(k);sh.getRange(1,h.length).setValue(k).setFontWeight('bold');}
-    const add=(LH_DEFAULT[tab]||[]).filter(r=>!has.has(String(r[key]))).map(r=>h.map(k=>r[k]===undefined||r[k]===null?'':r[k]));
+    const add=(LH_DEFAULT[tab]||[]).filter(r=>!has.has(lhKhoa_(tab,r))).map(r=>h.map(k=>r[k]===undefined||r[k]===null?'':r[k]));
     if(add.length){sh.getRange(sh.getLastRow()+1,1,add.length,h.length).setValues(add);n+=add.length;Logger.log('Thêm '+add.length+' dòng vào tab '+tab);}
   }
   return n;
@@ -218,5 +220,30 @@ function lamMoiAnh(){
   if(n){sh.getRange(2,ci('phien_ban')+1,out.length,1).setValues(out);xoaBoNhoDem();}
   try{if(!ScriptApp.getProjectTriggers().some(t=>t.getHandlerFunction()==='lamMoiAnh'))ScriptApp.newTrigger('lamMoiAnh').timeBased().everyHours(1).create();}catch(e){}
   Logger.log('Cập nhật phiên bản '+n+' ảnh'+(bad.length?'\nẢnh lỗi:\n'+bad.join('\n'):''));
+}
+// Tạo nhân vật thử cấp cao cho một tài khoản (chạy tay trong trình soạn thảo): taoNhanVatThu() → 2 nhân vật cấp 100 (nam + nữ) của tài khoản vnthudao,
+// mỗi nhân vật mặc đủ 9 món một bộ huyền thoại +9, túi có bộ huyền thoại thứ hai, 11 món đồ thần, thú cưỡi, sách, tiền và hồng ngọc để thử.
+// Đổi tài khoản / cấp: taoNhanVatThu('ten_dang_nhap', 120). Tên nhân vật đã có thì bỏ qua (không tạo trùng).
+function taoNhanVatThu(username,cap){
+  username=String(username||'vnthudao').toLowerCase();cap=Number(cap)||100;
+  const a=LH_DB.find('tai_khoan','username',username);if(!a){Logger.log('Không thấy tài khoản '+username);return;}
+  Player.load(lhStatic_());const now=Date.now(),rng=Math.random;
+  const defs=[{ten:'Thử Nam '+cap,gioi_tinh:'m',set:['tran-hung-dao','le-loi']},{ten:'Thử Nữ '+cap,gioi_tinh:'f',set:['trung-trac','bui-thi-xuan']}];
+  for(const d of defs){
+    if(LH_DB.where('nhan_vat','ten_khoa',d.ten.toLowerCase()).some(c=>c.trang_thai!=='deleted')){Logger.log('Đã có '+d.ten);continue;}
+    const c={id:'nv-'+Utilities.getUuid().replace(/-/g,'').slice(0,12),tai_khoan:a.id,ten:d.ten,ten_khoa:d.ten.toLowerCase(),gioi_tinh:d.gioi_tinh,suc_manh:20,nhanh_nhen:10,suc_khoe:10,tri_tue:10,trang_thai:'active',gia_danh_thue:0,nguoi_mua:'',luu:'',tao_luc:now,cap_nhat:now,cap:cap,kinh_nghiem:0,gia_hong_ngoc:0};
+    const p=Player.create({name:c.ten,gender:c.gioi_tinh,stats:{strength:20,agility:10,vitality:10,intelligence:10}});
+    p.level=cap;p.exp=0;p.points=0;p.bag=Array(Player.BAG_SIZE).fill(null);p.equipment=Object.fromEntries(Player.slots.map(k=>[k,null]));
+    // điểm cộng: mỗi cấp 5 điểm, chia đều (dư vào Sức mạnh)
+    const pts=(cap-1)*Number(Player.CFG.diem_moi_cap||5),each=Math.floor(pts/5);for(const k of ['strength','agility','vitality','intelligence','command'])p.alloc[k]=each;p.alloc.strength+=pts-each*5;
+    // bộ huyền thoại 1: mặc đủ 9 món +9, bậc = cấp; bộ 2 vào túi
+    const S1=Player.SETS[d.set[0]],S2=Player.SETS[d.set[1]];
+    for(const id of S1.pieces){const it=Player.roll(id,'l',rng,cap);it.lv=9;const slot=id.split(':')[1];p.equipment[slot]=it;}
+    for(const id of S2.pieces)Player.addItem(p,Player.roll(id,'l',rng,cap));
+    for(const id of Object.keys(Player.items).filter(k=>Player.items[k].myth))Player.addItem(p,Player.roll(id,'m',rng,cap));
+    for(const id of ['mount-tiger','mount-elephant','book-fire','book-metal','book-ma','book-sang'])Player.addItem(p,Player.roll(id,'n',rng));
+    p.copper=50000000;p.rubies=5000;const D=Player.derive(p);p.hp=D.tot.hp;p.mana=D.tot.mp;
+    c.luu=JSON.stringify({v:Player.VERSION,player:p,pos:null,seen:[],srv:{}});LH_DB.insert('nhan_vat',c);Logger.log('Đã tạo '+d.ten+' (cấp '+cap+')');
+  }
 }
 function kiemTra(){try{lhDuLieuBoSung_();}catch(e){Logger.log('Chưa bổ sung được quái / nhiệm vụ mới: '+e);}try{const n=lhHinhAnhBoSung_();if(n)Logger.log('Thêm '+n+' dòng ảnh mới vào file Hình ảnh');}catch(e){Logger.log('Chưa bổ sung được file Hình ảnh: '+e);}xoaBoNhoDem();const d=lhStatic_();Logger.log(Object.keys(d).map(k=>k+': '+d[k].length+' dòng').join('\n'));LH_DB.rows('tai_khoan');LH_DB.rows('nhan_vat');LH_DB.rows('cho');Logger.log('Bảng người chơi sẵn sàng. Quyền gửi mail: '+MailApp.getRemainingDailyQuota()+' thư/ngày');}

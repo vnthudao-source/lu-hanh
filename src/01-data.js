@@ -19,6 +19,7 @@ cau_hinh:[
  {khoa:'hong_ngoc_thu_nghiem',gia_tri:999,ghi_chu:'Hồng ngọc cho nhân vật mới'},
  {khoa:'ti_le_ban_lai',gia_tri:40,ghi_chu:'% giá gốc nhận lại khi bán cho cửa hàng'},
  {khoa:'he_so_gia_do_dep',gia_tri:250,ghi_chu:'Giá đồ Đẹp trong cửa hàng = % này của giá gốc'},
+ {khoa:'he_so_gia_hoan_hao',gia_tri:600,ghi_chu:'Giá đồ Hoàn hảo trong hiệu buôn thành trì = % này của giá gốc'},
  {khoa:'phi_cho',gia_tri:5,ghi_chu:'% thương nhân giữ lại khi bán hộ trên chợ và khi bán nhân vật đánh thuê'},
  {khoa:'mau_goc',gia_tri:60,ghi_chu:'Máu = mau_goc + Sức khỏe × mau_moi_diem'},
  {khoa:'mau_moi_diem',gia_tri:5,ghi_chu:''},
@@ -39,7 +40,7 @@ cau_hinh:[
  {khoa:'gieng_hoi_giay',gia_tri:300,ghi_chu:'Giếng cổ: số giây để nước đầy lại sau khi dùng'},
  {khoa:'exp_goc',gia_tri:60,ghi_chu:'Kinh nghiệm cần để lên cấp 2. Cấp L cần exp_goc × L^(exp_tang/100)'},
  {khoa:'exp_tang',gia_tri:150,ghi_chu:'Độ tăng kinh nghiệm cần mỗi cấp (150 = lũy thừa 1,5)'},
- {khoa:'cap_toi_da',gia_tri:100,ghi_chu:'Cấp cao nhất của nhân vật'},
+ {khoa:'cap_toi_da',gia_tri:150,ghi_chu:'Cấp cao nhất của nhân vật'},
  {khoa:'diem_moi_cap',gia_tri:5,ghi_chu:'Điểm cộng chỉ số nhận được mỗi lần lên cấp'},
  {khoa:'sach_chi_so',gia_tri:4,ghi_chu:'Mỗi sách gắn vào ô kỹ năng cộng chừng này điểm vào chỉ số theo hệ (Mộc chia đôi cho Sức khỏe và Trí tuệ)'},
  {khoa:'sach_moi_cap',gia_tri:2,ghi_chu:'Mỗi cấp gia cường sách cộng thêm'},
@@ -102,7 +103,8 @@ vat_pham:[
  ['ore','Khoáng thạch','','ore','',0,0,0,20,'',''],
  ['book-fire','Sách Hỏa','book','book','',0,0,0,400,'','',0,'fire'],['book-water','Sách Thủy','book','book','',0,0,0,300,'','',0,'water'],['book-earth','Sách Thổ','book','book','',0,0,0,450,'','',0,'earth'],['book-metal','Sách Kim','book','book','',0,0,0,450,'','',0,'metal'],['book-wood','Sách Mộc','book','book','',0,0,0,300,'','',0,'wood'],
  ['book-loi','Sách Lôi','book','book','',0,0,0,900,'','',0,'thunder'],['book-phong','Sách Phong','book','book','',0,0,0,700,'','',0,'wind'],['book-bang','Sách Băng','book','book','',0,0,0,800,'','',0,'ice'],['book-ma','Sách Ma công','book','book','',0,0,0,1500,'','',0,'demon'],['book-sang','Sách Ánh sáng','book','book','',0,0,0,1000,'','',0,'light']
-].map(([id,ten,o,loai,cam,cong,thu,toc,gia,mau,thu_cuoi,menh_lenh,he])=>({id,ten,o,loai,cam,cong,thu,toc:Math.round(toc*100),gia,mau,thu_cuoi:thu_cuoi||'',menh_lenh:menh_lenh||0,he:he||''})),
+].map(([id,ten,o,loai,cam,cong,thu,toc,gia,mau,thu_cuoi,menh_lenh,he])=>({id,ten,o,loai,cam,cong,thu,toc:Math.round(toc*100),gia,mau,thu_cuoi:thu_cuoi||'',menh_lenh:menh_lenh||0,he:he||'',pham_chat:'',hieu_ung:'',gia_tri:0,mo_ta:''})),
+// (v10.3) vat_pham có thêm cột pham_chat (phẩm chất cố định, vd p), hieu_ung / gia_tri / mo_ta (hiệu ứng riêng như đồ thần) — dùng cho hàng hiệu buôn thành trì (sinh ở 01-data-vung.js)
 // Loại vũ khí: sat_thuong = % sát thương; tam_danh = tầm đánh (điểm ảnh, 1 ô bản đồ = 48); lan_rong = độ rộng đòn (cận chiến: góc chém theo độ, giáo: bề ngang mũi đâm, gậy: bán kính nổ, nỏ: số quái xuyên qua thêm)
 // toc_danh_ms = thời gian một đòn (càng nhỏ càng nhanh); mana = % mana tốn khi dùng kỹ năng; hoi_chieu = % thời gian hồi kỹ năng (càng nhỏ hồi càng nhanh); noi_tai = % thanh nội tại mỗi đòn thường
 vu_khi:[
@@ -114,10 +116,32 @@ vu_khi:[
  ['staff','Gậy phép',65,680,90,900,80,120,9,'Tầm xa và rộng nhất (cầu phép nổ lan), sát thương thấp nhất, đánh chậm nhất']
 ].map(([loai,ten,sat_thuong,tam_danh,lan_rong,toc_danh_ms,mana,hoi_chieu,noi_tai,ghi_chu])=>({loai,ten,sat_thuong,tam_danh,lan_rong,toc_danh_ms,mana,hoi_chieu,noi_tai,ghi_chu})),
 cua_hang:[
- ...['sword-iron','sword-steel','shield-wood','shield-iron','staff-jade','bow-hunt','spear-iron','crossbow-war','hat-iron','armor-leather','armor-iron','pants-guard','gloves-leather','shoes-leather','shoes-iron'].map((id,i)=>({cua_hang:'smith',id,pham_chat:'n,g',gia:'',thu_tu:i+1})),
- ...['mount','mount-brown','mount-black','mount-white','mount-tiger','mount-elephant'].map((id,i)=>({cua_hang:'trainer',id,pham_chat:'n',gia:'',thu_tu:i+1})),
- ...['book-fire','book-water','book-earth','book-metal','book-wood','book-loi','book-phong','book-bang','book-ma','book-sang'].map((id,i)=>({cua_hang:'wizard',id,pham_chat:'n',gia:'',thu_tu:i+1}))
+ ...['sword-iron','sword-steel','shield-wood','shield-iron','staff-jade','bow-hunt','spear-iron','crossbow-war','hat-iron','armor-leather','armor-iron','pants-guard','gloves-leather','shoes-leather','shoes-iron'].map((id,i)=>({cua_hang:'smith',id,pham_chat:'n,g',gia:'',thu_tu:i+1,bac:0})),
+ ...['mount','mount-brown','mount-black','mount-white','mount-tiger','mount-elephant'].map((id,i)=>({cua_hang:'trainer',id,pham_chat:'n',gia:'',thu_tu:i+1,bac:0})),
+ ...['book-fire','book-water','book-earth','book-metal','book-wood','book-loi','book-phong','book-bang','book-ma','book-sang'].map((id,i)=>({cua_hang:'wizard',id,pham_chat:'n',gia:'',thu_tu:i+1,bac:0}))
 ],
+// Diện mạo (v10.3): NPC Thợ truyền thần ở thành trì cấp cao bán; mỗi dòng là một bộ da + tóc + râu + mắt + dấu trên mặt. gia = đồng, hong_ngoc = hồng ngọc (0 cả hai = miễn phí). gioi_tinh trống = cả hai.
+// kieu_toc: '' búi tóc · xoa (xõa dài) · dung (dựng) · khan (khăn buộc) · troc (đầu trọc). dau: seo (sẹo má) · not (nốt ruồi) · ve (vẽ mặt) · hoa (hoa cài, nữ). Ảnh chân dung riêng: giao_dien:chan_dung_<id> trong file Hình ảnh
+dien_mao:[
+ ['da-nau','Da nâu','',0,0,'#c89060','#2a2622','','','#2a2018','',1],
+ ['da-trang','Da trắng','',0,0,'#f0dcc0','#2a2622','','','#2a2018','',2],
+ ['dau-troc','Đầu trọc','m',0,0,'#e1c295','#2a2622','troc','','#2a2018','',3],
+ ['toc-xoa','Tóc xõa','',2000,0,'#e1c295','#2a2622','xoa','','#2a2018','',4],
+ ['toc-dung','Tóc dựng','',5000,0,'#e1c295','#1a1614','dung','','#2a2018','',5],
+ ['khan-buoc','Khăn buộc đầu','',6000,0,'#d8b088','#2a2622','khan','','#2a2018','',6],
+ ['toc-nau','Tóc nâu','',8000,0,'#e8cca8','#6a3a1a','','','#3a2a18','',7],
+ ['hoa-cai','Hoa cài tóc','f',8000,0,'#f0dcc0','#2a2622','','','#2a2018','hoa',8],
+ ['rau-quai','Râu quai nón','m',10000,0,'#d8b088','#2a2622','','#2a2622','#2a2018','',9],
+ ['not-ruoi','Nốt ruồi duyên','',12000,0,'#f0dcc0','#2a2622','','','#2a2018','not',10],
+ ['vet-seo','Vết sẹo chiến binh','',15000,0,'#c89060','#1a1614','dung','','#2a2018','seo',11],
+ ['toc-bac','Tóc bạc','',20000,0,'#e1c295','#d8d8d8','','','#2a2018','',12],
+ ['ve-mat','Vẽ mặt chiến binh','',30000,0,'#c89060','#2a2622','khan','','#2a2018','ve',13],
+ ['lao-truong','Lão trượng','m',50000,0,'#e8cca8','#d8d8d8','','#d8d0c0','#2a2018','',14],
+ ['mat-ngoc','Mắt ngọc','',100000,0,'#f0dcc0','#2a2622','xoa','','#2a7a9a','',15],
+ ['mat-hoa','Mắt hỏa','',0,20,'#d8b088','#1a1614','dung','','#c03020','',16],
+ ['tien-nu','Tiên nữ','f',0,30,'#fff0e0','#4a2a6a','xoa','','#6a3aa0','hoa',17],
+ ['ma-vuong','Ma Vương','m',0,30,'#9a8ab0','#1a0a2a','dung','#1a0a2a','#ff2060','ve',18]
+].map(([id,ten,gioi_tinh,gia,hong_ngoc,mau_da,mau_toc,kieu_toc,rau,mau_mat,dau,thu_tu])=>({id,ten,gioi_tinh,gia,hong_ngoc,mau_da,mau_toc,kieu_toc,rau,mau_mat,dau,thu_tu})),
 // Bộ huyền thoại: nhân vật lịch sử có thật. Mốc 3/5/7 món cộng chỉ số, đủ 9 món kích hoạt hiệu ứng riêng.
 bo_huyen_thoai:[
  ['ngo-quyen','Ngô Quyền','m','Bạch Đằng','sword','Kiếm Bạch Đằng','shield','Khiên cọc gỗ lim','Mũ trụ Đường Lâm','Giáp Bạch Đằng','Quần trận Bạch Đằng','Bao tay chèo lái','Hài thủy chiến','Cờ hiệu Tiền Ngô','Chiến mã Đường Lâm','horse','def:6,hp:30','reflect:8,dmgRed:4','str:8,crit2:4','stun',15,'Cọc Bạch Đằng: đòn đánh có 15% làm quái choáng 1 giây'],

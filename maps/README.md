@@ -48,3 +48,9 @@ Muốn mở bản đồ mới từ Thanh Mộc: thêm một cổng vào `portals
 Mười vùng cấp 20–100 không vẽ tay: `tools/genmaps.mjs` giữ một bảng tham số cho mỗi vùng (bảng màu nền, vật trang trí, dáng và màu quái, NPC thành trì, chiêu trùm) rồi sinh ra `maps/<mã>.json` + `maps/<mã>.art.js` (`K=>LH_ART.gen({...})`) và `src/01-data-vung.js` (quái, nhiệm vụ, tab `ban_do`). Sửa tham số rồi chạy lại `node tools/genmaps.mjs && node tools/build.mjs`.
 
 Bộ sinh `src/04-gen.js`: `theme` (màu đất, chi tiết grass/bamboo/moss/ash/ice/brick/cloud/bone, đá, nước, đường, ô đặc biệt) · `obj` (tree round/cone/palm/bamboo/dead, rock, pillar, lantern, torch, wall, gate, roof, flag, shrine, bones, crystal, drum, tent) · `mon` (quad, bird, snake, human, blob, bug, golem, dragon với cỡ, màu, sừng, cánh, gai, phát sáng, trong suốt) · `npc` (áo, nón, vật cầm, hành động patrol/turn/dance/drum/stand) · `sky` (hạt bay, màu phủ, vùng tối quanh người).
+
+## Bản 10.3
+
+- Bộ sinh `tools/genmaps.mjs` giờ có 20 vùng (cấp 20–150). Vùng thành trì có thêm `goods` (hàng hiệu buôn: `mul` hệ số giá, `mount` thú cưỡi mới, `fx` đồ hiệu ứng) → sinh dòng `vat_pham`, `cua_hang` trong `src/01-data-vung.js`.
+- NPC có `panel:'avatar'` mở bảng Thợ truyền thần (đổi diện mạo). Vai NPC mới: `hieu-buon`, `tho-truyen-than`, `vo-si`, `thai-su`, `ngu-lam`.
+- Thú cưỡi có hai dáng mới: `kylan` (kỳ lân) và `rong` (rồng, vẽ bằng dáng dragon của bộ sinh).

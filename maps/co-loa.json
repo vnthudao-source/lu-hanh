@@ -493,6 +493,20 @@
    "lines": [
     "Muốn thuê quân? Lính của ta đã qua trận mạc."
    ]
+  },
+  {
+   "id": "hieu-buon-co-loa",
+   "role": "hieu-buon",
+   "name": "Chủ hiệu Âu Lạc",
+   "act": "turn",
+   "x": 24,
+   "y": 21,
+   "panel": "shop",
+   "shop": "thanh-co-loa",
+   "lines": [
+    "Hiệu Âu Lạc có binh khí đúc theo lối Cổ Loa, nỏ Liên Châu bắn một phát ba mũi.",
+    "Hàng thành trì đắt hơn hàng làng, nhưng mỗi món đều có chỉ số riêng."
+   ]
   }
  ],
  "monsters": [

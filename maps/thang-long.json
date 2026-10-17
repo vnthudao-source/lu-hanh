@@ -547,6 +547,31 @@
    "lines": [
     "Ngựa của hoàng cung toàn tuấn mã, muốn mua thì xem."
    ]
+  },
+  {
+   "id": "hieu-buon-thang-long",
+   "role": "hieu-buon",
+   "name": "Chủ hiệu Long Thành",
+   "act": "turn",
+   "x": 24,
+   "y": 21,
+   "panel": "shop",
+   "shop": "thanh-thang-long",
+   "lines": [
+    "Hiệu Long Thành: binh khí hoàng cung, hổ trắng Tây Bắc, cờ Phú Quý. Giá cao nhưng đáng đồng tiền."
+   ]
+  },
+  {
+   "id": "tho-truyen-than",
+   "role": "tho-truyen-than",
+   "name": "Thợ truyền thần",
+   "act": "turn",
+   "x": 14,
+   "y": 17,
+   "panel": "avatar",
+   "lines": [
+    "Ta vẽ truyền thần cho vua quan trong triều. Muốn đổi diện mạo, ta tô lại cho: da, tóc, râu, mắt… mua một lần, đổi mãi."
+   ]
   }
  ],
  "monsters": [

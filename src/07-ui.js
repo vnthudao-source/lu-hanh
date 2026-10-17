@@ -93,7 +93,11 @@ window.startUI=(session)=>{
     {const lb=$('#lockBtn'),rg=Player.isRanged(Player.stance(p).type);lb.hidden=!rg;lb.classList.toggle('on',rg&&game.lockOn);lb.setAttribute('aria-pressed',String(rg&&game.lockOn));}
     if(md&&mb.dataset.beast!==md.beast){mb.dataset.beast=md.beast;const B=Player.BEASTS[md.beast];$('#mountIcon').innerHTML=`<use href="#i-${B.icon}"/>`;$('#mountName').textContent=B.skill;mb.title='4 · '+B.skill+' · 12 mana';}
     document.querySelectorAll('.skill-wheel .skill:not(.normal):not(.lockon)').forEach(b=>b.classList.toggle('locked',game.safe));
-    if(lastGender!==p.gender){lastGender=p.gender;const av=$('#avatarBtn'),u=LH_IMG.url('giao_dien:chan_dung_'+(p.gender==='f'?'nu':'nam'));av.querySelector('.pf-img')?.remove();if(u)av.querySelector('.portrait').insertAdjacentHTML('afterend',`<img class="pf-img" src="${esc(u)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`);$('#pfHair').style.display=p.gender==='f'?'':'none';$('#pfYem').style.display=p.gender==='f'?'':'none';}
+    // chân dung góc trái: theo giới tính + diện mạo đang dùng (ảnh giao_dien:chan_dung_<diện mạo> nếu có, không thì chan_dung_nam/nu, không thì hình vẽ đổi màu da, tóc, râu)
+    const avKey=p.gender+'|'+(p.avatar||'');
+    if(lastGender!==avKey){lastGender=avKey;const av=$('#avatarBtn'),A=Player.AVATARS[p.avatar]||null,u=(A&&LH_IMG.url('giao_dien:chan_dung_'+A.id))||LH_IMG.url('giao_dien:chan_dung_'+(p.gender==='f'?'nu':'nam'));av.querySelector('.pf-img')?.remove();if(u)av.querySelector('.portrait').insertAdjacentHTML('afterend',`<img class="pf-img" src="${esc(u)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`);
+      const skin=A?A.skin:'#e4c69b',hair=A?A.hair:'#2a2622',sh=(h,k)=>LH_Look.shade?LH_Look.shade(h,k):h;$('#pfFace').setAttribute('fill',skin);$('#pfNeck').setAttribute('fill',sh(skin,-.06));$('#pfBody').setAttribute('fill',sh(skin,-.1));$('#pfTop').setAttribute('fill',hair);$('#pfHair').setAttribute('fill',hair);$('#pfBeard').setAttribute('fill',A&&A.beard||hair);
+      $('#pfTop').style.display=A&&A.style==='troc'?'none':'';$('#pfHair').style.display=p.gender==='f'||(A&&A.style==='xoa')?'':'none';$('#pfYem').style.display=p.gender==='f'?'':'none';$('#pfBeard').style.display=A&&A.beard?'':'none';}
   }
   /* ---------- Bảng thuộc tính: 5 chỉ số lớn, chỉ số nhỏ chỉ hiện khi có cộng thêm ---------- */
   function showAttributes(){
@@ -164,7 +168,7 @@ window.startUI=(session)=>{
   /* ---------- Cửa hàng + gia cường ---------- */
   const RATE_NOTE=lv=>{if(lv>=Player.MAX_LV)return 'Đã đạt cấp tối đa';const r=Player.enhRate(lv);if(r>=1)return 'Chắc chắn thành công';return lv<10?'Thất bại: cấp về ngẫu nhiên +0 đến +6':'Thất bại: cấp về +6';};
   const ENH_OK={smith:d=>d.slot!=='book'&&d.slot!=='mount',trainer:d=>d.slot==='mount',wizard:d=>d.slot==='book'};
-  function enhList(id){const ok=ENH_OK[id]||(()=>true);return [...Player.slots.map(sl=>({where:'eq',key:sl,it:p.equipment[sl]})),...p.skillSlots.map((it,i)=>({where:'sk',key:i,it})),...p.bag.map((it,i)=>({where:'bag',key:i,it}))].filter(r=>Player.canEnhance(r.it)&&ok(info(r.it)));}
+  function enhList(id){const ok=Player.shopEnh(id)||ENH_OK[id]||(()=>true);return [...Player.slots.map(sl=>({where:'eq',key:sl,it:p.equipment[sl]})),...p.skillSlots.map((it,i)=>({where:'sk',key:i,it})),...p.bag.map((it,i)=>({where:'bag',key:i,it}))].filter(r=>Player.canEnhance(r.it)&&ok(info(r.it)));}
   function enhHtml(id){
     const list=enhList(id);
     if(!list.length)return `<div class="shop-empty">${svg('anvil')}<span>Chưa có món đồ để gia cường</span></div>`;
@@ -178,14 +182,16 @@ window.startUI=(session)=>{
       <button id="enhGo" class="primary big-btn"${max?' disabled':''}>${svg(id==='wizard'?'book':'anvil')}${id==='wizard'?'Luyện sách':'Gia cường'}</button></div></div>`;
   }
   function showShop(id,tab='buy'){
-    const list=Player.SHOPS[id]||[],META={smith:{icon:'sword',title:'Lò rèn',enh:'Gia cường'},trainer:{icon:'mount',title:'Thú cưỡi',enh:'Nâng thú'},wizard:{icon:'book',title:'Sách ngũ hành',enh:'Luyện sách'}}[id]||{icon:'bag',title:'Cửa hàng'};
+    // hiệu buôn thành trì (thanh-<vùng>): tên theo vùng, có gia cường; món nào cũng ghi bậc (· cấp N) = cấp thành
+    const RG=/^thanh-/.test(id)?Player.REGIONS.find(r=>'thanh-'+r.id===id):null;
+    const list=Player.SHOPS[id]||[],META={smith:{icon:'sword',title:'Lò rèn',enh:'Gia cường'},trainer:{icon:'mount',title:'Thú cưỡi',enh:'Nâng thú'},wizard:{icon:'book',title:'Sách ngũ hành',enh:'Luyện sách'}}[id]||(RG?{icon:'bag',title:'Hiệu buôn '+RG.name.replace(/^(Thành|Kinh Thành|Cố Đô) /,''),enh:'Gia cường'}:{icon:'bag',title:'Cửa hàng'});
     if(tab==='enh'&&!META.enh)tab='buy';
     const qs=[...new Set(list.flatMap(r=>r.q))],full=p.bag.indexOf(null)<0;if(!qs.includes(shopQ))shopQ=qs[0]||'n';
     const tile=(attr,type,it,price,go,goTxt,off,sel)=>`<button class="tile${off?' off':''}${sel?' sel':''}" ${attr} title="${esc(desc(it))}" style="${Player.qOf(it)!=='n'?`border-color:${qColor(it)}`:''}"><span class="ti" style="color:${tintOf(it)||'#e4cc8d'}">${icon(type)}</span>${lvb(it)}<b class="nm" style="color:${qColor(it)}">${esc(Player.nameOf(it))}</b>${chips(it)}<span class="price">${coins(price)}</span><span class="go">${svg(go)}${goTxt}</span></button>`;
     let body;
     if(tab==='buy'){
       const qbar=qs.length>1?`<div class="qbar">${qs.map(q=>`<button data-q="${q}" class="${q===shopQ?'on':''}" style="color:${Player.RAR[q].color}">${Player.RAR[q].name}</button>`).join('')}${shopQ!=='n'?`<small>Mỗi món có ${Player.RAR[shopQ].lines} dòng thuộc tính ngẫu nhiên</small>`:''}</div>`:'';
-      body=qbar+`<div class="shop-grid">${list.filter(r=>r.q.includes(shopQ)).map(r=>{const price=Player.shopPrice(r.id,shopQ),it={type:r.id,q:shopQ};return tile(`data-buy="${r.id}"`,r.id,it,price,'bag','Mua',p.copper<price||full,shopSel===r.id);}).join('')}</div>`;
+      body=qbar+`<div class="shop-grid">${list.filter(r=>r.q.includes(shopQ)||(info({type:r.id})||{}).q&&r.q.includes(info({type:r.id}).q)).map(r=>{const d=info({type:r.id}),q=d&&d.q?d.q:shopQ,price=Player.shopPrice(r.id,q,id),it={type:r.id,q,...(r.t?{t:r.t}:{})};return tile(`data-buy="${r.id}"`,r.id,it,price,'bag','Mua',p.copper<price||full,shopSel===r.id);}).join('')}</div>`;
     }
     else if(tab==='sell'){const t=p.bag.map((it,i)=>it?tile(`data-sell="${i}"`,it.type,it,Player.sellPrice(it),'coin','Bán',false,shopSel===String(i)):'').join('');body=`<div class="shop-grid">${t||`<div class="shop-empty">${svg('bag')}<span>Túi trống</span></div>`}</div>`;}
     else body=enhHtml(id);
@@ -193,7 +199,7 @@ window.startUI=(session)=>{
     openModal(`<div class="shop-tabs">${tabs.map(([k,ic,tx])=>`<button data-tab="${k}" class="${tab===k?'on':''}">${svg(ic)}${tx}</button>`).join('')}</div><div class="purse">${coins(p.copper)}${ruby(p.rubies)}</div>`,`<div class="shop-sub">${svg(META.icon)}${META.title}${tab==='enh'?'':' · chạm 2 lần để '+(tab==='buy'?'mua':'bán')}</div>${body}`,true);
     document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{shopSel=null;showShop(id,b.dataset.tab);});
     document.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{shopQ=b.dataset.q;shopSel=null;showShop(id,'buy');});
-    document.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{const type=b.dataset.buy;if(shopSel!==type){shopSel=type;showShop(id,'buy');return;}run(b,game.op({t:'buy',type,q:shopQ}).then(r=>{game.message(svg('check')+`Đã mua <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b>`);shopSel=null;showShop(id,'buy');}));});
+    document.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{const type=b.dataset.buy;if(shopSel!==type){shopSel=type;showShop(id,'buy');return;}run(b,game.op({t:'buy',type,q:shopQ,...(RG?{shop:id}:{})}).then(r=>{game.message(svg('check')+`Đã mua <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b>`);shopSel=null;showShop(id,'buy');}));});
     document.querySelectorAll('[data-sell]').forEach(b=>b.onclick=()=>{const i=b.dataset.sell;if(shopSel!==i){shopSel=i;showShop(id,'sell');return;}run(b,game.op({t:'sell',i:Number(i)}).then(r=>{game.message(svg('coin')+'Đã bán '+esc(Player.nameOf(r.item))+' '+coins(r.v));shopSel=null;showShop(id,'sell');}));});
     document.querySelectorAll('[data-enh]').forEach(b=>b.onclick=()=>{const [w,k]=b.dataset.enh.split(':');enhSel={where:w,key:w==='eq'?k:Number(k)};showShop(id,'enh');});
     const go=$('#enhGo');if(go)go.onclick=()=>{const t0=Date.now();const cur=enhSel.where==='sk'?p.skillSlots[enhSel.key]:enhSel.where==='bag'?p.bag[enhSel.key]:p.equipment[enhSel.key],ce=info(cur)&&info(cur).element;go.innerHTML=svg(id==='wizard'?'book':'anvil')+(id==='wizard'?'Đang luyện':'Đang rèn')+'…';game.hammer(ce?EL[ce].color:null);run(go,game.op(enhSel.where==='sk'?{t:'enhSk',key:enhSel.key,shop:id}:{t:'enh',where:enhSel.where==='bag'?'bag':'eq',key:enhSel.key,shop:id}).then(r=>new Promise(ok=>setTimeout(()=>ok(r),Math.max(0,550-(Date.now()-t0))))).then(r=>{const name=info(r.item).name;game.enhanceFx(r.ok);game.message(r.ok?svg('check')+`Thành công! ${esc(name)} +${r.to}`:svg('close')+`Thất bại\u{2026} ${esc(name)} về +${r.to}`);showShop(id,'enh');}),()=>showShop(id,'enh'));};
@@ -328,8 +334,22 @@ window.startUI=(session)=>{
     const first=(metN<V.length?row('talk',`Gặp dân làng (${metN}/${V.length})`,met):'')+(p.flags.river?'':row('bridge','Qua cầu sang Đông Ngạn',chip('next','Chưa qua')))+(p.flags.hunted?'':row('bow','Săn mỗi loài một con · thưởng 1 bạc',hunt));
     openModal(ttl('quest','Nhiệm vụ'),`<div class="quest-rows">${act}${first||(act?'':`<div class="qdone">${svg('check')}<span>Đã xong việc làng. Gặp Lý trưởng nhận việc mới.</span></div>`)}</div>`);
   }
+  /* ---------- Thợ truyền thần (thành trì): đổi diện mạo — da, tóc, râu, mắt, dấu trên mặt; diện mạo có giá thì mua một lần ---------- */
+  let avSel=null;
+  function showAvatars(){
+    const list=Object.values(Player.AVATARS).filter(A=>!A.gender||A.gender===p.gender).sort((a,b)=>a.order-b.order),own=p.avatars||[];
+    const cur=avSel!=null?avSel:(p.avatar||'');previewWho={equipment:p.equipment,gender:p.gender,stats:p.stats,avatar:cur};
+    const price2=(c,r)=>(c?coins(c):'')+(r?ruby(r):'')||'<small>Miễn phí</small>';
+    const tiles=[{id:'',name:'Vốn có',price:0,ruby:0,skin:'#e1c295',hair:'#2a2622'},...list].map(A=>{const has=!A.id||own.includes(A.id)||!(A.price||A.ruby),using=(p.avatar||'')===A.id;
+      return `<button class="tile av-tile${cur===A.id?' sel':''}${using?' using':''}" data-av="${A.id}"><span class="av-dot" style="background:${A.skin};border-color:${A.hair}"></span><b class="nm">${esc(A.name)}</b><span class="price">${has?(using?svg('check')+'Đang dùng':'<small>Đã có</small>'):price2(A.price,A.ruby)}</span></button>`;}).join('');
+    const A=Player.AVATARS[cur]||null,canUse=!A||own.includes(cur)||!(A.price||A.ruby),using=(p.avatar||'')===cur,off=using||(A&&!canUse&&(p.copper<A.price||p.rubies<A.ruby));
+    openModal(ttl('user','Thợ truyền thần')+`<div class="purse">${coins(p.copper)}${ruby(p.rubies)}</div>`,`<div class="equip-head"><canvas id="preview"></canvas><div class="av-info"><b>${esc(A?A.name:'Vốn có')}</b><small class="sel-desc">${A?(canUse?'Đã có':'Mua một lần, đổi lại lúc nào cũng được'):'Diện mạo ban đầu'}</small><button id="avGo" class="primary"${off?' disabled':''}>${svg(using?'check':canUse?'user':'coin')}${using?'Đang dùng':canUse?'Đổi diện mạo':'Mua '+(A.price?coins(A.price):'')+(A.ruby?ruby(A.ruby):'')}</button></div></div><div class="shop-grid av-grid">${tiles}</div>`,true);
+    document.querySelectorAll('[data-av]').forEach(b=>b.onclick=()=>{avSel=b.dataset.av;showAvatars();});
+    const go=$('#avGo');if(go)go.onclick=()=>run(go,game.op({t:'av',id:cur}).then(()=>{game.message(svg('check')+'Đã đổi diện mạo');avSel=null;refresh();showAvatars();}));
+  }
   function openPanel(n){
     npcPanel=true;
+    if(n.panel==='avatar'){avSel=null;return showAvatars();}
     if(n.panel==='shop')return showShop(n.shop);
     if(n.panel==='quests')return showQuestBoard();
     if(n.panel==='mercs')return showMercBoard('hire');
