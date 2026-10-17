@@ -199,6 +199,11 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
 
+## Bản 10.15
+
+- Bổ sung 631 ảnh vật phẩm vẽ sẵn còn thiếu (`dist/anh/vat_pham`): Đao, Chùy, đồ của 4 thành, đồ vùng và 60 bộ huyền thoại / thần của 30 danh tướng. Hàm `capNhatAnh` hết báo lỗi 404.
+- Ảnh biểu tượng vẽ đúng hình đao và chùy (trước đây vẽ thành gậy).
+
 ## Bản 10.14: đao và chùy, lính theo phẩm cấp, đơn chiêu mộ, 30 danh tướng Trung Hoa, điểm cộng sinh thêm chỉ số
 
 - **Hai loại vũ khí mới** (Sheet `vu_khi`): **Đao** (`saber`, một tay, chém vòng cung rộng 140°, sát thương 125%) và **Chùy** (`mace`, một tay, nặng nhất 145%, đẩy lùi mạnh, mỗi đòn 15% làm quái choáng). Cầm đôi hoặc kèm khiên; dùng dáng đánh của kiếm, hình vẽ riêng, biểu tượng `i-saber`, `i-mace`. Thợ rèn làng bán Đao sắt / Chùy sắt; lò rèn 4 thành bán Đao / Chùy theo thành; Thăng Long có Đao Lôi Đình (choáng 12%), Hoa Lư có Chùy Thái Sơn (choáng 20%).

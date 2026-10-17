@@ -1696,7 +1696,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
   groundDraw();resize();syncMerc();spawnBots();loadBotPool().then(()=>{if(botPool.length)spawnBots();});requestAnimationFrame(loop);
   /* ---------- Ảnh biểu tượng vật phẩm (công cụ tạo ảnh webp dùng): vẽ bằng đúng các hàm vẽ trên người ----------
      Vũ khí theo quy ước ảnh cầm tay: chéo 45°, tay cầm ở (14%, 86%) khung ảnh, ảnh rộng PIC_LEN/1.15 điểm thế giới. */
-  const WREACH={sword:[-9,38],spear:[-30,48],staff:[-22,37]};
+  const WREACH={sword:[-9,38],spear:[-30,48],staff:[-22,37],saber:[-11,50],mace:[-12,42]};
   function itemIcon(cv,type){
     const c=cv.getContext('2d'),N=cv.width,d=Player.items[type];c.clearRect(0,0,N,N);if(!d)return false;
     const L=LH_Look.of(type),kind=d.kind,T0=0;c.save();
@@ -1707,7 +1707,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     if((d.slot==='hand'||d.slot==='right'||d.slot==='left'||!d.slot&&WREACH[kind])&&WREACH[kind]){
       const s=PIC_LEN[kind]/1.15,k=N/s,[b0,b1]=WREACH[kind],B=-b0,Ab=.198*s,Af=1.216*s,g=Math.min(1,(Ab+Af)/(B+b1)),off=Ab-B*g;
       c.translate(.14*N,.86*N);c.scale(k,k);c.rotate(-Math.PI/4);c.translate(off,0);c.scale(g,g);
-      if(kind==='sword')drawSword(c,null,d.tint);else if(kind==='spear')drawSpear(c,null,d.tint);else drawStaff(c,null,0,T0,d.tint);
+      if(kind==='sword')drawSword(c,null,d.tint);else if(kind==='saber')drawSaber(c,null,d.tint);else if(kind==='mace')drawMace(c,null,d.tint);else if(kind==='spear')drawSpear(c,null,d.tint);else drawStaff(c,null,0,T0,d.tint);
     }
     else if(kind==='shield'){c.translate(N*.46,N/2);c.scale(N/34,N/34);drawShield(c,false,false,T0,d.tint);}
     else if(kind==='bow'){c.translate(N/2,N/2);c.rotate(-Math.PI/4);c.scale(N/52,N/52);drawBow(c,0,true,null,d.tint);}
