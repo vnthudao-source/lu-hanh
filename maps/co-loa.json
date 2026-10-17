@@ -507,6 +507,48 @@
     "Hiệu Âu Lạc có binh khí đúc theo lối Cổ Loa, nỏ Liên Châu bắn một phát ba mũi.",
     "Hàng thành trì đắt hơn hàng làng, nhưng mỗi món đều có chỉ số riêng."
    ]
+  },
+  {
+   "id": "nap-the-co-loa",
+   "role": "nap-the",
+   "name": "Người giữ kho",
+   "act": "turn",
+   "x": 33,
+   "y": 21,
+   "panel": "nap",
+   "lines": [
+    "Muốn thêm hồng ngọc? Chọn gói, quét mã, ta ghi sổ rồi kho mở ngay."
+   ]
+  },
+  {
+   "id": "tre-con-co-loa-1",
+   "role": "tre-con",
+   "name": "Cu Tí",
+   "act": "patrol",
+   "x0": 19,
+   "x1": 27,
+   "y": 14,
+   "spd": 70,
+   "lines": [
+    "Anh ơi chơi đuổi bắt với bọn em không?"
+   ],
+   "x": 23,
+   "facing": 1
+  },
+  {
+   "id": "tre-con-co-loa-2",
+   "role": "tre-con-2",
+   "name": "Cu Tèo",
+   "act": "patrol",
+   "x0": 21,
+   "x1": 29,
+   "y": 15,
+   "spd": 75,
+   "lines": [
+    "Em chạy nhanh nhất thành đấy!"
+   ],
+   "x": 25,
+   "facing": 1
   }
  ],
  "monsters": [

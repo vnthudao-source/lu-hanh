@@ -36,7 +36,9 @@ const LH_Look=(()=>{
     const L={type,slot,name:d.name,set:d.set||null,myth:!!d.myth,gender:d.gender||'',main:d.tint||null,alt:null,trim:null,kind:slot};
     if(d.set&&SET[d.set]){[L.main,L.alt,L.trim]=SET[d.set];L.legend=true;}
     if(d.myth&&MYTH[type]){L.main=MYTH[type].c;L.fx=MYTH[type].fx;L.trim=FX[L.fx][0];}
-    if(slot==='wings')L.kind=has(name,'áo choàng')?'cloak':has(name,'cờ')?'flag':'wings';
+    if(slot==='wings'){L.kind=has(name,'áo choàng')?'cloak':has(name,'cờ')?'flag':'wings';
+      // cánh dung hợp (v10.6): dáng theo tên — ác quỷ: cánh dơi · xương: cánh xương · ánh sáng / lửa / lôi phong: cánh năng lượng phát sáng · còn lại: cánh lông
+      if(L.kind==='wings')L.wing=has(name,'ác quỷ')?'bat':has(name,'xương')?'bone':has(name,'ánh sáng','lửa','lôi phong')?'energy':'feather';}
     else if(slot==='hat')L.kind=has(name,'nón lá','nón thần')?'nonla':has(name,'nón dấu')?'nondau':has(name,'khăn')?'khan':has(name,'trâm')?'tram':has(name,'phượng','nguyên phi')?'phoenix':has(name,'quang trung','quốc công','bình định vương','vạn thắng','trưng vương','trưng nhị')?'crown':'helm';
     else if(slot==='armor')L.kind=has(name,'bào','áo phượng','áo nguyên phi','côn sơn')?'robe':has(name,'áo da')?'leather':has(name,'áo vải')?'cloth':'scale';
     else if(slot==='pants')L.kind=has(name,'váy','xiêm')?'skirt':'pants';
@@ -71,10 +73,19 @@ const LH_Look=(()=>{
       c.strokeStyle=L.trim;c.lineWidth=1.2;c.stroke();E(c,-19,-52+fl*.5,3.2,3.2,L.alt);E(c,-19,-52+fl*.5,1.6,1.6,L.trim);
     }
     else{ // đôi cánh
-      const f=Math.sin(t*4)*.12,col=L.main;c.save();c.translate(-4,-22);
+      const f=Math.sin(t*4)*.12,col=L.main,W=L.wing||'feather';c.save();c.translate(-4,-22);
       for(const s of [1,.8]){c.save();c.rotate(-.1+f*s);c.scale(s,s);c.globalAlpha=s<1?.7:.92;c.fillStyle=col;c.strokeStyle=L.trim;c.lineWidth=1;
-        c.beginPath();c.moveTo(0,0);c.quadraticCurveTo(-26,-40,-40,-12);c.quadraticCurveTo(-28,-12,-22,4);c.quadraticCurveTo(-12,0,0,8);c.closePath();c.fill();c.stroke();
-        c.strokeStyle=shadeL(col,-.25);for(let i=1;i<4;i++){c.beginPath();c.moveTo(-4,2);c.lineTo(-12-i*8,-14+i*5);c.stroke();}c.restore();}
+        if(W==='bat'){c.beginPath();c.moveTo(0,0);c.quadraticCurveTo(-18,-34,-42,-30);c.lineTo(-34,-16);c.lineTo(-44,-4);c.lineTo(-30,0);c.lineTo(-34,12);c.lineTo(-18,4);c.lineTo(-10,10);c.closePath();c.fill();c.stroke();
+          c.strokeStyle=shadeL(col,-.35);for(const [x,y] of [[-34,-16],[-30,0],[-18,4]]){c.beginPath();c.moveTo(-2,-2);c.lineTo(x,y);c.stroke();}}
+        else if(W==='bone'){c.strokeStyle=col;c.lineWidth=3;c.lineCap='round';c.beginPath();c.moveTo(0,0);c.quadraticCurveTo(-16,-30,-38,-28);c.stroke();
+          for(const [x,y,x2,y2] of [[-14,-20,-30,-6],[-24,-26,-40,-12],[-34,-27,-46,-18]]){c.beginPath();c.moveTo(x,y);c.lineTo(x2,y2);c.stroke();E(c,x2,y2,2.2,2.2,col);}
+          c.lineWidth=1;c.strokeStyle=shadeL(col,-.4);c.fillStyle=shadeL(col,.2)+'55';c.beginPath();c.moveTo(-6,-6);c.lineTo(-30,-6);c.lineTo(-40,-12);c.lineTo(-24,-26);c.closePath();c.fill();}
+        else if(W==='energy'){c.save();c.shadowColor=L.trim;c.shadowBlur=14;c.globalAlpha=(s<1?.5:.75);
+          for(let i=0;i<3;i++){const ph=(t*1.5+i*.33)%1;c.globalAlpha*=1;c.beginPath();c.moveTo(0,0);c.quadraticCurveTo(-20-i*4,-36-ph*8,-42-i*3,-10-i*8);c.quadraticCurveTo(-26,-8+i*4,0,8);c.closePath();c.fill();}
+          c.restore();c.strokeStyle=shadeL(col,.4);for(let i=1;i<4;i++){c.beginPath();c.moveTo(-4,2);c.lineTo(-12-i*8,-14+i*5);c.stroke();}}
+        else{c.beginPath();c.moveTo(0,0);c.quadraticCurveTo(-26,-40,-40,-12);c.quadraticCurveTo(-28,-12,-22,4);c.quadraticCurveTo(-12,0,0,8);c.closePath();c.fill();c.stroke();
+          c.strokeStyle=shadeL(col,-.25);for(let i=1;i<4;i++){c.beginPath();c.moveTo(-4,2);c.lineTo(-12-i*8,-14+i*5);c.stroke();}}
+        c.restore();}
       c.restore();
     }
   }

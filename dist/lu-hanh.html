@@ -1,4 +1,4 @@
-<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="game-version" content="v10.5"><title>Lữ Hành v10.5 · Làng Thanh Mộc</title><style>
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="game-version" content="v10.6"><title>Lữ Hành v10.6 · Làng Thanh Mộc</title><style>
 #lu-hanh{position:fixed;inset:0;z-index:2147483000;overflow:hidden;text-align:left;line-height:normal}
 body:has(#lu-hanh){overflow:hidden!important}
 #lu-hanh{color-scheme:dark;--paper:#eee9da;--gold:#d8b678;--muted:#a8b4a7;--line:#ffffff20}
@@ -497,6 +497,12 @@ body:has(#lu-hanh){overflow:hidden!important}
 #lu-hanh .av-tile .av-dot{width:34px;height:34px;border-radius:50%;border:5px solid #2a2622;box-shadow:0 0 0 1px #00000055 inset}
 #lu-hanh .av-tile.using{outline:2px solid var(--ok,#7fd38a)}
 #lu-hanh .av-info{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+#lu-hanh .nap-grid .tile small{color:var(--muted);font-size:11px}
+#lu-hanh .nap-qr{display:flex;gap:14px;align-items:flex-start;margin-top:10px;padding:10px;border-radius:12px;background:#0f201980;border:1px solid var(--line);flex-wrap:wrap}
+#lu-hanh .nap-qr img{width:220px;max-width:100%;border-radius:10px;background:#fff}
+#lu-hanh .nap-info{display:flex;flex-direction:column;gap:6px;min-width:180px;flex:1}
+#lu-hanh .nap-info>div{display:flex;justify-content:space-between;gap:10px}
+#lu-hanh .nap-info small{color:var(--muted)}
 </style></head><body>
 <div id="lu-hanh">
 <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true"><defs>
@@ -556,8 +562,8 @@ body:has(#lu-hanh){overflow:hidden!important}
 <symbol id="i-menu" viewBox="0 0 32 32"><path d="M5 8h22M5 16h22M5 24h22"/></symbol>
 <symbol id="i-map" viewBox="0 0 32 32"><path d="m3 7 8-3 10 3 8-3v21l-8 3-10-3-8 3Z"/><path d="M11 4v21m10-18v21"/></symbol>
 </defs></svg>
-<header><div class="profile"><button id="avatarBtn" class="avatar" aria-label="Thuộc tính nhân vật"><svg viewBox="0 0 64 64" class="portrait" aria-hidden="true"><path id="pfBody" fill="#d9ad80" d="M10 64v-8c0-21 44-21 44 0v8Z"/><path id="pfNeck" fill="#dfbf91" d="M25 32h14v17H25z"/><ellipse id="pfHair" fill="#2a2622" cx="20" cy="34" rx="7" ry="13" style="display:none"/><path id="pfYem" fill="#c0392b" d="M32 44l10 10-10 10-10-10Z" style="display:none"/><ellipse id="pfFace" fill="#e4c69b" cx="32" cy="25" rx="15" ry="18"/><path id="pfBeard" fill="#2a2622" d="M22 33c3 9 17 9 20 0c-4 3-16 3-20 0Z" style="display:none"/><path id="pfTop" fill="#2a2622" d="M16 26V14C16-2 52-3 48 19L33 13l-17 13Z"/></svg><svg class="exp-ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="exp-bg" cx="50" cy="50" r="46" pathLength="100"/><circle id="expArc" class="exp-fg" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="0 100"/></svg><b id="levelBadge" class="level">Lv. 1</b><i id="ptDot" class="pt-dot" hidden>+</i></button><div class="player-info"><strong id="playerName" class="player-name">Lữ khách</strong><div class="bars"><div class="bar" aria-label="Máu"><div id="hpFill" class="bar-fill hp"></div><small id="hpText">100 / 100</small></div><div class="bar" aria-label="Mana"><div id="manaFill" class="bar-fill mana"></div><small id="manaText">80 / 80</small></div><div class="bar" aria-label="Nội tại"><div id="passiveFill" class="bar-fill passive" style="width:0"></div><small id="passiveText">0%</small></div></div><div id="buffs" class="buffs"></div></div></div><div class="top-right"><div id="bossBar" class="boss-mini" hidden><span id="bossIc" class="bi"></span><span class="bm"><span class="bm-bar"><span id="bossFill" class="bm-fill"></span></span><small id="bossHp"></small></span></div><span class="version">v10.5</span><button id="settingsBtn" aria-label="Menu" aria-expanded="false"><svg class="icon"><use href="#i-menu"/></svg></button><nav id="gameMenu" class="menu" hidden><button id="bagBtn"><svg class="icon"><use href="#i-bag"/></svg>Túi đồ</button><button id="questBtn"><svg class="icon"><use href="#i-quest"/></svg>Nhiệm vụ</button><button id="saveBtn"><svg class="icon"><use href="#i-save"/></svg>Lưu</button><button id="mapBtn"><svg class="icon"><use href="#i-map"/></svg>Bản đồ</button><button id="diagBtn"><svg class="icon"><use href="#i-eye"/></svg>Tình trạng</button></nav></div></header>
-<div id="portal" class="portal"><div class="portal-card"><div class="plogo"><b>Lữ Hành</b><small>Làng Thanh Mộc · v10.5</small></div><div id="portalBody"></div><p id="portalMsg"></p><small id="netMode" class="netmode"></small></div></div>
+<header><div class="profile"><button id="avatarBtn" class="avatar" aria-label="Thuộc tính nhân vật"><svg viewBox="0 0 64 64" class="portrait" aria-hidden="true"><path id="pfBody" fill="#d9ad80" d="M10 64v-8c0-21 44-21 44 0v8Z"/><path id="pfNeck" fill="#dfbf91" d="M25 32h14v17H25z"/><ellipse id="pfHair" fill="#2a2622" cx="20" cy="34" rx="7" ry="13" style="display:none"/><path id="pfYem" fill="#c0392b" d="M32 44l10 10-10 10-10-10Z" style="display:none"/><ellipse id="pfFace" fill="#e4c69b" cx="32" cy="25" rx="15" ry="18"/><path id="pfBeard" fill="#2a2622" d="M22 33c3 9 17 9 20 0c-4 3-16 3-20 0Z" style="display:none"/><path id="pfTop" fill="#2a2622" d="M16 26V14C16-2 52-3 48 19L33 13l-17 13Z"/></svg><svg class="exp-ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="exp-bg" cx="50" cy="50" r="46" pathLength="100"/><circle id="expArc" class="exp-fg" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="0 100"/></svg><b id="levelBadge" class="level">Lv. 1</b><i id="ptDot" class="pt-dot" hidden>+</i></button><div class="player-info"><strong id="playerName" class="player-name">Lữ khách</strong><div class="bars"><div class="bar" aria-label="Máu"><div id="hpFill" class="bar-fill hp"></div><small id="hpText">100 / 100</small></div><div class="bar" aria-label="Mana"><div id="manaFill" class="bar-fill mana"></div><small id="manaText">80 / 80</small></div><div class="bar" aria-label="Nội tại"><div id="passiveFill" class="bar-fill passive" style="width:0"></div><small id="passiveText">0%</small></div></div><div id="buffs" class="buffs"></div></div></div><div class="top-right"><div id="bossBar" class="boss-mini" hidden><span id="bossIc" class="bi"></span><span class="bm"><span class="bm-bar"><span id="bossFill" class="bm-fill"></span></span><small id="bossHp"></small></span></div><span class="version">v10.6</span><button id="settingsBtn" aria-label="Menu" aria-expanded="false"><svg class="icon"><use href="#i-menu"/></svg></button><nav id="gameMenu" class="menu" hidden><button id="bagBtn"><svg class="icon"><use href="#i-bag"/></svg>Túi đồ</button><button id="questBtn"><svg class="icon"><use href="#i-quest"/></svg>Nhiệm vụ</button><button id="saveBtn"><svg class="icon"><use href="#i-save"/></svg>Lưu</button><button id="mapBtn"><svg class="icon"><use href="#i-map"/></svg>Bản đồ</button><button id="diagBtn"><svg class="icon"><use href="#i-eye"/></svg>Tình trạng</button></nav></div></header>
+<div id="portal" class="portal"><div class="portal-card"><div class="plogo"><b>Lữ Hành</b><small>Làng Thanh Mộc · v10.6</small></div><div id="portalBody"></div><p id="portalMsg"></p><small id="netMode" class="netmode"></small></div></div>
 <main class="layout"><canvas id="scene" tabindex="0" aria-label="Bản đồ"></canvas><div id="questTrack" class="quest-track floating"></div><div class="map-box"><canvas id="minimap" width="240" height="128" aria-label="Bản đồ thu nhỏ"></canvas><div class="map-meta"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span id="placeName">Thanh Mộc</span><span id="placeCoord" class="coord"></span><span id="safeTag" class="safe" hidden>An toàn</span></div></div><div class="hint"><b>WASD</b>di chuyển <b>Space</b>đánh <b>1</b>combo <b>2</b>diện rộng <b>3</b>liên hoàn <b>4</b>thú cưỡi <b>E</b>nói chuyện <b>B</b>túi đồ</div><div class="skill-wheel"><button id="skill-normal" data-skill="normal" class="skill normal" title="Space"><svg id="normalIcon" class="icon"><use href="#i-sword"/></svg><small class="key">Đánh</small><span class="cooldown"></span></button><button id="skill-basic" data-skill="basic" class="skill basic" title="1 · Combo · 10 mana"><svg class="icon"><use href="#i-spark"/></svg><small class="key">Combo</small><span class="cooldown"></span></button><button id="skill-intermediate" data-skill="intermediate" class="skill intermediate" title="2 · Diện rộng · 18 mana"><svg class="icon"><use href="#i-whirl"/></svg><small class="key">Diện rộng</small><span class="cooldown"></span></button><button id="skill-advanced" data-skill="advanced" class="skill advanced" title="3 · Liên hoàn · 28 mana"><svg class="icon"><use href="#i-flame"/></svg><small class="key">Liên hoàn</small><span class="cooldown"></span></button><button id="lockBtn" class="skill lockon" type="button" title="T · Khóa mục tiêu (cung, nỏ)" aria-pressed="false" hidden><svg class="icon"><use href="#i-aim"/></svg><small class="key">Khóa</small></button><button id="skill-mount" data-skill="mount" class="skill mount" title="4 · Thú cưỡi" hidden><svg id="mountIcon" class="icon"><use href="#i-mount"/></svg><small id="mountName" class="key">Thú cưỡi</small><span class="cooldown"></span></button></div><div class="touch-controls"><div id="pad" class="pad" aria-label="Cần điều khiển"><div class="knob"></div></div></div><section id="dialog" hidden aria-live="polite"><h2 id="speaker"></h2><p id="line"></p><div class="actions"><span id="page" class="dots"></span><span><button id="shopBtn" hidden><svg class="icon"><use href="#i-bag"/></svg><span id="shopLabel">Mua bán</span></button><button id="next"><svg class="icon"><use href="#i-next"/></svg>Tiếp</button></span></div></section><div id="toast" role="status"></div></main><div id="overlay" class="overlay" hidden><section id="modalCard" class="card"><div class="card-head"><div id="overlayTitle" class="ttl"></div><button id="closeOverlay" class="close-modal" aria-label="Đóng"><svg class="icon"><use href="#i-close"/></svg></button></div><div id="overlayBody"></div></section></div>
 </div>
 <script>window.LH_API='https://script.google.com/macros/s/AKfycbwEUXIQSLK1t6FXNDDD18lbJGNomqhMAzcwh55N_uzKbUL19LaxvieMyhLpzrB06VfzgA/exec';window.LH_CHO='https://ikynagame.blogspot.com/p/cho-phien.html';window.LH_GAME='https://ikynagame.blogspot.com/';</script>
@@ -676,6 +682,15 @@ cau_hinh:[
  {khoa:'ti_le_ban_lai',gia_tri:40,ghi_chu:'% giá gốc nhận lại khi bán cho cửa hàng'},
  {khoa:'he_so_gia_do_dep',gia_tri:250,ghi_chu:'Giá đồ Đẹp trong cửa hàng = % này của giá gốc'},
  {khoa:'he_so_gia_hoan_hao',gia_tri:600,ghi_chu:'Giá đồ Hoàn hảo trong hiệu buôn thành trì = % này của giá gốc'},
+ {khoa:'dung_hop_ngoc',gia_tri:60,ghi_chu:'Dung hợp cánh (NPC Luyện khí sư): số hồng ngọc tốn mỗi lần'},
+ {khoa:'dung_hop_ti_le',gia_tri:40,ghi_chu:'Dung hợp cánh: tỉ lệ thành công (%)'},
+ {khoa:'dung_hop_thu_cap',gia_tri:9,ghi_chu:'Dung hợp cánh: thú cưỡi phải gia cường tới cấp này'},
+ {khoa:'dung_hop_dong',gia_tri:'0,30,28,22,12,6,2',ghi_chu:'Dung hợp cánh: tỉ lệ (%) ra 0,1,2,3,4,5 dòng (6 số, cách nhau dấu phẩy; số đầu bỏ qua)'},
+ {khoa:'canh_dong',gia_tri:'dmgMax,dmgMin,def,hp,mp,range,crit3',ghi_chu:'Dung hợp cánh: các chỉ số có thể ra dòng'},
+ {khoa:'nap_ngan_hang',gia_tri:'MB',ghi_chu:'Nạp thẻ: mã ngân hàng theo VietQR (MB = Quân đội)'},
+ {khoa:'nap_so_tai_khoan',gia_tri:'2220181818888',ghi_chu:'Nạp thẻ: số tài khoản nhận tiền'},
+ {khoa:'nap_ten_tai_khoan',gia_tri:'TRAN ANH NGUYET',ghi_chu:'Nạp thẻ: tên chủ tài khoản (không dấu)'},
+ {khoa:'nap_noi_dung',gia_tri:'Ikyna {goi} {tai_khoan}',ghi_chu:'Nạp thẻ: nội dung chuyển khoản ({goi} = tên gói, {tai_khoan} = tên đăng nhập)'},
  {khoa:'phi_cho',gia_tri:5,ghi_chu:'% thương nhân giữ lại khi bán hộ trên chợ và khi bán nhân vật đánh thuê'},
  {khoa:'mau_goc',gia_tri:60,ghi_chu:'Máu = mau_goc + Sức khỏe \u{d7} mau_moi_diem'},
  {khoa:'mau_moi_diem',gia_tri:5,ghi_chu:''},
@@ -738,7 +753,7 @@ thuoc_tinh:[
  ['atkSpd','Tốc độ đánh','agi','%','1-3','3-6','6-10','10-15'],['moveSpd','Tốc độ di chuyển','agi','%','1-2','2-4','4-7','8-12'],['def','Khả năng phòng ngự','agi','','1-2','2-4','4-7','8-14'],
  ['block','Phòng ngự thành công','agi','%','1-2','2-4','4-6','7-10'],['dodge','Tránh né','agi','%','1-2','2-3','3-5','6-9'],['dmgRed','Giảm sát thương','agi','%','1-2','2-4','4-6','7-10'],
  ['perfRed','Giảm sát thương hoàn hảo','agi','%','1-2','2-4','4-6','7-10'],['critRed','Giảm sát thương x2, x3','agi','%','1-2','2-4','4-6','7-10'],['legRed','Giảm sát thương huyền thoại','agi','%','1-2','2-4','4-6','7-10'],['mythRed','Giảm sát thương thần thoại','agi','%','1-2','2-3','3-5','5-8'],
- ['hp','Lượng máu','vit','','5-10','10-20','20-40','50-80'],['hpReg','Hồi máu mỗi giây','vit','','1-1','1-2','2-3','3-5'],['reflect','Phản đòn','vit','%','1-2','2-4','4-7','8-12'],
+ ['hp','Lượng máu','vit','','5-10','10-20','20-40','50-80'],['hpReg','Hồi máu mỗi giây','vit','','1-1','1-2','2-3','3-5'],['reflect','Phản đòn','vit','%','1-2','2-4','4-7','8-12'],['range','Tầm đánh','agi','%','3-5','5-8','8-12','12-18'],
  ['mp','Lượng mana','int','','4-8','8-16','16-30','40-60'],['mpReg','Hồi mana mỗi giây','int','','1-1','1-2','2-3','3-5'],['cdr','Giảm thời gian hồi chiêu','int','%','1-2','2-4','4-6','7-10']
 ].map(([ma,ten,nhom,don_vi,...r])=>{const o={ma,ten,nhom,don_vi};['dep','hoan_hao','huyen_thoai','than'].forEach((k,i)=>{const [a,b]=r[i].split('-').map(Number);o[k+'_thap']=a;o[k+'_cao']=b;});return o;}),
 vat_pham:[
@@ -754,6 +769,9 @@ vat_pham:[
  ['gloves','Bao tay','gloves','gloves','',0,1,0,30,'',''],['gloves-leather','Bao tay da','gloves','gloves','',0,2,0,120,'#6b4a2e',''],
  ['shoes','Dép cỏ','shoes','shoes','',0,1,0,30,'',''],['shoes-leather','Giày da','shoes','shoes','',0,2,0,120,'#5b3d26',''],['shoes-iron','Ủng đồng','shoes','shoes','',0,4,0,300,'#8a6a3a',''],
  ['wings','Áo choàng','wings','wings','',0,1,0,900,'',''],
+ // Cánh (v10.6): chỉ có được qua dung hợp ở Luyện khí sư; dòng chỉ số ngẫu nhiên 0\u{2013}5 (tab cau_hinh canh_dong, dung_hop_dong)
+ ['canh-thien-than','Cánh thiên thần','wings','wings','',0,6,0,30000,'#f4f0ff',''],['canh-ac-quy','Cánh ác quỷ','wings','wings','',0,6,0,30000,'#5a1a3a',''],['canh-tien-nu','Cánh tiên nữ','wings','wings','',0,6,0,30000,'#ffc0e8',''],['canh-anh-sang','Cánh ánh sáng','wings','wings','',0,6,0,30000,'#fff0a0',''],
+ ['canh-xuong','Cánh xương','wings','wings','',0,6,0,30000,'#e8e0d0',''],['canh-loi-phong','Cánh lôi phong','wings','wings','',0,6,0,30000,'#a0c8ff',''],['canh-dai-bang','Cánh đại bàng','wings','wings','',0,6,0,30000,'#8a5a30',''],['canh-lua','Cánh lửa','wings','wings','',0,6,0,30000,'#ff8a3d',''],
  ['mount','Ngựa con','mount','mount','',0,0,1.15,200,'#b78452','horse',5],['mount-brown','Ngựa nâu','mount','mount','',0,0,1.25,600,'#7a4b2a','horse',5],['mount-black','Ngựa ô','mount','mount','',0,0,1.35,1200,'#2e2a2a','horse',5],['mount-white','Bạch mã','mount','mount','',0,0,1.5,2500,'#ece6da','horse',5],
  ['mount-tiger','Hổ','mount','mount','',4,0,1.45,4000,'#e08a2e','tiger',10],['mount-elephant','Voi','mount','mount','',0,8,1.2,6000,'#8e9398','elephant',15],
  ['ore','Khoáng thạch','','ore','',0,0,0,20,'',''],
@@ -776,6 +794,10 @@ cua_hang:[
  ...['mount','mount-brown','mount-black','mount-white','mount-tiger','mount-elephant'].map((id,i)=>({cua_hang:'trainer',id,pham_chat:'n',gia:'',thu_tu:i+1,bac:0})),
  ...['book-fire','book-water','book-earth','book-metal','book-wood','book-loi','book-phong','book-bang','book-ma','book-sang'].map((id,i)=>({cua_hang:'wizard',id,pham_chat:'n',gia:'',thu_tu:i+1,bac:0}))
 ],
+// Gói nạp (v10.6): NPC Nạp thẻ ở thành trì hiện gói, sinh mã QR chuyển khoản (VietQR). Hồng ngọc cộng tay bằng hàm napHongNgoc trong Apps Script sau khi nhận tiền.
+goi_nap:[
+ ['goi-20','Gói 20K',20000,20,'Dùng thử'],['goi-50','Gói 50K',50000,55,'Tặng 10%'],['goi-100','Gói 100K',100000,120,'Tặng 20%'],['goi-200','Gói 200K',200000,260,'Tặng 30%'],['goi-500','Gói 500K',500000,700,'Tặng 40%'],['goi-1000','Gói 1 triệu',1000000,1500,'Tặng 50%']
+].map(([id,ten,tien,hong_ngoc,mo_ta],i)=>({id,ten,tien,hong_ngoc,mo_ta,thu_tu:i+1})),
 // Diện mạo (v10.3): NPC Thợ truyền thần ở thành trì cấp cao bán; mỗi dòng là một bộ da + tóc + râu + mắt + dấu trên mặt. gia = đồng, hong_ngoc = hồng ngọc (0 cả hai = miễn phí). gioi_tinh trống = cả hai.
 // kieu_toc: '' búi tóc \u{b7} xoa (xõa dài) \u{b7} dung (dựng) \u{b7} khan (khăn buộc) \u{b7} troc (đầu trọc). dau: seo (sẹo má) \u{b7} not (nốt ruồi) \u{b7} ve (vẽ mặt) \u{b7} hoa (hoa cài, nữ). Ảnh chân dung riêng: giao_dien:chan_dung_<id> trong file Hình ảnh
 dien_mao:[
@@ -1449,7 +1471,7 @@ window.LH_PACK=(id,def,art)=>{window.LH_MAPS[id]=def;LH_ART.add(id,art);};
   function npc(S){
     return (c,n,t,H)=>{
       const {ell,line,poly,rr,head,khanXep,nonLa,npcLegs,torso,oline,shade}=H,sway=S.act==='dance'?Math.sin(t*4+n.phase*6)*4:0,beat=S.act==='drum'?Math.max(0,Math.sin(t*6+n.phase)):0;
-      c.save();c.translate(sway*.5,0);
+      c.save();c.translate(sway*.5,0);if(S.s)c.scale(S.s,S.s); // s: tỉ lệ (trẻ con ~0,6)
       npcLegs(c,n,S.pants||shade(S.robe,-.35));
       if(S.skirt)poly(c,[-13,-26,13,-26,16,0,-16,0],S.robe);
       torso(c,-12,-28,24,24,5,S.robe);if(S.trim)line(c,[-12,-9,12,-9],S.trim,2.2),line(c,[2,-27,8,-10],S.trim,1.3);
@@ -1496,7 +1518,7 @@ window.LH_PACK=(id,def,art)=>{window.LH_MAPS[id]=def;LH_ART.add(id,art);};
 })();
 </script>
 <script>
-window.LH_MAP_CDN='https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@ban-10.5/dist/maps/';window.LH_MON_PACK={"bang-hoang":"bang-nguyen","voi-ma-mut":"bang-nguyen","yeu-tuyet":"bang-nguyen","thuong-luong":"bien-dong","cua-khong-lo":"bien-dong","muc-ma":"bien-dong","tuong-am-binh":"co-loa","am-binh":"co-loa","quy-doi":"co-loa","nguyet-than":"cung-trang","tho-ngoc":"cung-trang","nguyet-binh":"cung-trang","ma-vuong":"cuu-trung","thien-binh":"cuu-trung","ky-lan":"cuu-trung","xa-tinh":"dam-lay","dia-khong-lo":"dam-lay","ech-doc":"dam-lay","hai-long-vuong":"dao-rong","giao-long":"dao-rong","hai-quy":"dao-rong","diem-la-tuong":"dia-nguc-mon","nguu-dau":"dia-nguc-mon","ma-dien":"dia-nguc-mon","loi-dieu":"dinh-may","ung-tuyet":"dinh-may","de-nui":"dinh-may","doi-quy":"hang-dong","nhen-doc":"hang-dong","dai-bang":"hang-dong","su-quan":"hoa-lu","tho-phi":"hoa-lu","ngao-den":"hoa-lu","hac-mo-vuong":"hoang-mac-xuong","xuong-kho":"hoang-mac-xuong","bo-cap-den":"hoang-mac-xuong","hoa-long":"nui-lua","nham-thach-thu":"nui-lua","quy-lua":"nui-lua","soi-tuyet":"nui-tuyet","gau-nui":"nui-tuyet","ho-tinh":"nui-tuyet","hac-de":"phu-xuan","ngu-lam-phan":"phu-xuan","chien-tuong":"phu-xuan","chua-quy":"rung-ma","ma-troi":"rung-ma","quy-cay":"rung-ma","moc-tinh":"rung-truc","khi-rung":"rung-truc","ran-ho":"rung-truc","bo-cap":"sa-mac","ken-ken":"sa-mac","chan-tinh":"sa-mac","thach-tinh":"sa-mac","hac-long-tuong":"thang-long","phan-quan":"thang-long","hac-ky":"thang-long","hac-thien-ma":"thien-dinh","thien-tuong":"thien-dinh","than-thu":"thien-dinh","phong-vuong":"thien-son","tien-hac":"thien-son","tuyet-vien":"thien-son","long-vuong":"thuy-cung","tom-tuong":"thuy-cung","ca-kiem":"thuy-cung","cuu-vi-ho":"vuc-yeu-tinh","ho-ly":"vuc-yeu-tinh","yeu-tang":"vuc-yeu-tinh"};window.LH_MAPS=window.LH_MAPS||{};window.LH_MAPS["thanh-moc"]={"id":"thanh-moc","name":"Thanh Mộc","w":60,"h":32,"note":"Ô: . cỏ \u{b7} # chắn \u{b7} ~ nước \u{b7} = cầu \u{b7} : đường đất \u{b7} , cỏ khô \u{b7} \" ruộng lúa. Tọa độ theo ô (48 điểm ảnh).","tiles":["############################################################","#.............................~~~,,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,:::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,::,,,,,,,,,,,#","#.~~~....::....:...............~~~,,,,,,,,,,,:::,,,,,,,,,,,#","#.~~~....::....:.....::.......~~~,,,,,,,,,,,,::,,,,,,,,,,,,#","#.~~~....::....:.....::.......~~~,,,,,,,,,,,:::,,,,,,,,,,,,#","#.~~~....::....:.....::.......~~~,,,,,,,,,,,::,,,,,,,,,,,,,#","#........::....:.....::......~~~,,,,,,,,,,,:::,,,,,,,,,,,,,#","#........::....:.....::......~~~,,,,,,,,,,,::,,,,,,,,,,,,,,#","#::::::::::::::::::::::::::::===:::::::::::,,,,,,,,,,,,,,,,#","#::::::::::::::::::::::::::::===:::::::::::,,,,,,,,,,,,,,,,#","#........::....::....::......~~~,,,,,,,,,,::,,,,,,,,,,,,,,,#","#........::....::....::......~~~,,,,,,,,,,,::,,,,,,,,,,,,,,#","#..............::....::......~~~,,,,,,,,,,,,::,,,,,,,,,,,,,#","#............................~~~,,,,,,,,,,,,,::,,,,,,,,,,,,#","#............................~~~,,,,,,,,,,,,,,::,,,,,,,,,,,#","#.............................~~~,,,,,,,,,,,,,,::,,,,,,,,,,#","#.............................~~~,,,,,,,,,,,,,,,::,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,,,::,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,,,,::,,,,,,,#","#..............................~~~,,,,,,,,,,,,,,,,,::,,,,,,#","#.\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"...~~~,,,,,,,,,,,,,,,,,::,,,,,,#","#.\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"...~~~,,,,,,,,,,,,,,,,,,::,,,,,#","#.\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"...~~~,,,,,,,,,,,,,,,,,,::,,,,,#","#.\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"...~~~,,,,,,,,,,,,,,,,,,,::,,,,#","############################################################"],"spawn":{"x":16,"y":16},"safe":{"x0":0,"y0":0,"x1":27,"y1":31,"cfg":"vung_an_toan_x"},"zones":[{"name":"Đông Ngạn","x0":36,"y0":0,"x1":59,"y1":31}],"bridges":[{"x0":28,"x1":35,"y0":15,"y1":16,"flag":"river","msg":"Đã qua cầu \u{b7} Đông Ngạn"}],"decor":[{"kind":"pond","x":2,"y":9,"w":3,"h":4},{"kind":"plaza","x":13.2,"y":17.1,"w":4.6,"h":2.8}],"objects":[{"kind":"house","x":7,"y":5,"w":6,"h":4,"style":"hall"},{"kind":"house","x":14,"y":5,"w":3,"h":4,"style":"shrine"},{"kind":"house","x":19,"y":6,"w":5,"h":4,"style":"forge"},{"kind":"house","x":7,"y":19,"w":5,"h":4,"style":"inn"},{"kind":"house","x":13,"y":20,"w":5,"h":3,"style":"stable"},{"kind":"house","x":20,"y":20,"w":4,"h":4,"style":"barn"},{"kind":"banyan","x":25,"y":11},{"kind":"well","x":12,"y":18},{"kind":"fire","x":14,"y":13},{"kind":"fire","x":25,"y":21},{"kind":"well","ancient":true,"id":"gieng-1","x":39,"y":9},{"kind":"well","ancient":true,"id":"gieng-2","x":48,"y":18},{"kind":"well","ancient":true,"id":"gieng-3","x":54,"y":26}],"trees":[[2,1,0],[4,1,0],[6,1,0],[8,1,0],[13,1,0],[15,1,0],[17,1,0],[19,1,0],[21,1,0],[26,1,0],[28,1,0],[52,1,1],[56,1,1],[57,1,1],[58,1,1],[1,2,0],[3,2,0],[8,2,0],[10,2,0],[12,2,0],[14,2,0],[16,2,0],[21,2,0],[23,2,0],[25,2,0],[27,2,0],[29,2,0],[42,2,1],[56,2,1],[58,2,1],[3,3,0],[29,3,0],[57,3,1],[2,4,0],[4,4,0],[28,4,0],[30,4,0],[53,4,1],[56,4,1],[57,4,1],[58,4,1],[1,5,0],[27,5,0],[43,5,1],[56,5,1],[58,5,1],[1,6,0],[3,6,0],[27,6,0],[29,6,0],[57,6,1],[58,6,1],[2,7,0],[4,7,0],[28,7,0],[30,7,0],[54,7,1],[56,7,1],[57,7,1],[4,8,0],[30,8,0],[56,8,1],[58,8,1],[1,9,0],[27,9,0],[29,9,0],[56,9,1],[57,9,1],[58,9,1],[28,10,0],[55,10,1],[57,10,1],[28,11,0],[56,11,1],[58,11,1],[1,12,0],[27,12,0],[29,12,0],[56,12,1],[57,12,1],[58,12,1],[57,13,1],[46,14,1],[56,14,1],[57,14,1],[58,14,1],[56,15,1],[58,15,1],[57,16,1],[56,17,1],[57,17,1],[58,17,1],[56,18,1],[58,18,1],[1,19,0],[3,19,0],[27,19,0],[57,19,1],[58,19,1],[2,20,0],[4,20,0],[28,20,0],[48,20,1],[56,20,1],[57,20,1],[4,21,0],[38,21,1],[56,21,1],[58,21,1],[1,22,0],[3,22,0],[27,22,0],[29,22,0],[56,22,1],[57,22,1],[58,22,1],[2,23,0],[28,23,0],[57,23,1],[2,24,0],[4,24,0],[28,24,0],[30,24,0],[39,24,1],[56,24,1],[58,24,1],[1,25,0],[3,25,0],[27,25,0],[29,25,0],[56,25,1],[57,25,1],[58,25,1],[50,26,1],[57,26,1],[28,27,0],[30,27,0],[40,27,1],[56,27,1],[57,27,1],[58,27,1],[1,28,0],[29,28,0],[56,28,1],[58,28,1],[29,29,0],[51,29,1],[57,29,1],[28,30,0],[30,30,0],[41,30,1],[56,30,1],[57,30,1],[58,30,1]],"npcs":[{"id":"elder","role":"elder","name":"Lý trưởng","x":9,"y":11.4,"panel":"quests","x0":8.4,"x1":13.2,"facing":-1,"lines":["Chào lữ khách. Thanh Mộc là nơi bắt đầu hành trình của bạn.","Trong làng là vùng an toàn: không cưỡi thú, không dùng kỹ năng.","Làng có việc gì ta sẽ giao, xong việc có thưởng tiền và đồ."]},{"id":"smith","role":"smith","name":"Thợ rèn","x":20.4,"y":11.7,"panel":"shop","shop":"smith","facing":1,"lines":["Dao, kiếm, khiên, nỏ\u{2026} lò rèn này có đủ.","Có hồng ngọc thì ta gia cường đồ cho, càng lên cao càng dễ vỡ."]},{"id":"guide","role":"guide","name":"Người dẫn đường","x":27.3,"y":14.4,"panel":"mercs","facing":1,"lines":["Qua sông chỉ có cây cầu này.","Sư tử, cá sấu dữ. Voi chỉ nổi giận khi bị đánh.","Đi một mình nguy hiểm, ta có lính đánh thuê cho thuê."]},{"id":"trainer","role":"trainer","name":"Người nuôi thú cưỡi","x":18.8,"y":21.7,"panel":"shop","shop":"trainer","facing":-1,"lines":["Ngựa, hổ, voi\u{2026} con nào ở đây cũng đã thuần.","Mỗi loài có một ngón nghề riêng: ngựa đá hậu, hổ vồ mồi, voi dày xéo."]},{"id":"wizard","role":"wizard","name":"Đạo sĩ","x":17.4,"y":10.3,"panel":"shop","shop":"wizard","facing":-1,"lines":["Ngũ hành: Hỏa, Thủy, Thổ, Kim, Mộc. Bí truyền: Lôi, Phong, Băng, Ánh sáng, Ma công.","Gắn nhiều sách cùng lúc, chỉ số cộng dồn. Ta luyện sách cho mạnh thêm."]},{"id":"merchant","role":"merchant","name":"Thương nhân","x":9.6,"y":24.4,"panel":"market","facing":-1,"lines":["Ta buôn bán khắp các làng.","Đồ Hoàn hảo, Huyền thoại và đồ Thần, ta bán hộ cho người chơi khác.","Bán được ta giữ một ít tiền công."]}],"monsters":[{"type":"chua-son-lam","x":51,"y":5},{"type":"ngu-tinh","x":44,"y":28},{"type":"deer","x":43,"y":8},{"type":"deer","x":47,"y":24},{"type":"lion","x":50,"y":12},{"type":"elephant","x":52,"y":21},{"type":"croc","x":35,"y":7},{"type":"croc","x":35,"y":25}],"portals":[{"x":46,"y":1,"w":3,"h":1,"to":"sa-mac","tx":24,"ty":30,"label":"Sa mạc"},{"x":1,"y":15,"w":1,"h":2,"to":"nui-tuyet","tx":43,"ty":16,"label":"Núi tuyết"},{"x":52,"y":30,"w":3,"h":1,"to":"hang-dong","tx":23,"ty":3,"label":"Hang động"}],"ambient":"village","camps":[{"name":"Bãi hươu nai","x":40,"y":22,"r":3,"mon":{"deer":6,"lion":2}},{"name":"Bãi thú dữ","x":55,"y":18,"r":3,"mon":{"lion":3,"elephant":2}}]};</script>
+window.LH_MAP_CDN='https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@ban-10.6/dist/maps/';window.LH_MON_PACK={"bang-hoang":"bang-nguyen","voi-ma-mut":"bang-nguyen","yeu-tuyet":"bang-nguyen","thuong-luong":"bien-dong","cua-khong-lo":"bien-dong","muc-ma":"bien-dong","tuong-am-binh":"co-loa","am-binh":"co-loa","quy-doi":"co-loa","nguyet-than":"cung-trang","tho-ngoc":"cung-trang","nguyet-binh":"cung-trang","ma-vuong":"cuu-trung","thien-binh":"cuu-trung","ky-lan":"cuu-trung","xa-tinh":"dam-lay","dia-khong-lo":"dam-lay","ech-doc":"dam-lay","hai-long-vuong":"dao-rong","giao-long":"dao-rong","hai-quy":"dao-rong","diem-la-tuong":"dia-nguc-mon","nguu-dau":"dia-nguc-mon","ma-dien":"dia-nguc-mon","loi-dieu":"dinh-may","ung-tuyet":"dinh-may","de-nui":"dinh-may","doi-quy":"hang-dong","nhen-doc":"hang-dong","dai-bang":"hang-dong","su-quan":"hoa-lu","tho-phi":"hoa-lu","ngao-den":"hoa-lu","hac-mo-vuong":"hoang-mac-xuong","xuong-kho":"hoang-mac-xuong","bo-cap-den":"hoang-mac-xuong","hoa-long":"nui-lua","nham-thach-thu":"nui-lua","quy-lua":"nui-lua","soi-tuyet":"nui-tuyet","gau-nui":"nui-tuyet","ho-tinh":"nui-tuyet","hac-de":"phu-xuan","ngu-lam-phan":"phu-xuan","chien-tuong":"phu-xuan","chua-quy":"rung-ma","ma-troi":"rung-ma","quy-cay":"rung-ma","moc-tinh":"rung-truc","khi-rung":"rung-truc","ran-ho":"rung-truc","bo-cap":"sa-mac","ken-ken":"sa-mac","chan-tinh":"sa-mac","thach-tinh":"sa-mac","hac-long-tuong":"thang-long","phan-quan":"thang-long","hac-ky":"thang-long","hac-thien-ma":"thien-dinh","thien-tuong":"thien-dinh","than-thu":"thien-dinh","phong-vuong":"thien-son","tien-hac":"thien-son","tuyet-vien":"thien-son","long-vuong":"thuy-cung","tom-tuong":"thuy-cung","ca-kiem":"thuy-cung","cuu-vi-ho":"vuc-yeu-tinh","ho-ly":"vuc-yeu-tinh","yeu-tang":"vuc-yeu-tinh"};window.LH_MAPS=window.LH_MAPS||{};window.LH_MAPS["thanh-moc"]={"id":"thanh-moc","name":"Thanh Mộc","w":60,"h":32,"note":"Ô: . cỏ \u{b7} # chắn \u{b7} ~ nước \u{b7} = cầu \u{b7} : đường đất \u{b7} , cỏ khô \u{b7} \" ruộng lúa. Tọa độ theo ô (48 điểm ảnh).","tiles":["############################################################","#.............................~~~,,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,:::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,::,,,,,,,,,,,#","#.~~~....::....:...............~~~,,,,,,,,,,,:::,,,,,,,,,,,#","#.~~~....::....:.....::.......~~~,,,,,,,,,,,,::,,,,,,,,,,,,#","#.~~~....::....:.....::.......~~~,,,,,,,,,,,:::,,,,,,,,,,,,#","#.~~~....::....:.....::.......~~~,,,,,,,,,,,::,,,,,,,,,,,,,#","#........::....:.....::......~~~,,,,,,,,,,,:::,,,,,,,,,,,,,#","#........::....:.....::......~~~,,,,,,,,,,,::,,,,,,,,,,,,,,#","#::::::::::::::::::::::::::::===:::::::::::,,,,,,,,,,,,,,,,#","#::::::::::::::::::::::::::::===:::::::::::,,,,,,,,,,,,,,,,#","#........::....::....::......~~~,,,,,,,,,,::,,,,,,,,,,,,,,,#","#........::....::....::......~~~,,,,,,,,,,,::,,,,,,,,,,,,,,#","#..............::....::......~~~,,,,,,,,,,,,::,,,,,,,,,,,,,#","#............................~~~,,,,,,,,,,,,,::,,,,,,,,,,,,#","#............................~~~,,,,,,,,,,,,,,::,,,,,,,,,,,#","#.............................~~~,,,,,,,,,,,,,,::,,,,,,,,,,#","#.............................~~~,,,,,,,,,,,,,,,::,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,,,::,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,,,,::,,,,,,,#","#..............................~~~,,,,,,,,,,,,,,,,,::,,,,,,#","#.\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"...~~~,,,,,,,,,,,,,,,,,::,,,,,,#","#.\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"...~~~,,,,,,,,,,,,,,,,,,::,,,,,#","#.\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"...~~~,,,,,,,,,,,,,,,,,,::,,,,,#","#.\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"...~~~,,,,,,,,,,,,,,,,,,,::,,,,#","############################################################"],"spawn":{"x":16,"y":16},"safe":{"x0":0,"y0":0,"x1":27,"y1":31,"cfg":"vung_an_toan_x"},"zones":[{"name":"Đông Ngạn","x0":36,"y0":0,"x1":59,"y1":31}],"bridges":[{"x0":28,"x1":35,"y0":15,"y1":16,"flag":"river","msg":"Đã qua cầu \u{b7} Đông Ngạn"}],"decor":[{"kind":"pond","x":2,"y":9,"w":3,"h":4},{"kind":"plaza","x":13.2,"y":17.1,"w":4.6,"h":2.8}],"objects":[{"kind":"house","x":7,"y":5,"w":6,"h":4,"style":"hall"},{"kind":"house","x":14,"y":5,"w":3,"h":4,"style":"shrine"},{"kind":"house","x":19,"y":6,"w":5,"h":4,"style":"forge"},{"kind":"house","x":7,"y":19,"w":5,"h":4,"style":"inn"},{"kind":"house","x":13,"y":20,"w":5,"h":3,"style":"stable"},{"kind":"house","x":20,"y":20,"w":4,"h":4,"style":"barn"},{"kind":"banyan","x":25,"y":11},{"kind":"well","x":12,"y":18},{"kind":"fire","x":14,"y":13},{"kind":"fire","x":25,"y":21},{"kind":"well","ancient":true,"id":"gieng-1","x":39,"y":9},{"kind":"well","ancient":true,"id":"gieng-2","x":48,"y":18},{"kind":"well","ancient":true,"id":"gieng-3","x":54,"y":26}],"trees":[[2,1,0],[4,1,0],[6,1,0],[8,1,0],[13,1,0],[15,1,0],[17,1,0],[19,1,0],[21,1,0],[26,1,0],[28,1,0],[52,1,1],[56,1,1],[57,1,1],[58,1,1],[1,2,0],[3,2,0],[8,2,0],[10,2,0],[12,2,0],[14,2,0],[16,2,0],[21,2,0],[23,2,0],[25,2,0],[27,2,0],[29,2,0],[42,2,1],[56,2,1],[58,2,1],[3,3,0],[29,3,0],[57,3,1],[2,4,0],[4,4,0],[28,4,0],[30,4,0],[53,4,1],[56,4,1],[57,4,1],[58,4,1],[1,5,0],[27,5,0],[43,5,1],[56,5,1],[58,5,1],[1,6,0],[3,6,0],[27,6,0],[29,6,0],[57,6,1],[58,6,1],[2,7,0],[4,7,0],[28,7,0],[30,7,0],[54,7,1],[56,7,1],[57,7,1],[4,8,0],[30,8,0],[56,8,1],[58,8,1],[1,9,0],[27,9,0],[29,9,0],[56,9,1],[57,9,1],[58,9,1],[28,10,0],[55,10,1],[57,10,1],[28,11,0],[56,11,1],[58,11,1],[1,12,0],[27,12,0],[29,12,0],[56,12,1],[57,12,1],[58,12,1],[57,13,1],[46,14,1],[56,14,1],[57,14,1],[58,14,1],[56,15,1],[58,15,1],[57,16,1],[56,17,1],[57,17,1],[58,17,1],[56,18,1],[58,18,1],[1,19,0],[3,19,0],[27,19,0],[57,19,1],[58,19,1],[2,20,0],[4,20,0],[28,20,0],[48,20,1],[56,20,1],[57,20,1],[4,21,0],[38,21,1],[56,21,1],[58,21,1],[1,22,0],[3,22,0],[27,22,0],[29,22,0],[56,22,1],[57,22,1],[58,22,1],[2,23,0],[28,23,0],[57,23,1],[2,24,0],[4,24,0],[28,24,0],[30,24,0],[39,24,1],[56,24,1],[58,24,1],[1,25,0],[3,25,0],[27,25,0],[29,25,0],[56,25,1],[57,25,1],[58,25,1],[50,26,1],[57,26,1],[28,27,0],[30,27,0],[40,27,1],[56,27,1],[57,27,1],[58,27,1],[1,28,0],[29,28,0],[56,28,1],[58,28,1],[29,29,0],[51,29,1],[57,29,1],[28,30,0],[30,30,0],[41,30,1],[56,30,1],[57,30,1],[58,30,1]],"npcs":[{"id":"elder","role":"elder","name":"Lý trưởng","x":9,"y":11.4,"panel":"quests","x0":8.4,"x1":13.2,"facing":-1,"lines":["Chào lữ khách. Thanh Mộc là nơi bắt đầu hành trình của bạn.","Trong làng là vùng an toàn: không cưỡi thú, không dùng kỹ năng.","Làng có việc gì ta sẽ giao, xong việc có thưởng tiền và đồ."]},{"id":"smith","role":"smith","name":"Thợ rèn","x":20.4,"y":11.7,"panel":"shop","shop":"smith","facing":1,"lines":["Dao, kiếm, khiên, nỏ\u{2026} lò rèn này có đủ.","Có hồng ngọc thì ta gia cường đồ cho, càng lên cao càng dễ vỡ."]},{"id":"guide","role":"guide","name":"Người dẫn đường","x":27.3,"y":14.4,"panel":"mercs","facing":1,"lines":["Qua sông chỉ có cây cầu này.","Sư tử, cá sấu dữ. Voi chỉ nổi giận khi bị đánh.","Đi một mình nguy hiểm, ta có lính đánh thuê cho thuê."]},{"id":"trainer","role":"trainer","name":"Người nuôi thú cưỡi","x":18.8,"y":21.7,"panel":"shop","shop":"trainer","facing":-1,"lines":["Ngựa, hổ, voi\u{2026} con nào ở đây cũng đã thuần.","Mỗi loài có một ngón nghề riêng: ngựa đá hậu, hổ vồ mồi, voi dày xéo."]},{"id":"wizard","role":"wizard","name":"Đạo sĩ","x":17.4,"y":10.3,"panel":"shop","shop":"wizard","facing":-1,"lines":["Ngũ hành: Hỏa, Thủy, Thổ, Kim, Mộc. Bí truyền: Lôi, Phong, Băng, Ánh sáng, Ma công.","Gắn nhiều sách cùng lúc, chỉ số cộng dồn. Ta luyện sách cho mạnh thêm."]},{"id":"merchant","role":"merchant","name":"Thương nhân","x":9.6,"y":24.4,"panel":"market","facing":-1,"lines":["Ta buôn bán khắp các làng.","Đồ Hoàn hảo, Huyền thoại và đồ Thần, ta bán hộ cho người chơi khác.","Bán được ta giữ một ít tiền công."]}],"monsters":[{"type":"chua-son-lam","x":51,"y":5},{"type":"ngu-tinh","x":44,"y":28},{"type":"deer","x":43,"y":8},{"type":"deer","x":47,"y":24},{"type":"lion","x":50,"y":12},{"type":"elephant","x":52,"y":21},{"type":"croc","x":35,"y":7},{"type":"croc","x":35,"y":25}],"portals":[{"x":46,"y":1,"w":3,"h":1,"to":"sa-mac","tx":24,"ty":30,"label":"Sa mạc"},{"x":1,"y":15,"w":1,"h":2,"to":"nui-tuyet","tx":43,"ty":16,"label":"Núi tuyết"},{"x":52,"y":30,"w":3,"h":1,"to":"hang-dong","tx":23,"ty":3,"label":"Hang động"}],"ambient":"village","camps":[{"name":"Bãi hươu nai","x":40,"y":22,"r":3,"mon":{"deer":6,"lion":2}},{"name":"Bãi thú dữ","x":55,"y":18,"r":3,"mon":{"lion":3,"elephant":2}}]};</script>
 <script>
 /* ================= THẾ GIỚI: bộ bản đồ dùng chung =================
    Mỗi bản đồ / phó bản là một gói dữ liệu (thư mục maps/, xem maps/README.md): ô nền, nhà, cây, dân làng, quái, cầu, vùng an toàn, cổng sang bản đồ khác.
@@ -1651,7 +1673,9 @@ const LH_Look=(()=>{
     const L={type,slot,name:d.name,set:d.set||null,myth:!!d.myth,gender:d.gender||'',main:d.tint||null,alt:null,trim:null,kind:slot};
     if(d.set&&SET[d.set]){[L.main,L.alt,L.trim]=SET[d.set];L.legend=true;}
     if(d.myth&&MYTH[type]){L.main=MYTH[type].c;L.fx=MYTH[type].fx;L.trim=FX[L.fx][0];}
-    if(slot==='wings')L.kind=has(name,'áo choàng')?'cloak':has(name,'cờ')?'flag':'wings';
+    if(slot==='wings'){L.kind=has(name,'áo choàng')?'cloak':has(name,'cờ')?'flag':'wings';
+      // cánh dung hợp (v10.6): dáng theo tên \u{2014} ác quỷ: cánh dơi \u{b7} xương: cánh xương \u{b7} ánh sáng / lửa / lôi phong: cánh năng lượng phát sáng \u{b7} còn lại: cánh lông
+      if(L.kind==='wings')L.wing=has(name,'ác quỷ')?'bat':has(name,'xương')?'bone':has(name,'ánh sáng','lửa','lôi phong')?'energy':'feather';}
     else if(slot==='hat')L.kind=has(name,'nón lá','nón thần')?'nonla':has(name,'nón dấu')?'nondau':has(name,'khăn')?'khan':has(name,'trâm')?'tram':has(name,'phượng','nguyên phi')?'phoenix':has(name,'quang trung','quốc công','bình định vương','vạn thắng','trưng vương','trưng nhị')?'crown':'helm';
     else if(slot==='armor')L.kind=has(name,'bào','áo phượng','áo nguyên phi','côn sơn')?'robe':has(name,'áo da')?'leather':has(name,'áo vải')?'cloth':'scale';
     else if(slot==='pants')L.kind=has(name,'váy','xiêm')?'skirt':'pants';
@@ -1686,10 +1710,19 @@ const LH_Look=(()=>{
       c.strokeStyle=L.trim;c.lineWidth=1.2;c.stroke();E(c,-19,-52+fl*.5,3.2,3.2,L.alt);E(c,-19,-52+fl*.5,1.6,1.6,L.trim);
     }
     else{ // đôi cánh
-      const f=Math.sin(t*4)*.12,col=L.main;c.save();c.translate(-4,-22);
+      const f=Math.sin(t*4)*.12,col=L.main,W=L.wing||'feather';c.save();c.translate(-4,-22);
       for(const s of [1,.8]){c.save();c.rotate(-.1+f*s);c.scale(s,s);c.globalAlpha=s<1?.7:.92;c.fillStyle=col;c.strokeStyle=L.trim;c.lineWidth=1;
-        c.beginPath();c.moveTo(0,0);c.quadraticCurveTo(-26,-40,-40,-12);c.quadraticCurveTo(-28,-12,-22,4);c.quadraticCurveTo(-12,0,0,8);c.closePath();c.fill();c.stroke();
-        c.strokeStyle=shadeL(col,-.25);for(let i=1;i<4;i++){c.beginPath();c.moveTo(-4,2);c.lineTo(-12-i*8,-14+i*5);c.stroke();}c.restore();}
+        if(W==='bat'){c.beginPath();c.moveTo(0,0);c.quadraticCurveTo(-18,-34,-42,-30);c.lineTo(-34,-16);c.lineTo(-44,-4);c.lineTo(-30,0);c.lineTo(-34,12);c.lineTo(-18,4);c.lineTo(-10,10);c.closePath();c.fill();c.stroke();
+          c.strokeStyle=shadeL(col,-.35);for(const [x,y] of [[-34,-16],[-30,0],[-18,4]]){c.beginPath();c.moveTo(-2,-2);c.lineTo(x,y);c.stroke();}}
+        else if(W==='bone'){c.strokeStyle=col;c.lineWidth=3;c.lineCap='round';c.beginPath();c.moveTo(0,0);c.quadraticCurveTo(-16,-30,-38,-28);c.stroke();
+          for(const [x,y,x2,y2] of [[-14,-20,-30,-6],[-24,-26,-40,-12],[-34,-27,-46,-18]]){c.beginPath();c.moveTo(x,y);c.lineTo(x2,y2);c.stroke();E(c,x2,y2,2.2,2.2,col);}
+          c.lineWidth=1;c.strokeStyle=shadeL(col,-.4);c.fillStyle=shadeL(col,.2)+'55';c.beginPath();c.moveTo(-6,-6);c.lineTo(-30,-6);c.lineTo(-40,-12);c.lineTo(-24,-26);c.closePath();c.fill();}
+        else if(W==='energy'){c.save();c.shadowColor=L.trim;c.shadowBlur=14;c.globalAlpha=(s<1?.5:.75);
+          for(let i=0;i<3;i++){const ph=(t*1.5+i*.33)%1;c.globalAlpha*=1;c.beginPath();c.moveTo(0,0);c.quadraticCurveTo(-20-i*4,-36-ph*8,-42-i*3,-10-i*8);c.quadraticCurveTo(-26,-8+i*4,0,8);c.closePath();c.fill();}
+          c.restore();c.strokeStyle=shadeL(col,.4);for(let i=1;i<4;i++){c.beginPath();c.moveTo(-4,2);c.lineTo(-12-i*8,-14+i*5);c.stroke();}}
+        else{c.beginPath();c.moveTo(0,0);c.quadraticCurveTo(-26,-40,-40,-12);c.quadraticCurveTo(-28,-12,-22,4);c.quadraticCurveTo(-12,0,0,8);c.closePath();c.fill();c.stroke();
+          c.strokeStyle=shadeL(col,-.25);for(let i=1;i<4;i++){c.beginPath();c.moveTo(-4,2);c.lineTo(-12-i*8,-14+i*5);c.stroke();}}
+        c.restore();}
       c.restore();
     }
   }
@@ -1799,7 +1832,7 @@ const Player=(()=>{
   const ALIAS={'book-ice':'book-water','book-wind':'book-metal','book-thunder':'book-earth'};
   const skills={normal:{cost:0,cooldown:450},basic:{cost:10,cooldown:3000},intermediate:{cost:18,cooldown:6000},advanced:{cost:28,cooldown:10000},mount:{cost:12,cooldown:6000}};
   // Bảng sinh từ dữ liệu (Sheet)
-  const CFG={},RAR={},ADD={},items={},SHOPS={},SETS={},MON={},QUESTS={},MERCS={},ENH=[],WEAPONS={},REGIONS=[],AVATARS={};
+  const CFG={},RAR={},ADD={},items={},SHOPS={},SETS={},MON={},QUESTS={},MERCS={},ENH=[],WEAPONS={},REGIONS=[],AVATARS={},TOPUPS=[];
   // Kỹ năng trùm (cột ky_nang ở tab quai, cách nhau dấu phẩy): tên hiện, màu, thời gian hiệu ứng (giây)
   const SKILLS={slow:{name:'Trì trệ',desc:'giảm tốc đánh 40%',color:'#c8b060',dur:6},freeze:{name:'Đóng băng',desc:'đứng yên',color:'#80d8ff',dur:1.6},stun:{name:'Sét giật',desc:'choáng',color:'#ffe060',dur:1.4},
     weak:{name:'Suy nhược',desc:'giảm sát thương 40%',color:'#c060ff',dur:6},armor:{name:'Phá giáp',desc:'giảm phòng ngự 50%',color:'#ff9040',dur:6},poison:{name:'Trúng độc',desc:'mất máu dần',color:'#80e060',dur:5},
@@ -1823,6 +1856,7 @@ const Player=(()=>{
       if(slot==='mount'){d.beast=r.thu_cuoi||'horse';d.cmd=num(r.menh_lenh,BEASTS[d.beast].cmd);if(d.beast!=='horse')d.icon=d.beast;}
       if(slot==='book'){d.icon='book';d.element=r.he;}
       if(!slot)d.icon=r.loai||'ore';
+      if(slot==='wings'&&/^canh-/.test(r.id))d.wing=true; // cánh dung hợp (không mua, không rơi)
       if(r.pham_chat&&RAR[r.pham_chat]&&r.pham_chat!=='n')d.q=r.pham_chat; // phẩm chất cố định (hàng hiệu buôn thành trì)
       if(r.hieu_ung){d.fx=r.hieu_ung;d.fxv=num(r.gia_tri);d.fxText=r.mo_ta||'';}
       items[r.id]=d;
@@ -1848,6 +1882,7 @@ const Player=(()=>{
     for(const r of data.quai||[])MON[r.id]={name:r.ten,hp:num(r.mau),dmg:num(r.sat_thuong),speed:num(r.toc_do),run:num(r.toc_chay),r:num(r.ban_kinh),h:num(r.cao),aggro:num(r.tam_danh),range:num(r.tam_gan),cd:num(r.hoi_chieu_ms)/1000,windup:num(r.vung_tay_ms)/1000,copper:num(r.dong),knock:num(r.day_lui_phan_tram)/100,boss:num(r.boss),respawn:num(r.hoi_sinh_giay,15),drops:{g:num(r.dep_phan_van)/1e4,p:num(r.hoan_hao_phan_van)/1e4,l:num(r.huyen_thoai_phan_van)/1e4,m:num(r.than_phan_van)/1e4},rubies:[num(r.hong_ngoc_it),num(r.hong_ngoc_nhieu)],dtype:r.loai_sat_thuong||'thuong',crit:num(r.ti_le_x2),exp:num(r.kinh_nghiem,Math.max(1,Math.round(num(r.mau)/8))),map:String(r.ban_do||'').trim()||undefined,skills:String(r.ky_nang||'').split(/[,\s]+/).filter(k=>SKILLS[k])};
     for(const r of data.nhiem_vu||[])QUESTS[r.id]={id:r.id,name:r.ten,desc:r.mo_ta,target:r.muc_tieu,count:num(r.so_luong,1),copper:num(r.thuong_dong),rubies:num(r.thuong_hong_ngoc),item:r.thuong_do||'',itemQ:r.pham_chat_do||'n',repeat:r.lap_lai!=='khong',lv:num(r.cap_toi_thieu),exp:num(r.thuong_kinh_nghiem,Math.round(num(r.thuong_dong)/10))};
     REGIONS.length=0;for(const r of data.ban_do||[])REGIONS.push({id:String(r.id),name:r.ten,lv:num(r.cap,1),icon:r.bieu_tuong||'pin',order:num(r.thu_tu,99)});REGIONS.sort((a,b)=>a.order-b.order);
+    TOPUPS.length=0;for(const r of data.goi_nap||[])TOPUPS.push({id:r.id,name:r.ten,vnd:num(r.tien),ruby:num(r.hong_ngoc),desc:r.mo_ta||'',order:num(r.thu_tu,99)});TOPUPS.sort((a,b)=>a.order-b.order);
     clear(AVATARS);for(const r of data.dien_mao||[])AVATARS[r.id]={id:r.id,name:r.ten,gender:r.gioi_tinh||'',price:num(r.gia),ruby:num(r.hong_ngoc),skin:r.mau_da||'#e1c295',hair:r.mau_toc||'#2a2622',style:r.kieu_toc||'',beard:r.rau||'',eye:r.mau_mat||'#2a2018',mark:r.dau||'',order:num(r.thu_tu,99)};
     for(const r of data.linh||[])MERCS[r.id]={id:r.id,name:r.ten,gender:r.gioi_tinh==='f'?'f':'m',price:num(r.gia),cmd:num(r.menh_lenh,5),stats:{strength:num(r.suc_manh),agility:num(r.nhanh_nhen),vitality:num(r.suc_khoe),intelligence:num(r.tri_tue),command:0},gear:String(r.trang_bi||'').split(',').map(x=>x.trim()).filter(Boolean),desc:r.mo_ta};
   }
@@ -1896,6 +1931,7 @@ const Player=(()=>{
     // số dòng theo phẩm chất: Thường 1 \u{b7} Đẹp 1\u{2013}2 \u{b7} Hoàn hảo 2\u{2013}3 \u{b7} Huyền thoại, Thần 3\u{2013}4 (ngoài hiệu ứng bộ). Mỗi chỉ số chỉ một dòng.
     // Vũ khí, thú cưỡi: giữ như cũ (số dòng = so_dong của phẩm chất, lấy trong mọi chỉ số).
     const tier=R.tier||0,wear=ARMOR_SLOTS.includes(d.slot);
+    if(d.wing)return it; // cánh dung hợp: dòng do fuse() đặt
     if(d.slot&&d.slot!=='book'&&(R.lines||wear)){
       const pool=wear?armorPool():Object.keys(ADD),keys=pool.filter(k=>ADD[k]&&ADD[k].ranges[Math.max(1,tier)]);it.add={};
       const [lo,hi]=wear?(ARMOR_LINES[d.q||q]||[1,1]):[R.lines,R.lines],cnt=lo+Math.floor(rng()*(hi-lo+1));
@@ -1904,7 +1940,7 @@ const Player=(()=>{
     }
     return it;
   }
-  const BASE_DROP=()=>Object.keys(items).filter(k=>{const d=items[k];return !d.q&&d.slot&&d.slot!=='book'&&d.slot!=='mount';});
+  const BASE_DROP=()=>Object.keys(items).filter(k=>{const d=items[k];return !d.q&&d.slot&&d.slot!=='book'&&d.slot!=='mount'&&!d.wing;});
   const dropCap=()=>{const q=String(CFG.pham_chat_roi_toi_da||'').trim();return RAR[q]?RAR[q].tier:99;};
   function rollDrop(monId,rng=Math.random,luck=1){
     const M=MON[monId];if(!M)return {items:[],rubies:0};
@@ -1937,6 +1973,24 @@ const Player=(()=>{
     s.rubies-=cost;const ok=rng()<enhRate(lv);it.lv=ok?lv+1:enhFail(lv,rng);
     return {ok,from:lv,to:it.lv,cost};
   }
+  // Dung hợp cánh (NPC Luyện khí sư): thú cưỡi +dung_hop_thu_cap trở lên + một món huyền thoại / thần + hồng ngọc \u{2192} tỉ lệ dung_hop_ti_le ra một đôi cánh ngẫu nhiên
+  // Số dòng 0\u{2013}5 theo bảng dung_hop_dong (càng nhiều dòng càng hiếm); chỉ số lấy trong canh_dong, giá trị theo bậc: 0\u{2013}1 dòng Đẹp, 2\u{2013}3 Hoàn hảo, 4 Huyền thoại, 5 Thần (mỗi dòng \u{d7}(1+bậc thú/20)).
+  // Thất bại: mất món huyền thoại / thần và hồng ngọc, thú cưỡi về +6. Thành công: mất cả hai món, nhận cánh.
+  const WING_IDS=()=>Object.keys(items).filter(k=>items[k].wing);
+  function fuse(s,mi,xi,rng=Math.random){
+    const m=s.bag[mi],x=s.bag[xi],dm=info(m),dx=info(x),need=num(CFG.dung_hop_thu_cap,9),cost=num(CFG.dung_hop_ngoc,60);
+    if(!dm||dm.slot!=='mount'||(m.lv||0)<need)throw Error('THU');if(!dx||mi===xi||!(dx.set||dx.myth))throw Error('VAT_LIEU');if(s.rubies<cost)throw Error('RUBY');
+    const pool=WING_IDS();if(!pool.length)throw Error('ITEM');
+    s.rubies-=cost;const ok=rng()*100<num(CFG.dung_hop_ti_le,40);
+    if(!ok){s.bag[xi]=null;m.lv=Math.min(m.lv||0,6);return {ok:false,cost,mount:m};}
+    const type=pool[Math.floor(rng()*pool.length)],w=String(CFG.dung_hop_dong||'0,30,28,22,12,6,2').split(',').map(Number).slice(1),tot=w.reduce((a,b)=>a+b,0);
+    let r=rng()*tot,n=0;for(let i=0;i<w.length;i++){r-=w[i];if(r<0){n=i;break;}}
+    const q=n>=5?'m':n>=4?'l':n>=2?'p':'g',tier=RAR[q]?RAR[q].tier:1,keys=String(CFG.canh_dong||'dmgMax,dmgMin,def,hp,mp,range,crit3').split(/[,;\s]+/).filter(k=>ADD[k]&&ADD[k].ranges[tier]);
+    const it={uid:uid(type,rng),type,q,add:{}};
+    for(let i=0;i<n&&keys.length;i++){const k=keys.splice(Math.floor(rng()*keys.length),1)[0],[a,b]=ADD[k].ranges[tier];it.add[k]=Math.round((a+Math.floor(rng()*(b-a+1)))*(1+(m.lv||0)/20));}
+    if(!n)delete it.add;
+    s.bag[mi]=null;s.bag[xi]=null;s.bag[Math.min(mi,xi)]=it;return {ok:true,cost,item:it,lines:n};
+  }
   // Tạo nhân vật mới (từ thông tin máy chủ)
   function create(ch){
     const bag=Array(BAG_SIZE).fill(null);
@@ -1953,7 +2007,7 @@ const Player=(()=>{
   const aimAcc=it=>{const k=kind(it);if(!isRanged(k))return 0;return Math.min(100,num(CFG[k==='bow'?'cung_chinh_xac':'no_chinh_xac'],k==='bow'?70:76)+num(CFG.chinh_xac_moi_cap,2)*((it&&it.lv)||0));};
   // mốc cường hóa đủ bộ: [cấp thấp nhất, chỉ số, giá trị, biểu tượng]
   const ENH_TIERS=[[10,'cdr',5,'whirl'],[11,'atkSpd',6,'speed'],[12,'moveSpd',6,'feather'],[13,'crit2',4,'spark'],[14,'dmgRed',4,'shield'],[15,'crit3',2,'flame']];
-  const CAPS={reflect:60,dodge:50,block:60,dmgRed:70,cdr:50,crit2:60,crit3:30,perfRed:80,critRed:80,legRed:80,mythRed:80,acc:100};
+  const CAPS={reflect:60,dodge:50,block:60,dmgRed:70,cdr:50,crit2:60,crit3:30,range:60,perfRed:80,critRed:80,legRed:80,mythRed:80,acc:100};
   function derive(s,opt={}){
     const A={},add=(k,v)=>{if(v)A[k]=(A[k]||0)+v;};
     const eqs=slots.map(k=>s.equipment[k]).filter(it=>info(it)&&!(opt.safe&&info(it).slot==='mount'));
@@ -2196,7 +2250,7 @@ const Player=(()=>{
   // Các lệnh làm thay đổi tiền/đồ, chạy trên máy chủ (và trên trình duyệt ở chế độ ngoại tuyến)
   // số lần hạ một loài quái trong một lượt hồi sinh: bãi quái lớn có nhiều con cùng loài (Sheet cau_hinh gioi_han_ha_quai)
   const KILL_LIMIT=id=>MON[id].boss?1:num(CFG.gioi_han_ha_quai,16);
-  const PREDICT=new Set(['kill','buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff','av']);
+  const PREDICT=new Set(['kill','buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff','av','fuse']);
   function applyOp(s,op,srv,now=Date.now(),rng=Math.random){
     const t=op&&op.t;if(PREDICT.has(t))rng=seqRng(s);
     if(t==='kill'){
@@ -2220,6 +2274,7 @@ const Player=(()=>{
       if(!s.avatars.includes(id)&&(V.price||V.ruby)){if(s.copper<V.price)throw Error('MONEY');if(s.rubies<V.ruby)throw Error('RUBY');s.copper-=V.price;s.rubies-=V.ruby;s.avatars.push(id);}
       s.avatar=id;return {id,bought:!!(V.price||V.ruby)};}
     if(t==='sell'){const i=Math.floor(op.i),it=s.bag[i];const v=sell(s,i);return {v,item:it};}
+    if(t==='fuse'){const mi=Math.floor(op.m),xi=Math.floor(op.x);if(!(mi>=0&&mi<BAG_SIZE&&xi>=0&&xi<BAG_SIZE))throw Error('SLOT');return fuse(s,mi,xi,rng);}
     if(t==='enh'){const bag=op.where==='bag',key=bag?Math.floor(op.key):String(op.key);if(!bag&&!slots.includes(key))throw Error('SLOT');const r=enhance(s,{where:bag?'bag':'equipment',key},rng,op.shop);return {...r,item:bag?s.bag[key]:s.equipment[key]};}
     if(t==='enhSk'){const key=Math.floor(op.key);if(!(key>=0&&key<SKILL_SLOTS))throw Error('SLOT');const r=enhance(s,{where:'skill',key},rng,op.shop||'wizard');return {...r,item:s.skillSlots[key]};}
     if(t==='qa'){questAccept(s,String(op.id));return {};}
@@ -2231,7 +2286,7 @@ const Player=(()=>{
     throw Error('LENH');
   }
   load(typeof GAME_DATA!=='undefined'?GAME_DATA:{});
-  return {VERSION,BAG_SIZE,SKILL_SLOTS,MAX_LV,MAX_MERC,MAX_ACTIVE_QUEST,ELEMENTS,BEASTS,GROUPS,FX_NAMES,STAT_KEYS,CFG,RAR,ADD,SHOPS,SETS,MON,QUESTS,MERCS,AVATARS,items,slots,skills,shopEnh,shopRow,
+  return {VERSION,BAG_SIZE,SKILL_SLOTS,MAX_LV,MAX_MERC,MAX_ACTIVE_QUEST,ELEMENTS,BEASTS,GROUPS,FX_NAMES,STAT_KEYS,CFG,RAR,ADD,SHOPS,SETS,MON,QUESTS,MERCS,AVATARS,TOPUPS,items,slots,skills,shopEnh,shopRow,fuse,
     layout,relayout,load,info,kind,weapon,skillCost,cmdInfo,WEAPONS,PREDICT,seqRng,setFollow,fitFollow,mercCmd,petMax,SHOP_ENH,expNeed,maxLevel,gainExp,spendPoints,mountGain,bookStat,mountCmd,qOf,rar,nameOf,stat,canEnhance,tradeable,gainOf,enhRate,enhCost,enhance,roll,rollDrop,create,derive,targets,equip,unequip,stance,isTwo,pairOk,setSkill,unsetSkill,toggleBook,element,money,shopPrice,buy,sell,sellPrice,addItem,cast,
     aimAcc,isRanged,REGIONS,MON_REGION,SKILLS,mapLevel,regionLv,regionOf,questLevel,questAccept,questProgress,questTurnIn,hireNpc,addMerc,mercEquip,mercUnequip,dismissMerc,makeMerc,cleanItem,serialize,restore,restorePlayer,merge,applyOp,allItems};
 })();
@@ -2695,24 +2750,14 @@ window.startGame=(session)=>{
   }
   // Quay trái (7 giờ, theo phác thảo của tác giả): tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn;
   // tay trái co lại, khiên đưa ra bên hông phía sau (mặt ngoài nhìn thẳng), cả hai vẽ trước thân. Khi ra đòn thì về dáng đòn như thường.
-  // 8 phương án dáng quay trái (kiếm + khiên) \u{2014} sw: tay phải (kiếm), sh: tay trái (khiên); swBack/shBack: vẽ trước thân (khuất sau người); face: khiên nhìn thẳng mặt
-  const LEFT_POSES=[
-    {sw:{x:13,y:-9,ang:-.78},sh:{x:-15,y:-14},face:true},                 // 1 kiếm chếch lên trước, khiên bên hông sau (phác thảo)
-    {sw:{x:10,y:-20,ang:-1.3},sh:{x:-15,y:-14},face:true},                // 2 kiếm giơ cao, khiên bên hông sau
-    {sw:{x:15,y:-6,ang:.35},sh:{x:-4,y:-16},face:true},                   // 3 kiếm hạ thấp chĩa xuống trước, khiên che trước ngực
-    {sw:{x:13,y:-9,ang:-.78},sh:{x:-10,y:-12},face:false,shBack:true},    // 4 kiếm chếch lên trước, khiên nghiêng khuất sau người
-    {sw:{x:13,y:-9,ang:-.78},sh:{x:-17,y:-17},face:true,shBack:true},     // 5 kiếm chếch lên trước, khiên mặt ngoài ló sau lưng
-    {sw:{x:8,y:-19,ang:-2.3},sh:{x:-15,y:-14},face:true,swBack:true},     // 6 kiếm vác trên vai (lưỡi ra sau), khiên bên hông sau
-    {sw:{x:14,y:-12,ang:-.15},sh:{x:-8,y:-12},face:true},                 // 7 kiếm ngang chĩa thẳng, khiên lớn che hông
-    {sw:{x:6,y:-12,ang:-.95},sh:{x:-7,y:-14},face:true,swBack:true}       // 8 kiếm khuất sau người lộ lưỡi, khiên trước ngực (bản 10.4)
-  ];
-  let LEFT_POSE_ID=0; // chọn theo số (1\u{2013}8) \u{2192} chỉ số 0\u{2013}7; window.LH_POSE ghi đè khi thử
+  // Dáng quay trái (tác giả chọn, v10.6): khiên trước ngực nhìn thẳng mặt ngoài vẽ trên thân; tay phải buông thấp, kiếm chĩa xuống trước, vẽ sau thân (lộ phần lưỡi bên hông trái)
+  const LEFT_POSE={sw:{x:12,y:-8,ang:.35},sh:{x:-7,y:-14},face:true,swBack:true};
   const HIDE_ANG={sword:-.78,staff:-1.0,punch:-1.6};
   function handSide(P,st,facing,a){
     if(facing>0){const dW=st.two?-5:-15,dO=st.two?-5:15;P.front.x+=dW;P.back.x+=dO;if(P.trail)P.trail.cx+=dW;P.sh={front:{x:-8,y:-23},back:{x:8,y:-23}};}
     else{P.sh={front:{x:8,y:-23},back:{x:-8,y:-23}};
       const ah=atkHand(a,st);
-      if(!st.two&&ah!=='front'&&ah!=='both'&&!P.heal&&!(P.block&&st.right==='shield')){const V=LEFT_POSES[(window.LH_POSE!=null?window.LH_POSE-1:LEFT_POSE_ID)]||LEFT_POSES[0];P.hide=true;P.lp=V;
+      if(!st.two&&ah!=='front'&&ah!=='both'&&!P.heal&&!(P.block&&st.right==='shield')){const V=LEFT_POSE;P.hide=true;P.lp=V;
         P.front={x:V.sw.x,y:V.sw.y,ang:st.right==='sword'?V.sw.ang:(HIDE_ANG[st.right]!==undefined?HIDE_ANG[st.right]:-1.1)};
         if(ah!=='back'&&!P.block)P.back={x:V.sh.x,y:V.sh.y,ang:P.back.ang};}}
     return P;
@@ -2837,9 +2882,11 @@ window.startGame=(session)=>{
   function drawHero(c,h,st,el,t,opts={}){
     // Trong vùng an toàn (làng, thành): thu vũ khí \u{2014} kiếm dắt bên hông, khiên / cung / nỏ / giáo / gậy đeo sau lưng; tay vung theo bước đi. Đang ra đòn hoặc xem trước (túi đồ, chân dung) thì vẫn cầm.
     const who=opts.who||player,eq=who.equipment,info=Player.info,a=h.attack,sheathed=safe&&!a&&!opts.armed&&t>=h.blockUntil,P=handSide(heroPose(h,st,a,t),st,h.facing,a),flash=t-h.hurt<.12,md=!safe&&eq.mount&&info(eq.mount),mounted=!!md,seat=mounted?Player.BEASTS[md.beast].seat:0,big=mounted&&md.beast==='elephant',fem=who.gender==='f';
-    const AV=Player.AVATARS[who.avatar]||null,bob=h.moving?-Math.abs(Math.sin(h.walk))*(mounted?1.4:2.2):Math.sin(t*2)*.6,SKIN=AV?shade(AV.skin,-.07):'#d9ad80';
+    // đeo cánh (không phải áo choàng / cờ) và không cưỡi thú: lơ lửng cách đất, di chuyển thì lướt, chân không bước
+    const LWk=eq.wings&&LH_Look.of(eq.wings.type),flying=!!(LWk&&LWk.kind==='wings'&&!mounted&&!h.dead),hover=flying?-9+Math.sin(t*2.6+h.x*.01)*2.2:0;
+    const AV=Player.AVATARS[who.avatar]||null,bob=flying?hover:h.moving?-Math.abs(Math.sin(h.walk))*(mounted?1.4:2.2):Math.sin(t*2)*.6,SKIN=AV?shade(AV.skin,-.07):'#d9ad80';
     c.save();if(h.dead)c.globalAlpha=.45;
-    ell(c,h.x,h.y+5,big?42:mounted?28:15,big?12:mounted?8:7,'#243d3544');
+    ell(c,h.x,h.y+5,big?42:mounted?28:flying?11:15,big?12:mounted?8:flying?4:7,flying?'#243d3530':'#243d3544');
     if(el)drawAura(c,h.x,h.y,el,t,big?1.6:mounted?1.25:1);
     if(t<h.barrierUntil){c.save();c.globalAlpha=.35+Math.sin(t*12)*.1;c.strokeStyle='#9fe8a8';c.lineWidth=3;c.beginPath();c.ellipse(h.x,h.y-22-seat,26,34,0,0,PI2);c.stroke();c.restore();}
     c.save();c.translate(h.x,h.y);c.scale(h.facing,1);
@@ -2852,7 +2899,7 @@ window.startGame=(session)=>{
     const sleeve=LA?LA.main:SKIN,skin=LG?LG.main:SKIN;
     const held=(type,hp,role,tn,lv,it)=>{c.save();if(lv>=7){c.shadowColor=lv>=10?'#ff6a3a':'#ffd77a';c.shadowBlur=6+lv;}const L=it&&LH_Look.of(it);if(L&&L.fx)LH_Look.mythGlow(c,L);drawHeld(c,type,hp,P,el,t,role,tn,it);c.restore();};
     const backTop=a&&a.hand==='left'&&a.type==='sword',hide=!!P.hide&&!sheathed;
-    if(sheathed){const sw=h.moving?Math.sin(h.walk):0;P.hide=false;P.front={x:(h.facing>0?-9:10)+sw*4,y:-7,ang:0};P.back={x:(h.facing>0?9:-10)-sw*4,y:-7,ang:0};P.trail=null;}
+    if(sheathed){const sw=h.moving&&!flying?Math.sin(h.walk):0;P.hide=false;P.front={x:(h.facing>0?-9:10)+sw*4,y:-7,ang:0};P.back={x:(h.facing>0?9:-10)-sw*4,y:-7,ang:0};P.trail=null;}
     if(fem)ell(c,-7,-31,6,11,'#2a2622'); // tóc dài sau lưng
     // đồ đeo sau lưng (vẽ trước thân): khiên, cung, nỏ, giáo, gậy, kiếm thứ hai; kiếm chính dắt bên hông (vẽ trước thân, hé chuôi và mũi)
     if(sheathed){
@@ -2876,7 +2923,7 @@ window.startGame=(session)=>{
     const skirt=LP&&LP.kind==='skirt',pants=LP&&!skirt?LP.main:SKIN,boot=LS?LS.main:null;
     const foot=(x,y)=>{if(boot){roundRect(c,x-4,y-2,8,5,2,boot);line(c,[x-3,y-1.5,x+3,y-1.5],shade(boot,.25),1);}else ell(c,x,y+1,3.8,2.1,shade(SKIN,-.05));};
     if(mounted){oline(c,[0,-6,9,-2,7,9],pants,5.5);foot(6,10);}
-    else{const w=h.moving?Math.sin(h.walk):0,l1=Math.max(0,w)*3,l2=Math.max(0,-w)*3,st2=P.stride*3;oline(c,[-4,-6,-4.5-st2*.3,5-l1],pants,5.5);oline(c,[4,-6,4.5+st2,5-l2],pants,5.5);foot(-4.5-st2*.3,6-l1);foot(4.5+st2,6-l2);}
+    else{const w=h.moving&&!flying?Math.sin(h.walk):0,l1=Math.max(0,w)*3,l2=Math.max(0,-w)*3,st2=flying?0:P.stride*3;oline(c,[-4,-6,-4.5-st2*.3,5-l1],pants,5.5);oline(c,[4,-6,4.5+st2,5-l2],pants,5.5);foot(-4.5-st2*.3,6-l1);foot(4.5+st2,6-l2);}
     if(skirt){poly(c,mounted?[-11,-9,11,-9,14,3,-8,5]:[-12,-9,12,-9,15,4,-15,4],LP.main);line(c,[-12,-8,12,-8],LP.trim,2);}
     else if(!eq.pants){
       if(fem){poly(c,mounted?[-11,-9,11,-9,14,3,-8,5]:[-12,-9,12,-9,15,4,-15,4],'#5a3a2e');line(c,[-12,-8,12,-8],'#8a5a3a',2);} // váy
@@ -3046,7 +3093,7 @@ window.startGame=(session)=>{
     projectiles.push({kind:d.kind,x:ox,y:oy,vx:Math.cos(ang)*d.speed,vy:Math.sin(ang)*d.speed,sp:d.speed,age:0,life:(d.range||400)/d.speed,atk:{...atk,knock:d.kind==='bolt'?50:25},el:atk.el,pierce:d.pierce||0,splash:d.splash||0,hit:new Set(),gy:20+(o.seat||0),home:home||null,missed:missed||null});
   }
   function resolveAttack(a,idx=0){
-    const d=ATK[a.type],sk=SK[a.skill],el=HD.books.fire?'fire':a.elem;
+    const d0=ATK[a.type],RM=1+(HD.tot.range||0)/100,d=RM>1?{...d0,range:d0.range*RM}:d0,sk=SK[a.skill],el=HD.books.fire?'fire':a.elem; // Tầm đánh (dòng cánh): nới tầm mọi đòn
     const atk={D:HD,mul:d.dmg*sk.mul*(a.empowered?1.6:1),el,owner:'hero',knock:d.knock,skill:a.skill};
     const ang=Math.atan2(a.aim.y,a.aim.x),ox=hero.x,oy=hero.y-18,col=el?EL[el].color:'#f4ead0';
     if(d.kind==='melee'){
@@ -3606,7 +3653,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     shakeAmp=Math.max(0,shakeAmp-dt*25);
   }
   /* ---------- Trò chuyện: NPC còn lời dặn thì nói chuyện, sau đó mở thẳng bảng chức năng ---------- */
-  const PANEL_BTN={shop:'Mua bán',quests:'Nhận việc',mercs:'Thuê lính',market:'Chợ',avatar:'Đổi diện mạo'};
+  const PANEL_BTN={shop:'Mua bán',quests:'Nhận việc',mercs:'Thuê lính',market:'Chợ',avatar:'Đổi diện mạo',fuse:'Dung hợp',nap:'Nạp thẻ'};
   function nearby(){let best=null,bd=92;for(const n of World.npcs){const d=Math.hypot(n.x-hero.x,n.y-hero.y);if(d<bd){bd=d;best=n;}}return best;}
   function meet(n){
     route=[];targetNPC=null;if(n.id==='merchant')checkpoint();
@@ -4204,8 +4251,41 @@ window.startUI=(session)=>{
     document.querySelectorAll('[data-av]').forEach(b=>b.onclick=()=>{avSel=b.dataset.av;showAvatars();});
     const go=$('#avGo');if(go)go.onclick=()=>run(go,game.op({t:'av',id:cur}).then(()=>{game.message(svg('check')+'Đã đổi diện mạo');avSel=null;refresh();showAvatars();}));
   }
+  /* ---------- Luyện khí sư (thành trì): dung hợp thú cưỡi +9 với một món huyền thoại / thần + hồng ngọc \u{2192} cánh (tỉ lệ dung_hop_ti_le) ---------- */
+  let fuseSel={m:null,x:null};
+  function showFuse(){
+    const need=Number(Player.CFG.dung_hop_thu_cap)||9,cost=Number(Player.CFG.dung_hop_ngoc)||60,rate=Number(Player.CFG.dung_hop_ti_le)||40;
+    const mounts=p.bag.map((it,i)=>({it,i})).filter(r=>r.it&&info(r.it).slot==='mount'),mats=p.bag.map((it,i)=>({it,i})).filter(r=>r.it&&(info(r.it).set||info(r.it).myth));
+    if(fuseSel.m!=null&&!mounts.some(r=>r.i===fuseSel.m))fuseSel.m=null;if(fuseSel.x!=null&&!mats.some(r=>r.i===fuseSel.x))fuseSel.x=null;
+    const mini=(r,key,ok)=>`<button class="mini${fuseSel[key]===r.i?' sel':''}${ok?'':' off'}" data-fz="${key}:${r.i}" title="${esc(Player.nameOf(r.it))}" style="${Player.qOf(r.it)!=='n'?`border-color:${qColor(r.it)}`:''}"><span style="color:${tintOf(r.it)||'#e4cc8d'}">${icon(r.it.type)}</span>${lvb(r.it)}</button>`;
+    const M=fuseSel.m!=null?p.bag[fuseSel.m]:null,X=fuseSel.x!=null?p.bag[fuseSel.x]:null,okM=M&&(M.lv||0)>=need,can=okM&&X&&p.rubies>=cost;
+    const wings=Object.values(Player.items).filter(d=>d.wing).map(d=>d.name).join(' \u{b7} ');
+    openModal(ttl('wings','Luyện khí sư')+`<div class="purse">${coins(p.copper)}${ruby(p.rubies)}</div>`,
+      `<small class="sel-desc">Dung hợp <b>thú cưỡi +${need}</b> với một món <b>huyền thoại / thần</b> và ${cost} hồng ngọc \u{2192} một đôi cánh ngẫu nhiên (${esc(wings)}). Tỉ lệ ${rate}%. Thất bại: mất món huyền thoại / thần và hồng ngọc, thú cưỡi về +6. Cánh có 0\u{2013}5 dòng chỉ số ngẫu nhiên, càng nhiều dòng càng hiếm.</small>
+      <h4 class="mk-h">Thú cưỡi (+${need} trở lên)</h4>${mounts.length?`<div class="enh-list">${mounts.map(r=>mini(r,'m',(r.it.lv||0)>=need)).join('')}</div>`:`<div class="shop-empty">${svg('mount')}<span>Túi không có thú cưỡi</span></div>`}
+      <h4 class="mk-h">Món huyền thoại / thần</h4>${mats.length?`<div class="enh-list">${mats.map(r=>mini(r,'x',true)).join('')}</div>`:`<div class="shop-empty">${svg('bag')}<span>Túi không có đồ huyền thoại / thần</span></div>`}
+      <div class="enh-rows"><div><small>Thú</small><b>${M?esc(Player.nameOf(M)):'\u{2014}'}</b></div><div><small>Vật liệu</small><b>${X?esc(Player.nameOf(X)):'\u{2014}'}</b></div><div><small>Phí</small><b>${ruby(cost)}</b></div><div><small>Tỉ lệ</small><b>${rate}%</b></div></div>
+      <button id="fuseGo" class="primary big-btn"${can?'':' disabled'}>${svg('wings')}Dung hợp</button>`,true);
+    document.querySelectorAll('[data-fz]').forEach(b=>b.onclick=()=>{const [k,i]=b.dataset.fz.split(':');fuseSel[k]=fuseSel[k]===Number(i)?null:Number(i);showFuse();});
+    const go=$('#fuseGo');if(go)go.onclick=()=>{const t0=Date.now();go.innerHTML=svg('wings')+'Đang luyện\u{2026}';game.hammer('#c8a0ff');run(go,game.op({t:'fuse',m:fuseSel.m,x:fuseSel.x}).then(r=>new Promise(ok=>setTimeout(()=>ok(r),Math.max(0,900-(Date.now()-t0))))).then(r=>{game.enhanceFx(r.ok);game.message(r.ok?svg('check')+`Dung hợp thành công! <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b> (${r.lines} dòng)`:svg('close')+'Dung hợp thất bại\u{2026} thú cưỡi về +'+(r.mount.lv||0));fuseSel={m:null,x:null};game.refreshHD();showFuse();}),()=>showFuse());};
+  }
+  /* ---------- Nạp thẻ (thành trì): chọn gói \u{2192} mã QR chuyển khoản VietQR về tài khoản cấu hình; hồng ngọc cộng tay sau khi nhận tiền ---------- */
+  let napSel=null;
+  function showTopup(){
+    const C=Player.CFG,list=Player.TOPUPS,G=list.find(g=>g.id===napSel)||null,user=window.LH_USER||'';
+    const fmt=v=>Number(v).toLocaleString('vi-VN');
+    const tiles=list.map(g=>`<button class="tile${napSel===g.id?' sel':''}" data-nap="${g.id}"><span class="ti" style="color:#ff6fb5">${svg('orb')}</span><b class="nm">${esc(g.name)}</b><span class="chips"><span class="chip">${ruby(g.ruby)}</span></span>${g.desc?`<small>${esc(g.desc)}</small>`:''}<span class="price">${fmt(g.vnd)} đ</span></button>`).join('');
+    let qr='';
+    if(G){const info=String(C.nap_noi_dung||'Ikyna {goi} {tai_khoan}').replace('{goi}',G.name.replace(/^Gói\s*/i,'Goi ')).replace('{tai_khoan}',user).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').trim();
+      const url=`https://img.vietqr.io/image/${encodeURIComponent(C.nap_ngan_hang||'MB')}-${encodeURIComponent(C.nap_so_tai_khoan||'')}-compact2.png?amount=${G.vnd}&addInfo=${encodeURIComponent(info)}&accountName=${encodeURIComponent(C.nap_ten_tai_khoan||'')}`;
+      qr=`<div class="nap-qr"><img src="${url}" alt="Mã QR chuyển khoản" referrerpolicy="no-referrer"><div class="nap-info"><div><small>Ngân hàng</small><b>${esc(C.nap_ngan_hang||'MB')}</b></div><div><small>Số tài khoản</small><b>${esc(C.nap_so_tai_khoan||'')}</b></div><div><small>Chủ tài khoản</small><b>${esc(C.nap_ten_tai_khoan||'')}</b></div><div><small>Số tiền</small><b>${fmt(G.vnd)} đ</b></div><div><small>Nội dung</small><b>${esc(info)}</b></div><small class="sel-desc">Quét mã bằng ứng dụng ngân hàng, giữ nguyên nội dung chuyển khoản. Hồng ngọc được cộng vào tài khoản sau khi nhận tiền.</small></div></div>`;}
+    openModal(ttl('orb','Nạp thẻ')+`<div class="purse">${ruby(p.rubies)}</div>`,`<div class="shop-grid nap-grid">${tiles}</div>${qr}`,true);
+    document.querySelectorAll('[data-nap]').forEach(b=>b.onclick=()=>{napSel=b.dataset.nap;showTopup();});
+  }
   function openPanel(n){
     npcPanel=true;
+    if(n.panel==='fuse'){fuseSel={m:null,x:null};return showFuse();}
+    if(n.panel==='nap'){napSel=null;return showTopup();}
     if(n.panel==='avatar'){avSel=null;return showAvatars();}
     if(n.panel==='shop')return showShop(n.shop);
     if(n.panel==='quests')return showQuestBoard();
@@ -4328,7 +4408,7 @@ window.startUI=(session)=>{
   async function chars(selId){
     // phần chơi còn giữ trên máy (lần trước chưa kịp lưu): gửi trước để lều hiện đúng cấp, tiền
     let r;try{r=await Net.call('chars');let n=0;for(const c of r.list||r.chars||[])if(c&&c.id&&LH_Local.get(c.id)){await LH_Local.push(c.id).catch(()=>{});n++;}if(n)r=await Net.call('chars');}catch(e){Net.setToken('');note(netMsg(e));return auth('login');}
-    T.r=r;T.mode='view';
+    T.r=r;T.mode='view';window.LH_USER=r.account&&r.account.username||''; // tên đăng nhập (ghi trong nội dung chuyển khoản khi nạp thẻ)
     if(selId){const i=r.chars.findIndex(c=>c.id===selId);if(i>=0)T.sel=i;}
     if(T.sel>=Math.max(r.max,1))T.sel=0;
     card.classList.add('wide');

@@ -20,7 +20,7 @@
 */
 const LH_SHEETS=@@IDS@@;
 // Tab dữ liệu tĩnh → file Sheet chứa nó
-const LH_STATIC={cau_hinh:'cau_hinh',gia_cuong:'cau_hinh',pham_chat:'pham_chat',thuoc_tinh:'pham_chat',vat_pham:'vat_pham',cua_hang:'cua_hang',bo_huyen_thoai:'bo_huyen_thoai',do_than:'do_than',quai:'quai',nhiem_vu:'nhiem_vu',linh:'linh',vu_khi:'vat_pham',ban_do:'cau_hinh',dien_mao:'cau_hinh',hinh_anh:'hinh_anh'};
+const LH_STATIC={cau_hinh:'cau_hinh',gia_cuong:'cau_hinh',pham_chat:'pham_chat',thuoc_tinh:'pham_chat',vat_pham:'vat_pham',cua_hang:'cua_hang',bo_huyen_thoai:'bo_huyen_thoai',do_than:'do_than',quai:'quai',nhiem_vu:'nhiem_vu',linh:'linh',vu_khi:'vat_pham',ban_do:'cau_hinh',dien_mao:'cau_hinh',goi_nap:'cau_hinh',hinh_anh:'hinh_anh'};
 // Cột của các bảng người chơi (file "LH · Người chơi")
 const LH_COLS={
   tai_khoan:['id','username','email','muoi','mat_khau','tao_luc','token','token_het_han','ma_khoi_phuc','ma_het_han','token_cu'],
@@ -48,9 +48,9 @@ function lhStatic_(){
   return out;
 }
 // Tab được bổ sung dòng mới (theo cột id) khi game thêm quái, nhiệm vụ, hàng hóa thành trì, diện mạo
-const LH_BO_SUNG=['quai','nhiem_vu','cau_hinh','ban_do','vat_pham','cua_hang','dien_mao'];
+const LH_BO_SUNG=['quai','nhiem_vu','cau_hinh','ban_do','vat_pham','cua_hang','dien_mao','goi_nap','thuoc_tinh'];
 // khóa một dòng: cau_hinh theo khoa; cua_hang theo cửa hàng + mã hàng (một món có thể bán ở nhiều cửa hàng); còn lại theo id
-const lhKhoa_=(tab,r)=>tab==='cau_hinh'?String(r.khoa):tab==='cua_hang'?String(r.cua_hang)+'|'+String(r.id):String(r.id);
+const lhKhoa_=(tab,r)=>tab==='cau_hinh'?String(r.khoa):tab==='thuoc_tinh'?String(r.ma):tab==='cua_hang'?String(r.cua_hang)+'|'+String(r.id):String(r.id);
 // Chép các dòng mặc định còn thiếu (quái, nhiệm vụ của vùng mới) xuống cuối tab; không sửa dòng đã có
 function lhDuLieuBoSung_(){
   let n=0;
@@ -59,7 +59,7 @@ function lhDuLieuBoSung_(){
     // tab mới của bản cập nhật (ban_do) chưa có: tạo và đổ dữ liệu mặc định
     if(!sh){const rows=LH_DEFAULT[tab]||[];if(!rows.length)continue;const h0=Object.keys(rows[0]);sh=ss.insertSheet(tab);sh.getRange(1,1,rows.length+1,h0.length).setValues([h0,...rows.map(r=>h0.map(k=>r[k]===undefined||r[k]===null?'':r[k]))]);sh.setFrozenRows(1);sh.getRange(1,1,1,h0.length).setFontWeight('bold').setBackground('#2b4d38').setFontColor('#ffffff');n+=rows.length;Logger.log('Tạo tab '+tab);continue;}
     if(sh.getLastRow()<2)continue;
-    const v=sh.getDataRange().getValues(),h=v[0].map(String);if(h.indexOf('id')<0&&h.indexOf('khoa')<0)continue;const has=new Set(v.slice(1).map(r=>lhKhoa_(tab,Object.fromEntries(h.map((k,i)=>[k,r[i]])))));
+    const v=sh.getDataRange().getValues(),h=v[0].map(String);if(h.indexOf('id')<0&&h.indexOf('khoa')<0&&h.indexOf('ma')<0)continue;const has=new Set(v.slice(1).map(r=>lhKhoa_(tab,Object.fromEntries(h.map((k,i)=>[k,r[i]])))));
     // cột mới của bản cập nhật (ban_do, ky_nang…) chưa có trên Sheet: thêm vào cuối tiêu đề
     for(const k of Object.keys((LH_DEFAULT[tab]||[])[0]||{}))if(h.indexOf(k)<0){h.push(k);sh.getRange(1,h.length).setValue(k).setFontWeight('bold');}
     const add=(LH_DEFAULT[tab]||[]).filter(r=>!has.has(lhKhoa_(tab,r))).map(r=>h.map(k=>r[k]===undefined||r[k]===null?'':r[k]));
@@ -245,5 +245,19 @@ function taoNhanVatThu(username,cap){
     p.copper=50000000;p.rubies=5000;const D=Player.derive(p);p.hp=D.tot.hp;p.mana=D.tot.mp;
     c.luu=JSON.stringify({v:Player.VERSION,player:p,pos:null,seen:[],srv:{}});LH_DB.insert('nhan_vat',c);Logger.log('Đã tạo '+d.ten+' (cấp '+cap+')');
   }
+}
+// Nạp hồng ngọc tay sau khi nhận tiền chuyển khoản (NPC Nạp thẻ chỉ hiện mã QR, không tự cộng):
+// napHongNgoc('tên nhân vật', 120) hoặc napHongNgoc('tên đăng nhập', 120) (cộng vào nhân vật đầu tiên đang hoạt động của tài khoản). Ghi nhật ký vào tab nap_the.
+function napHongNgoc(ten,soLuong){
+  ten=String(ten||'').trim();soLuong=Math.floor(Number(soLuong)||0);if(!ten||soLuong<=0){Logger.log('Cú pháp: napHongNgoc(\'tên nhân vật hoặc tên đăng nhập\', số hồng ngọc)');return;}
+  Player.load(lhStatic_());
+  let c=LH_DB.where('nhan_vat','ten_khoa',ten.toLowerCase()).find(x=>x.trang_thai==='active'||x.trang_thai==='merc');
+  if(!c){const a=LH_DB.find('tai_khoan','username',ten.toLowerCase());if(a)c=LH_DB.where('nhan_vat','tai_khoan',a.id).find(x=>x.trang_thai==='active'||x.trang_thai==='merc');}
+  if(!c){Logger.log('Không thấy nhân vật / tài khoản '+ten);return;}
+  const l=LockService.getScriptLock();l.waitLock(15000);
+  try{let save={};try{save=JSON.parse(c.luu||'{}');}catch(e){}const p=save.player||Player.create({name:c.ten,gender:c.gioi_tinh});p.rubies=Math.floor(Number(p.rubies)||0)+soLuong;save.player=p;save.v=Player.VERSION;c.luu=JSON.stringify(save);c.cap_nhat=Date.now();LH_DB.update('nhan_vat',c);}
+  finally{l.releaseLock();}
+  try{const ss=SpreadsheetApp.openById(LH_SHEETS.nguoi_choi);let sh=ss.getSheetByName('nap_the');if(!sh){sh=ss.insertSheet('nap_the');sh.appendRow(['luc','nhan_vat','tai_khoan','hong_ngoc']);sh.setFrozenRows(1);}sh.appendRow([new Date(),c.ten,c.tai_khoan,soLuong]);}catch(e){}
+  Logger.log('Đã cộng '+soLuong+' hồng ngọc cho '+c.ten);
 }
 function kiemTra(){try{lhDuLieuBoSung_();}catch(e){Logger.log('Chưa bổ sung được quái / nhiệm vụ mới: '+e);}try{const n=lhHinhAnhBoSung_();if(n)Logger.log('Thêm '+n+' dòng ảnh mới vào file Hình ảnh');}catch(e){Logger.log('Chưa bổ sung được file Hình ảnh: '+e);}xoaBoNhoDem();const d=lhStatic_();Logger.log(Object.keys(d).map(k=>k+': '+d[k].length+' dòng').join('\n'));LH_DB.rows('tai_khoan');LH_DB.rows('nhan_vat');LH_DB.rows('cho');Logger.log('Bảng người chơi sẵn sàng. Quyền gửi mail: '+MailApp.getRemainingDailyQuota()+' thư/ngày');}

@@ -347,8 +347,41 @@ window.startUI=(session)=>{
     document.querySelectorAll('[data-av]').forEach(b=>b.onclick=()=>{avSel=b.dataset.av;showAvatars();});
     const go=$('#avGo');if(go)go.onclick=()=>run(go,game.op({t:'av',id:cur}).then(()=>{game.message(svg('check')+'Đã đổi diện mạo');avSel=null;refresh();showAvatars();}));
   }
+  /* ---------- Luyện khí sư (thành trì): dung hợp thú cưỡi +9 với một món huyền thoại / thần + hồng ngọc → cánh (tỉ lệ dung_hop_ti_le) ---------- */
+  let fuseSel={m:null,x:null};
+  function showFuse(){
+    const need=Number(Player.CFG.dung_hop_thu_cap)||9,cost=Number(Player.CFG.dung_hop_ngoc)||60,rate=Number(Player.CFG.dung_hop_ti_le)||40;
+    const mounts=p.bag.map((it,i)=>({it,i})).filter(r=>r.it&&info(r.it).slot==='mount'),mats=p.bag.map((it,i)=>({it,i})).filter(r=>r.it&&(info(r.it).set||info(r.it).myth));
+    if(fuseSel.m!=null&&!mounts.some(r=>r.i===fuseSel.m))fuseSel.m=null;if(fuseSel.x!=null&&!mats.some(r=>r.i===fuseSel.x))fuseSel.x=null;
+    const mini=(r,key,ok)=>`<button class="mini${fuseSel[key]===r.i?' sel':''}${ok?'':' off'}" data-fz="${key}:${r.i}" title="${esc(Player.nameOf(r.it))}" style="${Player.qOf(r.it)!=='n'?`border-color:${qColor(r.it)}`:''}"><span style="color:${tintOf(r.it)||'#e4cc8d'}">${icon(r.it.type)}</span>${lvb(r.it)}</button>`;
+    const M=fuseSel.m!=null?p.bag[fuseSel.m]:null,X=fuseSel.x!=null?p.bag[fuseSel.x]:null,okM=M&&(M.lv||0)>=need,can=okM&&X&&p.rubies>=cost;
+    const wings=Object.values(Player.items).filter(d=>d.wing).map(d=>d.name).join(' · ');
+    openModal(ttl('wings','Luyện khí sư')+`<div class="purse">${coins(p.copper)}${ruby(p.rubies)}</div>`,
+      `<small class="sel-desc">Dung hợp <b>thú cưỡi +${need}</b> với một món <b>huyền thoại / thần</b> và ${cost} hồng ngọc → một đôi cánh ngẫu nhiên (${esc(wings)}). Tỉ lệ ${rate}%. Thất bại: mất món huyền thoại / thần và hồng ngọc, thú cưỡi về +6. Cánh có 0–5 dòng chỉ số ngẫu nhiên, càng nhiều dòng càng hiếm.</small>
+      <h4 class="mk-h">Thú cưỡi (+${need} trở lên)</h4>${mounts.length?`<div class="enh-list">${mounts.map(r=>mini(r,'m',(r.it.lv||0)>=need)).join('')}</div>`:`<div class="shop-empty">${svg('mount')}<span>Túi không có thú cưỡi</span></div>`}
+      <h4 class="mk-h">Món huyền thoại / thần</h4>${mats.length?`<div class="enh-list">${mats.map(r=>mini(r,'x',true)).join('')}</div>`:`<div class="shop-empty">${svg('bag')}<span>Túi không có đồ huyền thoại / thần</span></div>`}
+      <div class="enh-rows"><div><small>Thú</small><b>${M?esc(Player.nameOf(M)):'—'}</b></div><div><small>Vật liệu</small><b>${X?esc(Player.nameOf(X)):'—'}</b></div><div><small>Phí</small><b>${ruby(cost)}</b></div><div><small>Tỉ lệ</small><b>${rate}%</b></div></div>
+      <button id="fuseGo" class="primary big-btn"${can?'':' disabled'}>${svg('wings')}Dung hợp</button>`,true);
+    document.querySelectorAll('[data-fz]').forEach(b=>b.onclick=()=>{const [k,i]=b.dataset.fz.split(':');fuseSel[k]=fuseSel[k]===Number(i)?null:Number(i);showFuse();});
+    const go=$('#fuseGo');if(go)go.onclick=()=>{const t0=Date.now();go.innerHTML=svg('wings')+'Đang luyện…';game.hammer('#c8a0ff');run(go,game.op({t:'fuse',m:fuseSel.m,x:fuseSel.x}).then(r=>new Promise(ok=>setTimeout(()=>ok(r),Math.max(0,900-(Date.now()-t0))))).then(r=>{game.enhanceFx(r.ok);game.message(r.ok?svg('check')+`Dung hợp thành công! <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b> (${r.lines} dòng)`:svg('close')+'Dung hợp thất bại… thú cưỡi về +'+(r.mount.lv||0));fuseSel={m:null,x:null};game.refreshHD();showFuse();}),()=>showFuse());};
+  }
+  /* ---------- Nạp thẻ (thành trì): chọn gói → mã QR chuyển khoản VietQR về tài khoản cấu hình; hồng ngọc cộng tay sau khi nhận tiền ---------- */
+  let napSel=null;
+  function showTopup(){
+    const C=Player.CFG,list=Player.TOPUPS,G=list.find(g=>g.id===napSel)||null,user=window.LH_USER||'';
+    const fmt=v=>Number(v).toLocaleString('vi-VN');
+    const tiles=list.map(g=>`<button class="tile${napSel===g.id?' sel':''}" data-nap="${g.id}"><span class="ti" style="color:#ff6fb5">${svg('orb')}</span><b class="nm">${esc(g.name)}</b><span class="chips"><span class="chip">${ruby(g.ruby)}</span></span>${g.desc?`<small>${esc(g.desc)}</small>`:''}<span class="price">${fmt(g.vnd)} đ</span></button>`).join('');
+    let qr='';
+    if(G){const info=String(C.nap_noi_dung||'Ikyna {goi} {tai_khoan}').replace('{goi}',G.name.replace(/^Gói\s*/i,'Goi ')).replace('{tai_khoan}',user).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').trim();
+      const url=`https://img.vietqr.io/image/${encodeURIComponent(C.nap_ngan_hang||'MB')}-${encodeURIComponent(C.nap_so_tai_khoan||'')}-compact2.png?amount=${G.vnd}&addInfo=${encodeURIComponent(info)}&accountName=${encodeURIComponent(C.nap_ten_tai_khoan||'')}`;
+      qr=`<div class="nap-qr"><img src="${url}" alt="Mã QR chuyển khoản" referrerpolicy="no-referrer"><div class="nap-info"><div><small>Ngân hàng</small><b>${esc(C.nap_ngan_hang||'MB')}</b></div><div><small>Số tài khoản</small><b>${esc(C.nap_so_tai_khoan||'')}</b></div><div><small>Chủ tài khoản</small><b>${esc(C.nap_ten_tai_khoan||'')}</b></div><div><small>Số tiền</small><b>${fmt(G.vnd)} đ</b></div><div><small>Nội dung</small><b>${esc(info)}</b></div><small class="sel-desc">Quét mã bằng ứng dụng ngân hàng, giữ nguyên nội dung chuyển khoản. Hồng ngọc được cộng vào tài khoản sau khi nhận tiền.</small></div></div>`;}
+    openModal(ttl('orb','Nạp thẻ')+`<div class="purse">${ruby(p.rubies)}</div>`,`<div class="shop-grid nap-grid">${tiles}</div>${qr}`,true);
+    document.querySelectorAll('[data-nap]').forEach(b=>b.onclick=()=>{napSel=b.dataset.nap;showTopup();});
+  }
   function openPanel(n){
     npcPanel=true;
+    if(n.panel==='fuse'){fuseSel={m:null,x:null};return showFuse();}
+    if(n.panel==='nap'){napSel=null;return showTopup();}
     if(n.panel==='avatar'){avSel=null;return showAvatars();}
     if(n.panel==='shop')return showShop(n.shop);
     if(n.panel==='quests')return showQuestBoard();

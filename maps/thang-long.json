@@ -572,6 +572,30 @@
    "lines": [
     "Ta vẽ truyền thần cho vua quan trong triều. Muốn đổi diện mạo, ta tô lại cho: da, tóc, râu, mắt… mua một lần, đổi mãi."
    ]
+  },
+  {
+   "id": "luyen-khi-su",
+   "role": "luyen-khi-su",
+   "name": "Luyện khí sư",
+   "act": "turn",
+   "x": 33,
+   "y": 12,
+   "panel": "fuse",
+   "lines": [
+    "Thú cưỡi luyện tới +9, thêm một báu vật huyền thoại hay thần, thêm hồng ngọc… ta dung hợp thành đôi cánh. Mười lần được bốn, chịu không?"
+   ]
+  },
+  {
+   "id": "nap-the-thang-long",
+   "role": "nap-the",
+   "name": "Quan ngân khố",
+   "act": "turn",
+   "x": 33,
+   "y": 21,
+   "panel": "nap",
+   "lines": [
+    "Ngân khố kinh thành đổi hồng ngọc cho khách. Chọn gói, quét mã là xong."
+   ]
   }
  ],
  "monsters": [

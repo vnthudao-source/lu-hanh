@@ -604,6 +604,60 @@
    "lines": [
     "Trống Ngọ Môn điểm canh."
    ]
+  },
+  {
+   "id": "luyen-khi-su-phu-xuan",
+   "role": "luyen-khi-su",
+   "name": "Luyện khí sư",
+   "act": "turn",
+   "x": 33,
+   "y": 12,
+   "panel": "fuse",
+   "lines": [
+    "Ta dung hợp thú cưỡi +9 với báu vật huyền thoại hay thần thành cánh. Mười lần được bốn."
+   ]
+  },
+  {
+   "id": "nap-the-phu-xuan",
+   "role": "nap-the",
+   "name": "Quan ngân khố",
+   "act": "turn",
+   "x": 33,
+   "y": 21,
+   "panel": "nap",
+   "lines": [
+    "Ngân khố Phú Xuân đổi hồng ngọc cho khách. Chọn gói, quét mã là xong."
+   ]
+  },
+  {
+   "id": "tre-con-phu-xuan-1",
+   "role": "tre-con-2",
+   "name": "Cu Bin",
+   "act": "patrol",
+   "x0": 19,
+   "x1": 27,
+   "y": 14,
+   "spd": 72,
+   "lines": [
+    "Em muốn làm Ngự lâm quân!"
+   ],
+   "x": 23,
+   "facing": 1
+  },
+  {
+   "id": "tre-con-phu-xuan-2",
+   "role": "tre-con-3",
+   "name": "Bé Na",
+   "act": "patrol",
+   "x0": 21,
+   "x1": 29,
+   "y": 15,
+   "spd": 66,
+   "lines": [
+    "Anh đến từ đâu thế? Xa lắm không?"
+   ],
+   "x": 25,
+   "facing": 1
   }
  ],
  "monsters": [

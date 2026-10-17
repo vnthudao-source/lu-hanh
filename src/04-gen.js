@@ -135,7 +135,7 @@
   function npc(S){
     return (c,n,t,H)=>{
       const {ell,line,poly,rr,head,khanXep,nonLa,npcLegs,torso,oline,shade}=H,sway=S.act==='dance'?Math.sin(t*4+n.phase*6)*4:0,beat=S.act==='drum'?Math.max(0,Math.sin(t*6+n.phase)):0;
-      c.save();c.translate(sway*.5,0);
+      c.save();c.translate(sway*.5,0);if(S.s)c.scale(S.s,S.s); // s: tỉ lệ (trẻ con ~0,6)
       npcLegs(c,n,S.pants||shade(S.robe,-.35));
       if(S.skirt)poly(c,[-13,-26,13,-26,16,0,-16,0],S.robe);
       torso(c,-12,-28,24,24,5,S.robe);if(S.trim)line(c,[-12,-9,12,-9],S.trim,2.2),line(c,[2,-27,8,-10],S.trim,1.3);

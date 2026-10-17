@@ -456,24 +456,14 @@ window.startGame=(session)=>{
   }
   // Quay trái (7 giờ, theo phác thảo của tác giả): tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn;
   // tay trái co lại, khiên đưa ra bên hông phía sau (mặt ngoài nhìn thẳng), cả hai vẽ trước thân. Khi ra đòn thì về dáng đòn như thường.
-  // 8 phương án dáng quay trái (kiếm + khiên) — sw: tay phải (kiếm), sh: tay trái (khiên); swBack/shBack: vẽ trước thân (khuất sau người); face: khiên nhìn thẳng mặt
-  const LEFT_POSES=[
-    {sw:{x:13,y:-9,ang:-.78},sh:{x:-15,y:-14},face:true},                 // 1 kiếm chếch lên trước, khiên bên hông sau (phác thảo)
-    {sw:{x:10,y:-20,ang:-1.3},sh:{x:-15,y:-14},face:true},                // 2 kiếm giơ cao, khiên bên hông sau
-    {sw:{x:15,y:-6,ang:.35},sh:{x:-4,y:-16},face:true},                   // 3 kiếm hạ thấp chĩa xuống trước, khiên che trước ngực
-    {sw:{x:13,y:-9,ang:-.78},sh:{x:-10,y:-12},face:false,shBack:true},    // 4 kiếm chếch lên trước, khiên nghiêng khuất sau người
-    {sw:{x:13,y:-9,ang:-.78},sh:{x:-17,y:-17},face:true,shBack:true},     // 5 kiếm chếch lên trước, khiên mặt ngoài ló sau lưng
-    {sw:{x:8,y:-19,ang:-2.3},sh:{x:-15,y:-14},face:true,swBack:true},     // 6 kiếm vác trên vai (lưỡi ra sau), khiên bên hông sau
-    {sw:{x:14,y:-12,ang:-.15},sh:{x:-8,y:-12},face:true},                 // 7 kiếm ngang chĩa thẳng, khiên lớn che hông
-    {sw:{x:6,y:-12,ang:-.95},sh:{x:-7,y:-14},face:true,swBack:true}       // 8 kiếm khuất sau người lộ lưỡi, khiên trước ngực (bản 10.4)
-  ];
-  let LEFT_POSE_ID=0; // chọn theo số (1–8) → chỉ số 0–7; window.LH_POSE ghi đè khi thử
+  // Dáng quay trái (tác giả chọn, v10.6): khiên trước ngực nhìn thẳng mặt ngoài vẽ trên thân; tay phải buông thấp, kiếm chĩa xuống trước, vẽ sau thân (lộ phần lưỡi bên hông trái)
+  const LEFT_POSE={sw:{x:12,y:-8,ang:.35},sh:{x:-7,y:-14},face:true,swBack:true};
   const HIDE_ANG={sword:-.78,staff:-1.0,punch:-1.6};
   function handSide(P,st,facing,a){
     if(facing>0){const dW=st.two?-5:-15,dO=st.two?-5:15;P.front.x+=dW;P.back.x+=dO;if(P.trail)P.trail.cx+=dW;P.sh={front:{x:-8,y:-23},back:{x:8,y:-23}};}
     else{P.sh={front:{x:8,y:-23},back:{x:-8,y:-23}};
       const ah=atkHand(a,st);
-      if(!st.two&&ah!=='front'&&ah!=='both'&&!P.heal&&!(P.block&&st.right==='shield')){const V=LEFT_POSES[(window.LH_POSE!=null?window.LH_POSE-1:LEFT_POSE_ID)]||LEFT_POSES[0];P.hide=true;P.lp=V;
+      if(!st.two&&ah!=='front'&&ah!=='both'&&!P.heal&&!(P.block&&st.right==='shield')){const V=LEFT_POSE;P.hide=true;P.lp=V;
         P.front={x:V.sw.x,y:V.sw.y,ang:st.right==='sword'?V.sw.ang:(HIDE_ANG[st.right]!==undefined?HIDE_ANG[st.right]:-1.1)};
         if(ah!=='back'&&!P.block)P.back={x:V.sh.x,y:V.sh.y,ang:P.back.ang};}}
     return P;
@@ -598,9 +588,11 @@ window.startGame=(session)=>{
   function drawHero(c,h,st,el,t,opts={}){
     // Trong vùng an toàn (làng, thành): thu vũ khí — kiếm dắt bên hông, khiên / cung / nỏ / giáo / gậy đeo sau lưng; tay vung theo bước đi. Đang ra đòn hoặc xem trước (túi đồ, chân dung) thì vẫn cầm.
     const who=opts.who||player,eq=who.equipment,info=Player.info,a=h.attack,sheathed=safe&&!a&&!opts.armed&&t>=h.blockUntil,P=handSide(heroPose(h,st,a,t),st,h.facing,a),flash=t-h.hurt<.12,md=!safe&&eq.mount&&info(eq.mount),mounted=!!md,seat=mounted?Player.BEASTS[md.beast].seat:0,big=mounted&&md.beast==='elephant',fem=who.gender==='f';
-    const AV=Player.AVATARS[who.avatar]||null,bob=h.moving?-Math.abs(Math.sin(h.walk))*(mounted?1.4:2.2):Math.sin(t*2)*.6,SKIN=AV?shade(AV.skin,-.07):'#d9ad80';
+    // đeo cánh (không phải áo choàng / cờ) và không cưỡi thú: lơ lửng cách đất, di chuyển thì lướt, chân không bước
+    const LWk=eq.wings&&LH_Look.of(eq.wings.type),flying=!!(LWk&&LWk.kind==='wings'&&!mounted&&!h.dead),hover=flying?-9+Math.sin(t*2.6+h.x*.01)*2.2:0;
+    const AV=Player.AVATARS[who.avatar]||null,bob=flying?hover:h.moving?-Math.abs(Math.sin(h.walk))*(mounted?1.4:2.2):Math.sin(t*2)*.6,SKIN=AV?shade(AV.skin,-.07):'#d9ad80';
     c.save();if(h.dead)c.globalAlpha=.45;
-    ell(c,h.x,h.y+5,big?42:mounted?28:15,big?12:mounted?8:7,'#243d3544');
+    ell(c,h.x,h.y+5,big?42:mounted?28:flying?11:15,big?12:mounted?8:flying?4:7,flying?'#243d3530':'#243d3544');
     if(el)drawAura(c,h.x,h.y,el,t,big?1.6:mounted?1.25:1);
     if(t<h.barrierUntil){c.save();c.globalAlpha=.35+Math.sin(t*12)*.1;c.strokeStyle='#9fe8a8';c.lineWidth=3;c.beginPath();c.ellipse(h.x,h.y-22-seat,26,34,0,0,PI2);c.stroke();c.restore();}
     c.save();c.translate(h.x,h.y);c.scale(h.facing,1);
@@ -613,7 +605,7 @@ window.startGame=(session)=>{
     const sleeve=LA?LA.main:SKIN,skin=LG?LG.main:SKIN;
     const held=(type,hp,role,tn,lv,it)=>{c.save();if(lv>=7){c.shadowColor=lv>=10?'#ff6a3a':'#ffd77a';c.shadowBlur=6+lv;}const L=it&&LH_Look.of(it);if(L&&L.fx)LH_Look.mythGlow(c,L);drawHeld(c,type,hp,P,el,t,role,tn,it);c.restore();};
     const backTop=a&&a.hand==='left'&&a.type==='sword',hide=!!P.hide&&!sheathed;
-    if(sheathed){const sw=h.moving?Math.sin(h.walk):0;P.hide=false;P.front={x:(h.facing>0?-9:10)+sw*4,y:-7,ang:0};P.back={x:(h.facing>0?9:-10)-sw*4,y:-7,ang:0};P.trail=null;}
+    if(sheathed){const sw=h.moving&&!flying?Math.sin(h.walk):0;P.hide=false;P.front={x:(h.facing>0?-9:10)+sw*4,y:-7,ang:0};P.back={x:(h.facing>0?9:-10)-sw*4,y:-7,ang:0};P.trail=null;}
     if(fem)ell(c,-7,-31,6,11,'#2a2622'); // tóc dài sau lưng
     // đồ đeo sau lưng (vẽ trước thân): khiên, cung, nỏ, giáo, gậy, kiếm thứ hai; kiếm chính dắt bên hông (vẽ trước thân, hé chuôi và mũi)
     if(sheathed){
@@ -637,7 +629,7 @@ window.startGame=(session)=>{
     const skirt=LP&&LP.kind==='skirt',pants=LP&&!skirt?LP.main:SKIN,boot=LS?LS.main:null;
     const foot=(x,y)=>{if(boot){roundRect(c,x-4,y-2,8,5,2,boot);line(c,[x-3,y-1.5,x+3,y-1.5],shade(boot,.25),1);}else ell(c,x,y+1,3.8,2.1,shade(SKIN,-.05));};
     if(mounted){oline(c,[0,-6,9,-2,7,9],pants,5.5);foot(6,10);}
-    else{const w=h.moving?Math.sin(h.walk):0,l1=Math.max(0,w)*3,l2=Math.max(0,-w)*3,st2=P.stride*3;oline(c,[-4,-6,-4.5-st2*.3,5-l1],pants,5.5);oline(c,[4,-6,4.5+st2,5-l2],pants,5.5);foot(-4.5-st2*.3,6-l1);foot(4.5+st2,6-l2);}
+    else{const w=h.moving&&!flying?Math.sin(h.walk):0,l1=Math.max(0,w)*3,l2=Math.max(0,-w)*3,st2=flying?0:P.stride*3;oline(c,[-4,-6,-4.5-st2*.3,5-l1],pants,5.5);oline(c,[4,-6,4.5+st2,5-l2],pants,5.5);foot(-4.5-st2*.3,6-l1);foot(4.5+st2,6-l2);}
     if(skirt){poly(c,mounted?[-11,-9,11,-9,14,3,-8,5]:[-12,-9,12,-9,15,4,-15,4],LP.main);line(c,[-12,-8,12,-8],LP.trim,2);}
     else if(!eq.pants){
       if(fem){poly(c,mounted?[-11,-9,11,-9,14,3,-8,5]:[-12,-9,12,-9,15,4,-15,4],'#5a3a2e');line(c,[-12,-8,12,-8],'#8a5a3a',2);} // váy
@@ -807,7 +799,7 @@ window.startGame=(session)=>{
     projectiles.push({kind:d.kind,x:ox,y:oy,vx:Math.cos(ang)*d.speed,vy:Math.sin(ang)*d.speed,sp:d.speed,age:0,life:(d.range||400)/d.speed,atk:{...atk,knock:d.kind==='bolt'?50:25},el:atk.el,pierce:d.pierce||0,splash:d.splash||0,hit:new Set(),gy:20+(o.seat||0),home:home||null,missed:missed||null});
   }
   function resolveAttack(a,idx=0){
-    const d=ATK[a.type],sk=SK[a.skill],el=HD.books.fire?'fire':a.elem;
+    const d0=ATK[a.type],RM=1+(HD.tot.range||0)/100,d=RM>1?{...d0,range:d0.range*RM}:d0,sk=SK[a.skill],el=HD.books.fire?'fire':a.elem; // Tầm đánh (dòng cánh): nới tầm mọi đòn
     const atk={D:HD,mul:d.dmg*sk.mul*(a.empowered?1.6:1),el,owner:'hero',knock:d.knock,skill:a.skill};
     const ang=Math.atan2(a.aim.y,a.aim.x),ox=hero.x,oy=hero.y-18,col=el?EL[el].color:'#f4ead0';
     if(d.kind==='melee'){
@@ -1367,7 +1359,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     shakeAmp=Math.max(0,shakeAmp-dt*25);
   }
   /* ---------- Trò chuyện: NPC còn lời dặn thì nói chuyện, sau đó mở thẳng bảng chức năng ---------- */
-  const PANEL_BTN={shop:'Mua bán',quests:'Nhận việc',mercs:'Thuê lính',market:'Chợ',avatar:'Đổi diện mạo'};
+  const PANEL_BTN={shop:'Mua bán',quests:'Nhận việc',mercs:'Thuê lính',market:'Chợ',avatar:'Đổi diện mạo',fuse:'Dung hợp',nap:'Nạp thẻ'};
   function nearby(){let best=null,bd=92;for(const n of World.npcs){const d=Math.hypot(n.x-hero.x,n.y-hero.y);if(d<bd){bd=d;best=n;}}return best;}
   function meet(n){
     route=[];targetNPC=null;if(n.id==='merchant')checkpoint();

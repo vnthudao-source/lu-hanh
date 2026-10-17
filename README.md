@@ -199,12 +199,22 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
 
+## Bản 10.6: dáng quay trái chốt, cánh dung hợp, bay lơ lửng, trẻ con trong thành, nạp thẻ
+
+- **Dáng quay trái** (tác giả chọn mẫu 7 vòng 2): khiên trước ngực nhìn thẳng mặt ngoài vẽ trên thân; tay phải buông thấp, kiếm chĩa xuống trước, vẽ sau thân, lộ phần lưỡi bên hông trái. Áp dụng cho nhân vật, lính đi theo, người chơi ảo (hằng `LEFT_POSE` trong `06-game.js`).
+- **Luyện khí sư** (Thăng Long, Phú Xuân; bảng `Dung hợp`): thú cưỡi **+9** (`dung_hop_thu_cap`) + một món **huyền thoại hoặc thần** + `dung_hop_ngoc` = 60 hồng ngọc → tỉ lệ `dung_hop_ti_le` = 40% ra một trong 8 đôi cánh: thiên thần, ác quỷ, tiên nữ, ánh sáng, xương, lôi phong, đại bàng, lửa (tab `vat_pham`, mã `canh-*`, không mua / không rơi). Cánh có **0–5 dòng** ngẫu nhiên trong `canh_dong` (sát thương cao nhất, sát thương nhỏ nhất, phòng ngự, máu, mana, **tầm đánh** — chỉ số mới `range`, nới tầm mọi đòn, trần 60% — tỉ lệ x3); tỉ lệ số dòng theo `dung_hop_dong` = 30/28/22/12/6/2 % cho 0…5 dòng. Phẩm chất theo số dòng: 0–1 Đẹp, 2–3 Hoàn hảo, 4 Huyền thoại, 5 Thần (giá trị dòng nhân thêm theo cấp thú). Thất bại: mất món huyền thoại / thần và hồng ngọc, thú cưỡi về +6. Lệnh `fuse` chạy trên máy chủ.
+- Dáng cánh theo tên: ác quỷ = cánh dơi, xương = cánh xương, ánh sáng / lửa / lôi phong = cánh năng lượng phát sáng, còn lại cánh lông; màu theo cột `mau`.
+- **Đeo cánh** (không phải áo choàng / cờ, không cưỡi thú): người lơ lửng cách đất, di chuyển thì lướt, chân không bước, bóng nhỏ lại; cưỡi thú thì như cũ.
+- **Trẻ con** chơi đuổi bắt trong Cổ Loa, Hoa Lư, Phú Xuân (vai `tre-con*`, tỉ lệ nhỏ `s` trong bộ sinh NPC).
+- **Nạp thẻ** (NPC ở cả 4 thành, bảng `Nạp thẻ`): gói trong tab mới `goi_nap` (tên, tiền, hồng ngọc, mô tả); chọn gói → mã QR VietQR chuyển khoản (`nap_ngan_hang` MB, `nap_so_tai_khoan`, `nap_ten_tai_khoan`, nội dung `nap_noi_dung` = `Ikyna {goi} {tai_khoan}` → ví dụ `Ikyna Goi 100K vnthudao`). Game không tự cộng; sau khi nhận tiền chạy `napHongNgoc('tên nhân vật hoặc tên đăng nhập', số hồng ngọc)` trong Apps Script (ghi nhật ký tab `nap_the` của file Người chơi).
+- `kiemTra` tự thêm tab `goi_nap`, dòng `thuoc_tinh` `range`, 8 cánh ở `vat_pham`, các khóa `cau_hinh` mới.
+
 ## Ra bản mới
 
 1. Sửa trong `src/` (và `VERSION`).
 2. `node tools/build.mjs`
-3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-10.6`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
-4. Trên Blogspot đổi `@ban-10.5` thành `@ban-10.6` (trang game và trang Chợ phiên).
+3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-10.7`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
+4. Trên Blogspot đổi `@ban-10.6` thành `@ban-10.7` (trang game và trang Chợ phiên).
 5. Nếu `Code.gs` đổi: dán lại vào Apps Script, Triển khai → Quản lý triển khai → Sửa → Phiên bản mới (giữ nguyên URL).
 
 ## Dữ liệu trong Sheet

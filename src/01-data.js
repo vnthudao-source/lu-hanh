@@ -20,6 +20,15 @@ cau_hinh:[
  {khoa:'ti_le_ban_lai',gia_tri:40,ghi_chu:'% giá gốc nhận lại khi bán cho cửa hàng'},
  {khoa:'he_so_gia_do_dep',gia_tri:250,ghi_chu:'Giá đồ Đẹp trong cửa hàng = % này của giá gốc'},
  {khoa:'he_so_gia_hoan_hao',gia_tri:600,ghi_chu:'Giá đồ Hoàn hảo trong hiệu buôn thành trì = % này của giá gốc'},
+ {khoa:'dung_hop_ngoc',gia_tri:60,ghi_chu:'Dung hợp cánh (NPC Luyện khí sư): số hồng ngọc tốn mỗi lần'},
+ {khoa:'dung_hop_ti_le',gia_tri:40,ghi_chu:'Dung hợp cánh: tỉ lệ thành công (%)'},
+ {khoa:'dung_hop_thu_cap',gia_tri:9,ghi_chu:'Dung hợp cánh: thú cưỡi phải gia cường tới cấp này'},
+ {khoa:'dung_hop_dong',gia_tri:'0,30,28,22,12,6,2',ghi_chu:'Dung hợp cánh: tỉ lệ (%) ra 0,1,2,3,4,5 dòng (6 số, cách nhau dấu phẩy; số đầu bỏ qua)'},
+ {khoa:'canh_dong',gia_tri:'dmgMax,dmgMin,def,hp,mp,range,crit3',ghi_chu:'Dung hợp cánh: các chỉ số có thể ra dòng'},
+ {khoa:'nap_ngan_hang',gia_tri:'MB',ghi_chu:'Nạp thẻ: mã ngân hàng theo VietQR (MB = Quân đội)'},
+ {khoa:'nap_so_tai_khoan',gia_tri:'2220181818888',ghi_chu:'Nạp thẻ: số tài khoản nhận tiền'},
+ {khoa:'nap_ten_tai_khoan',gia_tri:'TRAN ANH NGUYET',ghi_chu:'Nạp thẻ: tên chủ tài khoản (không dấu)'},
+ {khoa:'nap_noi_dung',gia_tri:'Ikyna {goi} {tai_khoan}',ghi_chu:'Nạp thẻ: nội dung chuyển khoản ({goi} = tên gói, {tai_khoan} = tên đăng nhập)'},
  {khoa:'phi_cho',gia_tri:5,ghi_chu:'% thương nhân giữ lại khi bán hộ trên chợ và khi bán nhân vật đánh thuê'},
  {khoa:'mau_goc',gia_tri:60,ghi_chu:'Máu = mau_goc + Sức khỏe × mau_moi_diem'},
  {khoa:'mau_moi_diem',gia_tri:5,ghi_chu:''},
@@ -82,7 +91,7 @@ thuoc_tinh:[
  ['atkSpd','Tốc độ đánh','agi','%','1-3','3-6','6-10','10-15'],['moveSpd','Tốc độ di chuyển','agi','%','1-2','2-4','4-7','8-12'],['def','Khả năng phòng ngự','agi','','1-2','2-4','4-7','8-14'],
  ['block','Phòng ngự thành công','agi','%','1-2','2-4','4-6','7-10'],['dodge','Tránh né','agi','%','1-2','2-3','3-5','6-9'],['dmgRed','Giảm sát thương','agi','%','1-2','2-4','4-6','7-10'],
  ['perfRed','Giảm sát thương hoàn hảo','agi','%','1-2','2-4','4-6','7-10'],['critRed','Giảm sát thương x2, x3','agi','%','1-2','2-4','4-6','7-10'],['legRed','Giảm sát thương huyền thoại','agi','%','1-2','2-4','4-6','7-10'],['mythRed','Giảm sát thương thần thoại','agi','%','1-2','2-3','3-5','5-8'],
- ['hp','Lượng máu','vit','','5-10','10-20','20-40','50-80'],['hpReg','Hồi máu mỗi giây','vit','','1-1','1-2','2-3','3-5'],['reflect','Phản đòn','vit','%','1-2','2-4','4-7','8-12'],
+ ['hp','Lượng máu','vit','','5-10','10-20','20-40','50-80'],['hpReg','Hồi máu mỗi giây','vit','','1-1','1-2','2-3','3-5'],['reflect','Phản đòn','vit','%','1-2','2-4','4-7','8-12'],['range','Tầm đánh','agi','%','3-5','5-8','8-12','12-18'],
  ['mp','Lượng mana','int','','4-8','8-16','16-30','40-60'],['mpReg','Hồi mana mỗi giây','int','','1-1','1-2','2-3','3-5'],['cdr','Giảm thời gian hồi chiêu','int','%','1-2','2-4','4-6','7-10']
 ].map(([ma,ten,nhom,don_vi,...r])=>{const o={ma,ten,nhom,don_vi};['dep','hoan_hao','huyen_thoai','than'].forEach((k,i)=>{const [a,b]=r[i].split('-').map(Number);o[k+'_thap']=a;o[k+'_cao']=b;});return o;}),
 vat_pham:[
@@ -98,6 +107,9 @@ vat_pham:[
  ['gloves','Bao tay','gloves','gloves','',0,1,0,30,'',''],['gloves-leather','Bao tay da','gloves','gloves','',0,2,0,120,'#6b4a2e',''],
  ['shoes','Dép cỏ','shoes','shoes','',0,1,0,30,'',''],['shoes-leather','Giày da','shoes','shoes','',0,2,0,120,'#5b3d26',''],['shoes-iron','Ủng đồng','shoes','shoes','',0,4,0,300,'#8a6a3a',''],
  ['wings','Áo choàng','wings','wings','',0,1,0,900,'',''],
+ // Cánh (v10.6): chỉ có được qua dung hợp ở Luyện khí sư; dòng chỉ số ngẫu nhiên 0–5 (tab cau_hinh canh_dong, dung_hop_dong)
+ ['canh-thien-than','Cánh thiên thần','wings','wings','',0,6,0,30000,'#f4f0ff',''],['canh-ac-quy','Cánh ác quỷ','wings','wings','',0,6,0,30000,'#5a1a3a',''],['canh-tien-nu','Cánh tiên nữ','wings','wings','',0,6,0,30000,'#ffc0e8',''],['canh-anh-sang','Cánh ánh sáng','wings','wings','',0,6,0,30000,'#fff0a0',''],
+ ['canh-xuong','Cánh xương','wings','wings','',0,6,0,30000,'#e8e0d0',''],['canh-loi-phong','Cánh lôi phong','wings','wings','',0,6,0,30000,'#a0c8ff',''],['canh-dai-bang','Cánh đại bàng','wings','wings','',0,6,0,30000,'#8a5a30',''],['canh-lua','Cánh lửa','wings','wings','',0,6,0,30000,'#ff8a3d',''],
  ['mount','Ngựa con','mount','mount','',0,0,1.15,200,'#b78452','horse',5],['mount-brown','Ngựa nâu','mount','mount','',0,0,1.25,600,'#7a4b2a','horse',5],['mount-black','Ngựa ô','mount','mount','',0,0,1.35,1200,'#2e2a2a','horse',5],['mount-white','Bạch mã','mount','mount','',0,0,1.5,2500,'#ece6da','horse',5],
  ['mount-tiger','Hổ','mount','mount','',4,0,1.45,4000,'#e08a2e','tiger',10],['mount-elephant','Voi','mount','mount','',0,8,1.2,6000,'#8e9398','elephant',15],
  ['ore','Khoáng thạch','','ore','',0,0,0,20,'',''],
@@ -120,6 +132,10 @@ cua_hang:[
  ...['mount','mount-brown','mount-black','mount-white','mount-tiger','mount-elephant'].map((id,i)=>({cua_hang:'trainer',id,pham_chat:'n',gia:'',thu_tu:i+1,bac:0})),
  ...['book-fire','book-water','book-earth','book-metal','book-wood','book-loi','book-phong','book-bang','book-ma','book-sang'].map((id,i)=>({cua_hang:'wizard',id,pham_chat:'n',gia:'',thu_tu:i+1,bac:0}))
 ],
+// Gói nạp (v10.6): NPC Nạp thẻ ở thành trì hiện gói, sinh mã QR chuyển khoản (VietQR). Hồng ngọc cộng tay bằng hàm napHongNgoc trong Apps Script sau khi nhận tiền.
+goi_nap:[
+ ['goi-20','Gói 20K',20000,20,'Dùng thử'],['goi-50','Gói 50K',50000,55,'Tặng 10%'],['goi-100','Gói 100K',100000,120,'Tặng 20%'],['goi-200','Gói 200K',200000,260,'Tặng 30%'],['goi-500','Gói 500K',500000,700,'Tặng 40%'],['goi-1000','Gói 1 triệu',1000000,1500,'Tặng 50%']
+].map(([id,ten,tien,hong_ngoc,mo_ta],i)=>({id,ten,tien,hong_ngoc,mo_ta,thu_tu:i+1})),
 // Diện mạo (v10.3): NPC Thợ truyền thần ở thành trì cấp cao bán; mỗi dòng là một bộ da + tóc + râu + mắt + dấu trên mặt. gia = đồng, hong_ngoc = hồng ngọc (0 cả hai = miễn phí). gioi_tinh trống = cả hai.
 // kieu_toc: '' búi tóc · xoa (xõa dài) · dung (dựng) · khan (khăn buộc) · troc (đầu trọc). dau: seo (sẹo má) · not (nốt ruồi) · ve (vẽ mặt) · hoa (hoa cài, nữ). Ảnh chân dung riêng: giao_dien:chan_dung_<id> trong file Hình ảnh
 dien_mao:[
