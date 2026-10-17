@@ -350,6 +350,6 @@ button.fx-vang{color:#ffe08a}button.fx-cau-vong{color:#ffb0ff}button.fx-lua{colo
 .coin.luck{color:#9fe8a8}.coin.luck svg{width:14px;height:14px}
 
 /* v10.14: đơn chiêu mộ */
-#lu-hanh .rc-box{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:6px 0 10px}
-#lu-hanh .rc-box .chips{flex:1}
-#lu-hanh .mrow.rc{border-width:2px;background:#1a1410aa}
+.rc-box{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:6px 0 10px}
+.rc-box .chips{flex:1}
+.mrow.rc{border-width:2px;background:#1a1410aa}
