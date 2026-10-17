@@ -273,4 +273,14 @@ function napHongNgoc(ten,soLuong){
   try{const ss=SpreadsheetApp.openById(LH_SHEETS.nguoi_choi);let sh=ss.getSheetByName('nap_the');if(!sh){sh=ss.insertSheet('nap_the');sh.appendRow(['luc','nhan_vat','tai_khoan','hong_ngoc']);sh.setFrozenRows(1);}sh.appendRow([new Date(),c.ten,c.tai_khoan,soLuong]);}catch(e){}
   Logger.log('Đã cộng '+soLuong+' hồng ngọc cho '+c.ten);
 }
+// v10.10: chép lại máu, sát thương của quái các vùng cấp 20+ (có cột ban_do) từ số liệu mặc định vào tab quai — tác giả giảm máu còn 1/5, sát thương gấp đôi.
+// Chạy một lần sau khi dán bản mới: capNhatQuai(). Chỉ ghi đè hai cột mau, sat_thuong; dòng do bạn tự thêm (không có trong mặc định) giữ nguyên.
+function capNhatQuai(){
+  const file=LH_SHEETS[LH_STATIC.quai];if(!file){Logger.log('Chưa có file Sheet quai');return;}
+  const sh=SpreadsheetApp.openById(file).getSheetByName('quai');if(!sh||sh.getLastRow()<2){Logger.log('Tab quai trống: game dùng số mặc định, không cần cập nhật');return;}
+  const v=sh.getDataRange().getValues(),h=v[0].map(String),ci=h.indexOf('id'),cm=h.indexOf('mau'),cd=h.indexOf('sat_thuong');if(ci<0||cm<0||cd<0){Logger.log('Thiếu cột id / mau / sat_thuong');return;}
+  const def=new Map((LH_DEFAULT.quai||[]).filter(r=>r.ban_do).map(r=>[String(r.id),r]));let n=0;
+  for(let i=1;i<v.length;i++){const d=def.get(String(v[i][ci]));if(!d)continue;if(Number(v[i][cm])!==Number(d.mau)||Number(v[i][cd])!==Number(d.sat_thuong)){sh.getRange(i+1,cm+1).setValue(d.mau);sh.getRange(i+1,cd+1).setValue(d.sat_thuong);n++;}}
+  xoaBoNhoDem();Logger.log('Đã cập nhật máu / sát thương cho '+n+' loài quái');
+}
 function kiemTra(){try{lhDuLieuBoSung_();}catch(e){Logger.log('Chưa bổ sung được quái / nhiệm vụ mới: '+e);}try{const n=lhHinhAnhBoSung_();if(n)Logger.log('Thêm '+n+' dòng ảnh mới vào file Hình ảnh');}catch(e){Logger.log('Chưa bổ sung được file Hình ảnh: '+e);}xoaBoNhoDem();const d=lhStatic_();Logger.log(Object.keys(d).map(k=>k+': '+d[k].length+' dòng').join('\n'));LH_DB.rows('tai_khoan');LH_DB.rows('nhan_vat');LH_DB.rows('cho');Logger.log('Bảng người chơi sẵn sàng. Quyền gửi mail: '+MailApp.getRemainingDailyQuota()+' thư/ngày');}

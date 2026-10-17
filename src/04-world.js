@@ -107,7 +107,7 @@ const World=(()=>{
   const api={T,DEFAULT,use,load,prefetch,monPack,enter,isSafe,zoneAt,portalAt,blocked,canStand,move,findPath,nearestOpen,
     get id(){return M.id;},get name(){return M.name;},get def(){return M;},get W(){return W;},get H(){return H;},get grid(){return grid;},get base(){return base;},get objects(){return objects;},
     get npcs(){return npcs;},get wells(){return wells;},get fires(){return fires;},get ripples(){return ripples;},get lights(){return lights;},get theme(){return M.theme||null;},get decor(){return M.decor||[];},get bridges(){return M.bridges||[];},get portals(){return M.portals||[];},
-    get spawn(){return {x:M.spawn.x*T,y:M.spawn.y*T};},get monsterSpawns(){return [...(M.monsters||[]),...campSpawns];},get camps(){return camps;}};
+    get spawn(){return {x:(M.spawn.x+.5)*T,y:(M.spawn.y+.5)*T};} /* tâm ô (v10.10: trước là góc ô, đè lên ô đá kề bên → kẹt khi vào Cổ Loa, Thăng Long) */,get monsterSpawns(){return [...(M.monsters||[]),...campSpawns];},get camps(){return camps;}};
   return api;
 })();
 if(LH_MAPS[World.DEFAULT])World.use(LH_MAPS[World.DEFAULT]);

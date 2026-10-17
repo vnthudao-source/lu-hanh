@@ -151,7 +151,9 @@ const MAPS=[
 // ---- quái: số liệu tăng theo bậc bản đồ (máu ×2, sát thương ×1,5, kinh nghiệm ×2 mỗi bản đồ; tỉ lệ rơi huyền thoại từ cấp 44, thần từ cấp 60)
 const R=(v)=>Math.round(v);
 // hệ số theo bậc bản đồ: 10 bản đồ đầu ×2 máu / ×1,5 sát thương / ×1,8 đồng; từ bản đồ 11 (cấp 105) ×1,5 / ×1,25 / ×1,5 để người chơi cấp cao còn theo kịp
-const K_HP=i=>i<10?Math.pow(2,i):Math.pow(2,10)*Math.pow(1.5,i-10),K_DMG=i=>i<10?Math.pow(1.5,i):Math.pow(1.5,10)*Math.pow(1.25,i-10),K_COIN=i=>i<10?Math.pow(1.8,i):Math.pow(1.8,10)*Math.pow(1.5,i-10);
+// v10.10: tác giả giảm máu quái vùng cấp 20+ còn 1/5, sát thương gấp đôi (HP_K, DMG_K)
+const HP_K=1/5,DMG_K=2;
+const K_HP=i=>HP_K*(i<10?Math.pow(2,i):Math.pow(2,10)*Math.pow(1.5,i-10)),K_DMG=i=>DMG_K*(i<10?Math.pow(1.5,i):Math.pow(1.5,10)*Math.pow(1.25,i-10)),K_COIN=i=>i<10?Math.pow(1.8,i):Math.pow(1.8,10)*Math.pow(1.5,i-10);
 const MOB_SKILL=['slow','poison','weak','armor','frost'];
 function monRows(){
   const rows=[];
@@ -159,18 +161,18 @@ function monRows(){
     const k=K_HP(i),kd=K_DMG(i),L=M.lv;
     const [a,b]=M.mobs;
     const mob=(id,ten,hp,dmg,spd,run,r,h,aggro,range,cd,wind,copper,knock,exp,ruby,x2)=>({id,ten,mau:R(hp*k),sat_thuong:R(dmg*kd),toc_do:spd,toc_chay:run,ban_kinh:r,cao:h,tam_danh:aggro,tam_gan:range,hoi_chieu_ms:cd,vung_tay_ms:wind,dong:R(copper*K_COIN(i)),day_lui_phan_tram:knock,boss:0,hoi_sinh_giay:20,
-      dep_phan_van:1500,hoan_hao_phan_van:L>=105?500:350,huyen_thoai_phan_van:L>=70?Math.min(120,30+Math.max(0,L-100)*2):0,than_phan_van:L>=120?Math.min(30,5+(L-120)):0,hong_ngoc_it:L>=105?1:0,hong_ngoc_nhieu:L>=105?2+Math.floor((L-100)/10):0,loai_sat_thuong:L>=120?'hoan_hao':'thuong',ti_le_x2:x2,kinh_nghiem:R(exp*k),ban_do:M.id,ky_nang:L>=125?(['slow','poison','weak','armor','slow','poison'][i%6]):''});
+      dep_phan_van:1500,hoan_hao_phan_van:L>=105?500:350,huyen_thoai_phan_van:L>=70?Math.min(120,30+Math.max(0,L-100)*2):0,than_phan_van:L>=120?Math.min(30,5+(L-120)):0,hong_ngoc_it:L>=105?1:0,hong_ngoc_nhieu:L>=105?2+Math.floor((L-100)/10):0,loai_sat_thuong:L>=120?'hoan_hao':'thuong',ti_le_x2:x2,kinh_nghiem:R(exp*k/HP_K),ban_do:M.id,ky_nang:L>=125?(['slow','poison','weak','armor','slow','poison'][i%6]):''});
     rows.push(mob(a[0],a[1],2000,90,70,190,24,50,260,56,1200,400,150,40,180,0,10));
     rows.push(mob(b[0],b[1],2800,110,55,160,28,60,240,64,1500,500,200,30,240,0,12));
     const [bid,bten,,sk]=M.boss;
     rows.push({id:bid,ten:bten,mau:R(18000*k),sat_thuong:R(150*kd),toc_do:50,toc_chay:130,ban_kinh:48,cao:110,tam_danh:300,tam_gan:120,hoi_chieu_ms:2000,vung_tay_ms:700,dong:R(4000*K_COIN(i)),day_lui_phan_tram:5,boss:L>=145?2:1,hoi_sinh_giay:300,
-      dep_phan_van:7500,hoan_hao_phan_van:4000,huyen_thoai_phan_van:L>=44?Math.min(3500,R(200+(L-44)*25)):0,than_phan_van:L>=60?Math.min(1500,R(50+(L-60)*12)):0,hong_ngoc_it:8+i*2,hong_ngoc_nhieu:20+i*4,loai_sat_thuong:L>=120?'than':L>=70?'huyen_thoai':'hoan_hao',ti_le_x2:15+i,kinh_nghiem:R(2000*k),ban_do:M.id,ky_nang:sk});
+      dep_phan_van:7500,hoan_hao_phan_van:4000,huyen_thoai_phan_van:L>=44?Math.min(3500,R(200+(L-44)*25)):0,than_phan_van:L>=60?Math.min(1500,R(50+(L-60)*12)):0,hong_ngoc_it:8+i*2,hong_ngoc_nhieu:20+i*4,loai_sat_thuong:L>=120?'than':L>=70?'huyen_thoai':'hoan_hao',ti_le_x2:15+i,kinh_nghiem:R(2000*k/HP_K),ban_do:M.id,ky_nang:sk});
   });
   return rows;
 }
 function questRows(){
   const rows=[];
-  MAPS.forEach((M,i)=>{const [a]=M.mobs,[bid,bten]=M.boss,k=K_COIN(i),ke=K_HP(i);
+  MAPS.forEach((M,i)=>{const [a]=M.mobs,[bid,bten]=M.boss,k=K_COIN(i),ke=K_HP(i)/HP_K;
     rows.push({id:'q-'+a[0],ten:'Săn '+a[1].toLowerCase(),mo_ta:a[1]+' quấy phá vùng '+M.name+', dân không dám qua lại.',muc_tieu:a[0],so_luong:6,thuong_dong:R(4000*k),thuong_hong_ngoc:0,thuong_do:'',pham_chat_do:'',lap_lai:'khong',thuong_kinh_nghiem:R(400*ke)});
     rows.push({id:'q-'+bid,ten:'Hạ '+bten,mo_ta:bten+' ngự trị '+M.name+'. Hạ được nó, cả vùng yên ổn.',muc_tieu:bid,so_luong:1,thuong_dong:R(40000*k),thuong_hong_ngoc:5+i*2,thuong_do:'',pham_chat_do:'',lap_lai:'khong',thuong_kinh_nghiem:R(4000*ke)});});
   return rows;
@@ -231,7 +233,7 @@ function build(M,idx){
   const camps=M.citadel?[{name:'Bãi '+M.mobs[0][1].toLowerCase(),x:7,y:16,r:3,mon:{[M.mobs[0][0]]:6,[M.mobs[1][0]]:2}},{name:'Bãi '+M.mobs[1][1].toLowerCase(),x:40,y:28,r:3,mon:{[M.mobs[1][0]]:5,[M.mobs[0][0]]:2}}]
     :[{name:'Bãi '+M.mobs[0][1].toLowerCase(),x:10,y:20,r:3,mon:{[M.mobs[0][0]]:6,[M.mobs[1][0]]:2}},{name:'Bãi '+M.mobs[1][1].toLowerCase(),x:38,y:12,r:3,mon:{[M.mobs[1][0]]:5,[M.mobs[0][0]]:2}}];
   const lair=M.citadel?{x:40,y:4}:{x:24,y:8};
-  const keep=(x,y)=>inSafe(x,y)||camps.some(c=>(x-c.x)**2+(y-c.y)**2<=(c.r+1.5)**2)||Math.hypot(x-lair.x,y-lair.y)<5||(ex&&Math.abs(x-ex.x-1)<=3&&Math.abs(y-ex.y)<=3)||(Math.abs(x-ent.x-1)<=3&&Math.abs(y-ent.y)<=3);
+  const keep=(x,y)=>inSafe(x,y)||Math.hypot(x-spawn.x,y-spawn.y)<=2.2||camps.some(c=>(x-c.x)**2+(y-c.y)**2<=(c.r+1.5)**2)||Math.hypot(x-lair.x,y-lair.y)<5||(ex&&Math.abs(x-ex.x-1)<=3&&Math.abs(y-ex.y)<=3)||(Math.abs(x-ent.x-1)<=3&&Math.abs(y-ent.y)<=3);
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){
     if(x===0||y===0||x===W-1||y===H-1){g[y][x]='#';continue;}
     if(keep(x,y))continue;

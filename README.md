@@ -199,6 +199,11 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
 
+## Bản 10.10: hết kẹt khi vào thành, quái máu 1/5 sát thương ×2
+
+- **Kẹt khi qua cổng vào Thành Cổ Loa, Kinh Thành Thăng Long** (và Hoa Lư): điểm xuất hiện `World.spawn` tính ở **góc ô** thay vì tâm ô, nên khi cổng không có tọa độ đích (`tx,ty`) nhân vật bị đặt đè lên ô đá kề bên (thành trì có đá sát điểm xuất hiện) → không đứng được. Sửa: `spawn` lấy tâm ô; `travel` kiểm tra `canStand`, bị chặn thì dời sang ô trống gần nhất (`nearestOpen`); `genmaps` giữ trống bán kính 2 ô quanh điểm xuất hiện (3 bản đồ thành trì sinh lại). Đã chạy thử **52 lượt qua cổng** của 25 bản đồ (kịch bản `scratchpad/v103/mapchk.py`): đứng được, tìm được đường tới vùng an toàn và mọi cổng.
+- **Quái vùng cấp 20+** (20 bản đồ sinh, kể cả trùm): máu còn **1/5**, sát thương **gấp đôi** (`HP_K`, `DMG_K` trong `genmaps.mjs`); kinh nghiệm, tiền, đồ rơi giữ nguyên. Máy chủ: tab `quai` trên Sheet đang giữ số cũ → chạy `capNhatQuai()` một lần để chép lại hai cột `mau`, `sat_thuong` (chỉ dòng có `ban_do`, dòng bạn tự thêm không đổi).
+
 ## Bản 10.9: dáng tay / vũ khí thống nhất (tác giả duyệt theo bảng 18 dáng)
 
 - **Quay trái là ảnh gương của quay phải** cho: tay không, trong làng (kiếm dắt hông, khiên / cung / nỏ / giáo / gậy đeo lưng), vũ khí hai tay (cung, nỏ, giáo) và **mọi lúc ra đòn** (`handSide`: `mirror`). Riêng lúc đứng / đi / đỡ có cầm đồ một tay (kiếm + khiên, gậy + khiên, song đao, cưỡi thú) quay trái giữ dáng riêng `LEFT_POSE` (khiên trước ngực, kiếm buông thấp) đã chốt ở 10.6.
