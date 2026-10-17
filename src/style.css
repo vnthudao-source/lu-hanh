@@ -348,3 +348,8 @@ button.fx-vang{color:#ffe08a}button.fx-cau-vong{color:#ffb0ff}button.fx-lua{colo
 .ev-banner{position:absolute;left:50%;top:64px;transform:translateX(-50%);background:#3a1a2acc;border:1px solid #ff7aa0;color:#ffe0ea;padding:6px 14px;border-radius:12px;font-size:13px;z-index:5;pointer-events:none;display:flex;gap:8px;align-items:center}
 .ev-banner svg{width:16px;height:16px}
 .coin.luck{color:#9fe8a8}.coin.luck svg{width:14px;height:14px}
+
+/* v10.14: đơn chiêu mộ */
+#lu-hanh .rc-box{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:6px 0 10px}
+#lu-hanh .rc-box .chips{flex:1}
+#lu-hanh .mrow.rc{border-width:2px;background:#1a1410aa}

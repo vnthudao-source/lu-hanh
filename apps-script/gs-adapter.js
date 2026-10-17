@@ -20,7 +20,7 @@
 */
 const LH_SHEETS=@@IDS@@;
 // Tab dữ liệu tĩnh → file Sheet chứa nó
-const LH_STATIC={cau_hinh:'cau_hinh',gia_cuong:'cau_hinh',pham_chat:'pham_chat',thuoc_tinh:'pham_chat',vat_pham:'vat_pham',cua_hang:'cua_hang',bo_huyen_thoai:'bo_huyen_thoai',do_than:'do_than',quai:'quai',nhiem_vu:'nhiem_vu',linh:'linh',vu_khi:'vat_pham',ban_do:'cau_hinh',dien_mao:'cau_hinh',goi_nap:'cau_hinh',bo_cau_hoi:'nhiem_vu',cau_hoi:'nhiem_vu',hinh_anh:'hinh_anh'};
+const LH_STATIC={cau_hinh:'cau_hinh',gia_cuong:'cau_hinh',pham_chat:'pham_chat',thuoc_tinh:'pham_chat',vat_pham:'vat_pham',cua_hang:'cua_hang',bo_huyen_thoai:'bo_huyen_thoai',tuong:'bo_huyen_thoai',do_than:'do_than',quai:'quai',nhiem_vu:'nhiem_vu',linh:'linh',vu_khi:'vat_pham',ban_do:'cau_hinh',dien_mao:'cau_hinh',goi_nap:'cau_hinh',bo_cau_hoi:'nhiem_vu',cau_hoi:'nhiem_vu',hinh_anh:'hinh_anh'};
 // Bảng ngoài (v10.11): câu hỏi Thầy đồ đọc thẳng từ tab CauHoi của bảng OCD_Quest (cột QuestionID, QuestID, StepID, ThuTu, CauHoi, A, B, C, D, DapAn).
 // Đọc được thì thay cho tab cau_hoi; không đọc được (chưa chia sẻ quyền) thì dùng tab cau_hoi / số mặc định. Để trống id để tắt.
 const LH_NGOAI={cau_hoi:{id:'10EjfikAuPyc1t_aGDDsUlq0eewo0WUl5qOyXjkVG28M',tab:'CauHoi',cot:{id:'QuestionID',bo:'QuestID',thu_tu:'ThuTu',cau:'CauHoi',a:'A',b:'B',c:'C',d:'D',dap_an:'DapAn'}}};
@@ -69,9 +69,9 @@ function lhStatic_(){
   return out;
 }
 // Tab được bổ sung dòng mới (theo cột id) khi game thêm quái, nhiệm vụ, hàng hóa thành trì, diện mạo
-const LH_BO_SUNG=['quai','nhiem_vu','cau_hinh','ban_do','vat_pham','cua_hang','dien_mao','goi_nap','thuoc_tinh','bo_cau_hoi','cau_hoi','linh'];
+const LH_BO_SUNG=['quai','nhiem_vu','cau_hinh','ban_do','vat_pham','cua_hang','dien_mao','goi_nap','thuoc_tinh','bo_cau_hoi','cau_hoi','linh','vu_khi','tuong']; // v10.14: thêm vu_khi (đao, chùy), tuong (danh tướng)
 // khóa một dòng: cau_hinh theo khoa; cua_hang theo cửa hàng + mã hàng (một món có thể bán ở nhiều cửa hàng); còn lại theo id
-const lhKhoa_=(tab,r)=>tab==='cau_hinh'?String(r.khoa):tab==='thuoc_tinh'?String(r.ma):tab==='cua_hang'?String(r.cua_hang)+'|'+String(r.id):String(r.id);
+const lhKhoa_=(tab,r)=>tab==='cau_hinh'?String(r.khoa):tab==='thuoc_tinh'?String(r.ma):tab==='vu_khi'?String(r.loai):tab==='cua_hang'?String(r.cua_hang)+'|'+String(r.id):String(r.id);
 // Chép các dòng mặc định còn thiếu (quái, nhiệm vụ của vùng mới) xuống cuối tab; không sửa dòng đã có
 function lhDuLieuBoSung_(){
   let n=0;
@@ -80,7 +80,7 @@ function lhDuLieuBoSung_(){
     // tab mới của bản cập nhật (ban_do) chưa có: tạo và đổ dữ liệu mặc định
     if(!sh){const rows=LH_DEFAULT[tab]||[];if(!rows.length)continue;const h0=Object.keys(rows[0]);sh=ss.insertSheet(tab);sh.getRange(1,1,rows.length+1,h0.length).setValues([h0,...rows.map(r=>h0.map(k=>r[k]===undefined||r[k]===null?'':r[k]))]);sh.setFrozenRows(1);sh.getRange(1,1,1,h0.length).setFontWeight('bold').setBackground('#2b4d38').setFontColor('#ffffff');n+=rows.length;Logger.log('Tạo tab '+tab);continue;}
     if(sh.getLastRow()<2)continue;
-    const v=sh.getDataRange().getValues(),h=v[0].map(String);if(h.indexOf('id')<0&&h.indexOf('khoa')<0&&h.indexOf('ma')<0)continue;const has=new Set(v.slice(1).map(r=>lhKhoa_(tab,Object.fromEntries(h.map((k,i)=>[k,r[i]])))));
+    const v=sh.getDataRange().getValues(),h=v[0].map(String);if(h.indexOf('id')<0&&h.indexOf('khoa')<0&&h.indexOf('ma')<0&&h.indexOf('loai')<0)continue;const has=new Set(v.slice(1).map(r=>lhKhoa_(tab,Object.fromEntries(h.map((k,i)=>[k,r[i]])))));
     // cột mới của bản cập nhật (ban_do, ky_nang…) chưa có trên Sheet: thêm vào cuối tiêu đề
     for(const k of Object.keys((LH_DEFAULT[tab]||[])[0]||{}))if(h.indexOf(k)<0){h.push(k);sh.getRange(1,h.length).setValue(k).setFontWeight('bold');}
     const add=(LH_DEFAULT[tab]||[]).filter(r=>!has.has(lhKhoa_(tab,r))).map(r=>h.map(k=>r[k]===undefined||r[k]===null?'':r[k]));

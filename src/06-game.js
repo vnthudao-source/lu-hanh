@@ -18,6 +18,8 @@ window.startGame=(session)=>{
     sword:{dur:.46,hit:.45,range:76,arc:2.0,dmg:1,kind:'melee',knock:45},
     shield:{dur:.48,hit:.45,range:58,arc:1.3,dmg:.7,kind:'melee',knock:110},
     spear:{dur:.56,hit:.5,range:112,width:26,dmg:1.15,kind:'thrust',knock:60},
+    saber:{dur:.52,hit:.47,range:82,arc:2.45,dmg:1.25,kind:'melee',knock:70}, // v10.14: đao — chém rộng, nặng tay
+    mace:{dur:.64,hit:.5,range:66,arc:1.75,dmg:1.45,kind:'melee',knock:130,stun:15}, // v10.14: chùy — đẩy lùi mạnh, 15% choáng
     staff:{dur:.62,hit:.56,speed:400,dmg:1.05,kind:'orb',range:420,splash:46},
     bow:{dur:.7,hit:.62,speed:640,dmg:1.1,kind:'arrow',range:520},
     crossbow:{dur:.85,hit:.22,speed:880,dmg:1.3,kind:'bolt',range:600,pierce:1}
@@ -407,15 +409,16 @@ window.startGame=(session)=>{
 
   /* ---------- Hoạt ảnh nhân vật chính ---------- */
   const SH={front:{x:5,y:-23},back:{x:-5,y:-23}};
+  const MELEE1=t=>t==='sword'||t==='saber'||t==='mace'; // v10.14: đao, chùy dùng dáng kiếm
   function heroPose(h,st,a,t){
     const aim=a&&a.aim?a.aim:h.aim,tilt=clamp(Math.atan2(aim.y,Math.max(.25,Math.abs(aim.x))),-1.15,1.15);
     let p=a?clamp((t-a.start)/a.dur,0,1):0;if(a&&a.cycles>1)p=(Math.min(p,.9999)*a.cycles)%1;const sw=h.moving?Math.sin(h.walk):0;
-    const idle={sword:-1.15,staff:-1.45,shield:0,punch:0};
+    const idle={sword:-1.15,saber:-1.1,mace:-1.0,staff:-1.45,shield:0,punch:0};
     const P={tilt,p,lean:0,crouch:0,front:{x:11+sw*3,y:-11,ang:idle[st.right||'punch']},back:{x:-9-sw*3,y:-11,ang:idle[st.left||'punch']},trail:null,pull:2,arrow:false,charge:0,cb:{string:-6,bolt:true,flash:false},stride:0,block:false,heal:false};
     // song kiếm: kiếm tay trước chĩa ra trước, kiếm tay sau giơ chéo sau vai — nhìn rõ hai thanh
-    if(st.dual&&st.type==='sword'){P.front={x:12+sw*2,y:-13,ang:-.55};P.back={x:-12-sw*2,y:-17,ang:-2.3};}
+    if(st.dual&&MELEE1(st.type)){P.front={x:12+sw*2,y:-13,ang:-.55};P.back={x:-12-sw*2,y:-17,ang:-2.3};}
     if(st.two){
-      if(st.type==='spear'){P.front={x:14,y:-14,ang:-1.25};P.back={x:14-Math.cos(-1.25)*17,y:-14-Math.sin(-1.25)*17,ang:-1.25};}
+      if(st.type==='spear'||MELEE1(st.type)){P.front={x:14,y:-14,ang:-1.25};P.back={x:14-Math.cos(-1.25)*17,y:-14-Math.sin(-1.25)*17,ang:-1.25};} // đao / chùy hai tay cầm như thương
       if(st.type==='bow'){P.front={x:13,y:-6,ang:.12};P.back={x:-6,y:-12,ang:0};} // cung hạ thấp, dựng đứng bên hông trước
       if(st.type==='crossbow'){P.front={x:13,y:-12,ang:.45};P.back={x:1,y:-17,ang:.45};}
     }
@@ -424,13 +427,13 @@ window.startGame=(session)=>{
     const type=a.type;
     if(type==='heal'){const k=Math.sin(p*Math.PI);P.front={x:lerp(11,7,k),y:lerp(-11,-34,k),ang:P.front.ang};P.back={x:lerp(-9,-5,k),y:lerp(-11,-34,k),ang:P.back.ang};P.heal=true;return P;}
     if(type==='block')return P;
-    if(type==='sword'){
+    if(MELEE1(type)){
       const left=a.hand==='left',hand=left?P.back:P.front,sx=left?-5:5,w=seg(p,0,.3),s=seg(p,.3,.56),r=seg(p,.56,1),end=.8+tilt*.6,k=s*s*(3-2*s);
       let ang,hx,hy;
       if(p<.3){ang=lerp(-1.15,-2.55,E(w));hx=lerp(left?-9:11,sx-1,E(w));hy=lerp(-11,-33,E(w));P.lean=-2*E(w);}
       else if(p<.56){ang=lerp(-2.55,end,k);hx=lerp(sx-1,sx+15,k);hy=lerp(-33,-12+tilt*10,k);P.lean=lerp(-2,4,k);P.trail={cx:sx,cy:-23,r:46,from:-2.4,to:ang,fade:1};}
       else{ang=lerp(end,-1.15,E(r));hx=lerp(sx+15,left?-9:11,E(r));hy=lerp(-12+tilt*10,-11,E(r));P.lean=4*(1-E(r));if(r<.3)P.trail={cx:sx,cy:-23,r:46,from:-2.4+r*5,to:end,fade:1-r/.3};}
-      hand.x=hx;hand.y=hy;hand.ang=ang;P.stride=P.lean>2?1:0;
+      hand.x=hx;hand.y=hy;hand.ang=ang;P.stride=P.lean>2?1:0;if(st.two){P.back={x:hx-Math.cos(ang)*14,y:hy-Math.sin(ang)*14,ang};}
     }else if(type==='punch'){const k=Math.sin(seg(p,.15,.75)*Math.PI);P.front.x=10+k*16;P.front.y=-15+tilt*6*k;P.lean=k*3;}
     else if(type==='shield'){
       const w=seg(p,0,.3),s=seg(p,.3,.48),r=seg(p,.48,1),x=p<.3?lerp(12,3,E(w)):p<.48?lerp(3,27,s):lerp(27,12,E(r)),hand=st.right==='shield'?P.front:P.back;
@@ -469,7 +472,7 @@ window.startGame=(session)=>{
   // Tay nào đang ra đòn (hand của dáng): front = tay phải, back = tay trái, both = cả hai, null = không
   function atkHand(a,st){
     if(!a||a.type==='block')return null;const T=a.type;
-    if(T==='heal')return 'both';if(T==='sword')return a.hand==='left'?'back':'front';
+    if(T==='heal')return 'both';if(T==='sword'||T==='saber'||T==='mace')return st.two?'both':a.hand==='left'?'back':'front';
     if(T==='shield')return st.right==='shield'?'front':'back';if(T==='staff')return st.right==='staff'?'front':'back';
     return 'front';
   }
@@ -477,7 +480,7 @@ window.startGame=(session)=>{
   // tay trái co lại, khiên đưa ra bên hông phía sau (mặt ngoài nhìn thẳng), cả hai vẽ trước thân. Khi ra đòn thì về dáng đòn như thường.
   // Dáng quay trái (tác giả chọn, v10.6): khiên trước ngực nhìn thẳng mặt ngoài vẽ trên thân; tay phải buông thấp, kiếm chĩa xuống trước, vẽ sau thân (lộ phần lưỡi bên hông trái)
   const LEFT_POSE={sw:{x:12,y:-8,ang:.35},sh:{x:-7,y:-14},face:true,swBack:true};
-  const HIDE_ANG={sword:-.78,staff:-1.0,punch:-1.6};
+  const HIDE_ANG={sword:-.78,saber:-.78,mace:-.9,staff:-1.0,punch:-1.6};
   function handSide(P,st,facing,a){
     const ah=atkHand(a,st);
     // Quay trái chỉ dùng dáng riêng (LEFT_POSE) khi đứng / đi / đỡ có cầm đồ một tay; tay không, vũ khí hai tay và lúc ra đòn thì vẽ đối xứng gương với quay phải
@@ -485,7 +488,7 @@ window.startGame=(session)=>{
     if(mirror){const dW=st.two?0:-15,dO=st.two?0:15;P.front.x+=dW;P.back.x+=dO;if(P.trail)P.trail.cx+=dW;P.sh={front:{x:-8,y:-23},back:{x:8,y:-23}};}
     else{P.sh={front:{x:8,y:-23},back:{x:-8,y:-23}};
       if(!(P.block&&st.right==='shield')){const V=LEFT_POSE;P.hide=true;P.lp={...V};
-        P.front={x:V.sw.x,y:V.sw.y,ang:st.right==='sword'?V.sw.ang:(HIDE_ANG[st.right]!==undefined?HIDE_ANG[st.right]:-1.1)};
+        P.front={x:V.sw.x,y:V.sw.y,ang:MELEE1(st.right)?V.sw.ang:(HIDE_ANG[st.right]!==undefined?HIDE_ANG[st.right]:-1.1)};
         if(!P.block)P.back={x:V.sh.x,y:V.sh.y,ang:P.back.ang};}}
     return P;
   }
@@ -499,6 +502,9 @@ window.startGame=(session)=>{
   function glow(c,el,blur){if(el){c.shadowColor=EL[el].color;c.shadowBlur=blur;}}
   let curLook=null; // dáng vẻ món vũ khí đang vẽ (bộ huyền thoại / đồ thần: chuôi, đốc theo màu bộ)
   function drawSword(c,el,tint){const G=curLook&&(curLook.legend||curLook.fx)?curLook:null;line(c,[-6,0,3,0],G?G.main:'#5a4330',4);c.fillStyle=G?G.trim:'#c9a85f';c.beginPath();c.arc(-7,0,2.5,0,PI2);c.fill();line(c,[3,-6,3,6],G?G.trim:'#c9a85f',3);c.save();glow(c,el,10);c.fillStyle=tint||'#dfe6ea';c.beginPath();c.moveTo(5,-2.3);c.lineTo(31,-1.6);c.lineTo(38,0);c.lineTo(31,1.6);c.lineTo(5,2.3);c.closePath();c.fill();c.restore();line(c,[7,0,29,0],'#9fb0b8',1);}
+  // v10.14: đao (lưỡi cong rộng, đốc đồng) và chùy (cán gỗ, đầu sắt tròn có gai)
+  function drawSaber(c,el,tint){const G=curLook&&(curLook.legend||curLook.fx)?curLook:null;line(c,[-7,0,3,0],G?G.main:'#4a3320',4);c.fillStyle=G?G.trim:'#c9a85f';c.beginPath();c.arc(-8,0,2.6,0,PI2);c.fill();line(c,[3,-5,3,5],G?G.trim:'#c9a85f',3);c.save();glow(c,el,10);c.fillStyle=tint||'#d8e0e4';c.beginPath();c.moveTo(4,-2);c.quadraticCurveTo(26,-9,40,-9);c.quadraticCurveTo(30,-1,22,3);c.lineTo(4,3);c.closePath();c.fill();c.restore();c.strokeStyle='#8fa0a8';c.lineWidth=1;c.beginPath();c.moveTo(7,-1);c.quadraticCurveTo(22,-5,33,-6);c.stroke();}
+  function drawMace(c,el,tint){const G=curLook&&(curLook.legend||curLook.fx)?curLook:null;line(c,[-8,0,22,0],G?G.main:'#6a4a2c',3.5);c.fillStyle=G?G.trim:'#c9a85f';c.beginPath();c.arc(-9,0,2.6,0,PI2);c.fill();c.save();glow(c,el,10);c.fillStyle=tint||'#8a8f96';c.beginPath();c.arc(28,0,7.5,0,PI2);c.fill();c.restore();c.fillStyle=tint?shade(tint,-.25):'#5a5f66';for(let i=0;i<8;i++){const a=i*Math.PI/4;c.beginPath();c.moveTo(28+Math.cos(a)*6,Math.sin(a)*6);c.lineTo(28+Math.cos(a)*11,Math.sin(a)*11);c.lineTo(28+Math.cos(a+.4)*6,Math.sin(a+.4)*6);c.fill();}c.fillStyle='#ffffff44';c.beginPath();c.arc(26,-2,2.5,0,PI2);c.fill();}
   function drawSpear(c,el,tint){line(c,[-30,0,36,0],'#9a7448',3);c.save();glow(c,el,10);c.fillStyle=tint||'#dfe3da';c.beginPath();c.moveTo(35,-4.5);c.lineTo(48,0);c.lineTo(35,4.5);c.closePath();c.fill();c.restore();c.fillStyle='#6f7a74';c.fillRect(32,-2.5,4,5);const tc=curLook&&(curLook.legend||curLook.fx)?curLook.main:'#b8433a';line(c,[33,2,31,9],tc,1.6);line(c,[34,2,34,10],tc,1.6);}
   function drawStaff(c,el,charge,t,tint){line(c,[-22,0,26,0],'#7d5d3a',3.5);line(c,[22,-3,22,3],'#c9a85f',2);line(c,[26,0,29,-5],'#7d5d3a',2);line(c,[26,0,29,5],'#7d5d3a',2);const col=el?EL[el].color:curLook&&(curLook.legend||curLook.fx)?curLook.trim:tint||'#a6baff',r=5+charge*3.5+Math.sin(t*6)*.6;c.save();c.shadowColor=col;c.shadowBlur=8+charge*16;c.fillStyle=col;c.beginPath();c.arc(31,0,r,0,PI2);c.fill();c.fillStyle='#ffffffcc';c.beginPath();c.arc(30,-1.5,r*.35,0,PI2);c.fill();c.restore();}
   // Khiên: nhìn nghiêng (cạnh) khi ở tay sau / đang chặn; nhìn thẳng mặt ngoài (face) khi đưa ra trước lúc quay trái hoặc đeo sau lưng
@@ -520,7 +526,7 @@ window.startGame=(session)=>{
     if(cb.flash){c.fillStyle='#fff3b0';c.beginPath();for(let i=0;i<8;i++){const a=i*Math.PI/4,r=i%2?4:11;c.lineTo(24+Math.cos(a)*r,Math.sin(a)*r);}c.fill();}
   }
   // Ảnh vũ khí trong Sheet Hình ảnh (vat_pham:<mã>): vẽ ảnh thay hình mặc định. Ảnh vẽ chéo, chuôi ở góc dưới trái, mũi ở góc trên phải.
-  const PIC_LEN={sword:36,spear:62,staff:46};
+  const PIC_LEN={sword:36,spear:62,staff:46,saber:40,mace:36};
   function drawHeld(c,type,hp,P,el,t,role,tint,it){
     if(!type)return;c.save();c.translate(hp.x,hp.y);if(hp.s)c.scale(hp.s,hp.s);curLook=it?LH_Look.of(it):null;
     const pic=it&&type!=='bow'&&type!=='crossbow'?LH_IMG.pic('vat_pham:'+it):null;
@@ -530,7 +536,7 @@ window.startGame=(session)=>{
       c.restore();return;
     }
     if(type==='shield')drawShield(c,role==='back',P.block,t,tint,role==='front'||role==='carry');
-    else{c.rotate(hp.ang);if(type==='sword')drawSword(c,el,tint);else if(type==='spear')drawSpear(c,el,tint);else if(type==='staff')drawStaff(c,el,P.charge,t,tint);else if(type==='bow')drawBow(c,P.pull,P.arrow,el,tint);else if(type==='crossbow')drawCrossbow(c,P.cb,el,tint);}
+    else{c.rotate(hp.ang);if(type==='sword')drawSword(c,el,tint);else if(type==='saber')drawSaber(c,el,tint);else if(type==='mace')drawMace(c,el,tint);else if(type==='spear')drawSpear(c,el,tint);else if(type==='staff')drawStaff(c,el,P.charge,t,tint);else if(type==='bow')drawBow(c,P.pull,P.arrow,el,tint);else if(type==='crossbow')drawCrossbow(c,P.cb,el,tint);}
     c.restore();
   }
   function drawWings(c,t){const f=Math.sin(t*4)*.12;c.save();c.translate(-4,-22);c.rotate(-.1+f);c.fillStyle='#e9eef4dd';c.strokeStyle='#b9c6d3';c.lineWidth=1;c.beginPath();c.moveTo(0,0);c.quadraticCurveTo(-26,-40,-40,-12);c.quadraticCurveTo(-28,-12,-22,4);c.quadraticCurveTo(-12,0,0,8);c.closePath();c.fill();c.stroke();for(let i=1;i<4;i++){c.beginPath();c.moveTo(-4,2);c.lineTo(-12-i*8,-14+i*5);c.stroke();}c.restore();}
@@ -797,7 +803,7 @@ window.startGame=(session)=>{
     if(m.type==='deer')m.flee=time+3;
     if(atk.owner==='hero'&&!atk.abs){
       if(f.lifesteal)healHero(dmg*f.lifesteal/100);
-      if(f.stun&&Math.random()*100<f.stun){m.stunUntil=time+1;m.atk=null;floater(c.x,c.y-M.h*.5-18,'Choáng','#ffe69a',12);}
+      if((f.stun||atk.stun)&&Math.random()*100<(f.stun||0)+(atk.stun||0)){m.stunUntil=time+1;m.atk=null;floater(c.x,c.y-M.h*.5-18,'Choáng','#ffe69a',12);} // v10.14: chùy cũng gây choáng
       if(f.burn)m.burn={dps:dmg*f.burn/100/3,until:time+3};
       if(f.venom&&!(m.burn&&m.burn.until>time+3)){m.burn={dps:dmg*f.venom/100/4,until:time+4,color:'#80e060'};floater(c.x,c.y-M.h*.5-18,'Độc','#80e060',12);} // Độc: mất máu dần 4 giây
       if(f.frost&&Math.random()*100<f.frost){m.slowUntil=time+2;m.slowK=.5;floater(c.x,c.y-M.h*.5-18,'Băng giá','#a0e0ff',12);burst(c.x,m.y-6,'#a0e0ff',10,120);}
@@ -829,9 +835,9 @@ window.startGame=(session)=>{
   }
   function resolveAttack(a,idx=0){
     const d0=ATK[a.type],RM=1+(HD.tot.range||0)/100,d=RM>1?{...d0,range:d0.range*RM}:d0,sk=SK[a.skill],el=HD.books.fire?'fire':a.elem; // Tầm đánh (dòng cánh): nới tầm mọi đòn
-    const atk={D:HD,mul:d.dmg*sk.mul*(a.empowered?1.6:1),el,owner:'hero',knock:d.knock,skill:a.skill};
+    const atk={D:HD,mul:d.dmg*sk.mul*(a.empowered?1.6:1),el,owner:'hero',knock:d.knock,skill:a.skill,stun:d.stun||0};
     const ang=Math.atan2(a.aim.y,a.aim.x),ox=hero.x,oy=hero.y-18,col=el?EL[el].color:'#f4ead0';
-    LH_Audio.play({sword:'swing',punch:'swing',shield:'bash',spear:'thrust',staff:'magic',bow:'bow',crossbow:'crossbow'}[a.type]||'swing');
+    LH_Audio.play({sword:'swing',saber:'swing',mace:'bash',punch:'swing',shield:'bash',spear:'thrust',staff:'magic',bow:'bow',crossbow:'crossbow'}[a.type]||'swing');
     if(d.kind==='melee'){
       const whirl=!!sk.multi,range=d.range*(whirl?1.15:1)*(a.skill==='basic'?1.2:1);
       hitArc(ox,oy,ang,range,whirl?PI2:d.arc,{...atk,knock:d.knock*(a.type==='shield'&&a.skill!=='normal'?1.6:1)});
@@ -1102,6 +1108,8 @@ window.startGame=(session)=>{
     if(HD.fx.manaShield&&d>0){const part=Math.min(Math.floor(player.mana),Math.round(d*HD.fx.manaShield/100));player.mana-=part;d-=part;}
     player.hp-=d;hero.lastHurt=time;hero.hurt=time;hero.invuln=time+.35;
     floater(hero.x,hero.y-66-seatH(),tag+'-'+d,'#ff8f86',15);shake(4);
+    // v10.14: Sức khỏe → tỉ lệ hồi đầy máu khi trúng đòn
+    if(player.hp>0&&S.fullHeal&&Math.random()*100<S.fullHeal){player.hp=S.hp;floater(hero.x,hero.y-84-seatH(),'+'+S.hp,'#9fe8a8',16,'heart');burst(hero.x,hero.y-30,'#9fe8a8',16,160);}
     if(S.reflect&&!m.dead){const c=center(m);hitMonster(m,{abs:dmg*S.reflect/100,owner:'reflect',color:EL.earth.glow},(m.x-hero.x)/(Math.hypot(m.x-hero.x,m.y-hero.y)||1),0);fx.push({kind:'bolt',x1:hero.x,y1:hero.y-22,x2:c.x,y2:c.y,color:EL.earth.color,age:0,life:.2});}
     const dx=hero.x-m.x,dy=hero.y-m.y,l=Math.hypot(dx,dy)||1;World.move(hero,dx/l*16,dy/l*16);
     if(HD.bfx&&HD.bfx.light&&!m.dead&&Math.random()*100<HD.bfx.light){m.fearUntil=time+(Number(CFG.sang_ms)||2500)/1000*(M.boss?.5:1);m.atk=null;m.leap=null;m.path=null;floater(m.x,m.y-M.h-20,'Hoảng sợ',EL.light.color,13);fx.push({kind:'ring',x:hero.x,y:hero.y-20,r0:10,r1:120,color:EL.light.color,age:0,life:.5,lw:5});burst(hero.x,hero.y-30,EL.light.glow,18,220);}
@@ -1220,7 +1228,7 @@ window.startGame=(session)=>{
         if(!World.canStand(e.x,e.y)){e.x=hero.x;e.y=hero.y;}
         if(w.pet)burst(e.x,e.y-20,EL.demon.color,18,160);}
       e.data=w.data;e.slot=i;
-      if(w.pet){const M=MON[w.data.type];e.type=w.data.type;e.max=M.hp;e.name=M.name;}else{e.D=Player.derive(w.data);e.max=e.D.tot.hp;e.name=w.data.name;}
+      if(w.pet){const M=MON[w.data.type];e.type=w.data.type;e.max=M.hp;e.name=M.name;}else{e.D=Player.derive(w.data);const tm=Player.tierMul(w.data);e.D.tot.hp=Math.round(e.D.tot.hp*tm);e.D.dmgMul*=tm;e.max=e.D.tot.hp;e.name=w.data.name;e.tier=w.data.tier||'n';} // v10.14: lính phẩm cấp cao máu, sát thương nhân lên
       if(!e.hp)e.hp=Math.max(1,Math.round(e.max*(w.data.hpFrac||1)));e.hp=Math.min(e.hp,e.max);
       allies.push(e);
     });
@@ -1229,7 +1237,7 @@ window.startGame=(session)=>{
   function mercHit(e,a){
     // lính thành trì: hệ sách theo ngày (Player.mercDaily); mỗi đòn thứ 4 ra chiêu diện rộng
     const dl=!e.pet&&Player.mercDaily(e.data),el=dl?dl.el:null,col=el?EL[el].color:'#dfe8f0';e.hits=(e.hits||0)+1;
-    const d=ATK[a.type],atk={D:e.D,mul:d.dmg*(el?1.15:1),el,owner:'merc',knock:d.knock},ang=Math.atan2(a.aim.y,a.aim.x),ox=e.x,oy=e.y-18;
+    const d=ATK[a.type],atk={D:e.D,mul:d.dmg*(el?1.15:1)*(1+(HD.tot.mercDmg||0)/100),el,owner:'merc',knock:d.knock,stun:d.stun||0},ang=Math.atan2(a.aim.y,a.aim.x),ox=e.x,oy=e.y-18; // v10.14: Mệnh lệnh cộng % sát thương lính
     if(el&&e.hits%4===0){nova(e.x,e.y-12,110,{...atk,mul:atk.mul*1.6},null);fx.push({kind:'ring',x:e.x,y:e.y-12,r0:8,r1:110,color:col,age:0,life:.4,lw:4});burst(e.x,e.y-20,col,16,180);floater(e.x,e.y-70,dl.skill,col,12);return;}
     if(d.kind==='melee'){hitArc(ox,oy,ang,d.range,d.arc,atk);fx.push({kind:'arc',x:ox,y:oy,ang,r:d.range*.8,arc:1.5,color:col,age:0,life:.2});}
     else if(d.kind==='thrust')hitLine(ox,oy,ang,d.range,d.width,atk);else spawnProjectile({x:e.x,y:e.y},ang,atk,d);
@@ -1313,7 +1321,7 @@ window.startGame=(session)=>{
   // Quái thu phục: đi theo, cắn/húc quái khác. Chết là mất hẳn
   function updatePet(e,dt){
     const M=MON[e.type];
-    if(e.atk){if(time>=e.atk.at&&!e.atk.done){e.atk.done=true;const t=e.atk.tg;if(t&&!t.dead&&Math.hypot(t.x-e.x,t.y-e.y)<M.range+MON[t.type].r+40){const l=Math.hypot(t.x-e.x,t.y-e.y)||1;hitMonster(t,{abs:Math.max(6,M.dmg)*(1+player.level*.05),owner:'pet',color:EL.demon.glow,knock:40},(t.x-e.x)/l,(t.y-e.y)/l);}}if(e.atk&&time>=e.atk.end)e.atk=null;e.data.hpFrac=e.hp/e.max;return;}
+    if(e.atk){if(time>=e.atk.at&&!e.atk.done){e.atk.done=true;const t=e.atk.tg;if(t&&!t.dead&&Math.hypot(t.x-e.x,t.y-e.y)<M.range+MON[t.type].r+40){const l=Math.hypot(t.x-e.x,t.y-e.y)||1;hitMonster(t,{abs:Math.max(6,M.dmg)*(1+player.level*.05)*(1+(HD.tot.petDmg||0)/100),owner:'pet',color:EL.demon.glow,knock:40},(t.x-e.x)/l,(t.y-e.y)/l);}}if(e.atk&&time>=e.atk.end)e.atk=null;e.data.hpFrac=e.hp/e.max;return;}
     const target=!safe&&!hero.dead?nearestFoe(e,300):null;let goal=null;
     if(target){const dx=target.x-e.x,dist=Math.hypot(dx,target.y-e.y),reach=M.range*.8+MON[target.type].r+M.r*.5;if(Math.abs(dx)>3)e.facing=dx<0?-1:1;
       if(dist>reach)goal={x:target.x,y:target.y};else if(time>e.cd){const w=Math.max(.25,M.windup);e.atk={at:time+w,end:time+w+.35,done:false,tg:target};e.cd=time+w+Math.max(.8,M.cd);}}
@@ -1606,7 +1614,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     layers.sort((a,b)=>a[0]-b[0]);
     for(const [,o] of layers){
       if(o===hero){drawHero(ctx,hero,st,el,time);drawDbf();if(hero.shieldHp>0){ctx.save();ctx.globalAlpha=.3+Math.sin(time*6)*.08;ctx.strokeStyle='#ffe9a8';ctx.lineWidth=2.5;ctx.beginPath();ctx.ellipse(hero.x,hero.y-24-seatH(),26,36,0,0,PI2);ctx.stroke();ctx.restore();}}
-      else if(o.key&&o.data){const e=o;if(e.pet){drawPet(e);}else{drawHero(ctx,e,Player.stance(e.data),null,time,{who:e.data,labelColor:e.bot?'#ffd9a8':'#bfe3ff',label:e.bot||safe});const sh=seatOf(e.data.equipment);if(e.hp<e.max){roundRect(ctx,e.x-18,e.y-78-sh,36,4,2,'#0a120ecc');roundRect(ctx,e.x-18,e.y-78-sh,36*e.hp/e.max,4,2,'#7fd38a');}}}
+      else if(o.key&&o.data){const e=o;if(e.pet){drawPet(e);}else{drawHero(ctx,e,Player.stance(e.data),null,time,{who:e.data,labelColor:e.bot?'#ffd9a8':e.tier&&e.tier!=='n'?(Player.RAR[e.tier]||{}).color||'#bfe3ff':'#bfe3ff',label:e.bot||safe});const sh=seatOf(e.data.equipment);if(e.hp<e.max){roundRect(ctx,e.x-18,e.y-78-sh,36,4,2,'#0a120ecc');roundRect(ctx,e.x-18,e.y-78-sh,36*e.hp/e.max,4,2,'#7fd38a');}}}
       else if(o.amb)drawAmbient(o);
       else if(LH_ART.obj[o.kind])LH_ART.obj[o.kind](ctx,o,time);
       else if(o.kind==='tree')tree(o);else if(o.kind==='house')house(o);else if(o.kind==='banyan')banyan(o);else if(o.kind==='well')well(o);else if(o.kind==='fire')campfire(o);else if(o.role)drawNPC(o);else drawMonster(o);

@@ -157,7 +157,7 @@ const LH_Look=(()=>{
   function note(type){
     const d=Player.items[type];if(!d)return {goi_y:'128×128, '+WEBP+'.',gioi_tinh:'Chung',ghi_chu:''};
     const L=of(type),k=d.kind,S=d.set&&Player.SETS[d.set];let t;
-    if(['sword','spear','staff'].includes(k))t=`128×128, ${WEBP}. Vũ khí vẽ chéo 45°: tay cầm ở góc dưới trái (14% từ trái, 86% từ trên), mũi hướng góc trên phải — game đặt đúng điểm này vào tay nhân vật.`;
+    if(['sword','spear','staff','saber','mace'].includes(k))t=`128×128, ${WEBP}. Vũ khí vẽ chéo 45°: tay cầm ở góc dưới trái (14% từ trái, 86% từ trên), mũi hướng góc trên phải — game đặt đúng điểm này vào tay nhân vật.`;
     else if(k==='shield')t=`128×128, ${WEBP}. Khiên đứng thẳng giữa ảnh, cao khoảng 85% khung.`;
     else if(k==='bow'||k==='crossbow')t=`128×128, ${WEBP}. Vẽ chéo giữa khung (trên tay vẫn dùng hình vẽ của game vì có động tác kéo dây).`;
     else if(d.slot==='mount')t=`128×128, ${WEBP}. Thú quay mặt sang phải, chân chạm đáy, thấy yên cưỡi.`;
