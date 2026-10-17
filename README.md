@@ -190,12 +190,17 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 - `vat_pham` có thêm cột `pham_chat` (phẩm chất cố định), `hieu_ung`, `gia_tri`, `mo_ta` (hiệu ứng riêng như đồ thần); `cua_hang` thêm cột `bac`. `kiemTra` tự thêm cột, tab `dien_mao` và các dòng mới (quái, việc, hàng hóa, diện mạo).
 - **Nhân vật thử**: hàm `taoNhanVatThu()` trong Apps Script tạo cho tài khoản `vnthudao` hai nhân vật cấp 100 (Thử Nam 100, Thử Nữ 100): mặc đủ 9 món một bộ huyền thoại +9 bậc 100, túi có bộ huyền thoại thứ hai, 11 món đồ thần, hổ, voi, 4 sách, 50 triệu đồng, 5000 hồng ngọc. `taoNhanVatThu('ten_khac',120)` cho tài khoản / cấp khác.
 
+## Bản 10.4: khiên nhìn thẳng mặt, kiếm quay trái, thu vũ khí trong làng và thành
+
+- **Quay trái**: khiên đưa ra trước vẽ **mặt ngoài nhìn thẳng** (tròn, có núm và đinh tán, viền theo màu bộ); kiếm/gậy khuất sau người nay chếch hẳn về bên trái, lưỡi nhô qua vai.
+- **Trong vùng an toàn** (làng, thành trì) nhân vật, lính đi theo và người chơi ảo **thu vũ khí**: tay vung theo bước đi; kiếm dắt bên hông (chuôi ở thắt lưng, lưỡi chếch ra sau); khiên, cung, nỏ, giáo, gậy, kiếm thứ hai đeo sau lưng. Ra đòn (đánh thường) hoặc chặn thì cầm lại; túi đồ, chân dung, chợ cho thuê vẫn hiện dáng cầm vũ khí.
+
 ## Ra bản mới
 
 1. Sửa trong `src/` (và `VERSION`).
 2. `node tools/build.mjs`
-3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-10.4`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
-4. Trên Blogspot đổi `@ban-10.3` thành `@ban-10.4` (trang game và trang Chợ phiên).
+3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-10.5`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
+4. Trên Blogspot đổi `@ban-10.4` thành `@ban-10.5` (trang game và trang Chợ phiên).
 5. Nếu `Code.gs` đổi: dán lại vào Apps Script, Triển khai → Quản lý triển khai → Sửa → Phiên bản mới (giữ nguyên URL).
 
 ## Dữ liệu trong Sheet

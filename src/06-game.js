@@ -456,7 +456,7 @@ window.startGame=(session)=>{
   }
   // Quay trái (7 giờ): học theo dáng quay phải — món tay sau thân (tay phải: kiếm/gậy) khuất sau người, chỉ lộ chút lưỡi;
   // món tay trái (khiên) đưa ra trước, thấy trọn. Khi tay phải ra đòn thì vũ khí vung ra trước như thường.
-  const HIDE_ANG={sword:-1.32,staff:-1.5,punch:-1.6};
+  const HIDE_ANG={sword:-.95,staff:-1.2,punch:-1.6};
   function handSide(P,st,facing,a){
     if(facing>0){const dW=st.two?-5:-15,dO=st.two?-5:15;P.front.x+=dW;P.back.x+=dO;if(P.trail)P.trail.cx+=dW;P.sh={front:{x:-8,y:-23},back:{x:8,y:-23}};}
     else{P.sh={front:{x:8,y:-23},back:{x:-8,y:-23}};
@@ -477,7 +477,12 @@ window.startGame=(session)=>{
   function drawSword(c,el,tint){const G=curLook&&(curLook.legend||curLook.fx)?curLook:null;line(c,[-6,0,3,0],G?G.main:'#5a4330',4);c.fillStyle=G?G.trim:'#c9a85f';c.beginPath();c.arc(-7,0,2.5,0,PI2);c.fill();line(c,[3,-6,3,6],G?G.trim:'#c9a85f',3);c.save();glow(c,el,10);c.fillStyle=tint||'#dfe6ea';c.beginPath();c.moveTo(5,-2.3);c.lineTo(31,-1.6);c.lineTo(38,0);c.lineTo(31,1.6);c.lineTo(5,2.3);c.closePath();c.fill();c.restore();line(c,[7,0,29,0],'#9fb0b8',1);}
   function drawSpear(c,el,tint){line(c,[-30,0,36,0],'#9a7448',3);c.save();glow(c,el,10);c.fillStyle=tint||'#dfe3da';c.beginPath();c.moveTo(35,-4.5);c.lineTo(48,0);c.lineTo(35,4.5);c.closePath();c.fill();c.restore();c.fillStyle='#6f7a74';c.fillRect(32,-2.5,4,5);const tc=curLook&&(curLook.legend||curLook.fx)?curLook.main:'#b8433a';line(c,[33,2,31,9],tc,1.6);line(c,[34,2,34,10],tc,1.6);}
   function drawStaff(c,el,charge,t,tint){line(c,[-22,0,26,0],'#7d5d3a',3.5);line(c,[22,-3,22,3],'#c9a85f',2);line(c,[26,0,29,-5],'#7d5d3a',2);line(c,[26,0,29,5],'#7d5d3a',2);const col=el?EL[el].color:curLook&&(curLook.legend||curLook.fx)?curLook.trim:tint||'#a6baff',r=5+charge*3.5+Math.sin(t*6)*.6;c.save();c.shadowColor=col;c.shadowBlur=8+charge*16;c.fillStyle=col;c.beginPath();c.arc(31,0,r,0,PI2);c.fill();c.fillStyle='#ffffffcc';c.beginPath();c.arc(30,-1.5,r*.35,0,PI2);c.fill();c.restore();}
-  function drawShield(c,back,blocking,t,tint){c.save();if(blocking){c.shadowColor='#f4dd9a';c.shadowBlur=14+Math.sin(t*20)*4;}const G=curLook&&(curLook.legend||curLook.fx)?curLook:null;c.fillStyle=G?G.main:tint||(back?'#8a6a3a':'#a07a46');c.strokeStyle=G?G.trim:'#d0bc7b';c.lineWidth=2;c.beginPath();c.ellipse(2,0,7,15,0,0,PI2);c.fill();c.stroke();c.restore();c.strokeStyle='#6b4a2e';c.lineWidth=1;for(let k=-10;k<=10;k+=5){c.beginPath();c.moveTo(-3,k);c.lineTo(7,k);c.stroke();}c.fillStyle='#d0bc7b';c.beginPath();c.arc(2.5,0,3,0,PI2);c.fill();}
+  // Khiên: nhìn nghiêng (cạnh) khi ở tay sau / đang chặn; nhìn thẳng mặt ngoài (face) khi đưa ra trước lúc quay trái hoặc đeo sau lưng
+  function drawShield(c,back,blocking,t,tint,face){c.save();if(blocking){c.shadowColor='#f4dd9a';c.shadowBlur=14+Math.sin(t*20)*4;}const G=curLook&&(curLook.legend||curLook.fx)?curLook:null,col=G?G.main:tint||(back?'#8a6a3a':'#a07a46'),trim=G?G.trim:'#d0bc7b';
+    if(face){c.fillStyle=col;c.strokeStyle=trim;c.lineWidth=2.2;c.beginPath();c.ellipse(0,0,12,15,0,0,PI2);c.fill();c.stroke();c.restore();
+      c.strokeStyle=shade(col,-.3);c.lineWidth=1;c.beginPath();c.ellipse(0,0,8.5,11,0,0,PI2);c.stroke();for(let k=-8;k<=8;k+=4){c.beginPath();c.moveTo(-9+Math.abs(k)*.5,k);c.lineTo(9-Math.abs(k)*.5,k);c.stroke();}
+      c.fillStyle=trim;for(const [x,y] of [[0,-10],[0,10],[-7,0],[7,0]]){c.beginPath();c.arc(x,y,1.5,0,PI2);c.fill();}c.beginPath();c.arc(0,0,4,0,PI2);c.fill();c.fillStyle='#ffffff55';c.beginPath();c.arc(-1,-1.5,1.6,0,PI2);c.fill();return;}
+    c.fillStyle=col;c.strokeStyle=trim;c.lineWidth=2;c.beginPath();c.ellipse(2,0,7,15,0,0,PI2);c.fill();c.stroke();c.restore();c.strokeStyle='#6b4a2e';c.lineWidth=1;for(let k=-10;k<=10;k+=5){c.beginPath();c.moveTo(-3,k);c.lineTo(7,k);c.stroke();}c.fillStyle='#d0bc7b';c.beginPath();c.arc(2.5,0,3,0,PI2);c.fill();}
   function drawBow(c,pull,arrow,el,tint){
     const sx=-(4+pull);line(c,[-4,-22,sx,0,-4,22],'#efe6cc',1.2);
     c.strokeStyle=tint||'#caa16b';c.lineWidth=3;c.beginPath();c.moveTo(-4,-22);c.quadraticCurveTo(9,-12,0,0);c.quadraticCurveTo(9,12,-4,22);c.stroke();line(c,[-1,-3,-1,3],'#6b4a2e',4);
@@ -500,7 +505,7 @@ window.startGame=(session)=>{
       else{const s=PIC_LEN[type]/1.15;c.rotate(hp.ang+Math.PI/4);if(el){c.shadowColor=EL[el].glow;c.shadowBlur=10;}c.drawImage(pic,-s*.14,-s*.86,s,s);}
       c.restore();return;
     }
-    if(type==='shield')drawShield(c,role==='back',P.block,t,tint);
+    if(type==='shield')drawShield(c,role==='back',P.block,t,tint,role==='front'||role==='carry');
     else{c.rotate(hp.ang);if(type==='sword')drawSword(c,el,tint);else if(type==='spear')drawSpear(c,el,tint);else if(type==='staff')drawStaff(c,el,P.charge,t,tint);else if(type==='bow')drawBow(c,P.pull,P.arrow,el,tint);else if(type==='crossbow')drawCrossbow(c,P.cb,el,tint);}
     c.restore();
   }
@@ -578,7 +583,8 @@ window.startGame=(session)=>{
     if(m.type==='horse')return {px:14,rot:.32*k};if(m.type==='elephant')return {px:-20,rot:-.32*Math.sin(Math.PI*Math.min(1,p/m.hit))};if(m.type==='kylan')return {px:-10,rot:-.28*k};if(m.type==='rong')return {px:-10,rot:-.12*k};return {px:0,rot:-.22*k};}
   // Mặc định: nam cởi trần đóng khố, nữ mặc yếm váy
   function drawHero(c,h,st,el,t,opts={}){
-    const who=opts.who||player,eq=who.equipment,info=Player.info,a=h.attack,P=handSide(heroPose(h,st,a,t),st,h.facing,a),flash=t-h.hurt<.12,md=!safe&&eq.mount&&info(eq.mount),mounted=!!md,seat=mounted?Player.BEASTS[md.beast].seat:0,big=mounted&&md.beast==='elephant',fem=who.gender==='f';
+    // Trong vùng an toàn (làng, thành): thu vũ khí — kiếm dắt bên hông, khiên / cung / nỏ / giáo / gậy đeo sau lưng; tay vung theo bước đi. Đang ra đòn hoặc xem trước (túi đồ, chân dung) thì vẫn cầm.
+    const who=opts.who||player,eq=who.equipment,info=Player.info,a=h.attack,sheathed=safe&&!a&&!opts.armed&&t>=h.blockUntil,P=handSide(heroPose(h,st,a,t),st,h.facing,a),flash=t-h.hurt<.12,md=!safe&&eq.mount&&info(eq.mount),mounted=!!md,seat=mounted?Player.BEASTS[md.beast].seat:0,big=mounted&&md.beast==='elephant',fem=who.gender==='f';
     const AV=Player.AVATARS[who.avatar]||null,bob=h.moving?-Math.abs(Math.sin(h.walk))*(mounted?1.4:2.2):Math.sin(t*2)*.6,SKIN=AV?shade(AV.skin,-.07):'#d9ad80';
     c.save();if(h.dead)c.globalAlpha=.45;
     ell(c,h.x,h.y+5,big?42:mounted?28:15,big?12:mounted?8:7,'#243d3544');
@@ -593,10 +599,24 @@ window.startGame=(session)=>{
     if(LW)LH_Look.back(c,LW,t,h.moving);
     const sleeve=LA?LA.main:SKIN,skin=LG?LG.main:SKIN;
     const held=(type,hp,role,tn,lv,it)=>{c.save();if(lv>=7){c.shadowColor=lv>=10?'#ff6a3a':'#ffd77a';c.shadowBlur=6+lv;}const L=it&&LH_Look.of(it);if(L&&L.fx)LH_Look.mythGlow(c,L);drawHeld(c,type,hp,P,el,t,role,tn,it);c.restore();};
-    const backTop=a&&a.hand==='left'&&a.type==='sword',hide=!!P.hide;
+    const backTop=a&&a.hand==='left'&&a.type==='sword',hide=!!P.hide&&!sheathed;
+    if(sheathed){const sw=h.moving?Math.sin(h.walk):0;P.hide=false;P.front={x:(h.facing>0?-9:10)+sw*4,y:-7,ang:0};P.back={x:(h.facing>0?9:-10)-sw*4,y:-7,ang:0};P.trail=null;}
     if(fem)ell(c,-7,-31,6,11,'#2a2622'); // tóc dài sau lưng
+    // đồ đeo sau lưng (vẽ trước thân): khiên, cung, nỏ, giáo, gậy, kiếm thứ hai; kiếm chính dắt bên hông (vẽ trước thân, hé chuôi và mũi)
+    if(sheathed){
+      const carry=(type,it,tn,lv,x,y,ang,role)=>{if(!type)return;held(type,{x,y,ang},role||'carry',tn,lv,it);};
+      const R=st.right,L=st.left;
+      if(L==='shield')carry(L,st.itL,st.tintL,st.lvL,-12,-23,0,'carry');
+      else if(L==='sword')carry(L,st.itL,st.tintL,st.lvL,-13,-32,2.2);
+      else if(L)carry(L,st.itL,st.tintL,st.lvL,-4,-22,-1.1);
+      if(R==='shield')carry(R,st.itR,st.tintR,st.lvR,-12,-23,0,'carry');
+      else if(R&&R!=='sword')carry(R,st.itR,st.tintR,st.lvR,-4,-20,-1.15);
+      drawArm(c,P.sh.back.x,P.sh.back.y,P.back.x,P.back.y,sleeve,skin);
+    }
+    const hipSword=()=>{if(sheathed&&st.right==='sword')held('sword',{x:-6,y:-9,ang:2.75},'carry',st.tintR,st.lvR,st.itR);};
     // quay trái: món tay phải (kiếm, gậy) vẽ trước thân → khuất sau người, chỉ lộ phần lưỡi nhô lên vai
-    if(hide){held(st.right,P.front,'back',st.tintR,st.lvR,st.itR);drawArm(c,P.sh.front.x,P.sh.front.y,P.front.x,P.front.y,sleeve,skin);}
+    if(sheathed){}
+    else if(hide){held(st.right,P.front,'back',st.tintR,st.lvR,st.itR);drawArm(c,P.sh.front.x,P.sh.front.y,P.front.x,P.front.y,sleeve,skin);}
     else{if(!st.two&&!backTop)held(st.left,P.back,'back',st.tintL,st.lvL,st.itL);
       if(!backTop)drawArm(c,P.sh.back.x,P.sh.back.y,P.back.x,P.back.y,sleeve,skin);}
     const skirt=LP&&LP.kind==='skirt',pants=LP&&!skirt?LP.main:SKIN,boot=LS?LS.main:null;
@@ -621,8 +641,9 @@ window.startGame=(session)=>{
     else if(fem){ell(c,-10,-46,6.5,5.5,HAIR);line(c,[-15,-48,-4,-44],'#c9a24a',1.6);ell(c,-4,-44,1.6,1.6,AV&&AV.mark==='hoa'?'#f06090':'#c0392b');if(AV&&AV.mark==='hoa'){ell(c,-12,-50,3,3,'#f06090');ell(c,-9,-52,2.2,2.2,'#ffd040');}}
     else if((!eq.hat||LH.kind==='tram')&&HS!=='dung'&&HS!=='xoa'){ell(c,-4,-49,4.5,4,HAIR);line(c,[-7,-46.5,-1,-46.5],'#a8343a',1.8);} // búi tóc
     if(LH)LH_Look.hat(c,LH,fem);
-    if(st.two){held(st.right,P.front,'front',st.tintR,st.lvR,st.itR);c.fillStyle=skin;c.beginPath();c.arc(P.back.x,P.back.y,3.4,0,PI2);c.fill();}
-    else if(hide){held(st.left,P.back,'front',st.tintL,st.lvL,st.itL);} // quay trái: khiên / món tay trái ra trước, thấy trọn
+    if(sheathed)hipSword(); // kiếm dắt bên hông: chuôi ở thắt lưng, lưỡi chếch ra sau
+    else if(st.two){held(st.right,P.front,'front',st.tintR,st.lvR,st.itR);c.fillStyle=skin;c.beginPath();c.arc(P.back.x,P.back.y,3.4,0,PI2);c.fill();}
+    else if(hide){held(st.left,P.back,'front',st.tintL,st.lvL,st.itL);} // quay trái: khiên / món tay trái ra trước, thấy trọn mặt ngoài
     else held(st.right,P.front,'front',st.tintR,st.lvR,st.itR);
     if(backTop){held(st.left,P.back,'back',st.tintL,st.lvL,st.itL);drawArm(c,P.sh.back.x,P.sh.back.y,P.back.x,P.back.y,sleeve,skin);}
     if(hide)drawArm(c,P.sh.back.x,P.sh.back.y,P.back.x,P.back.y,sleeve,skin);
@@ -1480,7 +1501,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     c.save();c.translate(fake.x,fake.y);c.scale(k,k);c.translate(-fake.x,-fake.y);
     const b=ui&&ui.previewBurst?time-ui.previewBurst():9;
     if(el&&!who&&b<.9){c.save();c.globalAlpha=1-b/.9;c.strokeStyle=EL[el].glow;c.lineWidth=3;c.beginPath();c.ellipse(fake.x,fake.y-20,10+b*60,(10+b*60)*.7,0,0,PI2);c.stroke();c.restore();}
-    drawHero(c,fake,st,who?null:el,time,{label:false,who:who||undefined});c.restore();
+    drawHero(c,fake,st,who?null:el,time,{label:false,who:who||undefined,armed:true});c.restore();
   }
   function activateBurst(el){if(!el)return;const C=EL[el];fx.push({kind:'ring',x:hero.x,y:hero.y-10,r0:8,r1:90,color:C.color,age:0,life:.6,lw:5});burst(hero.x,hero.y-26,C.color,26,200);burst(hero.x,hero.y-26,C.glow,12,120);}
   // Vòng lặp: một khung hình lỗi không làm dừng game (ghi vào nhật ký Tình trạng, báo một dòng, chạy tiếp)
@@ -1499,7 +1520,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     safe=false;
     return {draw(c,who,x,y,k,t,el,opts={}){
       time=t;const st=Player.stance(who),fake={x,y,facing:opts.facing||1,moving:false,walk:0,aim:{x:1,y:0},hurt:-9,blockUntil:0,barrierUntil:0,dead:0,name:'',attack:null,mountAct:null};
-      c.save();c.translate(x,y);c.scale(k,k);c.translate(-x,-y);drawHero(c,fake,st,el||null,t,{label:false,who});c.restore();
+      c.save();c.translate(x,y);c.scale(k,k);c.translate(-x,-y);drawHero(c,fake,st,el||null,t,{label:false,who,armed:true});c.restore();
     },seat:eq=>seatOf(eq)};
   }
   canvas.addEventListener('pointerdown',e=>{if(e.button&&e.button!==0)return;e.preventDefault();const r=canvas.getBoundingClientRect(),pt=screenPoint(e.clientX-r.left,e.clientY-r.top);if(e.pointerType==='mouse')mouseAim={x:pt.x,y:pt.y,t:time};goTo(pt);});
