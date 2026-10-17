@@ -79,6 +79,16 @@
    "tx": 53,
    "ty": 28,
    "label": "Rừng Đông Ngạn"
+  },
+  {
+   "x": 6,
+   "y": 32,
+   "w": 3,
+   "h": 1,
+   "to": "rung-truc",
+   "label": "Rừng Trúc",
+   "tx": 24,
+   "ty": 30
   }
  ],
  "tiles": [
@@ -167,11 +177,6 @@
   },
   {
    "kind": "stalag",
-   "x": 4,
-   "y": 30
-  },
-  {
-   "kind": "stalag",
    "x": 6,
    "y": 17
   },
@@ -184,11 +189,6 @@
    "kind": "stalag",
    "x": 13,
    "y": 28
-  },
-  {
-   "kind": "stalag",
-   "x": 7,
-   "y": 31
   },
   {
    "kind": "stalag",
@@ -402,5 +402,6 @@
     "doi-quy": 2
    }
   }
- ]
+ ],
+ "trees": []
 }

@@ -11,7 +11,7 @@ const root=path.resolve(path.dirname(new URL(import.meta.url).pathname),'..');
 const rd=f=>fs.readFileSync(path.join(root,f),'utf8'),wr=(f,s)=>{fs.writeFileSync(path.join(root,f),s);console.log(f.padEnd(24),s.length);};
 const V=rd('VERSION').trim();
 const API='https://script.google.com/macros/s/AKfycbwEUXIQSLK1t6FXNDDD18lbJGNomqhMAzcwh55N_uzKbUL19LaxvieMyhLpzrB06VfzgA/exec';
-const GAME=['00-loader.js','01-data.js','02-core.js','03-net.js','03-img.js','04-art.js','04-world.js','04-looks.js','05-player.js','06-game.js','07-ui.js','08-portal.js'];
+const GAME=['00-loader.js','01-data.js','01-data-vung.js','02-core.js','03-net.js','03-img.js','04-art.js','04-world.js','04-looks.js','05-player.js','06-game.js','07-ui.js','08-portal.js'];
 const CHO=['cho/cho.js'];
 // CSS: gắn mọi luật vào khung gốc (#lu-hanh, #cho-phien) để giao diện Blogspot không đè được (nút, chữ, ô nhập)
 function scope(src,id){
@@ -53,7 +53,7 @@ for(const id of mapIds){const d=mapOf(id);if(d.id!==id)throw Error('maps/'+id+'.
 const mapJs=ids=>`window.LH_MAP_CDN='https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@ban-${V.replace(/^v/,'')}/dist/maps/';window.LH_MON_PACK=${JSON.stringify(monPack)};`+'window.LH_MAPS=window.LH_MAPS||{};'+ids.map(id=>id===MAP0?`window.LH_MAPS[${JSON.stringify(id)}]=${JSON.stringify(mapOf(id))};`:packOf(id)).join('\n');
 // ---- game
 const body=rd('src/body.html').replaceAll('{{VERSION}}',V),css=rootCss('#lu-hanh','hidden')+scope(rd('src/style.css'),'#lu-hanh');
-const gameJs=ids=>GAME.flatMap(f=>f==='04-art.js'?[safe(rd('src/'+f)),safe(mapJs(ids))]:[safe(rd('src/'+f))]);
+const gameJs=ids=>GAME.flatMap(f=>f==='04-art.js'?[safe(rd('src/'+f)),safe(rd('src/04-gen.js')),safe(mapJs(ids))]:[safe(rd('src/'+f))]);
 const js=gameJs([MAP0]),jsAll=gameJs(mapIds);
 wr('dist/lu-hanh.css',banner('Làng Thanh Mộc')+miniCss(css));
 wr('dist/lu-hanh.js',safe(await mini(banner('Làng Thanh Mộc')+inject(body,'portal')+js.map(s=>';'+s).join('\n'),'lu-hanh.js')));
@@ -75,9 +75,9 @@ const cfg=`<script>${cfgJs(API)}</script>`;
 wr('blogspot/nhung-vao-blogspot.html',`<!-- Lữ Hành ${V} · trang GAME: dán vào bài/trang Blogspot (chế độ HTML). Bản mới: đổi số sau @ban- -->\n${cfg}\n<script charset="utf-8" src="${cdn}lu-hanh-boot.js"></script>\n`);
 wr('blogspot/cho-phien.html',`<!-- Lữ Hành ${V} · trang CHỢ PHIÊN: tạo Trang mới tên "cho-phien" trên Blogspot, dán vào (chế độ HTML). -->\n<link rel="stylesheet" href="${cdn}cho-phien.css">\n${cfg}\n<script charset="utf-8" src="${cdn}cho-phien.js"></script>\n`);
 // ---- Code.gs
-const ctx={};vm.runInNewContext(rd('src/01-data.js')+';'+rd('src/05-player.js')+';this.GD=GAME_DATA;this.P=Player;',ctx);
+const ctx={};vm.runInNewContext(rd('src/01-data.js')+';'+rd('src/01-data-vung.js')+';'+rd('src/05-player.js')+';this.GD=GAME_DATA;this.P=Player;',ctx);
 const ids=JSON.parse(rd('apps-script/sheet-ids.json'));
-const table=Object.fromEntries(Object.entries(ctx.GD).map(([k,rows])=>{const h=Object.keys(rows[0]);return [k,[h,...rows.map(r=>h.map(c=>r[c]))]];}));
+const table=Object.fromEntries(Object.entries(ctx.GD).map(([k,rows])=>{const h=[...new Set(rows.flatMap(r=>Object.keys(r)))];return [k,[h,...rows.map(r=>h.map(c=>r[c]))]];}));
 // ---- Bảng ảnh tĩnh (Sheet "LH · Hình ảnh"): mọi đối tượng dùng được ảnh, cột link_anh để trống = dùng hình mặc định
 const ICON_VN={sword:['Kiếm','Loại vũ khí kiếm, nút đánh thường khi cầm kiếm'],bow:['Cung','Loại cung, nút đánh khi cầm cung'],crossbow:['Nỏ','Loại nỏ, nút đánh khi cầm nỏ'],staff:['Gậy phép','Loại gậy, nút đánh khi cầm gậy'],spear:['Thương','Loại thương, nút đánh khi cầm thương'],shield:['Khiên','Loại khiên, chỉ số Thủ, vùng an toàn'],punch:['Nắm đấm','Sức mạnh, tay không'],hat:['Mũ','Ô trang bị mũ'],armor:['Áo giáp','Ô trang bị áo'],pants:['Quần','Ô trang bị quần'],gloves:['Găng tay','Ô trang bị găng'],shoes:['Giày','Ô trang bị giày'],wings:['Áo choàng / cánh','Ô trang bị cánh'],mount:['Ngựa','Thú cưỡi, nút kỹ năng thú cưỡi'],book:['Sách','Sách kỹ năng, ô kỹ năng'],ore:['Khoáng thạch','Nguyên liệu'],lock:['Ổ khóa','Ô khóa, đăng nhập'],pin:['Ghim bản đồ','Tên vùng trên bản đồ nhỏ'],flame:['Lửa','Sách Hỏa, kỹ năng Liên hoàn'],water:['Nước','Sách Thủy, trùm Ngư Tinh'],wood:['Cây','Sách Mộc'],metal:['Kim loại','Sách Kim'],earth:['Đất','Sách Thổ'],heart:['Trái tim','Máu, Sức khỏe'],orb:['Cầu mana','Mana, hết mana'],speed:['Tốc độ','Tốc độ chạy, tốc đánh'],reflect:['Phản đòn','Chỉ số phản đòn'],feather:['Lông vũ','Nhanh nhẹn'],flag:['Lá cờ','Mệnh lệnh, lính đang ra trận'],talk:['Nói chuyện','Gặp dân làng'],bridge:['Cây cầu','Nhiệm vụ qua cầu'],deer:['Hươu','Nhiệm vụ săn hươu'],lion:['Sư tử','Nhiệm vụ sư tử'],elephant:['Voi','Voi rừng, thú cưỡi voi'],croc:['Cá sấu','Nhiệm vụ cá sấu'],coin:['Đồng tiền','Tiền'],close:['Dấu X','Đóng, báo lỗi'],eye:['Con mắt','Xem, tầm đánh'],out:['Cửa ra','Đăng xuất'],check:['Dấu tích','Xong, thành công'],next:['Mũi tên','Tiếp, nhận việc'],pen:['Bút','Đặt tên'],user:['Người','Lính, đổi nhân vật'],hand2:['Hai tay','Vũ khí cầm hai tay'],thunder:['Sấm sét','Sách Lôi'],wind:['Gió','Sách Phong'],ice:['Băng','Sách Băng'],demon:['Ma công','Sách Ma công, quái thu phục'],light:['Ánh sáng','Sách Ánh sáng'],spark:['Tia sáng','Trí tuệ, Mana, kỹ năng Combo'],whirl:['Lốc xoáy','Kỹ năng Diện rộng'],tiger:['Hổ','Thú cưỡi hổ, trùm Chúa Sơn Lâm'],anvil:['Cái đe','Gia cường'],bag:['Túi đồ','Nút túi đồ, nhặt đồ'],home:['Ngôi nhà','Về làng'],save:['Lưu','Nút lưu'],quest:['Nhiệm vụ','Nút nhiệm vụ, theo dõi việc'],aim:['Khóa mục tiêu','Nút khóa mục tiêu khi cầm cung, nỏ; chỉ số chính xác'],menu:['Menu','Nút menu góc trên (ba gạch)'],map:['Bản đồ','Nút chọn bản đồ trong menu']};
 const ICON_TIP='64×64, định dạng webp, nền trong suốt, nét đơn giản một màu (game tô màu theo chỗ dùng)';

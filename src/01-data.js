@@ -10,13 +10,11 @@ cau_hinh:[
  {khoa:'cung_no_x2',gia_tri:15,ghi_chu:'Cầm cung / nỏ: cộng thêm % tỉ lệ gây sát thương x2 (vũ khí khác không có)'},
  {khoa:'gioi_han_ha_quai',gia_tri:16,ghi_chu:'Hạ tối đa bao nhiêu con cùng một loài quái thường trong một lượt hồi sinh (chống gian lận; bãi quái lớn cần số lớn)'},
  {khoa:'nguoi_choi_ao',gia_tri:4,ghi_chu:'Số người chơi ảo đi săn ở mỗi bản đồ (0 = tắt)'},
+ {khoa:'trum_ky_nang_giay',gia_tri:7,ghi_chu:'Trùm ra chiêu đặc biệt (cột ky_nang ở tab quai) cách nhau bao nhiêu giây'},
  {khoa:'dong_do_mac',gia_tri:'def,hp,dodge,reflect,hpReg,mp',ghi_chu:'Đồ mặc: các chỉ số có thể ra dòng ngẫu nhiên (mã ở tab thuoc_tinh, cách nhau dấu phẩy)'},
  {khoa:'cuong_hoa_5_mau',gia_tri:80,ghi_chu:'Mặc 5 món từ +9: cộng thêm máu'},
  {khoa:'cuong_hoa_bo_mau',gia_tri:150,ghi_chu:'Đủ 8 ô đồ từ +9: cộng thêm máu'},
  {khoa:'cuong_hoa_bo_sat_thuong',gia_tri:10,ghi_chu:'Đủ 8 ô đồ từ +9: cộng thêm % sát thương'},
- {khoa:'cap_hang_dong',gia_tri:5,ghi_chu:'Cấp tối thiểu vào Hang động (qua cổng hoặc chọn bản đồ), nhận việc ở Hang động'},
- {khoa:'cap_sa_mac',gia_tri:10,ghi_chu:'Cấp tối thiểu vào Sa mạc, nhận việc ở Sa mạc'},
- {khoa:'cap_nui_tuyet',gia_tri:15,ghi_chu:'Cấp tối thiểu vào Núi tuyết, nhận việc ở Núi tuyết'},
  {khoa:'tien_thu_nghiem',gia_tri:9999999,ghi_chu:'Tiền (đồng) cho nhân vật mới: 999 vàng 99 bạc 99 đồng. 100 đồng = 1 bạc, 100 bạc = 1 vàng'},
  {khoa:'hong_ngoc_thu_nghiem',gia_tri:999,ghi_chu:'Hồng ngọc cho nhân vật mới'},
  {khoa:'ti_le_ban_lai',gia_tri:40,ghi_chu:'% giá gốc nhận lại khi bán cho cửa hàng'},
@@ -41,7 +39,7 @@ cau_hinh:[
  {khoa:'gieng_hoi_giay',gia_tri:300,ghi_chu:'Giếng cổ: số giây để nước đầy lại sau khi dùng'},
  {khoa:'exp_goc',gia_tri:60,ghi_chu:'Kinh nghiệm cần để lên cấp 2. Cấp L cần exp_goc × L^(exp_tang/100)'},
  {khoa:'exp_tang',gia_tri:150,ghi_chu:'Độ tăng kinh nghiệm cần mỗi cấp (150 = lũy thừa 1,5)'},
- {khoa:'cap_toi_da',gia_tri:60,ghi_chu:'Cấp cao nhất của nhân vật'},
+ {khoa:'cap_toi_da',gia_tri:100,ghi_chu:'Cấp cao nhất của nhân vật'},
  {khoa:'diem_moi_cap',gia_tri:5,ghi_chu:'Điểm cộng chỉ số nhận được mỗi lần lên cấp'},
  {khoa:'sach_chi_so',gia_tri:4,ghi_chu:'Mỗi sách gắn vào ô kỹ năng cộng chừng này điểm vào chỉ số theo hệ (Mộc chia đôi cho Sức khỏe và Trí tuệ)'},
  {khoa:'sach_moi_cap',gia_tri:2,ghi_chu:'Mỗi cấp gia cường sách cộng thêm'},
@@ -193,6 +191,13 @@ nhiem_vu:[
  ['q-nhen-doc','Ổ nhện độc','Nhện độc giăng tơ kín hang động phía nam rừng Đông Ngạn.','nhen-doc',3,3000,0,'','','khong'],
  ['q-dai-bang','Hạ Đại Bàng Tinh','Đại Bàng Tinh làm tổ trong hang đá thạch nhũ, bắt người về hang.','dai-bang',1,30000,0,'','','khong']
 ].map(([id,ten,mo_ta,muc_tieu,so_luong,thuong_dong,thuong_hong_ngoc,thuong_do,pham_chat_do,lap_lai])=>({id,ten,mo_ta,muc_tieu,so_luong,thuong_dong,thuong_hong_ngoc,thuong_do,pham_chat_do,lap_lai,thuong_kinh_nghiem:Math.round(thuong_dong/10)})),
+// Vùng đất: cấp tối thiểu để vào (cổng, bảng Bản đồ) và nhận việc; biểu tượng ở bảng Bản đồ. 10 vùng cấp 20–100 nối thêm từ 01-data-vung.js
+ban_do:[
+ {id:'thanh-moc',ten:'Làng Thanh Mộc',cap:1,bieu_tuong:'home',thu_tu:1},
+ {id:'hang-dong',ten:'Hang động',cap:5,bieu_tuong:'light',thu_tu:2},
+ {id:'sa-mac',ten:'Sa mạc',cap:10,bieu_tuong:'flame',thu_tu:3},
+ {id:'nui-tuyet',ten:'Núi tuyết',cap:15,bieu_tuong:'ice',thu_tu:4}
+],
 linh:[
  ['dan-binh','Dân binh','m',100,5,12,8,12,4,'spear,hat','Lính giáo rẻ, máu trâu'],
  ['cung-thu','Nữ cung thủ','f',300,5,10,14,8,6,'bow,shoes','Bắn từ xa'],

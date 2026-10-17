@@ -20,7 +20,7 @@
 */
 const LH_SHEETS=@@IDS@@;
 // Tab dữ liệu tĩnh → file Sheet chứa nó
-const LH_STATIC={cau_hinh:'cau_hinh',gia_cuong:'cau_hinh',pham_chat:'pham_chat',thuoc_tinh:'pham_chat',vat_pham:'vat_pham',cua_hang:'cua_hang',bo_huyen_thoai:'bo_huyen_thoai',do_than:'do_than',quai:'quai',nhiem_vu:'nhiem_vu',linh:'linh',vu_khi:'vat_pham',hinh_anh:'hinh_anh'};
+const LH_STATIC={cau_hinh:'cau_hinh',gia_cuong:'cau_hinh',pham_chat:'pham_chat',thuoc_tinh:'pham_chat',vat_pham:'vat_pham',cua_hang:'cua_hang',bo_huyen_thoai:'bo_huyen_thoai',do_than:'do_than',quai:'quai',nhiem_vu:'nhiem_vu',linh:'linh',vu_khi:'vat_pham',ban_do:'cau_hinh',hinh_anh:'hinh_anh'};
 // Cột của các bảng người chơi (file "LH · Người chơi")
 const LH_COLS={
   tai_khoan:['id','username','email','muoi','mat_khau','tao_luc','token','token_het_han','ma_khoi_phuc','ma_het_han','token_cu'],
@@ -48,13 +48,18 @@ function lhStatic_(){
   return out;
 }
 // Tab được bổ sung dòng mới (theo cột id) khi game thêm quái, nhiệm vụ
-const LH_BO_SUNG=['quai','nhiem_vu','cau_hinh'];
+const LH_BO_SUNG=['quai','nhiem_vu','cau_hinh','ban_do'];
 // Chép các dòng mặc định còn thiếu (quái, nhiệm vụ của vùng mới) xuống cuối tab; không sửa dòng đã có
 function lhDuLieuBoSung_(){
   let n=0;
   for(const tab of LH_BO_SUNG){
-    const file=LH_SHEETS[LH_STATIC[tab]];if(!file)continue;const sh=SpreadsheetApp.openById(file).getSheetByName(tab);if(!sh||sh.getLastRow()<2)continue;
+    const file=LH_SHEETS[LH_STATIC[tab]];if(!file)continue;const ss=SpreadsheetApp.openById(file);let sh=ss.getSheetByName(tab);
+    // tab mới của bản cập nhật (ban_do) chưa có: tạo và đổ dữ liệu mặc định
+    if(!sh){const rows=LH_DEFAULT[tab]||[];if(!rows.length)continue;const h0=Object.keys(rows[0]);sh=ss.insertSheet(tab);sh.getRange(1,1,rows.length+1,h0.length).setValues([h0,...rows.map(r=>h0.map(k=>r[k]===undefined||r[k]===null?'':r[k]))]);sh.setFrozenRows(1);sh.getRange(1,1,1,h0.length).setFontWeight('bold').setBackground('#2b4d38').setFontColor('#ffffff');n+=rows.length;Logger.log('Tạo tab '+tab);continue;}
+    if(sh.getLastRow()<2)continue;
     const v=sh.getDataRange().getValues(),h=v[0].map(String),key=h.indexOf('id')>=0?'id':'khoa',ci=h.indexOf(key);if(ci<0)continue;const has=new Set(v.slice(1).map(r=>String(r[ci])));
+    // cột mới của bản cập nhật (ban_do, ky_nang…) chưa có trên Sheet: thêm vào cuối tiêu đề
+    for(const k of Object.keys((LH_DEFAULT[tab]||[])[0]||{}))if(h.indexOf(k)<0){h.push(k);sh.getRange(1,h.length).setValue(k).setFontWeight('bold');}
     const add=(LH_DEFAULT[tab]||[]).filter(r=>!has.has(String(r[key]))).map(r=>h.map(k=>r[k]===undefined||r[k]===null?'':r[k]));
     if(add.length){sh.getRange(sh.getLastRow()+1,1,add.length,h.length).setValues(add);n+=add.length;Logger.log('Thêm '+add.length+' dòng vào tab '+tab);}
   }

@@ -23,7 +23,7 @@ const World=(()=>{
       else if(o.kind==='fire'){block(o.x,o.y);const f={kind:'fire',x:(o.x+.5)*T,y:(o.y+.6)*T};objects.push(f);fires.push(f);}
       else if(o.kind==='well'){block(o.x,o.y);const w=o.ancient?{kind:'well',ancient:true,id:o.id,x:(o.x+.5)*T,y:(o.y+.7)*T}:{kind:'well',x:(o.x+.5)*T,y:(o.y+.7)*T};objects.push(w);if(o.ancient)wells.push(w);}
       // vật trang trí riêng của gói bản đồ (đá, xương rồng, thông tuyết, thạch nhũ, pha lê…): vẽ bằng LH_ART.obj[kind]; solid:false = đi xuyên qua được
-      else{const sz=o.w||1;if(o.solid!==false)for(let k=0;k<sz;k++)block(o.x+k,o.y);const g={...o,tx:o.x,ty:o.y,x:(o.x+sz/2)*T,y:(o.y+.7)*T,seed:o.seed??(o.x*31+o.y*17)};objects.push(g);if(o.light)lights.push(g);}
+      else{const sz=o.w||1,rows=o.h||1;if(o.solid!==false)for(let k=0;k<sz;k++)for(let j=0;j<rows;j++)block(o.x+k,o.y-j);const g={...o,tx:o.x,ty:o.y,x:(o.x+sz/2)*T,y:(o.y+.7)*T,seed:o.seed??(o.x*31+o.y*17)};objects.push(g);if(o.light)lights.push(g);}
     }
     npcs=(def.npcs||[]).map(n=>({...n,x:n.x*T,y:n.y*T,...(n.x0!=null?{x0:n.x0*T,x1:n.x1*T}:{}),lines:n.lines||[],hx:n.x*T,hy:n.y*T,facing:n.facing||-1,moving:false,walk:0,dir:1,pause:0,turnAt:0,phase:Math.random()}));
     // gợn nước: ô nước đầu tiên mỗi hàng (bỏ hàng có cầu)

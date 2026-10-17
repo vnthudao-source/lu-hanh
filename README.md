@@ -143,12 +143,36 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 - Sa mạc có thêm trùm **Thạch Tinh** (người đá cát) ở ô 9, 24, rơi đồ tới Hoàn hảo, kèm việc "Phá Thạch Tinh" ở Lý trưởng.
 - Rung màn hình khi voi, trùm ra đòn giờ chỉ xảy ra khi người chơi ở gần (trước đây trùm, voi đánh người chơi ảo ở xa cũng làm rung cả màn hình).
 
+## Bản 10.2: mười vùng cấp 20–100, hai thành trì, chiêu thức trùm
+
+- **10 bản đồ mới** nối tiếp nhau theo cấp, mỗi vùng 2 loài quái, 1 trùm, 2 bãi quái lớn, trạm nghỉ ở cổng vào (lửa trại, giếng cổ) và người chơi ảo:
+
+  | Cấp | Vùng | Đi từ | Trùm · chiêu |
+  |---|---|---|---|
+  | 20 | Rừng Trúc | Hang động (mép dưới) | Mộc Tinh · Trì trệ |
+  | 28 | Đầm Lầy | Sa mạc (mép phải) | Xà Tinh · Trúng độc, Trì trệ |
+  | 36 | Đỉnh Mây | Núi tuyết (mép trên) | Lôi Điểu · Sét giật, Trì trệ |
+  | 44 | **Thành Cổ Loa** (thành trì) | Rừng Trúc | Tướng Âm Binh · Phá giáp, Suy nhược |
+  | 52 | Bãi Biển Hoang | Đầm Lầy | Thuồng Luồng · Trì trệ, Trúng độc |
+  | 60 | Núi Lửa | Đỉnh Mây | Hỏa Long · Nổ, Suy nhược |
+  | 70 | Rừng Ma | Thành Cổ Loa | Chúa Quỷ · Suy nhược, Phá giáp, Trúng độc |
+  | 80 | Băng Nguyên | Bãi Biển Hoang | Băng Hoàng · Đóng băng, Trì trệ |
+  | 90 | **Kinh Thành Thăng Long** (thành trì) | Rừng Ma | Hắc Long Tướng · Phá giáp, Sét giật, Suy nhược |
+  | 100 | Cửu Trùng Đài | Băng Nguyên và Thăng Long | Ma Vương · Đóng băng, Suy nhược, Nổ, Tự bạo |
+
+- **Thành trì** có tường, cổng, nhà mái ngói, đèn lồng, cờ; NPC mới: lính gác / cấm vệ tuần tra, quan văn giao việc, sư thầy, vũ công và ca nữ múa, người đánh trống hội, nghệ nhân đèn, thợ rèn thành, tướng quân (thuê lính), pháp sư, thương gia, quan mục. Quái vây ngoài thành.
+- **Quái mạnh dần**: mỗi vùng máu ×2, sát thương ×1,5, kinh nghiệm ×2 so với vùng trước (số liệu ở tab `quai`, chỉnh được). Giới hạn cấp nhân vật nâng lên 100 (`cap_toi_da`; game lấy số lớn hơn giữa cấu hình và cấp vùng cao nhất).
+- **Đồ theo bậc vùng**: đồ rơi ở vùng cấp ≥ 20 mang bậc `t` = cấp vùng (tên hiện "· cấp 44"): chỉ số gốc ×(1 + t/25), dòng cộng thêm ×(1 + t/20). Trùm từ cấp 44 rơi đồ huyền thoại, từ cấp 60 rơi đồ thần, tỉ lệ tăng dần theo cấp vùng (cột `huyen_thoai_phan_van`, `than_phan_van`); quái thường từ cấp 70 có tỉ lệ nhỏ rơi huyền thoại. Trần `pham_chat_roi_toi_da` tự nới theo cấp vùng.
+- **Chiêu thức trùm** (cột `ky_nang` tab `quai`, cách nhau dấu phẩy, ra chiêu mỗi `trum_ky_nang_giay` = 7 giây, có vòng báo trước 1,1 giây tại chỗ đứng): `slow` Trì trệ (tốc đánh −40%, 6 giây) · `freeze` Đóng băng (đứng yên 1,6 giây) · `stun` Sét giật (choáng 1,4 giây) · `weak` Suy nhược (sát thương −40%) · `armor` Phá giáp (phòng ngự −50%) · `poison` Trúng độc (mất 2% máu mỗi nửa giây, 5 giây) · `bomb` Nổ (sát thương ×2,5 trong vòng tròn) · `tubao` Tự bạo (còn dưới 15% máu: gồng 2,2 giây rồi nổ ×4 sát thương bán kính 260 và chết, vẫn rơi đồ). Hiệu ứng đang dính hiện trên đầu nhân vật.
+- **Gọn nhẹ**: nền, vật trang trí, quái, NPC của các vùng mới vẽ bằng bộ sinh theo tham số `src/04-gen.js` (dáng quad / bird / snake / human / blob / bug / golem / dragon, nền theo bảng màu…), nên mỗi gói bản đồ mới chỉ 4–8 KB (vùng vẽ tay cũ 13–15 KB) và vẫn chỉ tải khi tới gần cổng. Toàn bộ 10 vùng sinh từ một bảng tham số: `node tools/genmaps.mjs` (ghi `maps/*.json`, `maps/*.art.js`, `src/01-data-vung.js`, thêm cổng vào 3 vùng cũ).
+- Tab mới `ban_do` (file cấu hình): mã, tên, cấp tối thiểu, biểu tượng của từng vùng; `kiemTra` tự tạo tab này và thêm cột `ban_do`, `ky_nang` vào tab `quai` cùng 30 quái, 20 việc mới.
+
 ## Ra bản mới
 
 1. Sửa trong `src/` (và `VERSION`).
 2. `node tools/build.mjs`
-3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-10.2`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
-4. Trên Blogspot đổi `@ban-10.1` thành `@ban-10.2` (trang game và trang Chợ phiên).
+3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-10.3`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
+4. Trên Blogspot đổi `@ban-10.2` thành `@ban-10.3` (trang game và trang Chợ phiên).
 5. Nếu `Code.gs` đổi: dán lại vào Apps Script, Triển khai → Quản lý triển khai → Sửa → Phiên bản mới (giữ nguyên URL).
 
 ## Dữ liệu trong Sheet
