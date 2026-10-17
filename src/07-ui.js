@@ -18,7 +18,7 @@ window.startUI=(session)=>{
   const run=(btn,pr,after)=>{if(btn){btn.disabled=true;btn.classList.add('busy');}return pr.then(()=>refresh(),e=>{fail(e);if(btn){btn.disabled=false;btn.classList.remove('busy');}after&&after();});};
   // dân làng Thanh Mộc (việc đầu tiên: gặp đủ dân làng), dù nhân vật đang ở bản đồ khác
   // biểu tượng mặc định của từng loài quái (khi Sheet Hình ảnh chưa có ảnh)
-  const MON_IC={deer:'deer',lion:'lion',elephant:'elephant',croc:'croc','chua-son-lam':'tiger','ngu-tinh':'water','bo-cap':'earth','ken-ken':'feather','chan-tinh':'earth','soi-tuyet':'ice','gau-nui':'ice','ho-tinh':'ice','doi-quy':'demon','nhen-doc':'demon','dai-bang':'wind'};
+  const MON_IC={deer:'deer',lion:'lion',elephant:'elephant',croc:'croc','chua-son-lam':'tiger','ngu-tinh':'water','bo-cap':'earth','ken-ken':'feather','chan-tinh':'earth','thach-tinh':'earth','soi-tuyet':'ice','gau-nui':'ice','ho-tinh':'ice','doi-quy':'demon','nhen-doc':'demon','dai-bang':'wind'};
   const monIc=(t,fb)=>MON_IC[t]||fb;
   const villagers=()=>((typeof LH_MAPS!=='undefined'&&LH_MAPS[World.DEFAULT])||{npcs:[]}).npcs;
   const ttl=(id,text)=>`${svg(id)}<b>${text}</b>`;
@@ -105,7 +105,7 @@ window.startUI=(session)=>{
       const al=(p.alloc&&p.alloc[baseKey])||0,addBtn=p.points>0?`<button class="pt-add" data-pt="${g}">+1</button>${p.points>=5?`<button class="pt-add" data-pt="${g}" data-n="5">+5</button>`:''}`:'';
       return `<div class="attr"><div class="main">${svg(ic)}<span>${name}</span><b>${D.main[g]}</b>${plus?`<em>+${plus}</em>`:''}${al?`<em title="Điểm đã cộng" style="color:#ffd98a">+${al}</em>`:''}${addBtn}</div>${extra}${subs}</div>`;
     }).join('');
-    const sets=D.sets.map(x=>{const S2=Player.SETS[x.id];return chip('quest',`Bộ ${S2.name} ${x.n}/9`,Player.RAR.l.color);}).join('');
+    const sets=D.sets.map(x=>{const S2=Player.SETS[x.id];return chip('quest',`Bộ ${S2.name} ${x.n}/9`,Player.RAR.l.color);}).join('')+(D.enh&&D.enh.n9?chip('anvil',`Đồ +9: ${D.enh.n9}/8`,'#ffd77a'):'')+(D.enh?D.enh.list.map(([ic,t])=>chip(ic,t,'#ffd77a')).join(''):'');
     const fxs=Object.entries(D.fx).map(([k,v])=>chip('spark',Player.FX_NAMES[k]+' '+v,Player.RAR.m.color)).join('');
     const books=Object.keys(D.books).map(b=>chip(EL[b].icon,EL[b].name+': '+elInfo(b),EL[b].color)).join('');
     const need=Player.expNeed(p.level),maxed=p.level>=Player.maxLevel();
@@ -347,7 +347,7 @@ window.startUI=(session)=>{
   async function save(){closeMenu();const ok=await game.save();game.message(ok?svg('save')+'Đã lưu':svg('close')+'Không lưu được');}
   $('#avatarBtn').onclick=showAttributes;
   $('#settingsBtn').onclick=()=>{menu.hidden=!menu.hidden;$('#settingsBtn').setAttribute('aria-expanded',String(!menu.hidden));};
-  $('#lockBtn').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();game.toggleLock();});$('#saveBtn').onclick=save;$('#mapBtn').onclick=showMaps;$('#homeBtn').onclick=()=>{closeMenu();closeModal();game.home();refresh();};
+  $('#lockBtn').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();game.toggleLock();});$('#saveBtn').onclick=save;$('#mapBtn').onclick=showMaps;
   // Tình trạng: phiên bản, phần chơi chưa lưu, lần gọi máy chủ và lỗi gần đây (chụp màn hình gửi khi game có vấn đề)
   function showDiag(){
     closeMenu();const D=LH_DIAG.data,v=document.querySelector('.version');

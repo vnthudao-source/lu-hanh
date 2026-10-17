@@ -10,6 +10,10 @@ cau_hinh:[
  {khoa:'cung_no_x2',gia_tri:15,ghi_chu:'Cầm cung / nỏ: cộng thêm % tỉ lệ gây sát thương x2 (vũ khí khác không có)'},
  {khoa:'gioi_han_ha_quai',gia_tri:16,ghi_chu:'Hạ tối đa bao nhiêu con cùng một loài quái thường trong một lượt hồi sinh (chống gian lận; bãi quái lớn cần số lớn)'},
  {khoa:'nguoi_choi_ao',gia_tri:4,ghi_chu:'Số người chơi ảo đi săn ở mỗi bản đồ (0 = tắt)'},
+ {khoa:'dong_do_mac',gia_tri:'def,hp,dodge,reflect,hpReg,mp',ghi_chu:'Đồ mặc: các chỉ số có thể ra dòng ngẫu nhiên (mã ở tab thuoc_tinh, cách nhau dấu phẩy)'},
+ {khoa:'cuong_hoa_5_mau',gia_tri:80,ghi_chu:'Mặc 5 món từ +9: cộng thêm máu'},
+ {khoa:'cuong_hoa_bo_mau',gia_tri:150,ghi_chu:'Đủ 8 ô đồ từ +9: cộng thêm máu'},
+ {khoa:'cuong_hoa_bo_sat_thuong',gia_tri:10,ghi_chu:'Đủ 8 ô đồ từ +9: cộng thêm % sát thương'},
  {khoa:'cap_hang_dong',gia_tri:5,ghi_chu:'Cấp tối thiểu vào Hang động (qua cổng hoặc chọn bản đồ), nhận việc ở Hang động'},
  {khoa:'cap_sa_mac',gia_tri:10,ghi_chu:'Cấp tối thiểu vào Sa mạc, nhận việc ở Sa mạc'},
  {khoa:'cap_nui_tuyet',gia_tri:15,ghi_chu:'Cấp tối thiểu vào Núi tuyết, nhận việc ở Núi tuyết'},
@@ -164,6 +168,7 @@ quai:[
  ['bo-cap','Bọ cạp cát',380,26,55,160,22,30,240,56,1.3,.4,60,.4,0,18,.12,.025,0,0,'0-0','thuong',8],
  ['ken-ken','Kền kền',300,24,80,210,22,52,280,60,1.1,.35,55,.5,0,18,.12,.025,0,0,'0-0','thuong',8],
  ['chan-tinh','Chằn Tinh',6500,60,45,120,44,86,280,110,2,.7,1500,.08,1,240,.7,.35,0,0,'5-15','hoan_hao',15],
+ ['thach-tinh','Thạch Tinh',8000,64,40,105,46,112,260,104,2.2,.8,1700,.05,1,260,.72,.36,0,0,'6-16','hoan_hao',15],
  // Núi tuyết (phía tây làng)
  ['soi-tuyet','Sói tuyết',420,30,90,220,20,38,300,54,1,.3,70,.5,0,18,.13,.028,0,0,'0-0','thuong',10],
  ['gau-nui','Gấu ngựa',1050,45,45,130,28,60,220,70,1.8,.6,110,.2,0,22,.15,.03,0,0,'0-0','thuong',8],
@@ -172,7 +177,7 @@ quai:[
  ['doi-quy','Dơi quỷ',450,34,95,230,20,56,260,52,1,.3,75,.4,0,18,.14,.03,0,0,'0-0','thuong',10],
  ['nhen-doc','Nhện độc',1200,52,50,150,28,32,240,64,1.6,.5,120,.25,0,22,.16,.032,0,0,'0-0','thuong',10],
  ['dai-bang','Đại Bàng Tinh',9000,75,70,190,46,100,320,120,1.8,.65,2200,.06,1,240,.8,.4,0,0,'8-20','hoan_hao',20]
-].map(([id,ten,mau,sat_thuong,toc_do,toc_chay,ban_kinh,cao,tam_danh,tam_gan,hoi_chieu,vung_tay,dong,day_lui,boss,hoi_sinh_giay,ti_le_dep,ti_le_hoan_hao,ti_le_huyen_thoai,ti_le_than,hong_ngoc,loai_sat_thuong,ti_le_x2])=>{const [ha,hb]=hong_ngoc.split('-').map(Number),v=x=>Math.round(x*10000);return {id,ten,mau,sat_thuong,toc_do,toc_chay,ban_kinh,cao,tam_danh,tam_gan,hoi_chieu_ms:Math.round(hoi_chieu*1000),vung_tay_ms:Math.round(vung_tay*1000),dong,day_lui_phan_tram:Math.round(day_lui*100),boss,hoi_sinh_giay,dep_phan_van:v(ti_le_dep),hoan_hao_phan_van:v(ti_le_hoan_hao),huyen_thoai_phan_van:v(ti_le_huyen_thoai),than_phan_van:v(ti_le_than),hong_ngoc_it:ha,hong_ngoc_nhieu:hb,loai_sat_thuong,ti_le_x2,kinh_nghiem:{deer:8,lion:20,elephant:50,croc:25,'chua-son-lam':300,'ngu-tinh':800,'bo-cap':45,'ken-ken':40,'chan-tinh':900,'soi-tuyet':55,'gau-nui':110,'ho-tinh':1200,'doi-quy':60,'nhen-doc':130,'dai-bang':1500}[id]||0};}),
+].map(([id,ten,mau,sat_thuong,toc_do,toc_chay,ban_kinh,cao,tam_danh,tam_gan,hoi_chieu,vung_tay,dong,day_lui,boss,hoi_sinh_giay,ti_le_dep,ti_le_hoan_hao,ti_le_huyen_thoai,ti_le_than,hong_ngoc,loai_sat_thuong,ti_le_x2])=>{const [ha,hb]=hong_ngoc.split('-').map(Number),v=x=>Math.round(x*10000);return {id,ten,mau,sat_thuong,toc_do,toc_chay,ban_kinh,cao,tam_danh,tam_gan,hoi_chieu_ms:Math.round(hoi_chieu*1000),vung_tay_ms:Math.round(vung_tay*1000),dong,day_lui_phan_tram:Math.round(day_lui*100),boss,hoi_sinh_giay,dep_phan_van:v(ti_le_dep),hoan_hao_phan_van:v(ti_le_hoan_hao),huyen_thoai_phan_van:v(ti_le_huyen_thoai),than_phan_van:v(ti_le_than),hong_ngoc_it:ha,hong_ngoc_nhieu:hb,loai_sat_thuong,ti_le_x2,kinh_nghiem:{deer:8,lion:20,elephant:50,croc:25,'chua-son-lam':300,'ngu-tinh':800,'bo-cap':45,'ken-ken':40,'chan-tinh':900,'thach-tinh':1000,'soi-tuyet':55,'gau-nui':110,'ho-tinh':1200,'doi-quy':60,'nhen-doc':130,'dai-bang':1500}[id]||0};}),
 nhiem_vu:[
  ['q-huou','Săn hươu','Dân làng cần thịt hươu cho hội làng.','deer',5,200,0,'','','khong'],
  ['q-su-tu','Trừ sư tử','Sư tử bên Đông Ngạn hay vồ người đi rừng.','lion',3,500,0,'','','khong'],
@@ -182,6 +187,7 @@ nhiem_vu:[
  ['q-ngu-tinh','Trừ Ngư Tinh','Ngư Tinh nổi lên ở đầm phía đông nam, dâng nước hại dân.','ngu-tinh',1,30000,0,'','','khong'],
  ['q-bo-cap','Bọ cạp sa mạc','Lái buôn qua sa mạc phía bắc rừng Đông Ngạn bị bọ cạp cát đốt.','bo-cap',5,2000,0,'','','khong'],
  ['q-chan-tinh','Diệt Chằn Tinh','Chằn Tinh cuộn mình trong tháp cổ giữa sa mạc, đòi người nộp mạng.','chan-tinh',1,20000,0,'','','khong'],
+ ['q-thach-tinh','Phá Thạch Tinh','Thạch Tinh thức dậy ở góc tây nam sa mạc, đá lăn chặn đường lái buôn.','thach-tinh',1,22000,0,'','','khong'],
  ['q-soi-tuyet','Đàn sói tuyết','Sói tuyết từ núi phía tây làng xuống bắt gia súc.','soi-tuyet',5,2500,0,'','','khong'],
  ['q-ho-tinh','Trừ Hồ Tinh','Hồ Tinh chín đuôi ẩn trên đỉnh núi tuyết, mê hoặc người lên núi.','ho-tinh',1,25000,0,'','','khong'],
  ['q-nhen-doc','Ổ nhện độc','Nhện độc giăng tơ kín hang động phía nam rừng Đông Ngạn.','nhen-doc',3,3000,0,'','','khong'],

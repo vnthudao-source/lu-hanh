@@ -1,4 +1,4 @@
-/* Hình vẽ riêng của bản đồ Sa mạc: nền cát, đá đỏ, ốc đảo; xương rồng, thốt nốt, tháp Chàm đổ; Bọ cạp cát, Kền kền, trùm Chằn Tinh; cát bay */
+/* Hình vẽ riêng của bản đồ Sa mạc: nền cát, đá đỏ, ốc đảo; xương rồng, thốt nốt, tháp Chàm đổ; Bọ cạp cát, Kền kền, trùm Chằn Tinh, Thạch Tinh; cát bay */
 K=>{
   const {ell,line,poly,rr,shade,hash,PI2}=K;
   function tile(c,x,y,v,n,T,G){
@@ -101,6 +101,17 @@ K=>{
       c.strokeStyle=Wl;c.lineWidth=1.2;for(let k=0;k<4;k++){c.beginPath();c.moveTo(-8-k*6,-4-k);c.lineTo(-20-k*6,-20-up*(.6+k*.2));c.stroke();}
       line(c,[4,8,6,16],col('#a89070'),2);line(c,[-4,8,-4,16],col('#a89070'),2);c.restore();},
     // Chằn Tinh: trăn khổng lồ cuộn khúc, đầu ngóc cao, mắt đỏ, sừng nhỏ
+    // trùm Thạch Tinh: người đá cát khổng lồ, mắt lửa; vung tay đập xuống khi ra đòn
+    'thach-tinh'(c,m,M,s){const {col,t,open,atk}=s,R=col('#a8673e'),D=col('#6e3f22'),L=col('#d9a271'),g=m.moving?Math.sin(s.g):0,lift=open?-38:atk?-14:Math.sin(t*1.4)*3;
+      const rock=(x,y,rx,ry,cl)=>{ell(c,x,y,rx,ry,D);ell(c,x-1,y-2,rx-3,ry-3,cl||R);ell(c,x-rx*.35,y-ry*.4,rx*.35,ry*.25,L);};
+      rock(-16-g*6,-14,13,15);rock(16+g*6,-14,13,15);
+      rock(0,-52,38,34);for(let k=0;k<5;k++)line(c,[-24+k*11,-70+(k%2)*8,-18+k*11,-44+(k%3)*6],D,2);
+      c.save();c.translate(-34,-66);c.rotate(-.3-(open?.5:0));rock(0,14,12,22);rock(-2,40,14,12);c.restore();
+      c.save();c.translate(34,-66);c.rotate(.9+lift/40);rock(0,14,12,22);rock(4,38,16,14);c.restore();
+      rock(4,-98,22,18);c.fillStyle=col('#ff8a2a');c.shadowColor='#ffb04a';c.shadowBlur=10;c.fillRect(6,-104,6,4);c.fillRect(16,-103,5,4);c.shadowBlur=0;
+      if(open)line(c,[8,-90,22,-88],col('#3a1e10'),3);
+      c.fillStyle='#e8c89a66';for(let k=0;k<6;k++){const a=t*2+k;c.beginPath();c.arc(Math.cos(a)*44,-8+Math.sin(a*1.3)*4,2,0,PI2);c.fill();}
+    },
     'chan-tinh'(c,m,M,s){c.scale(1.3,1.3);const {col,t,open}=s,B=col('#5f7a3a'),D=col('#3f5626'),Y=col('#c9b45a'),sw=Math.sin(t*1.6)*3;
       for(const [y0,rx,ry] of [[-6,54,16],[-22,46,14],[-36,36,12]]){ell(c,0,y0,rx,ry,D);ell(c,0,y0-3,rx-4,ry-4,B);for(let k=-3;k<=3;k++){c.save();c.translate(k*rx/4.2,y0-2);c.rotate(.6);c.fillStyle=Y;c.fillRect(-3,-3,6,6);c.restore();}}
       const hx=open?58:40+sw,hy=open?-84:-96+sw;
@@ -119,5 +130,5 @@ K=>{
   function sky(c,s){const {w,h,t}=s;
     const g=c.createLinearGradient(0,0,0,h);g.addColorStop(0,'#fff0c41f');g.addColorStop(.5,'#ffd08a00');g.addColorStop(1,'#d08a3a14');c.fillStyle=g;c.fillRect(0,0,w,h);
     c.fillStyle='#f6dfa8';for(const d of dust){const x=((d.x+t*d.v)%1)*w,y=d.y*h+Math.sin(t*1.3+d.p)*14;c.globalAlpha=.35+.25*Math.sin(t*2+d.p);c.fillRect(x,y,d.s*3,d.s*.7);}c.globalAlpha=1;}
-  return {theme:{sand:{tile,over,ripple:'#d8f0ec66'}},obj,mon,sky:{sand:sky},ring:{'chan-tinh':'#c9b45a','bo-cap':'#d8b070'}};
+  return {theme:{sand:{tile,over,ripple:'#d8f0ec66'}},obj,mon,sky:{sand:sky},ring:{'chan-tinh':'#c9b45a','thach-tinh':'#d9a271','bo-cap':'#d8b070'}};
 }

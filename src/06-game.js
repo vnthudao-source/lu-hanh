@@ -429,6 +429,13 @@ window.startGame=(session)=>{
     }
     return P;
   }
+  // Nhìn 3/4 từ phía trước: tay phải nhân vật luôn ở bên trái màn hình, tay trái ở bên phải.
+  // Quay trái (lật hình) thì tay phải đã nằm phía trước; quay phải thì dời tay cầm vũ khí chính ra sau thân, tay kia ra trước.
+  function handSide(P,st,facing){
+    if(facing>0){const dW=st.two?-5:-15,dO=st.two?-5:15;P.front.x+=dW;P.back.x+=dO;if(P.trail)P.trail.cx+=dW;P.sh={front:{x:-8,y:-23},back:{x:8,y:-23}};}
+    else P.sh={front:{x:8,y:-23},back:{x:-8,y:-23}};
+    return P;
+  }
   function drawArm(c,sx,sy,hx,hy,sleeve,skin){
     const dx=hx-sx,dy=hy-sy,dd=Math.hypot(dx,dy)||1,d=Math.min(19.5,dd),ux=dx/dd,uy=dy/dd,off=Math.sqrt(Math.max(0,100-(d/2)**2));
     let px=-uy,py=ux;if(py<0){px=-px;py=-py;}
@@ -527,7 +534,7 @@ window.startGame=(session)=>{
     if(m.type==='horse')return {px:14,rot:.32*k};if(m.type==='elephant')return {px:-20,rot:-.32*Math.sin(Math.PI*Math.min(1,p/m.hit))};return {px:0,rot:-.22*k};}
   // Mặc định: nam cởi trần đóng khố, nữ mặc yếm váy
   function drawHero(c,h,st,el,t,opts={}){
-    const who=opts.who||player,eq=who.equipment,info=Player.info,a=h.attack,P=heroPose(h,st,a,t),flash=t-h.hurt<.12,md=!safe&&eq.mount&&info(eq.mount),mounted=!!md,seat=mounted?Player.BEASTS[md.beast].seat:0,big=mounted&&md.beast==='elephant',fem=who.gender==='f';
+    const who=opts.who||player,eq=who.equipment,info=Player.info,a=h.attack,P=handSide(heroPose(h,st,a,t),st,h.facing),flash=t-h.hurt<.12,md=!safe&&eq.mount&&info(eq.mount),mounted=!!md,seat=mounted?Player.BEASTS[md.beast].seat:0,big=mounted&&md.beast==='elephant',fem=who.gender==='f';
     const bob=h.moving?-Math.abs(Math.sin(h.walk))*(mounted?1.4:2.2):Math.sin(t*2)*.6,SKIN='#d9ad80';
     c.save();if(h.dead)c.globalAlpha=.45;
     ell(c,h.x,h.y+5,big?42:mounted?28:15,big?12:mounted?8:7,'#243d3544');
@@ -545,11 +552,11 @@ window.startGame=(session)=>{
     const backTop=a&&a.hand==='left'&&a.type==='sword';
     if(fem)ell(c,-7,-31,6,11,'#2a2622'); // tóc dài sau lưng
     if(!st.two&&!backTop)held(st.left,P.back,'back',st.tintL,st.lvL,st.itL);
-    if(!backTop)drawArm(c,SH.back.x,SH.back.y,P.back.x,P.back.y,sleeve,skin);
+    if(!backTop)drawArm(c,P.sh.back.x,P.sh.back.y,P.back.x,P.back.y,sleeve,skin);
     const skirt=LP&&LP.kind==='skirt',pants=LP&&!skirt?LP.main:SKIN,boot=LS?LS.main:null;
-    const foot=(x,y)=>{if(boot){roundRect(c,x-3,y-2,9,5,2,boot);line(c,[x-3,y-1.5,x+6,y-1.5],shade(boot,.25),1);}else ell(c,x+1.5,y+1,4.2,2,SKIN);};
+    const foot=(x,y)=>{if(boot){roundRect(c,x-4,y-2,8,5,2,boot);line(c,[x-3,y-1.5,x+3,y-1.5],shade(boot,.25),1);}else ell(c,x,y+1,3.8,2.1,shade(SKIN,-.05));};
     if(mounted){oline(c,[0,-6,9,-2,7,9],pants,5.5);foot(6,10);}
-    else{const s=h.moving?Math.sin(h.walk)*5:0,bf=-4-s-P.stride*4,ff=4+s+P.stride*7;oline(c,[-3,-6,bf,5],pants,5.5);oline(c,[3,-6,ff,5],pants,5.5);foot(bf,6);foot(ff,6);}
+    else{const w=h.moving?Math.sin(h.walk):0,l1=Math.max(0,w)*3,l2=Math.max(0,-w)*3,st2=P.stride*3;oline(c,[-4,-6,-4.5-st2*.3,5-l1],pants,5.5);oline(c,[4,-6,4.5+st2,5-l2],pants,5.5);foot(-4.5-st2*.3,6-l1);foot(4.5+st2,6-l2);}
     if(skirt){poly(c,mounted?[-11,-9,11,-9,14,3,-8,5]:[-12,-9,12,-9,15,4,-15,4],LP.main);line(c,[-12,-8,12,-8],LP.trim,2);}
     else if(!eq.pants){
       if(fem){poly(c,mounted?[-11,-9,11,-9,14,3,-8,5]:[-12,-9,12,-9,15,4,-15,4],'#5a3a2e');line(c,[-12,-8,12,-8],'#8a5a3a',2);} // váy
@@ -569,8 +576,8 @@ window.startGame=(session)=>{
     if(LH)LH_Look.hat(c,LH,fem);
     if(st.two){held(st.right,P.front,'front',st.tintR,st.lvR,st.itR);c.fillStyle=skin;c.beginPath();c.arc(P.back.x,P.back.y,3.4,0,PI2);c.fill();}
     else held(st.right,P.front,'front',st.tintR,st.lvR,st.itR);
-    if(backTop){held(st.left,P.back,'back',st.tintL,st.lvL,st.itL);drawArm(c,SH.back.x,SH.back.y,P.back.x,P.back.y,sleeve,skin);}
-    drawArm(c,SH.front.x,SH.front.y,P.front.x,P.front.y,sleeve,skin);
+    if(backTop){held(st.left,P.back,'back',st.tintL,st.lvL,st.itL);drawArm(c,P.sh.back.x,P.sh.back.y,P.back.x,P.back.y,sleeve,skin);}
+    drawArm(c,P.sh.front.x,P.sh.front.y,P.front.x,P.front.y,sleeve,skin);
     if(P.trail&&P.trail.to>P.trail.from){const tr=P.trail;c.save();c.globalAlpha=.5*tr.fade;c.fillStyle=el?EL[el].color:'#f4ead0';c.beginPath();c.arc(tr.cx,tr.cy,tr.r+6,tr.from,tr.to);c.arc(tr.cx,tr.cy,tr.r-14,tr.to,tr.from,true);c.closePath();c.fill();c.restore();}
     if(myth.length)LH_Look.mythAura(c,myth,t);
     if(P.heal){c.save();c.globalAlpha=.7;c.fillStyle='#bff5c4';c.beginPath();c.arc(P.front.x,P.front.y,6,0,PI2);c.arc(P.back.x,P.back.y,6,0,PI2);c.fill();c.restore();}
@@ -1148,7 +1155,8 @@ window.startGame=(session)=>{
     const hits=[];if(!hero.dead&&Math.hypot(hero.x-m.x,hero.y-m.y)<reach)hits.push('hero');for(const e of allies)if(e.hp>0&&Math.hypot(e.x-m.x,e.y-m.y)<reach+(e.pet?MON[e.type].r:0))hits.push(e);for(const e of bots)if(!e.dead&&Math.hypot(e.x-m.x,e.y-m.y)<reach)hits.push(e);
     const pref=m.tgt&&hits.includes(m.tgt)?m.tgt:hits.includes('hero')?'hero':hits[0],list=M.boss?hits:pref?[pref]:[];
     for(const h of list){if(h==='hero')hurtHero(M.dmg,m);else hurtAlly(h,M.dmg);}
-    if(m.type==='elephant'||M.boss){shake(M.boss?8:6);fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:70,color:LH_ART.ring[m.type]||(m.type==='ngu-tinh'?'#7fd0ff':'#d9cdb0'),age:0,life:.45,lw:5});}
+    if(m.type==='elephant'||M.boss){const hd=Math.hypot(hero.x-m.x,hero.y-m.y);if(hd<480)shake((M.boss?8:6)*(1-hd/600)); // chỉ rung khi người chơi ở gần (quái đánh người chơi ảo, lính ở xa thì không rung)
+fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:70,color:LH_ART.ring[m.type]||(m.type==='ngu-tinh'?'#7fd0ff':'#d9cdb0'),age:0,life:.45,lw:5});}
     if(m.type==='ngu-tinh')for(let i=0;i<14;i++){const a=i/14*PI2;particles.push({x:m.x+Math.cos(a)*30,y:m.y-10,vx:Math.cos(a)*160,vy:Math.sin(a)*60-80,age:0,life:.6,color:'#9fdcff',size:4,grav:300});}
   }
   // Đi tới đích; vướng bụi cây, nhà, nước thì tìm đường vòng theo lưới ô thay vì đẩy mãi vào vật cản

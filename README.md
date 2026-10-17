@@ -134,12 +134,21 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 - **Bãi quái lớn**: mỗi bản đồ 2 bãi (trường `camps` trong `maps/*.json`), quái tụ đông để luyện cấp, tên bãi hiện ở góc bản đồ nhỏ. Giới hạn hạ quái cùng loài trong một lượt hồi sinh nâng lên 16 (`gioi_han_ha_quai`).
 - **Người chơi ảo** (`nguoi_choi_ao`, mặc định 4 mỗi bản đồ, 0 = tắt): đi săn quanh các bãi quái, bị quái đánh, gục thì 20 giây sau quay lại. Tên, giới tính, đồ lấy từ nhân vật người chơi đang rao cho thuê ở Thương nhân; chưa có thì dùng 8 người chơi mặc định với vũ khí, đồ khác nhau (đồ tốt hơn ở vùng cấp cao). Không đánh trùm. Quái do người chơi ảo hạ không cho thưởng, trừ khi mình đã gây từ 30% máu quái.
 
+## Bản 10.1: dòng chỉ số đồ mặc, cường hóa đủ bộ, trùm Thạch Tinh
+
+- **Đồ mặc** (mũ, áo, quần, găng, giày, cánh) có dòng chỉ số ngẫu nhiên trong nhóm: phòng ngự, lượng máu, tránh né, phản đòn, hồi máu, lượng mana (Sheet `cau_hinh` `dong_do_mac`). Số dòng: Thường 1 · Đẹp 1–2 · Hoàn hảo 2–3 · Huyền thoại, Thần 3–4 (ngoài hiệu ứng bộ). Mỗi chỉ số chỉ xuất hiện một lần trên một món; đồ Thường lấy nửa dưới khoảng giá trị của đồ Đẹp. Vũ khí, thú cưỡi giữ như cũ. Phản đòn tổng tối đa 60%.
+- **Cường hóa** (8 ô đồ, trừ thú cưỡi; vũ khí hai tay tính cả ô tay trái): 5 món từ +9: máu +80 (`cuong_hoa_5_mau`). Đủ 8 ô từ +9: thêm máu +150 và sát thương +10% (`cuong_hoa_bo_mau`, `cuong_hoa_bo_sat_thuong`). Đủ 8 ô cùng từ +10 trở lên, theo món thấp nhất (cộng dồn): +10 giảm hồi chiêu 5% · +11 tốc đánh 6% · +12 tốc chạy 6% · +13 x2 4% · +14 giảm sát thương 4% · +15 x3 2%. Hiện ở bảng Thuộc tính.
+- Vẽ lại tay: nhìn 3/4 từ phía trước nên tay phải (vũ khí chính) luôn ở bên trái màn hình, tay trái bên phải, quay hướng nào cũng vậy. Chân đứng thẳng, bàn chân hướng xuống như Lý trưởng; đi bộ nhấc chân luân phiên.
+- Bỏ mục "Về làng" trong menu (dùng Bản đồ → Làng Thanh Mộc).
+- Sa mạc có thêm trùm **Thạch Tinh** (người đá cát) ở ô 9, 24, rơi đồ tới Hoàn hảo, kèm việc "Phá Thạch Tinh" ở Lý trưởng.
+- Rung màn hình khi voi, trùm ra đòn giờ chỉ xảy ra khi người chơi ở gần (trước đây trùm, voi đánh người chơi ảo ở xa cũng làm rung cả màn hình).
+
 ## Ra bản mới
 
 1. Sửa trong `src/` (và `VERSION`).
 2. `node tools/build.mjs`
-3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-10.1`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
-4. Trên Blogspot đổi `@ban-10.0` thành `@ban-10.1` (trang game và trang Chợ phiên).
+3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-10.2`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
+4. Trên Blogspot đổi `@ban-10.1` thành `@ban-10.2` (trang game và trang Chợ phiên).
 5. Nếu `Code.gs` đổi: dán lại vào Apps Script, Triển khai → Quản lý triển khai → Sửa → Phiên bản mới (giữ nguyên URL).
 
 ## Dữ liệu trong Sheet

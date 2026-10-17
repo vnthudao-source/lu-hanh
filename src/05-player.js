@@ -93,13 +93,22 @@ const Player=(()=>{
   // máy người chơi tính trước kết quả mua/gia cường/nhiệm vụ để hiện ngay, máy chủ tính lại y hệt rồi lưu
   function seqRng(s){return ()=>{let t=(s.rs=(s.rs+0x6D2B79F5)|0);t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296;};}
   // Sinh món đồ với phẩm chất + dòng thuộc tính ngẫu nhiên
+  const ARMOR_SLOTS=['hat','armor','pants','gloves','shoes','wings'];
+  const ARMOR_LINES={n:[1,1],g:[1,2],p:[2,3],l:[3,4],m:[3,4]};
+  const armorPool=()=>String(CFG.dong_do_mac||'def,hp,dodge,reflect,hpReg,mp').split(/[,;\s]+/).filter(k=>ADD[k]);
   function roll(type,q='n',rng=Math.random){
     const d=items[type];if(!d)throw Error('ITEM');
     const it={uid:uid(type,rng),type};if(!d.q&&q!=='n')it.q=q;
     const R=RAR[d.q||q]||{lines:0,tier:0};
-    if(d.slot&&d.slot!=='book'&&R.lines){
-      const keys=Object.keys(ADD).filter(k=>ADD[k].ranges[R.tier]);it.add={};
-      for(let n=0;n<R.lines&&keys.length;n++){const k=keys.splice(Math.floor(rng()*keys.length),1)[0],[a,b]=ADD[k].ranges[R.tier];it.add[k]=a+Math.floor(rng()*(b-a+1));}
+    // Đồ mặc (mũ, áo, quần, găng, giày, cánh): dòng ngẫu nhiên lấy trong nhóm phòng thủ / sinh lực (Sheet cau_hinh dong_do_mac),
+    // số dòng theo phẩm chất: Thường 1 · Đẹp 1–2 · Hoàn hảo 2–3 · Huyền thoại, Thần 3–4 (ngoài hiệu ứng bộ). Mỗi chỉ số chỉ một dòng.
+    // Vũ khí, thú cưỡi: giữ như cũ (số dòng = so_dong của phẩm chất, lấy trong mọi chỉ số).
+    const tier=R.tier||0,wear=ARMOR_SLOTS.includes(d.slot);
+    if(d.slot&&d.slot!=='book'&&(R.lines||wear)){
+      const pool=wear?armorPool():Object.keys(ADD),keys=pool.filter(k=>ADD[k]&&ADD[k].ranges[Math.max(1,tier)]);it.add={};
+      const [lo,hi]=wear?(ARMOR_LINES[d.q||q]||[1,1]):[R.lines,R.lines],cnt=lo+Math.floor(rng()*(hi-lo+1));
+      for(let n=0;n<cnt&&keys.length;n++){const k=keys.splice(Math.floor(rng()*keys.length),1)[0];let [a,b]=ADD[k].ranges[Math.max(1,tier)];if(!tier)b=Math.max(a,Math.ceil((a+b)/2)-1);it.add[k]=a+Math.floor(rng()*(b-a+1));}
+      if(!Object.keys(it.add).length)delete it.add;
     }
     return it;
   }
@@ -148,7 +157,9 @@ const Player=(()=>{
   const isRanged=k=>k==='bow'||k==='crossbow';
   // Chính xác của cung / nỏ (Sheet cau_hinh: cung_chinh_xac, no_chinh_xac, chinh_xac_moi_cap)
   const aimAcc=it=>{const k=kind(it);if(!isRanged(k))return 0;return Math.min(100,num(CFG[k==='bow'?'cung_chinh_xac':'no_chinh_xac'],k==='bow'?70:76)+num(CFG.chinh_xac_moi_cap,2)*((it&&it.lv)||0));};
-  const CAPS={dodge:50,block:60,dmgRed:70,cdr:50,crit2:60,crit3:30,perfRed:80,critRed:80,legRed:80,mythRed:80,acc:100};
+  // mốc cường hóa đủ bộ: [cấp thấp nhất, chỉ số, giá trị, biểu tượng]
+  const ENH_TIERS=[[10,'cdr',5,'whirl'],[11,'atkSpd',6,'speed'],[12,'moveSpd',6,'feather'],[13,'crit2',4,'spark'],[14,'dmgRed',4,'shield'],[15,'crit3',2,'flame']];
+  const CAPS={reflect:60,dodge:50,block:60,dmgRed:70,cdr:50,crit2:60,crit3:30,perfRed:80,critRed:80,legRed:80,mythRed:80,acc:100};
   function derive(s,opt={}){
     const A={},add=(k,v)=>{if(v)A[k]=(A[k]||0)+v;};
     const eqs=slots.map(k=>s.equipment[k]).filter(it=>info(it)&&!(opt.safe&&info(it).slot==='mount'));
@@ -165,6 +176,13 @@ const Player=(()=>{
     if(shield)add('block',10);
     const sets=[];
     for(const [id,n] of Object.entries(setCount)){const S=SETS[id];if(!S)continue;sets.push({id,n,name:S.name,hero:S.hero});for(const t of [3,5,7])if(n>=t)for(const [k,v] of Object.entries(S.tiers[t]))add(k,v);if(n>=9)fx[S.fx]=Math.max(fx[S.fx]||0,S.fxv);}
+    // Hào quang cường hóa (8 ô đồ trừ thú cưỡi; vũ khí hai tay tính cả ô tay trái):
+    //  5 món +9 trở lên: + máu · đủ 8 ô +9: thêm máu và % sát thương · đủ 8 ô cùng từ +10..+15: mỗi mốc thêm một hiệu ứng (cộng dồn)
+    const EQ8=['right','left','hat','armor','pants','gloves','shoes','wings'],lvOf=k=>{const it=k==='left'&&isTwo(s.equipment.right)?s.equipment.right:s.equipment[k];return info(it)?(it.lv||0):-1;};
+    const lvs=EQ8.map(lvOf),n9=lvs.filter(v=>v>=9).length,full=lvs.every(v=>v>=9),minLv=Math.min(...lvs),enh={n9,full,min:full?minLv:0,list:[]};let enhDmg=0;
+    if(n9>=5){add('hp',num(CFG.cuong_hoa_5_mau,80));enh.list.push(['heart','5 món +9: máu +'+num(CFG.cuong_hoa_5_mau,80)]);}
+    if(full){add('hp',num(CFG.cuong_hoa_bo_mau,150));enhDmg=num(CFG.cuong_hoa_bo_sat_thuong,10);enh.list.push(['sword','Đủ bộ +9: máu +'+num(CFG.cuong_hoa_bo_mau,150)+', sát thương +'+enhDmg+'%']);
+      for(const [lv,k,v,ic] of ENH_TIERS)if(minLv>=lv){add(k,v);enh.list.push([ic,'Đủ bộ +'+lv+': '+ADD[k].name+' +'+v+ADD[k].unit]);}}
     const books={},blv={};for(const it of (s.skillSlots||[])){const d=info(it);if(d&&d.element){books[d.element]=true;blv[d.element]=Math.max(blv[d.element]??-1,it.lv||0);for(const [k,v] of Object.entries(bookStat(it)))add(k,v);}}
     const pc=(k,f,e)=>blv[e]>=0?num(CFG[k],f)+num(CFG.sach_ti_le_cap,1)*blv[e]:0;
     const bfx={thunder:pc('loi_ti_le',12,'thunder'),wind:pc('phong_ti_le',20,'wind'),ice:pc('bang_ti_le',10,'ice'),light:pc('sang_ti_le',15,'light'),demon:blv.demon>=0?blv.demon:-1};
@@ -176,7 +194,7 @@ const Player=(()=>{
     tot.hp=Math.round(tot.hp);tot.mp=Math.round(tot.mp);tot.dmgMax=Math.max(tot.dmgMax,tot.dmgMin);
     // cung, nỏ: tỉ lệ chính xác khi khóa mục tiêu (tăng theo cấp gia cường) và cộng thêm tỉ lệ x2 sát thương
     const rw=(s.equipment||{}).right;if(isRanged(kind(rw))){tot.aim=aimAcc(rw);tot.crit2=Math.min(CAPS.crit2,(tot.crit2||0)+num(CFG.cung_no_x2,15));}
-    return {main,add:A,tot,fx,books,bfx,sets,mount,dmgMul:books.fire?1+num(CFG.hoa_sat_thuong,25)/100:1};
+    return {main,add:A,tot,fx,books,bfx,sets,mount,enh,dmgMul:(books.fire?1+num(CFG.hoa_sat_thuong,25)/100:1)*(1+enhDmg/100)};
   }
   const mountCmd=eq=>eq&&eq.mount&&info(eq.mount)?info(eq.mount).cmd||5:0;
   // Mệnh lệnh: thú cưỡi + mỗi lính đang đi theo tốn số điểm riêng của lính đó (lính gục chờ ở làng vẫn giữ chỗ)
@@ -252,7 +270,7 @@ const Player=(()=>{
   // Nhiệm vụ của Lý trưởng
   /* ---------- Vùng đất và cấp tối thiểu (v9.9): Sheet cau_hinh cap_hang_dong, cap_sa_mac, cap_nui_tuyet ---------- */
   const REGIONS=[{id:'thanh-moc',name:'Làng Thanh Mộc',icon:'home'},{id:'hang-dong',name:'Hang động',key:'cap_hang_dong',def:5,icon:'light'},{id:'sa-mac',name:'Sa mạc',key:'cap_sa_mac',def:10,icon:'flame'},{id:'nui-tuyet',name:'Núi tuyết',key:'cap_nui_tuyet',def:15,icon:'ice'}];
-  const MON_REGION={'bo-cap':'sa-mac','ken-ken':'sa-mac','chan-tinh':'sa-mac','soi-tuyet':'nui-tuyet','gau-nui':'nui-tuyet','ho-tinh':'nui-tuyet','doi-quy':'hang-dong','nhen-doc':'hang-dong','dai-bang':'hang-dong'};
+  const MON_REGION={'bo-cap':'sa-mac','ken-ken':'sa-mac','chan-tinh':'sa-mac','thach-tinh':'sa-mac','soi-tuyet':'nui-tuyet','gau-nui':'nui-tuyet','ho-tinh':'nui-tuyet','doi-quy':'hang-dong','nhen-doc':'hang-dong','dai-bang':'hang-dong'};
   const mapLevel=id=>{const R=REGIONS.find(r=>r.id===id);return R&&R.key?Math.max(1,num(CFG[R.key],R.def)):1;};
   const regionOf=monId=>(MON[monId]&&MON[monId].map)||MON_REGION[monId]||'thanh-moc';
   const questLevel=Q=>Q?(Q.lv||mapLevel(regionOf(Q.target))):1;

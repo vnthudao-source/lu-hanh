@@ -118,6 +118,11 @@
    "type": "chan-tinh",
    "x": 24,
    "y": 12
+  },
+  {
+   "type": "thach-tinh",
+   "x": 9,
+   "y": 24
   }
  ],
  "portals": [
