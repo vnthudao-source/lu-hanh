@@ -199,6 +199,11 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
 
+## Bản 10.7: sửa trang tải đứng ở ~96% (máy chủ chậm)
+
+- Nguyên nhân: gói dữ liệu tĩnh (quái, nhiệm vụ, vật phẩm, cửa hàng của 20 vùng…) đã ~122 KB, vượt giới hạn 100 KB một ô của CacheService; code cũ chỉ đệm khi dưới 95 KB nên **mọi lệnh gọi** đều đọc lại 15 tab Sheet → quá 25 giây là trang coi như rớt mạng, thử lại, nhìn như đứng ở 96%.
+- Sửa (`gs-adapter.js`): nén gzip rồi chia nhiều ô đệm (`lhCachePut_` / `lhCacheGet_`, 122 KB → ~27 KB một ô), giữ 5 phút; `xoaBoNhoDem` xóa đủ các ô. Chỉ cần dán Code.gs mới và tạo phiên bản triển khai mới; không đổi gì ở game.
+
 ## Bản 10.6: dáng quay trái chốt, cánh dung hợp, bay lơ lửng, trẻ con trong thành, nạp thẻ
 
 - **Dáng quay trái** (tác giả chọn mẫu 7 vòng 2): khiên trước ngực nhìn thẳng mặt ngoài vẽ trên thân; tay phải buông thấp, kiếm chĩa xuống trước, vẽ sau thân, lộ phần lưỡi bên hông trái. Áp dụng cho nhân vật, lính đi theo, người chơi ảo (hằng `LEFT_POSE` trong `06-game.js`).

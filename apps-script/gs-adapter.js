@@ -6,7 +6,7 @@
       Lưu ý: dùng đúng tài khoản Google đang sở hữu thư mục đó.
    3. Triển khai → Tùy chọn triển khai mới → Loại: Ứng dụng web → Thực thi với tư cách: Tôi → Ai có quyền truy cập: Bất kỳ ai → Triển khai.
    4. Sao chép URL ứng dụng web (đuôi /exec), dán vào dòng const LH_API='' trong code game trên Blogspot.
-   Sửa số liệu trong các file Sheet xong, chạy hàm xoaBoNhoDem để game nhận ngay (nếu không, tối đa 2 phút).
+   Sửa số liệu trong các file Sheet xong, chạy hàm xoaBoNhoDem để game nhận ngay (nếu không, tối đa 5 phút).
    v8.9: chạy kiemTra để thêm dòng ảnh màn hình chờ, cảnh căn lều vào file Hình ảnh. Chợ phiên ký gửi bằng hồng ngọc.
    v9.8: ba vùng mới (Sa mạc, Núi tuyết, Hang động). Quái, nhiệm vụ mới tự dùng số liệu mặc định; chạy kiemTra một lần để chép dòng mới vào tab quai, nhiem_vu và file Hình ảnh.
    v9.7: hàm capNhatAnh: ghi gợi ý vẽ ảnh (webp), cột gioi_tinh, ghi_chu vào file Hình ảnh và chép ảnh vật phẩm game vẽ sẵn vào thư mục Drive.
@@ -32,8 +32,21 @@ function lhRows_(sh,cols){
   const h=cols||v[0].map(String);
   return v.slice(1).map((r,i)=>{const o={_r:i+2};h.forEach((k,j)=>{if(k)o[k]=r[j]===null||r[j]===undefined?'':(r[j] instanceof Date?r[j].toISOString():r[j]);});return o;});
 }
+// Bộ nhớ đệm dữ liệu tĩnh (v10.7): gói dữ liệu đã hơn 100 KB (giới hạn một ô CacheService) nên nén gzip rồi chia nhiều ô; trước đây quá 95 KB là bỏ không đệm,
+// khiến mọi lệnh gọi phải đọc lại toàn bộ Sheet (rất chậm, trang tải đứng ở ~96%).
+const LH_CACHE_GIAY=300;
+function lhCachePut_(key,s){
+  try{const z=Utilities.base64Encode(Utilities.gzip(Utilities.newBlob(s,'text/plain')).getBytes()),o={},n=Math.ceil(z.length/90000);
+    for(let i=0;i<n;i++)o[key+'-'+i]=z.slice(i*90000,(i+1)*90000);o[key]=n+':'+z.length;CacheService.getScriptCache().putAll(o,LH_CACHE_GIAY);}catch(e){}
+}
+function lhCacheGet_(key){
+  try{const cache=CacheService.getScriptCache(),h=cache.get(key);if(!h)return null;const [n,len]=h.split(':').map(Number),keys=[];for(let i=0;i<n;i++)keys.push(key+'-'+i);
+    const m=cache.getAll(keys);let z='';for(const k of keys){if(!m[k])return null;z+=m[k];}if(z.length!==len)return null;
+    return Utilities.ungzip(Utilities.newBlob(Utilities.base64Decode(z),'application/x-gzip')).getDataAsString();}catch(e){return null;}
+}
+function lhCacheXoa_(key){const cache=CacheService.getScriptCache(),keys=[key];for(let i=0;i<12;i++)keys.push(key+'-'+i);cache.removeAll(keys);}
 function lhStatic_(){
-  const cache=CacheService.getScriptCache(),hit=cache.get('lh-data');if(hit)return JSON.parse(hit);
+  const hit=lhCacheGet_('lh-data');if(hit)return JSON.parse(hit);
   const out={},books={};
   for(const [tab,file] of Object.entries(LH_STATIC)){
     if(!LH_SHEETS[file]){out[tab]=LH_DEFAULT[tab]||[];continue;}
@@ -44,7 +57,7 @@ function lhStatic_(){
   for(const tab of LH_BO_SUNG)if(LH_SHEETS[LH_STATIC[tab]]&&Array.isArray(out[tab])&&out[tab].length){const has=new Set(out[tab].map(r=>lhKhoa_(tab,r)));for(const r of LH_DEFAULT[tab]||[])if(!has.has(lhKhoa_(tab,r)))out[tab].push(r);}
   // Ảnh tĩnh: chỉ gửi các dòng đã dán link
   out.hinh_anh=(out.hinh_anh||[]).filter(r=>String(r.link_anh||'').trim()).map(r=>({nhom:r.nhom,ma:r.ma,link_anh:String(r.link_anh).trim(),...(String(r.phien_ban||'').trim()?{v:String(r.phien_ban).trim()}:{})}));
-  const s=JSON.stringify(out);if(s.length<95000)cache.put('lh-data',s,120);
+  lhCachePut_('lh-data',JSON.stringify(out));
   return out;
 }
 // Tab được bổ sung dòng mới (theo cột id) khi game thêm quái, nhiệm vụ, hàng hóa thành trì, diện mạo
@@ -121,7 +134,7 @@ function doGet(e){
   const q=e&&e.parameter&&e.parameter.p;let p={};if(q){try{p=JSON.parse(q);}catch(err){}}
   return ContentService.createTextOutput(q?lhRun_(p):JSON.stringify(LH.handle('ping',{}))).setMimeType(ContentService.MimeType.JSON);
 }
-function xoaBoNhoDem(){CacheService.getScriptCache().remove('lh-data');}
+function xoaBoNhoDem(){lhCacheXoa_('lh-data');}
 // Dọn bảng chợ: món đã hủy, món đã bán và đã nhận tiền chuyển sang tab cho_cu (bảng cho chỉ còn hàng đang bày + tiền chưa nhận).
 // caiDat tạo lịch chạy hằng ngày lúc 3 giờ sáng; chạy tay lúc nào cũng được.
 function donCho(){
