@@ -210,5 +210,6 @@ function LH_Core(A){
       });
     }
   };
-  return {handle(action,p){try{if(!H[action])fail('KHONG_CO_LENH');return {ok:true,...H[action](p||{})};}catch(e){return {ok:false,error:String(e.message||e)};}}};
+  // v10.12: lệnh kèm pre = gói phần chơi chưa gửi {bid,sentAt,save,ops} → chạy play trước trong cùng lượt gọi (một lượt thay vì hai)
+  return {handle(action,p){try{if(!H[action])fail('KHONG_CO_LENH');p=p||{};let pre=null;if(p.pre&&typeof p.pre==='object'&&action!=='play'&&action!=='save'){const r=H.play({token:p.token,charId:p.charId,...p.pre});pre={results:r.results,savedAt:r.savedAt};}return {ok:true,...H[action](p),...(pre?{pre}:{})};}catch(e){return {ok:false,error:String(e.message||e)};}}};
 }

@@ -554,7 +554,7 @@
    "x": 32,
    "y": 17,
    "panel": "shop",
-   "shop": "wizard",
+   "shop": "thanh-phu-xuan-sach",
    "lines": [
     "Sách ngũ hành luyện ở đây lên tầng cao nhất."
    ]
@@ -734,5 +734,5 @@
  ],
  "theme": "phu-xuan",
  "sky": "phu-xuan",
- "level": 145
+ "level": 290
 }

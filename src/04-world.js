@@ -59,6 +59,8 @@ const World=(()=>{
     return loading[id];
   }
   const prefetch=id=>{if(id&&!LH_MAPS[id])load(id).catch(()=>{});};
+  // bỏ lượt tải đang treo (mạng chậm) để lần bấm sau tải lại từ đầu
+  const cancel=id=>{if(loading[id]&&!LH_MAPS[id]){delete loading[id];if(typeof document!=='undefined')document.querySelectorAll('script[src$="/'+id+'.js"]').forEach(x=>x.remove());}};
   // Quái thu phục đi theo về làng: tải gói chứa hình vẽ của loài quái đó
   const monPack=type=>{const id=(typeof window!=='undefined'&&window.LH_MON_PACK||{})[type];if(id)prefetch(id);};
   async function enter(id){let d;try{d=await load(id);}catch(e){d=await load(DEFAULT);}use(d);return d.id;}
@@ -104,7 +106,7 @@ const World=(()=>{
     if(ex===Math.floor(to.x/T)&&ey===Math.floor(to.y/T)&&canStand(to.x,to.y))path[path.length-1]={x:to.x,y:to.y};
     return path;
   }
-  const api={T,DEFAULT,use,load,prefetch,monPack,enter,isSafe,zoneAt,portalAt,blocked,canStand,move,findPath,nearestOpen,
+  const api={T,DEFAULT,use,load,prefetch,cancel,monPack,enter,isSafe,zoneAt,portalAt,blocked,canStand,move,findPath,nearestOpen,
     get id(){return M.id;},get name(){return M.name;},get def(){return M;},get W(){return W;},get H(){return H;},get grid(){return grid;},get base(){return base;},get objects(){return objects;},
     get npcs(){return npcs;},get wells(){return wells;},get fires(){return fires;},get ripples(){return ripples;},get lights(){return lights;},get theme(){return M.theme||null;},get decor(){return M.decor||[];},get bridges(){return M.bridges||[];},get portals(){return M.portals||[];},
     get spawn(){return {x:(M.spawn.x+.5)*T,y:(M.spawn.y+.5)*T};} /* tâm ô (v10.10: trước là góc ô, đè lên ô đá kề bên → kẹt khi vào Cổ Loa, Thăng Long) */,get monsterSpawns(){return [...(M.monsters||[]),...campSpawns];},get camps(){return camps;}};

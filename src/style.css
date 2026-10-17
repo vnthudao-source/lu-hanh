@@ -297,7 +297,6 @@ button.busy{opacity:.6;pointer-events:none}
 .nap-info{display:flex;flex-direction:column;gap:6px;min-width:180px;flex:1}
 .nap-info>div{display:flex;justify-content:space-between;gap:10px}.nap-info small{color:var(--muted)}
 /* v10.11: Phấn Son, Thầy đồ, cốt truyện */
-.avatar .pf-frame{position:absolute;inset:-9px;width:calc(100% + 18px);height:calc(100% + 18px);object-fit:contain;pointer-events:none;z-index:3}
 .avatar{overflow:visible}
 .player-name.fx-vang{color:#ffe08a;text-shadow:0 0 8px #ffd24a,0 0 2px #fff}
 .player-name.fx-cau-vong{background:linear-gradient(90deg,#ff6b6b,#ffd93d,#6bff95,#6bc5ff,#c56bff,#ff6b6b);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:fxRainbow 4s linear infinite}
@@ -326,3 +325,16 @@ button.fx-vang{color:#ffe08a}button.fx-cau-vong{color:#ffb0ff}button.fx-lua{colo
 .quiz-opts button.on{border-color:#ffd77a;background:#3a3020}
 .quiz-opts button.ans{box-shadow:0 0 0 2px #9fe8a8 inset}
 .quiz-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;justify-content:flex-end}
+/* v10.12 */
+.fx-pick{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:4px}
+.fx-pick button{padding:4px 8px;font-size:11px}
+.qnpc{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:#4a2a3a55;border:1px dashed #ff7aa0}
+.qnpc svg{width:22px;height:22px;flex:none;color:#ff7aa0}
+.qnpc b{display:block}
+.qnpc small{color:var(--muted)}
+.story-talk{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:12px;background:#1a2a2280;border:1px solid var(--line);margin-bottom:10px}
+.story-talk .who{width:44px;height:44px;flex:none;border-radius:50%;background:#2b4d38;display:flex;align-items:center;justify-content:center}
+.story-talk .who svg{width:24px;height:24px;color:#ffd98a}
+.story-talk p{margin:0 0 6px;line-height:1.5;font-size:15px}
+.story-bar{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.shop-sub .loading{color:var(--muted);font-style:italic}

@@ -56,9 +56,18 @@
   const getArt=()=>art||(art=window.startGame({portrait:true,player:Player.create({name:'.',gender:'m'})}));
   function stopTent(){cancelAnimationFrame(T.raf);T.raf=0;}
   const whoOf=c=>c.look&&c.look.equipment?{gender:c.gender,equipment:c.look.equipment,stats:c.stats}:Player.create({name:c.name,gender:c.gender,stats:c.stats});
+  // v10.12: lều hiện ngay từ danh sách nhân vật lưu lần trước (lh-chars-cache), rồi thay bằng danh sách mới khi máy chủ trả về
+  const CK='lh-chars-cache',charsCached=()=>{try{const c=JSON.parse(localStorage.getItem(CK)||'null');return c&&c.tok===Net.token&&c.account&&Array.isArray(c.chars)?c:null;}catch(e){return null;}},charsKeep=r=>{try{localStorage.setItem(CK,JSON.stringify({tok:Net.token,account:r.account,chars:r.chars,max:r.max}));}catch(e){}};
   async function chars(selId,pre){
+    let r;
+    const cached=T.r?null:charsCached();
+    if(cached&&!T.r){tent(cached,selId);note('Đang làm mới danh sách nhân vật…',true);}
     // phần chơi còn giữ trên máy (lần trước chưa kịp lưu): gửi trước để lều hiện đúng cấp, tiền
-    let r;try{r=await (pre||Net.call('chars'));if(r&&r.__err)throw r.__err;let n=0;for(const c of r.list||r.chars||[])if(c&&c.id&&LH_Local.get(c.id)){await LH_Local.push(c.id).catch(()=>{});n++;}if(n)r=await Net.call('chars');}catch(e){Net.setToken('');note(netMsg(e));return auth('login');}
+    try{r=await (pre||Net.call('chars'));if(r&&r.__err)throw r.__err;let n=0;for(const c of r.list||r.chars||[])if(c&&c.id&&LH_Local.get(c.id)){await LH_Local.push(c.id).catch(()=>{});n++;}if(n)r=await Net.call('chars');}catch(e){Net.setToken('');note(netMsg(e));return auth('login');}
+    charsKeep(r);if(cached)note('');
+    tent(r,selId);
+  }
+  function tent(r,selId){
     T.r=r;T.mode='view';window.LH_USER=r.account&&r.account.username||''; // tên đăng nhập (ghi trong nội dung chuyển khoản khi nạp thẻ)
     if(selId){const i=r.chars.findIndex(c=>c.id===selId);if(i>=0)T.sel=i;}
     if(T.sel>=Math.max(r.max,1))T.sel=0;
@@ -102,11 +111,13 @@
       el.querySelectorAll('[data-in]').forEach(i=>i.onchange=()=>set(i.dataset.in,+i.value));
       $('#cGo').onclick=async()=>{
         const g=$('#cGo');busy(g,true);
-        L.show({story:STORY,label:'Khởi tạo nhân vật',bg:'tao_nv'}).step(4,null,55);
+        L.show({story:STORY,label:'Khởi tạo nhân vật',bg:'tao_nv',speed:55}).step(4,null,55);
         try{
           const res=await Net.call('createChar',{name:$('#cName').value,gender:T.gender,stats:{...st}});
           L.step(55,'Chuẩn bị hành trang',92);
-          await chars(res.char.id);await L.done({min:3500});note('Nhân vật đã đứng trước căn lều',true);
+          // v10.12: không gọi lại máy chủ, thêm nhân vật mới vào lều ngay
+          const r=T.r||charsCached()||{account:{username:window.LH_USER||''},chars:[],max:5};r.chars=[...(r.chars||[]),res.char];charsKeep(r);
+          tent(r,res.char.id);await L.done({min:1200});note('Nhân vật đã đứng trước căn lều',true);
         }catch(e){L.hide();note(netMsg(e));busy(g,false);}
       };
     };
@@ -174,11 +185,13 @@
     busy(btn,true);
     L.show({scene:true,label:'Tải nhân vật',bg:'vao_lang'}).step(0,null,45);
     try{
+      // v10.12: gói bản đồ nhân vật đứng lần trước tải song song với lệnh load (khóa lh-last-map-<id>)
+      let lastMap='';try{lastMap=localStorage.getItem('lh-last-map-'+charId)||'';}catch(e){}if(lastMap)World.prefetch(lastMap);
       await LH_Local.push(charId);
       const r=await Net.call('load',{charId});
       L.step(45,'Dựng làng Thanh Mộc',88);
       // dựng bản đồ nhân vật đang đứng (bản đồ chưa có trong game thì tải gói dữ liệu; lỗi thì về làng)
-      const mid=(r.save&&r.save.pos&&r.save.pos.map)||World.DEFAULT,got=await World.enter(mid);
+      const mid=(r.save&&r.save.pos&&r.save.pos.map)||World.DEFAULT,got=await World.enter(mid);try{localStorage.setItem('lh-last-map-'+charId,got);}catch(e){}
       const R=Player.restore(got===mid?r.save:{...r.save,pos:null},r.char,World.canStand,null);
       await new Promise(ok=>setTimeout(ok,60));
       stopTent();root.hidden=true;document.body.classList.add('in-game');document.getElementById('lu-hanh')?.classList.add('in-game');

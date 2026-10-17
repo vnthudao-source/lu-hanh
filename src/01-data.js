@@ -49,7 +49,7 @@ cau_hinh:[
  {khoa:'gieng_hoi_giay',gia_tri:300,ghi_chu:'Giếng cổ: số giây để nước đầy lại sau khi dùng'},
  {khoa:'exp_goc',gia_tri:60,ghi_chu:'Kinh nghiệm cần để lên cấp 2. Cấp L cần exp_goc × L^(exp_tang/100)'},
  {khoa:'exp_tang',gia_tri:150,ghi_chu:'Độ tăng kinh nghiệm cần mỗi cấp (150 = lũy thừa 1,5)'},
- {khoa:'cap_toi_da',gia_tri:150,ghi_chu:'Cấp cao nhất của nhân vật'},
+ {khoa:'cap_toi_da',gia_tri:400,ghi_chu:'Cấp cao nhất của nhân vật (v10.12: 400)'},
  {khoa:'diem_moi_cap',gia_tri:5,ghi_chu:'Điểm cộng chỉ số nhận được mỗi lần lên cấp'},
  {khoa:'sach_chi_so',gia_tri:4,ghi_chu:'Mỗi sách gắn vào ô kỹ năng cộng chừng này điểm vào chỉ số theo hệ (Mộc chia đôi cho Sức khỏe và Trí tuệ)'},
  {khoa:'sach_moi_cap',gia_tri:2,ghi_chu:'Mỗi cấp gia cường sách cộng thêm'},
@@ -250,20 +250,18 @@ linh:[
 /* ================= v10.11: Phấn Son (mỹ phẩm), cốt truyện "Tìm con", Thầy đồ hỏi thư pháp, lính thành trì ================= */
 {
   const DRIVE=id=>'https://drive.google.com/file/d/'+id+'/view';
-  // Mỹ phẩm (ô 'cos'): thẻ avatar (thay ảnh chân dung), khung avatar (viền quanh chân dung), nền hồ sơ (nền khung trên của game), thuốc đa nhiệm (hiệu ứng tên nhân vật)
+  // Mỹ phẩm (ô 'cos'): thẻ avatar (thay ảnh chân dung), nền hồ sơ (nền khung trên của game), thuốc đa nhiệm (hiệu ứng tên nhân vật). v10.12: bỏ khung avatar; mua xong áp dụng ngay, không qua túi
   // Mua bằng hồng ngọc ở Chủ tiệm Phấn Son. Dùng xong vào bộ sưu tập, đổi qua lại ở bảng Diện mạo. Ảnh: link Drive (cột anh) — thay ảnh thì sửa link trong tab vat_pham.
   const COS=[
    ['av-tuong-quan','Thẻ avatar Tướng quân','avatar',40,'1LUSY5q3cEGNu4VECWZGa_VOalCcphoUx'],['av-hiep-khach','Thẻ avatar Hiệp khách','avatar',40,'1_9hVbAhxETPwldlFvRDfe9e68-cZu0Yu'],
    ['av-phi-tan','Thẻ avatar Phi Tần','avatar',40,'1jVlcjR4RDojr-Q9LSx6ywwmElINgtMJd'],['av-my-nu-sen','Thẻ avatar Mỹ nữ bên hoa sen','avatar',40,'1Zjjc7Sqp_J-v0ckeA7UbamopSTXY_BQN'],
    ['av-minh-hong','Thẻ avatar Minh Hồng','avatar',80,'1mHxTCbL1vxiveuALFl6cdY-Ajwew2vpJ'],['av-vuong-gia','Thẻ avatar Vương Gia Lãng Tử','avatar',80,'15dbYhpGHNrYIluqQy77_-ZLoNX4IK0Om'],
    ['av-bach-kim','Thẻ avatar Bạch Kim Quang Mỹ Nữ','avatar',80,'11VnNVYq69-5o5MDsH4O4dzdJgUhmdQrL'],['av-mau-don','Thẻ avatar Mẫu Đơn','avatar',80,'18bul53I9se1-05F0SZ8yfmMmtlv5NaOH'],['av-cuu-vi','Thẻ avatar Cửu Vĩ Hồ Ly Tinh','avatar',200,'1DSHau53kj7bF2y7_NvLrUYroAR9RlylB'],
-   ['khung-go','Khung gỗ','khung',10,'1SGyFvI9Flqxj7IQhwadoaJc0Slab1Gjo'],['khung-giay','Khung giấy','khung',10,'1Ix74x_nuNOPVDbQ3GJXI-cikMAFelUZY'],['khung-but-long','Khung bút lông','khung',10,'1ygwWCRZGYd3uU3hMg36FVLnTJVZ7B4iP'],['khung-nghien-muc','Khung nghiên mực','khung',10,'16_yDZG070k4cZvOfhMNnCbj79BOOq5ze'],
-   ['khung-trang','Khung Trăng','khung',80,'1CS4Pn8ztHtckqqnsqJwGeiX8aD7LPXzD'],['khung-hoa','Khung Hoa','khung',80,'11hAghxxpgwfH3Yme0U7TzkbESfnL_N-7'],['khung-phuong-hoang','Khung Phượng hoàng','khung',80,'1fiapTdTEvF6KSrFYQt3TU_u_VWnl5_r6'],['khung-thanh-long','Khung Thanh Long','khung',80,'1t1HtNLCva4V_WHol0s9MOcKaAU7V32-t'],['khung-cuu-vi','Khung Cửu vĩ','khung',200,'1kWhOADayTMRDAZVfHqdcxr180x8kSj02'],
    ['nen-ca','Nền hồ sơ Cá','nen',60,'1vKX-YFQvcFS-6R6L5cxIewU7bN58co4Z'],['nen-lau-dai','Nền hồ sơ Lâu đài','nen',60,'1e0BY_CCZOErhaiAcIIaQmv--gxYgC7R0'],['nen-nui','Nền hồ sơ Núi','nen',60,'1I9axl3vT4v4oooskc6slprQqOAV-Usqi'],['nen-trang','Nền hồ sơ Trăng','nen',60,'1ZVeQIWPwsMS66the145Tye9rlDgmViSJ'],
    ['nen-hong-nhat','Nền hồ sơ Hồng Nhật','nen',120,'1VZ5c_m99jsLeUqQ2ulSonB67v4O203rD'],['nen-cuu-vi','Nền hồ sơ Cửu vĩ hồ ly','nen',200,'1KyQHKTBKXBu1mOBXTTCR2Uj22D4j4YoS'],
    ['thuoc-da-nhiem','Thuốc đa nhiệm','thuoc',30,'1Jeb6RLbkOBphWIdBml68c0BgOAciYwnX']
   ];
-  const COS_MOTA={avatar:'Dùng để thay ảnh chân dung trong khung trên và lều nhân vật (giữ mãi, đổi qua lại ở bảng Diện mạo)',khung:'Khung viền bao quanh chân dung, nằm ngoài vòng kinh nghiệm',nen:'Thay nền khung trên của game',thuoc:'Uống vào chọn một hiệu ứng cho tên nhân vật: ánh vàng, cầu vồng, lửa, băng, tím mộng'};
+  const COS_MOTA={avatar:'Mua xong thay ngay ảnh chân dung ở khung trên và lều nhân vật (giữ mãi, đổi qua lại ở bảng Phấn Son)',nen:'Thay nền khung trên của game',thuoc:'Uống vào chọn một hiệu ứng cho tên nhân vật: ánh vàng, cầu vồng, lửa, băng, tím mộng'};
   for(const [id,ten,loai,gia_hong_ngoc,drv] of COS)GAME_DATA.vat_pham.push({id,ten,o:'cos',loai,cam:'',cong:0,thu:0,toc:0,gia:0,mau:'',thu_cuoi:'',menh_lenh:0,he:'',pham_chat:'',hieu_ung:'',gia_tri:0,mo_ta:COS_MOTA[loai],gia_hong_ngoc,anh:DRIVE(drv)});
   GAME_DATA.cua_hang.push(...COS.map(([id],i)=>({cua_hang:'phan-son',id,pham_chat:'n',gia:'',thu_tu:i+1,bac:0})));
   // Vật phẩm cốt truyện (ô 'quest'): không mặc, không bán, không rơi — manh mối tìm con gái
@@ -279,6 +277,8 @@ linh:[
   ];
   for(const [id,ten,drv,mo_ta] of QI)GAME_DATA.vat_pham.push({id,ten,o:'quest',loai:'quest',cam:'',cong:0,thu:0,toc:0,gia:0,mau:'#e8c070',thu_cuoi:'',menh_lenh:0,he:'',pham_chat:'',hieu_ung:'',gia_tri:0,mo_ta,gia_hong_ngoc:0,anh:DRIVE(drv)});
   // Cốt truyện "Tìm con": người cha xuyên vào game, phải đánh phá từng vùng để lần theo manh mối cứu con gái bị lạc. 8 việc nối tiếp nhau (yeu_cau = việc trước), rải từ vùng cấp 20 tới Thiên Đình.
+  // v10.12: mỗi việc do một NPC giao (npc, noi = bản đồ của NPC); bảng nhiệm vụ chỉ báo NPC nào có việc, phải tới gặp mới biết việc
+  const STORY_NPC={'tc-1':['thay-do','thanh-moc','Thầy đồ'],'tc-2':['wizard','thanh-moc','Đạo sĩ'],'tc-3':['su-thay','co-loa','Sư thầy'],'tc-4':['vu-cong','co-loa','Vũ công'],'tc-5':['ca-nu','thang-long','Ca nữ'],'tc-6':['nghe-nhan','thang-long','Nghệ nhân đèn'],'tc-7':['ca-tru','hoa-lu','Ca nương'],'tc-8':['cung-nu','phu-xuan','Cung nữ']};
   const STORY=[ // [id, tên, vùng, quái, số, đồ thưởng, mô tả, lời kết (hiện khi trả việc)]
    ['tc-1','Dấu vết đầu tiên','rung-truc','khi-rung',8,'but-long','Lũ khỉ rừng trúc cướp được một cây bút lông nhỏ. Bạn nhận ra cán bút khắc chữ "An" — tên con gái mình.','Bút của con bé! Nó đã đi qua đây. Trên cán bút còn dính vết bùn đầm lầy… không, là mây — nó bị kéo lên Đỉnh Mây.'],
    ['tc-2','Nét chữ dở dang','dinh-may','ung-tuyet',8,'giay-muc','Ưng tuyết trên Đỉnh Mây tha về tổ những mẩu giấy. Một tờ có nét chữ con gái bạn.','"Bố ơi, người ta đưa con ra biển…" Chữ run run nhưng vẫn đúng bút thuận bố dạy. Ra Bãi Biển Hoang!'],
@@ -289,7 +289,7 @@ linh:[
    ['tc-7','Vân đỏ Xương Hoá','dao-rong','hai-long-vuong',1,'an-xuong-hoa','Hải Long Vương ngoài Đảo Rồng giữ ấn Xương Hoá vân đỏ.','Trên ấn khắc: "Thiên Đình — tầng cao nhất". Chỉ còn một cánh cửa nữa. Hắc Thiên Ma đang giữ chìa khóa.'],
    ['tc-8','Cánh cửa Thiên Đình','thien-dinh','hac-thien-ma',1,'an-tho-son','Hắc Thiên Ma trên Thiên Đình giữ ấn Thọ Sơn — chìa khóa mở cánh cửa nơi con gái bạn bị nhốt.','Cánh cửa mở. Con bé ngồi giữa phòng, tay vẫn cầm bút tập viết. "Bố!" — Bạn đã phá đảo và tìm được con. Hành trình vẫn còn dài, nhưng từ nay hai cha con đi cùng nhau.']
   ];
-  STORY.forEach(([id,ten,vung,muc_tieu,so_luong,thuong_do,mo_ta,loi_ket],i)=>GAME_DATA.nhiem_vu.push({id,ten,mo_ta,muc_tieu,so_luong,thuong_dong:2000*(i+1)*(i+1),thuong_hong_ngoc:5+i*5,thuong_do,pham_chat_do:'n',lap_lai:'khong',thuong_kinh_nghiem:800*(i+1)*(i+1),yeu_cau:i?STORY[i-1][0]:'',loi_ket,truyen:1}));
+  STORY.forEach(([id,ten,vung,muc_tieu,so_luong,thuong_do,mo_ta,loi_ket],i)=>GAME_DATA.nhiem_vu.push({id,ten,mo_ta,muc_tieu,so_luong,thuong_dong:2000*(i+1)*(i+1),thuong_hong_ngoc:5+i*5,thuong_do,pham_chat_do:'n',lap_lai:'khong',thuong_kinh_nghiem:800*(i+1)*(i+1),yeu_cau:i?STORY[i-1][0]:'',loi_ket,truyen:1,npc:STORY_NPC[id][0],noi:STORY_NPC[id][1],npc_ten:STORY_NPC[id][2]}));
   // Thầy đồ (làng, thành trì): bộ câu hỏi thư pháp từ sách "Thư pháp Việt". Máy chủ đọc tab CauHoi của bảng OCD_Quest (xem Code.gs LH_NGOAI); dưới đây là bộ mặc định khi chưa đọc được.
   // Trả lời sai quá quiz_sai_toi_da hoặc chọn "chưa biết" → Thầy đồ giao việc săn quái (quai × so_luong, quái của vùng tương ứng); săn xong thầy chỉ đáp án đúng, chọn lại được thưởng (quiz_thuong_lo %).
   const MAPSEQ=['rung-truc','dam-lay','dinh-may','co-loa','bien-dong','nui-lua','rung-ma','bang-nguyen','thang-long','cuu-trung','thuy-cung','hoang-mac-xuong','thien-son','hoa-lu','dia-nguc-mon','dao-rong','vuc-yeu-tinh','cung-trang','phu-xuan','thien-dinh'];

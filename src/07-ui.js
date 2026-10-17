@@ -69,7 +69,7 @@ window.startUI=(session)=>{
   function questHtml(){
     const V=villagers(),s=V.filter(n=>game.seen.includes(n.id)).length,total=V.length;if(s<total)return svg('talk')+`Gặp dân làng ${s}/${total}`;
     const act=Object.entries(p.quests.active);
-    if(act.length){const [id,n]=act[0],Q=Player.QUESTS[id];return svg('quest')+`${esc(Q.name)} ${Math.min(n,Q.count)}/${Q.count}`+(act.length>1?` <small>+${act.length-1}</small>`:'');}
+    if(act.length){act.sort((a,b)=>(Player.QUESTS[b[0]]&&Player.QUESTS[b[0]].story?1:0)-(Player.QUESTS[a[0]]&&Player.QUESTS[a[0]].story?1:0));const [id,n]=act[0],Q=Player.QUESTS[id];return svg(Q.story?'heart':'quest')+`${esc(Q.name)} ${Math.min(n,Q.count)}/${Q.count}`+(Q.story&&n>=Q.count?` <small>· gặp ${esc(Q.npcName||Q.npc)}</small>`:'')+(act.length>1?` <small>+${act.length-1}</small>`:'');}
     if(!p.flags.river)return svg('bridge')+'Qua cầu sang Đông Ngạn';
     // còn việc chưa làm thì nhắc gặp Lý trưởng; làm hết rồi thì khung theo dõi biến mất cho gọn
     return Object.values(Player.QUESTS).some(Q=>Q.repeat||!p.quests.done[Q.id])?svg('quest')+'Gặp Lý trưởng nhận việc':'';
@@ -95,10 +95,9 @@ window.startUI=(session)=>{
     if(md&&mb.dataset.beast!==md.beast){mb.dataset.beast=md.beast;const B=Player.BEASTS[md.beast];$('#mountIcon').innerHTML=`<use href="#i-${B.icon}"/>`;$('#mountName').textContent=B.skill;mb.title='4 · '+B.skill+' · 12 mana';}
     document.querySelectorAll('.skill-wheel .skill:not(.normal):not(.lockon)').forEach(b=>b.classList.toggle('locked',game.safe));
     // chân dung góc trái: theo giới tính + diện mạo đang dùng (ảnh giao_dien:chan_dung_<diện mạo> nếu có, không thì chan_dung_nam/nu, không thì hình vẽ đổi màu da, tóc, râu)
-    const C=p.cos&&p.cos.use||{},avKey=p.gender+'|'+(p.avatar||'')+'|'+(C.avatar||'')+'|'+(C.khung||'')+'|'+(C.nen||'')+'|'+(C.ten||'');
+    const C=p.cos&&p.cos.use||{},avKey=p.gender+'|'+(p.avatar||'')+'|'+(C.avatar||'')+'|'+(C.nen||'')+'|'+(C.ten||'');
     if(lastGender!==avKey){lastGender=avKey;const av=$('#avatarBtn'),A=Player.AVATARS[p.avatar]||null,cosAv=C.avatar&&info({type:C.avatar}),u=(cosAv&&cosAv.img)||(A&&LH_IMG.url('giao_dien:chan_dung_'+A.id))||LH_IMG.url('giao_dien:chan_dung_'+(p.gender==='f'?'nu':'nam'));
-      // khung quanh chân dung (ngoài vòng kinh nghiệm), nền khung trên, hiệu ứng tên (Thuốc đa nhiệm)
-      av.querySelector('.pf-frame')?.remove();const fr=C.khung&&info({type:C.khung});if(fr&&fr.img)av.insertAdjacentHTML('beforeend',`<img class="pf-frame" src="${esc(fr.img)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`);
+      // nền khung trên, hiệu ứng tên (Thuốc đa nhiệm); v10.12: bỏ khung chân dung
       const bg=C.nen&&info({type:C.nen}),hd=document.querySelector('#lu-hanh header');if(hd){hd.style.backgroundImage=bg&&bg.img?`linear-gradient(#14231d99,#14231dcc),url("${bg.img}")`:'';hd.style.backgroundSize='cover';hd.style.backgroundPosition='center';}
       $('#playerName').className='player-name'+(C.ten?' fx-'+C.ten:'');av.querySelector('.pf-img')?.remove();if(u)av.querySelector('.portrait').insertAdjacentHTML('afterend',`<img class="pf-img" src="${esc(u)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`);
       const skin=A?A.skin:'#e4c69b',hair=A?A.hair:'#2a2622',sh=(h,k)=>LH_Look.shade?LH_Look.shade(h,k):h;$('#pfFace').setAttribute('fill',skin);$('#pfNeck').setAttribute('fill',sh(skin,-.06));$('#pfBody').setAttribute('fill',sh(skin,-.1));$('#pfTop').setAttribute('fill',hair);$('#pfHair').setAttribute('fill',hair);$('#pfBeard').setAttribute('fill',A&&A.beard||hair);
@@ -164,7 +163,7 @@ window.startUI=(session)=>{
       selected=null;if(!p.skillSlots[i]){skillFocus=null;return;}
       skillFocus=i;if(p.activeBook!==i){p.activeBook=i;game.activateBurst(Player.element(p));burstAt=game.now();}
     }));
-    document.querySelectorAll('[data-use],[data-usefx]').forEach(btn=>btn.onclick=()=>{const i=selected;run(btn,game.op({t:'use',i,...(btn.dataset.usefx?{fx:btn.dataset.usefx}:{})}).then(r=>{LH_Audio.play('rare');game.message(svg('check')+({avatar:'Đã đổi ảnh chân dung',khung:'Đã đeo khung',nen:'Đã đổi nền hồ sơ',ten:'Tên nhân vật đã có hiệu ứng '+(Player.NAME_FX[r.id]||'')}[r.kind]||'Đã dùng')+' · đổi qua lại ở bảng Diện mạo');selected=null;game.refreshHD();renderBag();}));});
+    document.querySelectorAll('[data-use],[data-usefx]').forEach(btn=>btn.onclick=()=>{const i=selected;run(btn,game.op({t:'use',i,...(btn.dataset.usefx?{fx:btn.dataset.usefx}:{})}).then(r=>{LH_Audio.play('rare');game.message(svg('check')+({avatar:'Đã đổi ảnh chân dung',nen:'Đã đổi nền hồ sơ',ten:'Tên nhân vật đã có hiệu ứng '+(Player.NAME_FX[r.id]||'')}[r.kind]||'Đã dùng')+' · đổi qua lại ở bảng Diện mạo');selected=null;game.refreshHD();renderBag();}));});
     document.querySelectorAll('[data-act]').forEach(btn=>btn.onclick=()=>act(()=>{
       const a=btn.dataset.act;
       if(a==='book'){Player.setSkill(p,selected,null);skillFocus=p.activeBook;selected=null;game.activateBurst(Player.element(p));burstAt=game.now();}
@@ -177,7 +176,7 @@ window.startUI=(session)=>{
   const RATE_NOTE=lv=>{if(lv>=Player.MAX_LV)return 'Đã đạt cấp tối đa';const r=Player.enhRate(lv);if(r>=1)return 'Chắc chắn thành công';return lv<10?'Thất bại: cấp về ngẫu nhiên +0 đến +6':'Thất bại: cấp về +6';};
   const ENH_OK={smith:d=>d.slot!=='book'&&d.slot!=='mount',trainer:d=>d.slot==='mount',wizard:d=>d.slot==='book'};
   function enhList(id){const ok=Player.shopEnh(id)||ENH_OK[id]||(()=>true);return [...Player.slots.map(sl=>({where:'eq',key:sl,it:p.equipment[sl]})),...p.skillSlots.map((it,i)=>({where:'sk',key:i,it})),...p.bag.map((it,i)=>({where:'bag',key:i,it}))].filter(r=>Player.canEnhance(r.it)&&ok(info(r.it)));}
-  function enhHtml(id){
+  function enhHtml(id,isBook){
     const list=enhList(id);
     if(!list.length)return `<div class="shop-empty">${svg('anvil')}<span>Chưa có món đồ để gia cường</span></div>`;
     let cur=enhSel&&list.find(r=>r.where===enhSel.where&&String(r.key)===String(enhSel.key));if(!cur){cur=list[0];enhSel={where:cur.where,key:cur.key};}
@@ -187,14 +186,14 @@ window.startUI=(session)=>{
       ${max?'':`<div class="enh-next">${svg('next')}<b>+${lv+1}</b>${chips({...next,add:{}})}</div>`}
       <div class="enh-rows"><div><small>Tỉ lệ</small><b>${max?'—':Math.round(rate*100)+'%'}</b></div><div><small>Phí</small><b>${max?'—':ruby(cost)}</b></div><div><small>Hồng ngọc</small><b>${ruby(p.rubies)}</b></div></div>
       <small class="sel-desc">${RATE_NOTE(lv)} · ${info(it).slot==='mount'?gainText(info(it)):'Mỗi cấp: '+gainText(info(it))}</small>
-      <button id="enhGo" class="primary big-btn"${max?' disabled':''}>${svg(id==='wizard'?'book':'anvil')}${id==='wizard'?'Luyện sách':'Gia cường'}</button></div></div>`;
+      <button id="enhGo" class="primary big-btn"${max?' disabled':''}>${svg(isBook?'book':'anvil')}${isBook?'Luyện sách':'Gia cường'}</button></div></div>`;
   }
   function showShop(id,tab='buy'){
     // hiệu buôn thành trì (thanh-<vùng>): tên theo vùng, có gia cường; món nào cũng ghi bậc (· cấp N) = cấp thành
     const RG=/^thanh-/.test(id)?Player.REGIONS.find(r=>id.startsWith('thanh-'+r.id)):null;
     const RG2=/^thanh-/.test(id)?Player.REGIONS.find(r=>id.startsWith('thanh-'+r.id)):null,RGN=RG2?RG2.name.replace(/^(Thành|Kinh Thành|Cố Đô) /,''):'';
-    const list=Player.SHOPS[id]||[],META={smith:{icon:'sword',title:'Lò rèn',enh:'Gia cường'},trainer:{icon:'mount',title:'Thú cưỡi',enh:'Nâng thú'},wizard:{icon:'book',title:'Sách ngũ hành',enh:'Luyện sách'},'phan-son':{icon:'orb',title:'Tiệm Phấn Son · mua bằng hồng ngọc'}}[id]||(RG2?(/-ren$/.test(id)?{icon:'sword',title:'Lò rèn '+RGN,enh:'Gia cường'}:/-thu$/.test(id)?{icon:'mount',title:'Chuồng thú '+RGN,enh:'Nâng thú'}:{icon:'bag',title:'Hiệu buôn '+RGN,enh:'Gia cường'}):{icon:'bag',title:'Cửa hàng'});
-    if(tab==='enh'&&!META.enh)tab='buy';
+    const list=Player.SHOPS[id]||[],META={smith:{icon:'sword',title:'Lò rèn',enh:'Gia cường'},trainer:{icon:'mount',title:'Thú cưỡi',enh:'Nâng thú'},wizard:{icon:'book',title:'Sách ngũ hành',enh:'Luyện sách'},'phan-son':{icon:'orb',title:'Tiệm Phấn Son · mua bằng hồng ngọc'}}[id]||(RG2?(/-ren$/.test(id)?{icon:'sword',title:'Lò rèn '+RGN,enh:'Gia cường'}:/-thu$/.test(id)?{icon:'mount',title:'Chuồng thú '+RGN,enh:'Nâng thú'}:/-sach$/.test(id)?{icon:'book',title:'Pháp sư '+RGN+' · sách bậc '+RG2.lv,enh:'Luyện sách'}:{icon:'bag',title:'Hiệu buôn '+RGN,enh:'Gia cường'}):{icon:'bag',title:'Cửa hàng'});
+    if(tab==='enh'&&!META.enh)tab='buy';const isBook=id==='wizard'||/-sach$/.test(id);
     const qs=[...new Set(list.flatMap(r=>r.q))],full=p.bag.indexOf(null)<0;if(!qs.includes(shopQ))shopQ=qs[0]||'n';
     const tile=(attr,type,it,price,go,goTxt,off,sel)=>{const dd=info(it)||{};return `<button class="tile${off?' off':''}${sel?' sel':''}${dd.img?' pic':''}" ${attr} title="${esc(desc(it))}" style="${Player.qOf(it)!=='n'?`border-color:${qColor(it)}`:''}"><span class="ti" style="color:${tintOf(it)||'#e4cc8d'}">${icon(type)}</span>${lvb(it)}<b class="nm" style="color:${qColor(it)}">${esc(Player.nameOf(it))}</b>${chips(it)}${dd.desc?`<small>${esc(dd.desc)}</small>`:''}<span class="price">${dd.ruby&&go==='bag'?ruby(dd.ruby):coins(price)}</span><span class="go">${svg(go)}${goTxt}</span></button>`;};
     let body;
@@ -203,36 +202,65 @@ window.startUI=(session)=>{
       body=qbar+`<div class="shop-grid">${list.filter(r=>r.q.includes(shopQ)||(info({type:r.id})||{}).q&&r.q.includes(info({type:r.id}).q)).map(r=>{const d=info({type:r.id}),q=d&&d.q?d.q:shopQ,price=Player.shopPrice(r.id,q,id),it={type:r.id,q,...(r.t?{t:r.t}:{})};return tile(`data-buy="${r.id}"`,r.id,it,price,'bag','Mua',(d&&d.ruby?p.rubies<d.ruby:p.copper<price)||full,shopSel===r.id);}).join('')}</div>`;
     }
     else if(tab==='sell'){const t=p.bag.map((it,i)=>it&&info(it)&&info(it).slot!=='cos'&&info(it).slot!=='quest'?tile(`data-sell="${i}"`,it.type,it,Player.sellPrice(it),'coin','Bán',false,shopSel===String(i)):'').join('');body=`<div class="shop-grid">${t||`<div class="shop-empty">${svg('bag')}<span>Túi trống</span></div>`}</div>`;}
-    else body=enhHtml(id);
-    const tabs=[['buy',META.icon,'Mua'],['sell','coin','Bán'],...(META.enh?[['enh',id==='wizard'?'book':'anvil',META.enh]]:[])];
+    else body=enhHtml(id,isBook);
+    const tabs=[['buy',META.icon,'Mua'],['sell','coin','Bán'],...(META.enh?[['enh',isBook?'book':'anvil',META.enh]]:[])];
     openModal(`<div class="shop-tabs">${tabs.map(([k,ic,tx])=>`<button data-tab="${k}" class="${tab===k?'on':''}">${svg(ic)}${tx}</button>`).join('')}</div><div class="purse">${coins(p.copper)}${ruby(p.rubies)}</div>`,`<div class="shop-sub">${svg(META.icon)}${META.title}${tab==='enh'?'':' · chạm 2 lần để '+(tab==='buy'?'mua':'bán')}</div>${body}`,true);
     document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{shopSel=null;showShop(id,b.dataset.tab);});
     document.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{shopQ=b.dataset.q;shopSel=null;showShop(id,'buy');});
-    document.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{const type=b.dataset.buy;if(shopSel!==type){shopSel=type;showShop(id,'buy');return;}run(b,game.op({t:'buy',type,q:shopQ,...(RG?{shop:id}:{})}).then(r=>{LH_Audio.play('buy');game.message(svg('check')+`Đã mua <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b>`);shopSel=null;showShop(id,'buy');}));});
+    // v10.12: mỹ phẩm Phấn Son mua xong áp dụng ngay (thuốc đa nhiệm: chọn hiệu ứng tên rồi mới mua)
+    const buyDone=r=>{LH_Audio.play('buy');if(r.cos){game.refreshHD();refresh();game.message(svg('check')+({avatar:'Đã mua và thay ảnh chân dung',nen:'Đã mua và đổi nền hồ sơ',ten:'Đã mua · tên nhân vật có hiệu ứng '+(Player.NAME_FX[r.cos.id]||'')}[r.cos.kind]||'Đã mua')+' · đổi qua lại ở Thuộc tính → Phấn Son');}else game.message(svg('check')+`Đã mua <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b>`);shopSel=null;showShop(id,'buy');};
+    document.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{const type=b.dataset.buy,d=info({type});if(shopSel!==type){shopSel=type;showShop(id,'buy');return;}if(d&&d.slot==='cos'&&d.kind==='thuoc')return;run(b,game.op({t:'buy',type,q:shopQ,...(RG?{shop:id}:{})}).then(buyDone));});
+    if(shopSel&&tab==='buy'){const d=info({type:shopSel});const tile=document.querySelector(`[data-buy="${shopSel}"]`);if(tile&&d&&d.slot==='cos'&&d.kind==='thuoc'){const go=tile.querySelector('.go');if(go){go.innerHTML='<small>Chọn hiệu ứng tên:</small>';const bar=document.createElement('span');bar.className='fx-pick';bar.innerHTML=Object.entries(Player.NAME_FX).map(([k,v])=>`<button class="fx-${k}" data-buyfx="${k}">${v}</button>`).join('');go.appendChild(bar);
+      bar.querySelectorAll('[data-buyfx]').forEach(x=>x.onclick=e=>{e.stopPropagation();run(x,game.op({t:'buy',type:shopSel,q:shopQ,fx:x.dataset.buyfx,...(RG?{shop:id}:{})}).then(buyDone));});}}}
     document.querySelectorAll('[data-sell]').forEach(b=>b.onclick=()=>{const i=b.dataset.sell;if(shopSel!==i){shopSel=i;showShop(id,'sell');return;}run(b,game.op({t:'sell',i:Number(i)}).then(r=>{game.message(svg('coin')+'Đã bán '+esc(Player.nameOf(r.item))+' '+coins(r.v));shopSel=null;showShop(id,'sell');}));});
     document.querySelectorAll('[data-enh]').forEach(b=>b.onclick=()=>{const [w,k]=b.dataset.enh.split(':');enhSel={where:w,key:w==='eq'?k:Number(k)};showShop(id,'enh');});
-    const go=$('#enhGo');if(go)go.onclick=()=>{const t0=Date.now();const cur=enhSel.where==='sk'?p.skillSlots[enhSel.key]:enhSel.where==='bag'?p.bag[enhSel.key]:p.equipment[enhSel.key],ce=info(cur)&&info(cur).element;go.innerHTML=svg(id==='wizard'?'book':'anvil')+(id==='wizard'?'Đang luyện':'Đang rèn')+'…';game.hammer(ce?EL[ce].color:null);run(go,game.op(enhSel.where==='sk'?{t:'enhSk',key:enhSel.key,shop:id}:{t:'enh',where:enhSel.where==='bag'?'bag':'eq',key:enhSel.key,shop:id}).then(r=>new Promise(ok=>setTimeout(()=>ok(r),Math.max(0,550-(Date.now()-t0))))).then(r=>{const name=info(r.item).name;game.enhanceFx(r.ok);game.message(r.ok?svg('check')+`Thành công! ${esc(name)} +${r.to}`:svg('close')+`Thất bại\u{2026} ${esc(name)} về +${r.to}`);showShop(id,'enh');}),()=>showShop(id,'enh'));};
+    const go=$('#enhGo');if(go)go.onclick=()=>{const t0=Date.now();const cur=enhSel.where==='sk'?p.skillSlots[enhSel.key]:enhSel.where==='bag'?p.bag[enhSel.key]:p.equipment[enhSel.key],ce=info(cur)&&info(cur).element;go.innerHTML=svg(isBook?'book':'anvil')+(isBook?'Đang luyện':'Đang rèn')+'…';game.hammer(ce?EL[ce].color:null);run(go,game.op(enhSel.where==='sk'?{t:'enhSk',key:enhSel.key,shop:id}:{t:'enh',where:enhSel.where==='bag'?'bag':'eq',key:enhSel.key,shop:id}).then(r=>new Promise(ok=>setTimeout(()=>ok(r),Math.max(0,550-(Date.now()-t0))))).then(r=>{const name=info(r.item).name;game.enhanceFx(r.ok);game.message(r.ok?svg('check')+`Thành công! ${esc(name)} +${r.to}`:svg('close')+`Thất bại\u{2026} ${esc(name)} về +${r.to}`);showShop(id,'enh');}),()=>showShop(id,'enh'));};
   }
   /* ---------- Lý trưởng: bảng nhiệm vụ ---------- */
   function rewardChips(Q){const o=[];if(Q.copper)o.push(`<i class="ch">${coins(Q.copper)}</i>`);if(Q.rubies)o.push(`<i class="ch">${ruby(Q.rubies)}</i>`);if(Q.item&&Player.items[Q.item]){const it={type:Q.item,q:Q.itemQ};o.push(`<i class="ch" style="color:${qColor(it)}">${icon(Q.item)}${esc(Player.items[Q.item].name)} · ${Player.RAR[Q.itemQ||'n'].name}</i>`);}return o.join('');}
   function showQuestBoard(){
     // việc làm một lần đã xong thì không hiện nữa; xếp theo cấp, nhóm theo vùng; vùng chưa đủ cấp hiện khóa
     const lv=p.level||1,R=id=>Player.REGIONS.find(r=>r.id===id)||Player.REGIONS[0];
-    const list=Object.values(Player.QUESTS).filter(Q=>Q.repeat||!p.quests.done[Q.id]||p.quests.active[Q.id]!=null)
-      .filter(Q=>!Q.story||!Q.req||p.quests.done[Q.req]||p.quests.active[Q.id]!=null||(Player.QUESTS[Q.req]&&p.quests.active[Q.req]!=null)) // cốt truyện: chỉ lộ việc kế tiếp
-      .map(Q=>({Q,need:Player.questLevel(Q),reg:R(Player.regionOf(Q.target))})).sort((a,b)=>(a.Q.story?-1:0)-(b.Q.story?-1:0)||a.need-b.need);
-    let last='',rows='';
+    const list=Object.values(Player.QUESTS).filter(Q=>!Q.story&&(Q.repeat||!p.quests.done[Q.id]||p.quests.active[Q.id]!=null))
+      .map(Q=>({Q,need:Player.questLevel(Q),reg:R(Player.regionOf(Q.target))})).sort((a,b)=>a.need-b.need);
+    // v10.12: cốt truyện Tìm con không bày trên bảng; chỉ chỉ chỗ NPC đang giữ việc, tới gặp mới biết việc gì
+    let last='',rows=storyHint();
     for(const {Q,need,reg} of list){
-      const key=(Q.story?'truyen':need+'|'+reg.id),lock=lv<need;
-      if(key!==last){last=key;rows+=Q.story?`<div class="qgroup story">${svg('heart')}<b>Tìm con</b><span>Lần theo manh mối qua từng vùng để cứu con gái</span></div>`:`<div class="qgroup${lock?' qlock':''}">${svg(lock?'lock':reg.icon)}<b>${esc(reg.name)}</b><span>${lock?'Cần cấp '+need:'Cấp '+need+'+'}</span></div>`;}
+      const key=need+'|'+reg.id,lock=lv<need;
+      if(key!==last){last=key;rows+=`<div class="qgroup${lock?' qlock':''}">${svg(lock?'lock':reg.icon)}<b>${esc(reg.name)}</b><span>${lock?'Cần cấp '+need:'Cấp '+need+'+'}</span></div>`;}
       const n=p.quests.active[Q.id],done=p.quests.done[Q.id]||0,M=Player.MON[Q.target],act=n!=null,ready=act&&n>=Q.count;
-      const needPrev=Q.req&&!p.quests.done[Q.req];
-      const btn=ready?`<button class="primary" data-turnin="${Q.id}">${svg('check')}Trả việc</button>`:act?`<span class="qprog">${n}/${Q.count}</span>`:(!Q.repeat&&done)?`<span class="qprog">Đã xong</span>`:needPrev?`<span class="qprog">${svg('lock')}Xong việc trước</span>`:lock?`<span class="qprog">${svg('lock')}${need}</span>`:`<button data-accept="${Q.id}">${svg('next')}Nhận</button>`;
+      const btn=ready?`<button class="primary" data-turnin="${Q.id}">${svg('check')}Trả việc</button>`:act?`<span class="qprog">${n}/${Q.count}</span>`:(!Q.repeat&&done)?`<span class="qprog">Đã xong</span>`:lock?`<span class="qprog">${svg('lock')}${need}</span>`:`<button data-accept="${Q.id}">${svg('next')}Nhận</button>`;
       rows+=`<div class="qrow${act?' act':''}${lock&&!act?' dim':''}">${LH_IMG.icon('quai:'+Q.target,monIc(Q.target,'flag'))}<div><b>${esc(Q.name)}</b><small>${esc(Q.desc)} · ${M?esc(M.name):''} ×${Q.count}${done?` · đã làm ${done} lần`:''}</small><span class="chips">${rewardChips(Q)}</span></div>${btn}</div>`;
     }
     openModal(ttl('quest','Lý trưởng giao việc'),`<small class="sel-desc">Lv. ${lv} · nhận tối đa ${Player.MAX_ACTIVE_QUEST} việc cùng lúc. Xong việc quay về gặp Lý trưởng để nhận thưởng.</small><div class="quest-rows" style="margin-top:8px">${rows||`<div class="cho-note">${svg('check')}<span>Đã làm xong mọi việc của làng. Hãy ra Đông Ngạn săn quái, luyện cấp.</span></div>`}</div>`,true);
     document.querySelectorAll('[data-accept]').forEach(b=>b.onclick=()=>run(b,game.op({t:'qa',id:b.dataset.accept}).then(()=>showQuestBoard())));
-    document.querySelectorAll('[data-turnin]').forEach(b=>b.onclick=()=>run(b,game.op({t:'qt',id:b.dataset.turnin}).then(r=>{game.message(svg('check')+'Nhận thưởng'+(r.copper?' '+coins(r.copper):'')+(r.rubies?' '+ruby(r.rubies):'')+(r.exp?' · +'+r.exp+' kinh nghiệm':'')+(r.item?` \u{00b7} <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b>`:''));if(r.up)game.levelUp(r.up);const Q=Player.QUESTS[b.dataset.turnin];if(Q&&Q.end)setTimeout(()=>openModal(ttl('heart','Tìm con · '+Q.name),`<div class="story-end">${svg('quest')}<p>${esc(Q.end)}</p></div><button class="primary big-btn" id="storyOk">${svg('next')}Tiếp tục</button>`),50);else showQuestBoard();if(Q&&Q.end)setTimeout(()=>{const b2=$('#storyOk');if(b2)b2.onclick=()=>showQuestBoard();},80);})));
+    document.querySelectorAll('[data-turnin]').forEach(b=>b.onclick=()=>run(b,game.op({t:'qt',id:b.dataset.turnin}).then(r=>{rewardMsg(r);showQuestBoard();})));
+  }
+  const rewardMsg=r=>game.message(svg('check')+'Nhận thưởng'+(r.copper?' '+coins(r.copper):'')+(r.rubies?' '+ruby(r.rubies):'')+(r.exp?' · +'+r.exp+' kinh nghiệm':'')+(r.item?` \u{00b7} <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b>`:''))||(r.up&&game.levelUp(r.up));
+  const regName=id=>(Player.REGIONS.find(r=>r.id===id)||{}).name||id;
+  // Bảng nhiệm vụ chỉ báo NPC nào đang giữ việc Tìm con (đang làm: nơi trả việc)
+  function storyHint(){
+    const act=Object.keys(p.quests.active).map(id=>Player.QUESTS[id]).find(Q=>Q&&Q.story);
+    if(act){const n=p.quests.active[act.id],M=Player.MON[act.target];return `<div class="qgroup story">${svg('heart')}<b>Tìm con</b><span>${esc(act.name)} · ${M?esc(M.name):''} ${Math.min(n,act.count)}/${act.count}</span></div><div class="qnpc">${svg(n>=act.count?'check':'talk')}<div><b>${n>=act.count?'Về gặp':'Xong việc về gặp'} ${esc(act.npcName||act.npc)}</b><small>${esc(regName(act.at))}</small></div></div>`;}
+    const nx=Player.storyNext(p);if(!nx)return Object.values(Player.QUESTS).some(Q=>Q.story)?`<div class="qgroup story">${svg('heart')}<b>Tìm con</b><span>Đã tìm được con gái · hành trình trọn vẹn</span></div>`:'';
+    const need=Player.questLevel(nx),lock=(p.level||1)<need;
+    return `<div class="qgroup story">${svg('heart')}<b>Tìm con</b><span>Lần theo manh mối qua từng vùng để cứu con gái</span></div><div class="qnpc">${svg(lock?'lock':'talk')}<div><b>${esc(nx.npcName||nx.npc)} đang có việc muốn nhờ bạn</b><small>${esc(regName(nx.at))}${lock?' · cần cấp '+need:' · tới gặp để biết việc gì'}</small></div></div>`;
+  }
+  // Gặp NPC đang giữ việc cốt truyện: kể chuyện, nhận / trả việc tại chỗ; xong mới mở bảng thường của NPC (nếu có)
+  function showStoryTalk(n,st){
+    const Q=st.Q,M=Player.MON[Q.target],cnt=p.quests.active[Q.id],need=Player.questLevel(Q),lock=(p.level||1)<need;
+    const next=n.panel?`<button id="stNext">${svg('next')}${({shop:'Mua bán',quests:'Sổ việc',mercs:'Thuê lính',market:'Chợ',avatar:'Đổi diện mạo',fuse:'Dung hợp',nap:'Nạp thẻ',quiz:'Hỏi bài'})[n.panel]||'Mở'}</button>`:'';
+    const body=st.state==='new'?`<div class="story-talk"><span class="who">${svg('talk')}</span><div><p>${esc(Q.desc)}</p><small class="sel-desc">${M?esc(M.name):''} ×${Q.count} · ${esc(regName(Player.regionOf(Q.target)))}${lock?' · cần cấp '+need:''}</small><span class="chips">${rewardChips(Q)}</span></div></div><div class="story-bar">${next}<button class="primary" id="stGo"${lock?' disabled':''}>${svg('check')}Nhận việc</button></div>`
+      :st.state==='ready'?`<div class="story-talk"><span class="who">${svg('check')}</span><div><p>Việc đã xong: ${esc(Q.name)} (${Q.count}/${Q.count}).</p><span class="chips">${rewardChips(Q)}</span></div></div><div class="story-bar">${next}<button class="primary" id="stGo">${svg('check')}Trả việc</button></div>`
+      :`<div class="story-talk"><span class="who">${svg('quest')}</span><div><p>${esc(Q.desc)}</p><small class="sel-desc">${M?esc(M.name):''} ${Math.min(cnt,Q.count)}/${Q.count} · xong về gặp ta</small></div></div><div class="story-bar">${next}</div>`;
+    openModal(ttl('heart',esc(n.name)+' · Tìm con'),body);
+    const nb=$('#stNext');if(nb)nb.onclick=()=>openPanel(n,true);
+    const go=$('#stGo');if(go)go.onclick=()=>run(go,game.op(st.state==='new'?{t:'qa',id:Q.id}:{t:'qt',id:Q.id}).then(r=>{
+      if(st.state==='new'){game.message(svg('quest')+'Đã nhận: '+esc(Q.name));LH_Audio.play('quest');closeModal();return;}
+      rewardMsg(r);LH_Audio.play('quest');
+      openModal(ttl('heart','Tìm con · '+Q.name),`<div class="story-end">${svg('quest')}<p>${esc(Q.end||'Cảm ơn, hành trình còn dài.')}</p></div><button class="primary big-btn" id="storyOk">${svg('next')}Tiếp tục</button>`);
+      $('#storyOk').onclick=()=>{const nx=Player.storyNext(p);if(nx)game.message(svg('talk')+`Manh mối tiếp: gặp ${nx.npcName||nx.npc} ở ${regName(nx.at)}`);closeModal();};
+    }));
   }
   /* ---------- Người dẫn đường: lính đánh thuê ---------- */
   const statLine=st=>`<small class="sel-desc">Sức mạnh ${st.strength} · Nhanh nhẹn ${st.agility} · Sức khỏe ${st.vitality} · Trí tuệ ${st.intelligence}</small>`;
@@ -272,20 +300,25 @@ window.startUI=(session)=>{
   }
   /* ---------- Thương nhân: trung gian mua bán giữa người chơi (đồ ký gửi, nhân vật cho thuê, tiền bán hàng) ----------
      Mọi lệnh ở đây chạy trên máy chủ: trước khi gửi, game lưu hết phần chơi trên máy (game.server), sau đó nhận lại túi đồ, tiền chuẩn. */
-  const MK={tab:'buy',list:null,mercs:null,chars:null,claim:0,claimRuby:0,filter:'all',sel:null,pick:null,busy:false};
+  const MK={tab:'buy',list:null,mercs:null,chars:null,claim:0,claimRuby:0,filter:'all',sel:null,pick:null,busy:false,at:0,fetching:null};
+  const MK_FRESH=60000; // danh sách hàng dùng lại trong 60 giây (mở bảng là thấy ngay), vẫn làm mới ngầm
+  const mkSet=r=>{MK.list=r.open;MK.claim=r.claim;MK.claimRuby=r.claimRuby||0;MK.at=Date.now();};
+  // hỏi thương nhân trước (lúc chạm vào NPC / vào làng) để khi tới nơi bảng hiện ngay
+  function prefetchMarket(force){if(!Net.token)return;if(!force&&MK.list&&Date.now()-MK.at<MK_FRESH)return;if(MK.fetching)return MK.fetching;MK.fetching=Net.call('marketList').then(r=>{mkSet(r);if(!$('#overlay').hidden&&$('#modalCard').dataset.mk&&(MK.tab==='buy'||MK.tab==='money')&&!MK.busy)showMarket(null,true);},()=>{}).finally(()=>{MK.fetching=null;});return MK.fetching;}
   const price2=(c,r)=>(c||!r?coins(c):'')+(r?ruby(r):'');
   function mkTile(attr,it,priceHtml,go,goTxt,off,sel,foot){
     return `<button class="tile${off?' off':''}${sel?' sel':''}" ${attr} title="${esc(desc(it))}" style="${Player.qOf(it)!=='n'?`border-color:${qColor(it)}`:''}"><span class="ti" style="color:${tintOf(it)||'#e4cc8d'}">${icon(it.type)}</span>${lvb(it)}<b class="nm" style="color:${qColor(it)}">${esc(Player.nameOf(it))}</b>${chips(it)}${priceHtml?`<span class="price">${priceHtml}</span>`:''}${foot||''}<span class="go">${svg(go)}${goTxt}</span></button>`;
   }
   // Gọi máy chủ: khóa cả bảng trong lúc chờ (bấm nhanh không dồn lệnh)
-  async function mkRun(fn){
+  async function mkRun(fn,btn){
     if(MK.busy)return;MK.busy=true;const card=$('#modalCard');card.classList.add('mk-wait');card.querySelectorAll('button:not(#closeOverlay),input').forEach(x=>x.disabled=true);
+    if(btn){btn.classList.add('busy');btn.innerHTML=svg('next')+'Đang gửi…';btn.disabled=true;}
     try{await fn();}catch(e){fail(e);}finally{MK.busy=false;card.classList.remove('mk-wait');if(!$('#overlay').hidden&&$('#modalCard').dataset.mk)showMarket(MK.tab,true);}
   }
   async function mkLoad(force){
-    if(MK.tab==='buy'&&(force||!MK.list)){const r=await Net.call('marketList');MK.list=r.open;MK.claim=r.claim;MK.claimRuby=r.claimRuby||0;}
+    if(MK.tab==='buy'&&(force||!MK.list)){const r=await Net.call('marketList');mkSet(r);}
     if(MK.tab==='merc'&&(force||!MK.mercs)){const [m,c]=await Promise.all([Net.call('mercList'),Net.call('chars')]);MK.mercs=m.list;MK.chars=c.chars;MK.claim=c.claim;MK.claimRuby=c.claimRuby||0;}
-    if(MK.tab==='money'&&force){const r=await Net.call('marketList');MK.list=r.open;MK.claim=r.claim;MK.claimRuby=r.claimRuby||0;}
+    if(MK.tab==='money'&&force){const r=await Net.call('marketList');mkSet(r);}
   }
   function showMarket(tab,quiet){
     if(tab)MK.tab=tab;if(!quiet){MK.sel=null;MK.pick=null;}
@@ -321,19 +354,19 @@ window.startUI=(session)=>{
     Q('[data-mf]').forEach(b=>b.onclick=()=>{MK.filter=b.dataset.mf;showMarket(null,true);});
     Q('[data-mreload]').forEach(b=>b.onclick=()=>mkRun(()=>mkLoad(true)));
     Q('[data-mbuy]').forEach(b=>b.onclick=()=>{const id=b.dataset.mbuy;if(MK.sel!==id){MK.sel=id;showMarket(null,true);return;}
-      mkRun(async()=>{try{const r=await game.server('marketBuy',{id});MK.list=MK.list.filter(x=>x.id!==id);MK.sel=null;game.message(svg('check')+`Đã mua <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b>`);}catch(e){if(e.message==='DA_BAN'){MK.list=MK.list.filter(x=>x.id!==id);MK.sel=null;}throw e;}});});
+      mkRun(async()=>{try{const r=await game.server('marketBuy',{id});MK.list=MK.list.filter(x=>x.id!==id);MK.sel=null;game.message(svg('check')+`Đã mua <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b>`);}catch(e){if(e.message==='DA_BAN'){MK.list=MK.list.filter(x=>x.id!==id);MK.sel=null;}throw e;}},b);});
     Q('[data-mcancel]').forEach(b=>b.onclick=()=>{const id=b.dataset.mcancel;if(MK.sel!==id){MK.sel=id;showMarket(null,true);return;}
-      mkRun(async()=>{await game.server('marketCancel',{id});MK.list=MK.list.filter(x=>x.id!==id);MK.sel=null;game.message(svg('check')+'Đã lấy lại món đồ');});});
+      mkRun(async()=>{await game.server('marketCancel',{id});MK.list=MK.list.filter(x=>x.id!==id);MK.sel=null;game.message(svg('check')+'Đã lấy lại món đồ');},b);});
     Q('[data-mpick]').forEach(b=>b.onclick=()=>{MK.pick=MK.pick===b.dataset.mpick?null:b.dataset.mpick;showMarket(null,true);});
     const sg=$('#mkSell');if(sg)sg.onclick=()=>{const v=id=>Math.max(0,Math.floor(+$(id).value||0)),pr=v('#mkG')*10000+Math.min(99,v('#mkS'))*100,rb=v('#mkR');
       if(pr<1&&rb<1){game.message(svg('close')+'Nhập giá bán');return;}const uid=MK.pick,it=p.bag.find(x=>x&&x.uid===uid);
-      mkRun(async()=>{const r=await game.server('marketSell',{uid,price:pr,ruby:rb});if(MK.list&&it)MK.list.unshift({id:r.id,item:it,price:pr,ruby:rb,mine:true,seller:p.name});MK.pick=null;game.message(svg('check')+'Đã bày hàng');});};
+      mkRun(async()=>{const r=await game.server('marketSell',{uid,price:pr,ruby:rb});if(MK.list&&it)MK.list.unshift({id:r.id,item:it,price:pr,ruby:rb,mine:true,seller:p.name});MK.pick=null;game.message(svg('check')+'Đã bày hàng');},sg);};
     Q('[data-mhire]').forEach(b=>b.onclick=()=>{const id=b.dataset.mhire;if(MK.sel!==id){MK.sel=id;showMarket(null,true);return;}
-      mkRun(async()=>{const r=await game.server('mercBuy',{targetId:id});MK.mercs=MK.mercs.filter(x=>x.id!==id);MK.sel=null;game.message(svg('user')+esc(r.name)+' đi theo bạn');});});
+      mkRun(async()=>{const r=await game.server('mercBuy',{targetId:id});MK.mercs=MK.mercs.filter(x=>x.id!==id);MK.sel=null;game.message(svg('user')+esc(r.name)+' đi theo bạn');},b);});
     Q('[data-mreg]').forEach(b=>b.onclick=()=>{const id=b.dataset.mreg,g=Math.max(0,Math.floor(+document.querySelector(`[data-mg="${id}"]`).value||0)),r=Math.max(0,Math.floor(+document.querySelector(`[data-mr="${id}"]`).value||0));
       mkRun(async()=>{const x=await Net.call('mercRegister',{charId:id,price:g*10000,ruby:r,playing:session.charId});MK.chars=MK.chars.map(c=>c.id===id?{...c,...x.char}:c);game.message(svg('check')+'Đã đăng cho thuê');});});
     Q('[data-mstop]').forEach(b=>b.onclick=()=>{const id=b.dataset.mstop;mkRun(async()=>{const x=await Net.call('mercCancel',{charId:id});MK.chars=MK.chars.map(c=>c.id===id?{...c,...x.char}:c);game.message(svg('check')+'Đã hủy cho thuê');});});
-    const cg=$('#mkClaim');if(cg)cg.onclick=()=>mkRun(async()=>{const r=await game.server('claim',{});MK.claim=0;MK.claimRuby=0;game.message(svg('coin')+'Đã nhận '+price2(r.amount,r.ruby));});
+    const cg=$('#mkClaim');if(cg)cg.onclick=()=>mkRun(async()=>{const r=await game.server('claim',{});MK.claim=0;MK.claimRuby=0;game.message(svg('coin')+'Đã nhận '+price2(r.amount,r.ruby));},cg);
     if(MK.tab==='money'&&MK.list!=null&&!quiet)mkRun(()=>mkLoad(true));
   }
   function showQuests(){
@@ -343,7 +376,7 @@ window.startUI=(session)=>{
     const hunt=Object.keys(names).map(t=>chip(t,names[t]+' '+(k[t]||0),k[t]?'#9fe8a8':'')).join('');
     const act=Object.entries(p.quests.active).map(([id,n])=>{const Q=Player.QUESTS[id];return row('quest',esc(Q.name)+` (${Math.min(n,Q.count)}/${Q.count})`,rewardChips(Q));}).join('');
     const first=(metN<V.length?row('talk',`Gặp dân làng (${metN}/${V.length})`,met):'')+(p.flags.river?'':row('bridge','Qua cầu sang Đông Ngạn',chip('next','Chưa qua')))+(p.flags.hunted?'':row('bow','Săn mỗi loài một con · thưởng 1 bạc',hunt));
-    openModal(ttl('quest','Nhiệm vụ'),`<div class="quest-rows">${act}${first||(act?'':`<div class="qdone">${svg('check')}<span>Đã xong việc làng. Gặp Lý trưởng nhận việc mới.</span></div>`)}</div>`);
+    openModal(ttl('quest','Nhiệm vụ'),`<div class="quest-rows">${storyHint()}${act}${first||(act?'':`<div class="qdone">${svg('check')}<span>Đã xong việc làng. Gặp Lý trưởng nhận việc mới.</span></div>`)}</div>`);
   }
   /* ---------- Thợ truyền thần (thành trì): đổi diện mạo — da, tóc, râu, mắt, dấu trên mặt; diện mạo có giá thì mua một lần ---------- */
   let avSel=null;
@@ -359,12 +392,12 @@ window.startUI=(session)=>{
     const go=$('#avGo');if(go)go.onclick=()=>run(go,game.op({t:'av',id:cur}).then(()=>{game.message(svg('check')+'Đã đổi diện mạo');avSel=null;refresh();showAvatars();}));
   }
   /* ---------- Bộ sưu tập Phấn Son: đổi qua lại thẻ avatar, khung, nền, hiệu ứng tên đã có (op cos) ---------- */
-  const COS_T={avatar:['Ảnh chân dung','user'],khung:['Khung chân dung','shield'],nen:['Nền hồ sơ','map'],ten:['Hiệu ứng tên','orb']};
+  const COS_T={avatar:['Ảnh chân dung','user'],nen:['Nền hồ sơ','map'],ten:['Hiệu ứng tên','orb']};
   function showCosmetics(){
     const C=p.cos||{use:{},own:{}};
     const sec=Object.entries(COS_T).map(([k,[tt,ic]])=>{const own=C.own[k]||[],use=C.use[k]||'';
       const tiles=[`<button class="tile cos${!use?' sel':''}" data-cos="${k}:"><span class="ti">${svg('close')}</span><b class="nm">Không dùng</b></button>`,...own.map(id=>{const d=k==='ten'?{name:Player.NAME_FX[id]||id}:info({type:id})||{name:id};return `<button class="tile cos${use===id?' sel':''}" data-cos="${k}:${id}">${d.img?`<img src="${esc(d.img)}" alt="" referrerpolicy="no-referrer">`:`<span class="ti">${svg(ic)}</span>`}<b class="nm${k==='ten'?' fx-'+id:''}">${esc(d.name)}</b>${use===id?`<span class="price">${svg('check')}Đang dùng</span>`:''}</button>`;})].join('');
-      return `<h4 class="mk-h">${svg(ic)}${tt}${own.length?'':' <small>— chưa có, mua ở Cô hàng Phấn Son (làng Thanh Mộc)</small>'}</h4><div class="shop-grid cos-grid">${tiles}</div>`;}).join('');
+      return `<h4 class="mk-h">${svg(ic)}${tt}${own.length?'':' <small>— chưa có, mua ở Cô hàng Phấn Son (làng Thanh Mộc): mua xong dùng ngay</small>'}</h4><div class="shop-grid cos-grid">${tiles}</div>`;}).join('');
     openModal(ttl('orb','Phấn Son · bộ sưu tập')+`<div class="purse">${ruby(p.rubies)}</div>`,`<small class="sel-desc">Đồ đã mua giữ mãi trong bộ sưu tập; chạm để đổi. Ảnh chân dung thay cho diện mạo ở khung trên và lều nhân vật.</small>${sec}`,true);
     document.querySelectorAll('[data-cos]').forEach(b=>b.onclick=()=>{const [kind,id]=b.dataset.cos.split(':');run(b,game.op({t:'cos',kind,id}).then(()=>{refresh();showCosmetics();}));});
   }
@@ -429,8 +462,9 @@ window.startUI=(session)=>{
     openModal(ttl('orb','Nạp thẻ')+`<div class="purse">${ruby(p.rubies)}</div>`,`<div class="shop-grid nap-grid">${tiles}</div>${qr}`,true);
     document.querySelectorAll('[data-nap]').forEach(b=>b.onclick=()=>{napSel=b.dataset.nap;showTopup();});
   }
-  function openPanel(n){
+  function openPanel(n,skipStory){
     npcPanel=true;
+    const st=skipStory?null:Player.storyAt(p,n.id);if(st)return showStoryTalk(n,st);
     if(n.panel==='fuse'){fuseSel={m:null,x:null};return showFuse();}
     if(n.panel==='nap'){napSel=null;return showTopup();}
     if(n.panel==='avatar'){avSel=null;return showAvatars();}
@@ -438,7 +472,7 @@ window.startUI=(session)=>{
     if(n.panel==='shop')return showShop(n.shop);
     if(n.panel==='quests')return showQuestBoard();
     if(n.panel==='mercs')return showMercBoard('hire');
-    if(n.panel==='market'){MK.list=null;MK.mercs=null;return showMarket('buy');}
+    if(n.panel==='market'){MK.mercs=null;const fresh=MK.list&&Date.now()-MK.at<MK_FRESH;if(!fresh)MK.list=null;showMarket('buy');if(fresh)prefetchMarket(true);return;}
   }
   /* ---------- Chọn bản đồ: đi nhanh tới trạm nghỉ ở cổng từng vùng; thiếu cấp thì khóa ---------- */
   function showMaps(){
@@ -489,7 +523,7 @@ window.startUI=(session)=>{
   });
   const alive=()=>{if(!window.LH_KICKED&&Net.token&&document.visibilityState==='visible')Net.call('alive').catch(()=>{});};
   setInterval(alive,20000);document.addEventListener('visibilitychange',alive);
-  window.GameUI={refresh,showAttributes,openPanel,showShop:(id,tab)=>{shopSel=null;showShop(id,tab);},showQuestBoard,showMaps,showMercBoard,showMarket,showQuests,save,previewElem,previewWho:()=>previewWho,previewBurst:()=>burstAt,
+  window.GameUI={refresh,showAttributes,openPanel,prefetchMarket,showShop:(id,tab)=>{shopSel=null;showShop(id,tab);},showQuestBoard,showMaps,showMercBoard,showMarket,showQuests,save,previewElem,previewWho:()=>previewWho,previewBurst:()=>burstAt,
     showBag:()=>{if($('#overlay').hidden){selected=null;skillFocus=null;renderBag();}else closeModal();},
     frame(time,st){
       if(time-lastFrame<.1)return;lastFrame=time;refresh();$('#settingsBtn').classList.toggle('dirty',game.unsaved());$('#saveBtn').classList.toggle('dirty',game.unsaved());const now=Date.now();
@@ -497,4 +531,5 @@ window.startUI=(session)=>{
       const bb=$('#bossBar');if(st&&st.boss){bb.hidden=false;bb.classList.toggle('final',st.boss.final);if(bb.dataset.t!==st.boss.type){bb.dataset.t=st.boss.type;bb.title=st.boss.name;$('#bossIc').innerHTML=LH_IMG.icon('quai:'+st.boss.type,monIc(st.boss.type,'tiger'));}$('#bossFill').style.width=Math.max(0,st.boss.hp/st.boss.max*100)+'%';$('#bossHp').textContent=Math.max(0,Math.ceil(st.boss.hp));}else bb.hidden=true;
     }};
   refresh();
+  setTimeout(()=>prefetchMarket(),4000);
 };

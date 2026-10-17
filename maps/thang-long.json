@@ -518,7 +518,7 @@
    "x": 32,
    "y": 17,
    "panel": "shop",
-   "shop": "wizard",
+   "shop": "thanh-thang-long-sach",
    "lines": [
     "Sách ngũ hành của ta luyện tới tầng cao mới thấy uy lực."
    ]
@@ -670,5 +670,5 @@
  ],
  "theme": "thang-long",
  "sky": "thang-long",
- "level": 90
+ "level": 170
 }

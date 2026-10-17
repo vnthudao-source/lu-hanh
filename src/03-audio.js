@@ -12,7 +12,10 @@ const LH_Audio=(()=>{
     ctx=new AC();master=ctx.createGain();master.gain.value=on?1:0;master.connect(ctx.destination);
     sfx=ctx.createGain();sfx.gain.value=.8;sfx.connect(master);mus=ctx.createGain();mus.gain.value=.3;mus.connect(master);amb=ctx.createGain();amb.gain.value=.2;amb.connect(master);
     noiseBuf=ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate);const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
-    document.addEventListener('visibilitychange',()=>{if(!ctx)return;if(document.hidden)ctx.suspend();else if(on)ctx.resume();});
+    document.addEventListener('visibilitychange',()=>{if(!ctx)return;if(document.hidden)ctx.suspend();else if(on)ctx.resume().then(start).catch(()=>{});});
+    // v10.12: quay lại trang / có nguồn âm khác chen vào (iPhone: trạng thái interrupted) → mở lại
+    for(const ev of ['pageshow','focus'])window.addEventListener(ev,()=>{if(ctx&&on&&ctx.state!=='running')ctx.resume().then(start).catch(()=>{});});
+    ctx.onstatechange=()=>{if(on&&ctx.state!=='running'&&!document.hidden)setTimeout(()=>{if(ctx.state!=='running')ctx.resume().catch(()=>{});},300);};
     return ctx;
   }
   const now=()=>ctx.currentTime;
@@ -76,12 +79,13 @@ const LH_Audio=(()=>{
   };
   const MIN_GAP={hit:.05,crit:.05,step:.12,hoof:.1,swing:.06,ui:.04,coin:.05,pickup:.08};
   function play(name,o={}){
-    if(!on||!ctx||ctx.state!=='running'||!SFX[name])return;const t=now(),g=MIN_GAP[name]||.02;if(lastPlay[name]&&t-lastPlay[name]<g)return;lastPlay[name]=t;
+    if(!on||!ctx||!SFX[name])return;if(ctx.state!=='running'){ctx.resume().catch(()=>{});return;}const t=now(),g=MIN_GAP[name]||.02;if(lastPlay[name]&&t-lastPlay[name]<g)return;lastPlay[name]=t;
     try{if(o.vol!=null){const save=sfx.gain.value;sfx.gain.setValueAtTime(save*o.vol,t);sfx.gain.setValueAtTime(save,t+.5);}SFX[name]();}catch(e){}
   }
   // ---- Nhạc nền: ngũ cung gảy, giai điệu đi ngẫu nhiên có trọng âm theo nhịp, trầm giữ nền; nhịp trống nhẹ ở vùng hoang dã / trùm
   function beat(){
     if(!ctx||!on||!scene)return;const sc=SC[scene]||SC.village,base=BASE[scene]||220,tempo=scene==='boss'?.27:scene==='wild'?.42:.5;
+    if(nextBeat<now()-1)nextBeat=now()+.05; // trễ quá (trình duyệt tạm dừng) thì bỏ qua các nhịp cũ, không dồn nốt
     while(nextBeat<now()+.6){
       const i=bar%8,t=nextBeat;
       if(i===0||(scene!=='village'&&i===4))pluck(base/2,t,.22,tempo*4,mus); // trầm
@@ -108,11 +112,23 @@ const LH_Audio=(()=>{
   function start(){if(!ctx||musTimer)return;nextBeat=now()+.1;musTimer=setInterval(beat,300);ambTimer=setInterval(ambient,3000);ambient();}
   function setScene(s){if(s===scene)return;scene=s;bar=0;melodyNote=2;if(ctx&&on){nextBeat=Math.max(nextBeat,now()+.4);}}
   // Mở khóa ở thao tác đầu tiên (iPhone / Safari): tạo AudioContext trong sự kiện chạm, phát một nốt câm
+  // iPhone: Web Audio bị tắt khi gạt nút im lặng (rung), trừ khi trang đang phát một thẻ <audio>. Phát thẻ <audio> câm lặp vô hạn
+  // (tạo trong thao tác chạm) để hệ thống coi trang là đang phát nhạc → âm thanh game nghe được dù máy đang để im lặng.
+  let keepEl=null;
+  function keepAlive(){
+    if(keepEl)return;try{
+      const sr=8000,n=sr/10,buf=new Uint8Array(44+n),w=(o,v)=>{for(let i=0;i<4;i++)buf[o+i]=(v>>>(8*i))&255;},t=(o,x)=>{for(let i=0;i<x.length;i++)buf[o+i]=x.charCodeAt(i);};
+      t(0,'RIFF');w(4,36+n);t(8,'WAVEfmt ');w(16,16);buf[20]=1;buf[22]=1;w(24,sr);w(28,sr);buf[32]=1;buf[34]=8;t(36,'data');w(40,n);for(let i=0;i<n;i++)buf[44+i]=128;
+      let b64='';for(let i=0;i<buf.length;i+=3){const a=buf[i],b=buf[i+1]||0,c=buf[i+2]||0,x=(a<<16)|(b<<8)|c;b64+='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'[x>>18]+'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'[(x>>12)&63]+(i+1<buf.length?'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'[(x>>6)&63]:'=')+(i+2<buf.length?'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'[x&63]:'=');}
+      keepEl=document.createElement('audio');keepEl.src='data:audio/wav;base64,'+b64;keepEl.loop=true;keepEl.volume=0.01;keepEl.setAttribute('playsinline','');keepEl.setAttribute('x-webkit-airplay','deny');keepEl.style.display='none';document.body.appendChild(keepEl);
+    }catch(e){keepEl=null;}
+  }
   function unlock(){const c=ac();if(!c)return;if(c.state!=='running')c.resume().then(start).catch(()=>{});else start();
-    try{const b=c.createBuffer(1,1,22050),s=c.createBufferSource();s.buffer=b;s.connect(c.destination);s.start(0);}catch(e){}}
+    try{const b=c.createBuffer(1,1,22050),s=c.createBufferSource();s.buffer=b;s.connect(c.destination);s.start(0);}catch(e){}
+    if(on){keepAlive();if(keepEl&&keepEl.paused)keepEl.play().catch(()=>{});}}
   ['pointerdown','keydown','touchend'].forEach(ev=>document.addEventListener(ev,unlock,{capture:true,passive:true}));
   function toggle(v){on=v==null?!on:!!v;try{localStorage.setItem('lh-am',on?'1':'0');}catch(e){}
-    if(ctx){if(on){ctx.resume().catch(()=>{});master.gain.cancelScheduledValues(now());master.gain.setTargetAtTime(1,now(),.05);start();}else master.gain.setTargetAtTime(0,now(),.05);}
+    if(ctx){if(on){ctx.resume().catch(()=>{});master.gain.cancelScheduledValues(now());master.gain.setTargetAtTime(1,now(),.05);start();keepAlive();if(keepEl&&keepEl.paused)keepEl.play().catch(()=>{});}else{master.gain.setTargetAtTime(0,now(),.05);if(keepEl)keepEl.pause();}}
     return on;}
   return {play,setScene,toggle,get on(){return on;},unlock};
 })();

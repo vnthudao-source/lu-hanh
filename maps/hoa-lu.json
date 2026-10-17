@@ -614,6 +614,19 @@
    ]
   },
   {
+   "id": "phap-su-hoa-lu",
+   "role": "phap-su",
+   "name": "Pháp sư",
+   "act": "turn",
+   "x": 20,
+   "y": 17,
+   "panel": "shop",
+   "shop": "thanh-hoa-lu-sach",
+   "lines": [
+    "Sách ngũ hành bậc Trường Yên, luyện lên mỗi cấp cộng chỉ số gấp bội sách làng."
+   ]
+  },
+  {
    "id": "nap-the-hoa-lu",
    "role": "nap-the",
    "name": "Người giữ kho",
@@ -717,5 +730,5 @@
  ],
  "theme": "hoa-lu",
  "sky": "hoa-lu",
- "level": 120
+ "level": 235
 }

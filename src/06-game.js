@@ -11,6 +11,8 @@ window.startGame=(session)=>{
   // quái của bản đồ đang đứng (đổi bản đồ thì dựng lại)
   const makeMonsters=()=>World.monsterSpawns.filter(s=>MON[s.type]).map((s,i)=>{const x=(s.x+.5)*T,y=(s.y+.5)*T;return {id:i,type:s.type,hx:x,hy:y,x,y,hp:MON[s.type].hp,max:MON[s.type].hp,dead:false,deadAt:0,respawn:0,facing:-1,walk:0,moving:false,hurt:-9,aggro:-9,atk:null,cd:0,flee:0,wander:null,stunUntil:0,burn:null,burnAcc:0,leapCd:0,leap:null};});
   const monsters=makeMonsters();
+  // v10.12: ảnh quái, NPC của bản đồ tải sớm khi vào (ảnh khác chỉ tải lúc cần vẽ)
+  const warmMap=()=>{try{LH_IMG.warm([...new Set(monsters.map(m=>'quai:'+m.type)),...World.npcs.map(n=>'npc:'+n.id),...World.npcs.map(n=>'npc:'+(n.role||''))]);}catch(e){}};warmMap();
   const ATK={
     punch:{dur:.32,hit:.5,range:50,arc:1.3,dmg:.55,kind:'melee',knock:40},
     sword:{dur:.46,hit:.45,range:76,arc:2.0,dmg:1,kind:'melee',knock:45},
@@ -343,6 +345,9 @@ window.startGame=(session)=>{
   function drawNPCMarks(){
     for(const n of World.npcs){
       const bx=n.x,by=npcMarkY(n)+Math.sin(time*3)*2,near=Math.hypot(n.x-hero.x,n.y-hero.y)<92;
+      // v10.12: NPC đang giữ việc cốt truyện Tìm con: dấu hồng (! có việc · ? trả việc)
+      const st=Player.storyAt(player,n.id);
+      if(st){const ch=st.state==='ready'?'?':'!';ctx.font='700 24px system-ui';ctx.textAlign='center';ctx.lineWidth=3.5;ctx.strokeStyle='#3a102aee';ctx.strokeText(ch,bx,by+7);ctx.fillStyle=st.state==='active'?'#ffb0c8':'#ff5a8a';ctx.fillText(ch,bx,by+7);if(st.state!=='active')continue;}
       if(!seen.has(n.id)){
         if(near&&!dialogNPC){roundRect(ctx,bx-17,by-12,34,24,7,'#f0e7c8');ctx.fillStyle='#f0e7c8';ctx.beginPath();ctx.moveTo(bx-4,by+10);ctx.lineTo(bx-4,by+17);ctx.lineTo(bx+4,by+10);ctx.fill();ctx.fillStyle='#31503b';for(let k=-1;k<=1;k++){ctx.beginPath();ctx.arc(bx+k*8,by,2,0,PI2);ctx.fill();}}
         else{ctx.font='700 20px system-ui';ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle='#22382bd0';ctx.strokeText('!',bx,by+6);ctx.fillStyle='#f6d36b';ctx.fillText('!',bx,by+6);}
@@ -907,7 +912,7 @@ window.startGame=(session)=>{
   // Gửi hết hàng chờ (mỗi gói tối đa 500 lệnh), nhận lại trạng thái chuẩn
   function flush(){
     if(window.LH_KICKED)return Promise.resolve(false);
-    if(sync.busy)return sync.busy.then(()=>flush());
+    if(sync.busy)return sync.busy.then(()=>flush(),()=>flush());
     sync.busy=(async()=>{
       try{
         do{
@@ -937,13 +942,30 @@ window.startGame=(session)=>{
     return sync.busy;
   }
   // Lệnh giao dịch với người chơi (qua Thương nhân): lưu hết phần chơi trên máy trước, rồi mới gọi máy chủ và nhận trạng thái chuẩn
-  async function server(action,payload){
-    // chưa có gì mới kể từ lần lưu trước (cả cách xếp đồ) thì khỏi lưu lại
-    if((unsaved()||JSON.stringify(Player.layout(player))!==sync.flushedSig)&&!(await flush()))throw Error('CHUA_LUU');
-    const r=await Net.call(action,{charId:session.charId,...payload});
-    if(r.state&&(!r.charId||r.charId===session.charId))adopt(r.state);
-    sync.at=time;LH_Local.clear(session.charId);if(unsaved())keepLocal();
-    return r;
+  // v10.12: phần chơi chưa gửi đi kèm ngay trong lệnh (trường pre) → một lượt gọi máy chủ thay vì hai (ký gửi, mua ở chợ nhanh gấp đôi).
+  // Máy chủ chạy phần lưu trước rồi tới lệnh; lỗi giữa chừng thì gói lưu còn trên máy, gửi lại sau (mã bid chống tính hai lần)
+  function server(action,payload){
+    if(window.LH_KICKED)return Promise.reject(Error('CHUA_LUU'));
+    if(sync.busy)return sync.busy.then(()=>server(action,payload),()=>server(action,payload));
+    sync.busy=(async()=>{
+      let pre=null;
+      if(unsaved()||JSON.stringify(Player.layout(player))!==sync.flushedSig){
+        if(!inflight){sent=sync.queue.splice(0,CHUNK);const ops=sent.map(b=>b.op);if(ops.length&&!ops[0].lay&&sync.lastLay)ops[0]={...ops[0],lay:sync.lastLay};for(const o of ops)if(o.lay)sync.lastLay=o.lay;inflight={bid:Date.now().toString(36)+Math.random().toString(36).slice(2,8),ops};}
+        keepLocal(true);pre={bid:inflight.bid,sentAt:Date.now(),save:Player.serialize(player,hero,seen),ops:inflight.ops};
+      }
+      const sentSig=JSON.stringify(Player.layout(player));
+      let r;
+      try{r=await Net.call(action,{charId:session.charId,...payload,...(pre?{pre}:{})});}
+      catch(e){
+        if(pre){keepLocal(true);if(['Failed to fetch','CHAP_CHON','KHONG_TRUY_CAP'].includes(e.message)&&!sync.retry)sync.retry=setTimeout(()=>{sync.retry=null;if(unsaved())flush();},10000);}
+        throw e;
+      }
+      if(pre){sync.flushedSig=sentSig;inflight=null;sent.forEach((b,i)=>{b.res=((r.pre||{}).results||[])[i];});for(const b of sent)if(b.ent){const i=pending.indexOf(b.ent);if(i>=0)pending.splice(i,1);}sent=[];}
+      if(r.state&&(!r.charId||r.charId===session.charId))adopt(r.state);
+      sync.at=time;if(!unsaved())LH_Local.clear(session.charId);else keepLocal(true);
+      return r;
+    })().finally(()=>{sync.busy=null;window.GameUI?.refresh();});
+    return sync.busy;
   }
   // Mốc lưu tự động (về làng, qua cầu, gặp Thương nhân): vừa lưu xong mà chưa chơi gì thêm thì bỏ qua
   function checkpoint(){if(!unsaved()&&time-sync.at<20)return;flush().then(ok=>{if(ok)message(svg('save')+'Đã lưu');});}
@@ -1072,9 +1094,12 @@ window.startGame=(session)=>{
   async function travel(id,tx,ty){
     if(travelling)return;travelling=true;route=[];targetNPC=null;keys.clear();joystick={x:0,y:0};holdAttack=false;dialogNPC=null;dialogEl.hidden=true;
     let def;
-    try{def=await World.load(id);}catch(e){message(svg('close')+'Chưa mở được vùng này');travelling=false;portalArmed=false;return false;}
+    // mạng chậm: báo đang tải, quá 20 giây thì bỏ (bấm lại sẽ tải lại), không khóa game vĩnh viễn
+    const slow=setTimeout(()=>{if(travelling)message(svg('map')+'Đang tải vùng… mạng chậm, xin chờ');},1500);
+    try{def=await Promise.race([World.load(id),new Promise((_,no)=>setTimeout(()=>no(Error('CHO_LAU')),20000))]);}catch(e){clearTimeout(slow);World.cancel&&World.cancel(id);message(svg('close')+(e.message==='CHO_LAU'?'Tải vùng quá lâu, kiểm tra mạng rồi bấm lại':'Chưa mở được vùng này'));travelling=false;portalArmed=false;window.GameUI?.refresh();return false;}
+    clearTimeout(slow);
     World.use(def);W=World.W;H=World.H;grid=World.grid;
-    monsters.length=0;monsters.push(...makeMonsters());spawnBots();projectiles.length=0;particles.length=0;floaters.length=0;fx.length=0;
+    monsters.length=0;monsters.push(...makeMonsters());warmMap();spawnBots();projectiles.length=0;particles.length=0;floaters.length=0;fx.length=0;
     Object.assign(hero,tx!=null?{x:(tx+.5)*T,y:(ty+.5)*T}:World.spawn,{map:World.id,attack:null,mountAct:null});
     // điểm đến bị chặn (đá, tường, vật) thì dời sang ô trống gần nhất — không bao giờ kẹt khi vừa qua cổng
     if(!World.canStand(hero.x,hero.y)){const o=World.nearestOpen(Math.floor(hero.x/T),Math.floor(hero.y/T));if(o){hero.x=(o.x+.5)*T;hero.y=(o.y+.5)*T;}}
@@ -1387,7 +1412,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
   const PANEL_BTN={shop:'Mua bán',quests:'Nhận việc',mercs:'Thuê lính',market:'Chợ',avatar:'Đổi diện mạo',fuse:'Dung hợp',nap:'Nạp thẻ',quiz:'Hỏi bài'};
   function nearby(){let best=null,bd=92;for(const n of World.npcs){const d=Math.hypot(n.x-hero.x,n.y-hero.y);if(d<bd){bd=d;best=n;}}return best;}
   function meet(n){
-    route=[];targetNPC=null;if(n.id==='merchant')checkpoint();
+    route=[];targetNPC=null;
     if(!seen.has(n.id)){keys.clear();joystick={x:0,y:0};holdAttack=false;dialogNPC=n;page=0;dialogEl.hidden=false;showLine();return;}
     window.GameUI?.openPanel(n);
   }
@@ -1396,7 +1421,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     $('#speaker').textContent=n.name;$('#line').textContent=n.lines[page];
     $('#page').innerHTML=n.lines.length>1?n.lines.map((_,i)=>`<i class="${i===page?'on':''}"></i>`).join(''):'';
     $('#next').innerHTML=svg(lastPage?'check':'next')+(lastPage?'Xong':'Tiếp');
-    $('#shopBtn').hidden=!(lastPage&&n.panel);$('#shopLabel').textContent=PANEL_BTN[n.panel]||'Mở';
+    const st=Player.storyAt(player,n.id);$('#shopBtn').hidden=!(lastPage&&(n.panel||st));$('#shopLabel').textContent=st?(st.state==='ready'?'Trả việc':st.state==='active'?'Việc đang làm':'Có việc nhờ'):PANEL_BTN[n.panel]||'Mở';
   }
   function nearWell(r=82){let best=null,bd=r;for(const o of World.wells){const d=Math.hypot(o.x-hero.x,o.y-hero.y);if(d<bd){bd=d;best=o;}}return best;}
   function useWell(o){
@@ -1424,7 +1449,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     if(n&&Math.hypot(n.x-hero.x,n.y-hero.y)<92){meet(n);return;}
     const target=n?{x:n.x,y:n.y+40}:m?{x:m.x,y:m.y}:pt,path=World.findPath(hero,target);
     if(!path)return;
-    route=path;targetNPC=n||null;canvas.focus();
+    route=path;targetNPC=n||null;canvas.focus();if(n&&n.panel==='market')window.GameUI?.prefetchMarket(); // v10.12: hỏi thương nhân trước khi tới nơi
   }
   function screenPoint(x,y){return {x:x/scale+camera.x,y:y/scale+camera.y};}
   const save=()=>flush();
@@ -1575,7 +1600,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
   document.addEventListener('keyup',e=>{const k=keyOf(e);keys.delete(k);if(k===' ')keys.delete(' ');if(!e.code)keys.clear();});
   window.addEventListener('blur',()=>{keys.clear();stopPad();holdAttack=false;});
   $('#next').onclick=nextLine;
-  $('#shopBtn').onclick=()=>{const n=dialogNPC;if(!n||!n.panel)return;endDialog(false);window.GameUI?.openPanel(n);};
+  $('#shopBtn').onclick=()=>{const n=dialogNPC;if(!n||!(n.panel||Player.storyAt(player,n.id)))return;endDialog(false);window.GameUI?.openPanel(n);};
   let padId=null;const pad=$('#pad');
   function padMove(e){if(e.pointerId!==padId)return;const r=pad.getBoundingClientRect(),dx=e.clientX-r.left-r.width/2,dy=e.clientY-r.top-r.height/2,d=Math.max(36,Math.hypot(dx,dy));joystick={x:dx/d,y:dy/d};$('.knob').style.transform=`translate(${joystick.x*31}px,${joystick.y*31}px)`;}
   function stopPad(){padId=null;joystick={x:0,y:0};$('.knob').style.transform='';}

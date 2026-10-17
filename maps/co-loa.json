@@ -522,6 +522,20 @@
    ]
   },
   {
+   "id": "phap-su-co-loa",
+   "role": "phap-su",
+   "name": "Pháp sư",
+   "act": "turn",
+   "x": 33,
+   "y": 12,
+   "panel": "shop",
+   "shop": "thanh-co-loa-sach",
+   "lines": [
+    "Sách ngũ hành bậc Cổ Loa: cùng một quyển nhưng chỉ số mạnh hơn sách làng nhiều lần.",
+    "Chỉ gắn được 5 quyển, chọn hệ cho kỹ."
+   ]
+  },
+  {
    "id": "nap-the-co-loa",
    "role": "nap-the",
    "name": "Người giữ kho",
@@ -620,5 +634,5 @@
   }
  ],
  "theme": "co-loa",
- "level": 44
+ "level": 70
 }

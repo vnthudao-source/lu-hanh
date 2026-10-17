@@ -293,4 +293,19 @@ function capNhatQuai(){
   for(let i=1;i<v.length;i++){const d=def.get(String(v[i][ci]));if(!d)continue;if(Number(v[i][cm])!==Number(d.mau)||Number(v[i][cd])!==Number(d.sat_thuong)){sh.getRange(i+1,cm+1).setValue(d.mau);sh.getRange(i+1,cd+1).setValue(d.sat_thuong);n++;}}
   xoaBoNhoDem();Logger.log('Đã cập nhật máu / sát thương cho '+n+' loài quái');
 }
+// v10.12: giãn cấp vùng (thành cuối 290–300), nhân vật tối đa cấp 400, việc Tìm con gắn NPC, bỏ khung chân dung.
+// Chép giá trị mặc định mới vào các dòng ĐÃ CÓ trên Sheet (kiemTra chỉ thêm dòng mới, không sửa dòng cũ): ban_do.cap · cau_hinh.cap_toi_da · nhiem_vu tc-*: npc, noi, npc_ten;
+// xóa dòng khung-* khỏi vat_pham và cua_hang. Chạy một lần sau khi dán Code.gs mới (chạy kiemTra trước để có đủ cột / dòng).
+function capNhatV1012(){
+  lhDuLieuBoSung_();
+  const ghi=(tab,khoa,cols,chon)=>{const file=LH_SHEETS[LH_STATIC[tab]];if(!file)return 0;const sh=SpreadsheetApp.openById(file).getSheetByName(tab);if(!sh||sh.getLastRow()<2)return 0;
+    const v=sh.getDataRange().getValues(),h=v[0].map(String),ck=h.indexOf(khoa);if(ck<0)return 0;const def=new Map((LH_DEFAULT[tab]||[]).filter(r=>!chon||chon(r)).map(r=>[String(r[khoa]),r]));let n=0;
+    for(let i=1;i<v.length;i++){const d=def.get(String(v[i][ck]));if(!d)continue;for(const c of cols){const j=h.indexOf(c);if(j<0)continue;const val=d[c]===undefined||d[c]===null?'':d[c];if(String(v[i][j])!==String(val)){sh.getRange(i+1,j+1).setValue(val);n++;}}}
+    return n;};
+  const xoa=(tab,test)=>{const file=LH_SHEETS[LH_STATIC[tab]];if(!file)return 0;const sh=SpreadsheetApp.openById(file).getSheetByName(tab);if(!sh||sh.getLastRow()<2)return 0;
+    const v=sh.getDataRange().getValues(),h=v[0].map(String);let n=0;for(let i=v.length-1;i>=1;i--){const r=Object.fromEntries(h.map((k,j)=>[k,v[i][j]]));if(test(r)){sh.deleteRow(i+1);n++;}}return n;};
+  const a=ghi('ban_do','id',['cap']),b=ghi('cau_hinh','khoa',['gia_tri'],r=>r.khoa==='cap_toi_da'),c=ghi('nhiem_vu','id',['npc','noi','npc_ten'],r=>/^tc-/.test(String(r.id)));
+  const d=xoa('vat_pham',r=>/^khung-/.test(String(r.id))||(String(r.o)==='cos'&&String(r.loai)==='khung')),e=xoa('cua_hang',r=>/^khung-/.test(String(r.id)));
+  xoaBoNhoDem();Logger.log('ban_do: '+a+' ô cấp · cau_hinh cap_toi_da: '+b+' · nhiem_vu Tìm con: '+c+' ô npc · xóa '+d+' khung ở vat_pham, '+e+' ở cua_hang');
+}
 function kiemTra(){try{lhDuLieuBoSung_();}catch(e){Logger.log('Chưa bổ sung được quái / nhiệm vụ mới: '+e);}try{const n=lhHinhAnhBoSung_();if(n)Logger.log('Thêm '+n+' dòng ảnh mới vào file Hình ảnh');}catch(e){Logger.log('Chưa bổ sung được file Hình ảnh: '+e);}xoaBoNhoDem();const d=lhStatic_();Logger.log(Object.keys(d).map(k=>k+': '+d[k].length+' dòng').join('\n'));LH_DB.rows('tai_khoan');LH_DB.rows('nhan_vat');LH_DB.rows('cho');Logger.log('Bảng người chơi sẵn sàng. Quyền gửi mail: '+MailApp.getRemainingDailyQuota()+' thư/ngày');}

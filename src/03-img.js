@@ -21,7 +21,10 @@ const LH_IMG=(()=>{
     return u?`<svg class="icon pic" viewBox="0 0 32 32" aria-hidden="true"${color?` style="color:${color}"`:''}><image href="${attr(u)}" width="32" height="32" preserveAspectRatio="xMidYMid meet" onerror="const e=document.createElementNS('http://www.w3.org/2000/svg','use');e.setAttribute('href','#i-${fb}');this.replaceWith(e)"/></svg>`:s;
   }
   // Ảnh cho canvas (quái, NPC, túi đồ, vũ khí cầm tay): chỉ trả về khi đã tải xong
-  function pic(key){const p=PIC[key];return p&&p.complete&&p.naturalWidth>0?p:null;}
+  // v10.12: chỉ tải trước ảnh giao diện (nền, logo, chân dung); ảnh quái, NPC, đồ vật tải khi lần đầu cần vẽ (warm để tải sớm khi vào bản đồ)
+  function want(key){const u=MAP[key];if(!u||/^bieu_tuong:/.test(key))return null;let p=PIC[key];if(!p||p.src!==u){p=new Image();p.referrerPolicy='no-referrer';p.src=u;PIC[key]=p;}return p;}
+  function pic(key){const p=PIC[key]||want(key);return p&&p.complete&&p.naturalWidth>0?p:null;}
+  const warm=keys=>{for(const k of keys||[])want(k);};
   // Biểu tượng giao diện: thay nội dung <symbol id="i-…"> bằng ảnh, mọi chỗ dùng biểu tượng đó tự đổi theo
   function applyIcons(){
     if(typeof document==='undefined')return;
@@ -38,7 +41,7 @@ const LH_IMG=(()=>{
     for(const k of Object.keys(MAP))delete MAP[k];Object.assign(MAP,map);
     // ảnh riêng của vật phẩm (cột anh trong tab vat_pham: thẻ avatar, khung, nền, đồ cốt truyện) khi tab hinh_anh chưa có dòng riêng
     if(typeof Player!=='undefined')for(const [k,d] of Object.entries(Player.items||{}))if(d.img&&!MAP['vat_pham:'+k])MAP['vat_pham:'+k]=d.img;
-    for(const [k,u] of Object.entries(MAP)){if(/^bieu_tuong:/.test(k)||(PIC[k]&&PIC[k].src===u))continue;const im=new Image();im.referrerPolicy='no-referrer';im.src=u;PIC[k]=im;}
+    for(const k of Object.keys(MAP))if(/^giao_dien:/.test(k))want(k);
     applyIcons();
   }
   // rows: [{nhom, ma, link_anh}] từ máy chủ
@@ -51,5 +54,5 @@ const LH_IMG=(()=>{
     load(map);
   }
   try{const c=JSON.parse(localStorage.getItem(KEY)||'{}');if(c&&typeof c==='object')load(c);}catch(e){}
-  return {set,url,icon,pic,direct,get map(){return {...MAP};}};
+  return {set,url,icon,pic,warm,direct,get map(){return {...MAP};}};
 })();
