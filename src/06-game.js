@@ -26,7 +26,7 @@ window.startGame=(session)=>{
   // 4 kỹ năng mặc định: đánh thường · combo (3 đòn) · diện rộng · liên hoàn (5 đòn + nổ)
   const SK={normal:{mul:1,dur:1,cycles:1},basic:{mul:.85,dur:.7,cycles:3},intermediate:{mul:1.15,dur:1.2,cycles:1,multi:3,nova:130},advanced:{mul:.75,dur:.55,cycles:5,nova:160,finale:2}};
   let width=0,height=0,scale=1,route=[],targetNPC=null,targetWell=null,dialogNPC=null,page=0,last=0,time=0,toastTimer,joystick={x:0,y:0},holdAttack=false,mouseAim=null,shakeAmp=0,manaWarnAt=-9;
-  let lastAllyKey='',safe=World.isSafe(hero.x,hero.y),HD=Player.derive(player,{safe}),hdAt=-1,bridgeSide=[],travelling=false;
+  let sceneTick=0,lastAllyKey='',safe=World.isSafe(hero.x,hero.y),HD=Player.derive(player,{safe}),hdAt=-1,bridgeSide=[],travelling=false;
   const ground=document.createElement('canvas'),miniGround=document.createElement('canvas');
   hero.name=player.name;
   const $=s=>document.querySelector(s),clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,t)=>a+(b-a)*t,seg=(p,a,b)=>clamp((p-a)/(b-a),0,1),E=t=>t<.5?2*t*t:1-((-2*t+2)**2)/2;
@@ -764,6 +764,7 @@ window.startGame=(session)=>{
     m.hp-=dmg;m.hurt=time;m.aggro=time+8;if(atk.owner!=='bot')m.heroDmg=(m.heroDmg||0)+dmg;
     const c=center(m);if(atk.owner==='bot')floater(c.x+(Math.random()*16-8),c.y-M.h*.5,String(dmg),'#cfc7b6',11);else floater(c.x+(Math.random()*16-8),c.y-M.h*.5,(r.tag?r.tag+' ':'')+dmg,atk.el&&!r.tag?EL[atk.el].glow:r.color,atk.el&&!r.tag?16:r.size);
     burst(c.x,c.y,atk.el?EL[atk.el].color:'#f1e2b5',6);
+    if(atk.owner!=='bot')LH_Audio.play(r.tag||r.size>14?'crit':'hit');
     const kb=(atk.knock||30)*M.knock;if(kb)World.move(m,dx*kb*.25,dy*kb*.25,Math.min(M.r,16));
     if(m.type==='deer')m.flee=time+3;
     if(atk.owner==='hero'&&!atk.abs){
@@ -802,6 +803,7 @@ window.startGame=(session)=>{
     const d0=ATK[a.type],RM=1+(HD.tot.range||0)/100,d=RM>1?{...d0,range:d0.range*RM}:d0,sk=SK[a.skill],el=HD.books.fire?'fire':a.elem; // Tầm đánh (dòng cánh): nới tầm mọi đòn
     const atk={D:HD,mul:d.dmg*sk.mul*(a.empowered?1.6:1),el,owner:'hero',knock:d.knock,skill:a.skill};
     const ang=Math.atan2(a.aim.y,a.aim.x),ox=hero.x,oy=hero.y-18,col=el?EL[el].color:'#f4ead0';
+    LH_Audio.play({sword:'swing',punch:'swing',shield:'bash',spear:'thrust',staff:'magic',bow:'bow',crossbow:'crossbow'}[a.type]||'swing');
     if(d.kind==='melee'){
       const whirl=!!sk.multi,range=d.range*(whirl?1.15:1)*(a.skill==='basic'?1.2:1);
       hitArc(ox,oy,ang,range,whirl?PI2:d.arc,{...atk,knock:d.knock*(a.type==='shield'&&a.skill!=='normal'?1.6:1)});
@@ -823,7 +825,7 @@ window.startGame=(session)=>{
   function kill(m,owner){
     const M=MON[m.type];m.dead=true;m.deadAt=time;m.respawn=time+M.respawn;m.atk=null;m.burn=null;m.leap=null;
     if(owner==='bot'&&(m.heroDmg||0)<m.max*.3){burst(m.x,m.y-M.h*.4,'#e9dcb4',12);return;}
-    floater(m.x,m.y-M.h-6,'+'+M.copper+' đồng','#f3d27a',13);burst(m.x,m.y-M.h*.4,'#e9dcb4',16);
+    floater(m.x,m.y-M.h-6,'+'+M.copper+' đồng','#f3d27a',13);burst(m.x,m.y-M.h*.4,'#e9dcb4',16);LH_Audio.play(M.boss?'boss':'kill');
     // Phần thưởng tính ngay trên máy người chơi (cùng luật, cùng chuỗi ngẫu nhiên với máy chủ): túi rơi xuống là mở liền,
     // lệnh gom lại gửi máy chủ sau; máy chủ tính lại y hệt để lưu
     const sack={x:m.x+(Math.random()-.5)*10,y:m.y+4,born:time,boss:!!M.boss};loot.push(sack);
@@ -838,13 +840,14 @@ window.startGame=(session)=>{
     if(!r||!r.ok){sack.gone=time;return;}
     sack.open=time;const x=sack.x,y=sack.y-30;let dy=0;
     burst(x,y+18,(r.items.length?Player.rar(r.items[0]).color:'#e9dcb4'),r.items.length?22:10,150);
+    LH_Audio.play(r.items.length?(Player.rar(r.items[0]).tier>=3?'rare':'pickup'):'coin');
     if(r.rubies){floater(x,y-dy,'+'+r.rubies+' hồng ngọc','#ff7aa0',14);dy+=16;}
     if(r.exp){floater(x,y-dy,'+'+r.exp+' kinh nghiệm','#ffe08a',12);dy+=14;}
     if(r.up)levelUp(r.up);
     if(r.pet){petSpawn[r.pet.pid]={x:sack.x,y:sack.y};const M=MON[r.pet.type];floater(x,y-dy-10,'Thu phục '+M.name+'!',EL.demon.glow,16);fx.push({kind:'ring',x:sack.x,y:sack.y,r0:8,r1:90,color:EL.demon.color,age:0,life:.7,lw:5});burst(sack.x,sack.y-20,EL.demon.color,30,200);message(svg('check')+`Thu phục ${M.name} · đi theo bạn`);syncMerc();}
     r.items.forEach(it=>{const R=Player.rar(it),nm=Player.nameOf(it);floater(x,y-dy,nm,R.color,14);dy+=16;message(svg('bag')+`Nhặt được <b style="color:${R.color}">${nm}</b> \u{00b7} ${R.name}`);});
     (r.lost||[]).forEach(it=>message(svg('close')+'Túi đầy, rơi mất '+Player.nameOf(it)));
-    (r.done||[]).forEach(id=>{const Q=Player.QUESTS[id];if(Q)message(svg('quest')+`${Q.name}: xong, về gặp Lý trưởng`);});
+    (r.done||[]).forEach(id=>{const Q=Player.QUESTS[id];if(Q)LH_Audio.play('quest');if(Q)message(svg('quest')+`${Q.name}: xong, về gặp Lý trưởng`);});
     if(r.bonus)message(svg('check')+'Săn đủ 4 loài \u{00b7} +'+r.bonus+' đồng');
   }
   // Lên cấp: vòng sáng, hạt vàng, đầy máu và mana
@@ -852,7 +855,7 @@ window.startGame=(session)=>{
     refreshHD();player.hp=HD.tot.hp;player.mana=HD.tot.mp;
     for(let i=0;i<3;i++)fx.push({kind:'ring',x:hero.x,y:hero.y-10,r0:10+i*6,r1:110+i*30,color:i?'#fff3c4':'#ffd36a',age:0,life:.8+i*.15,lw:5-i});
     burst(hero.x,hero.y-30,'#ffe08a',40,240);burst(hero.x,hero.y-30,'#fff6d8',18,150);
-    floater(hero.x,hero.y-90,'Lên cấp '+player.level+'!','#ffe08a',20);
+    floater(hero.x,hero.y-90,'Lên cấp '+player.level+'!','#ffe08a',20);LH_Audio.play('levelup');
     message(svg('check')+`Lên cấp ${player.level} · +${n*(Number(Player.CFG.diem_moi_cap)||5)} điểm cộng chỉ số`);
     const av=document.getElementById('avatarBtn');if(av){av.classList.add('lvup');setTimeout(()=>av.classList.remove('lvup'),1600);}
     window.GameUI?.refresh();
@@ -981,7 +984,7 @@ window.startGame=(session)=>{
     if(id==='mount'){
       const md=Player.info(player.equipment.mount),big=md.beast==='elephant';
       hero.mountAct={type:md.beast,start:time,dur:big?.9:.7,hit:big?.55:.45,done:false,aim:{...aim}};
-      floater(hero.x,hero.y-80-seatH(),Player.BEASTS[md.beast].skill,'#ffe0a0',13);window.GameUI?.refresh();return true;
+      floater(hero.x,hero.y-80-seatH(),Player.BEASTS[md.beast].skill,'#ffe0a0',13);LH_Audio.play('roar');window.GameUI?.refresh();return true;
     }
     if(st.dual)hero.swing^=1;
     const d=ATK[st.type],sk=SK[id];
@@ -1028,8 +1031,10 @@ window.startGame=(session)=>{
     let d=dmg,tag='';
     if(Math.random()*100<M.crit){d=Math.max(dmg,d*2*(1-S.critRed/100));tag='x2 ';}
     const front=(m.x-hero.x)*hero.facing>-10;
-    if(time<hero.blockUntil&&front){d*=.2;burst(hero.x+hero.facing*20,hero.y-22,'#f4dd9a',10,150);}
-    else if(Math.random()*100<S.block){d*=.2;tag='Đỡ ';burst(hero.x+hero.facing*20,hero.y-22,'#f4dd9a',8,120);}
+    let blocked=false;
+    if(time<hero.blockUntil&&front){d*=.2;blocked=true;burst(hero.x+hero.facing*20,hero.y-22,'#f4dd9a',10,150);}
+    else if(Math.random()*100<S.block){d*=.2;tag='Đỡ ';blocked=true;burst(hero.x+hero.facing*20,hero.y-22,'#f4dd9a',8,120);}
+    LH_Audio.play(blocked?'block':'hurt');
     d*=100/(100+S.def*(dbfOn('armor')?2:4));d*=1-S.dmgRed/100;
     const red={hoan_hao:S.perfRed,huyen_thoai:S.legRed,than:S.mythRed}[M.dtype]||0;d*=1-red/100;
     d=Math.max(1,Math.round(d));
@@ -1044,11 +1049,13 @@ window.startGame=(session)=>{
     window.GameUI?.refresh();
   }
   function die(){
-    if(HD.fx.revive&&time>=hero.reviveAt){player.hp=Math.round(HD.tot.hp*HD.fx.revive/100);hero.reviveAt=time+300;hero.invuln=time+2;message(svg('heart')+'Hồi sinh tại chỗ');burst(hero.x,hero.y-24,'#ffe0f0',30,200);return;}
-    player.hp=0;hero.dead=time+2.2;hero.attack=null;hero.mountAct=null;route=[];message(svg('heart')+'Bạn đã gục · về làng');
+    if(HD.fx.revive&&time>=hero.reviveAt){player.hp=Math.round(HD.tot.hp*HD.fx.revive/100);hero.reviveAt=time+300;hero.invuln=time+2;LH_Audio.play('heal');message(svg('heart')+'Hồi sinh tại chỗ');burst(hero.x,hero.y-24,'#ffe0f0',30,200);return;}
+    player.hp=0;hero.dead=time+2.2;hero.attack=null;hero.mountAct=null;route=[];LH_Audio.play('die');message(svg('heart')+'Bạn đã gục · về làng');
   }
   /* ---------- Đổi bản đồ: lưu, tải gói dữ liệu bản đồ (lần đầu), dựng lại nền, quái, dân làng ---------- */
   let portalArmed=!World.portalAt(hero.x,hero.y),prefAt=0;
+  // Cảnh nhạc nền: làng / trong thành (an toàn), hoang dã, hang ổ trùm (trùm còn sống)
+  function musicScene(){const z=World.zoneAt(hero.x,hero.y)||'';LH_Audio.setScene(safe?(z==='Trong thành'?'citadel':'village'):(/^Hang ổ/.test(z)&&monsters.some(m=>!m.dead&&MON[m.type].boss&&Math.hypot(m.x-hero.x,m.y-hero.y)<420)?'boss':'wild'));}
   async function travel(id,tx,ty){
     if(travelling)return;travelling=true;route=[];targetNPC=null;keys.clear();joystick={x:0,y:0};holdAttack=false;dialogNPC=null;dialogEl.hidden=true;
     let def;
@@ -1058,7 +1065,7 @@ window.startGame=(session)=>{
     Object.assign(hero,tx!=null?{x:(tx+.5)*T,y:(ty+.5)*T}:World.spawn,{map:World.id,attack:null,mountAct:null});
     allies.forEach((e,i)=>{e.x=hero.x+FORM[i%6][0];e.y=hero.y+FORM[i%6][1];if(!World.canStand(e.x,e.y)){e.x=hero.x;e.y=hero.y;}e.path=null;});
     bridgeSide=[];portalArmed=!World.portalAt(hero.x,hero.y);safe=World.isSafe(hero.x,hero.y);refreshHD();
-    groundDraw();resize();keepLocal();window.GameUI?.refresh();message(svg('pin')+World.name);travelling=false;return true;
+    groundDraw();resize();keepLocal();window.GameUI?.refresh();message(svg('pin')+World.name);LH_Audio.play('portal');musicScene();travelling=false;return true;
   }
   function respawn(){if(World.id!==World.DEFAULT){hero.dead=0;refreshHD();player.hp=HD.tot.hp;player.mana=HD.tot.mp;hero.invuln=time+2;travel(World.DEFAULT);return;}
     hero.dead=0;hero.mountAct=null;refreshHD();player.hp=HD.tot.hp;player.mana=HD.tot.mp;Object.assign(hero,World.spawn);hero.invuln=time+2;hero.attack=null;monsters.forEach(m=>{m.aggro=-9;m.atk=null;});resize();}
@@ -1325,7 +1332,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
           if(M.skills&&M.skills.length&&!m.cast&&time>(m.skillCd||0)&&dist<M.aggro){
             if(M.skills.includes('tubao')&&!m.tubao&&m.hp<m.max*.15){m.tubao={at:time+2.2};floater(m.x,m.y-M.h-24,'Tự bạo!','#ff2020',20);fx.push({kind:'ring',x:m.x,y:m.y,r0:20,r1:260,color:'#ff3020',age:0,life:2.2,lw:3});continue;}
             const list=M.skills.filter(k=>k!=='tubao');
-            if(list.length){const kind=list[(m.skillIdx=((m.skillIdx||0)+1)%list.length)],S=Player.SKILLS[kind];m.cast={kind,at:time+1.1,x:tg.x,y:tg.y};m.skillCd=time+(Number(CFG.trum_ky_nang_giay)||7);
+            if(list.length){const kind=list[(m.skillIdx=((m.skillIdx||0)+1)%list.length)],S=Player.SKILLS[kind];m.cast={kind,at:time+1.1,x:tg.x,y:tg.y};LH_Audio.play(kind==='freeze'?'freeze':'bolt');m.skillCd=time+(Number(CFG.trum_ky_nang_giay)||7);
               floater(m.x,m.y-M.h-24,S.name,S.color,17);fx.push({kind:'ring',x:tg.x,y:tg.y,r0:130,r1:30,color:S.color,age:0,life:1.1,lw:3});}
           }
           if(M.boss===1&&dist>M.range*1.4&&dist<320&&time>m.leapCd){m.leapCd=time+6;m.facing=dx<0?-1:1;m.leap={start:time,dur:.55,tx:tg.x-dx/dist*40,ty:tg.y-dy/dist*20};fx.push({kind:'ring',x:m.leap.tx,y:m.leap.ty,r0:10,r1:60,color:'#ff7a5a',age:0,life:.55,lw:3});continue;}
@@ -1404,7 +1411,8 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
   function screenPoint(x,y){return {x:x/scale+camera.x,y:y/scale+camera.y};}
   const save=()=>flush();
   function update(dt){
-    const nowSafe=World.isSafe(hero.x,hero.y);if(nowSafe!==safe){safe=nowSafe;hero.mountAct=null;refreshHD();window.GameUI?.refresh();if(safe){message(svg('shield')+'Vào vùng an toàn');checkpoint();}}
+    if((sceneTick=(sceneTick||0)+1)%45===0)musicScene();
+    const nowSafe=World.isSafe(hero.x,hero.y);if(nowSafe!==safe){safe=nowSafe;hero.mountAct=null;refreshHD();window.GameUI?.refresh();if(safe){LH_Audio.play('safe');message(svg('shield')+'Vào vùng an toàn');checkpoint();}musicScene();}
     if(time-hdAt>.25){hdAt=time;refreshHD();const k=allyKey();if(k!==lastAllyKey){lastAllyKey=k;syncMerc();}if(safe)reviveAtVillage();}
     const S=HD.tot;
     if(!hero.dead){player.mana=Math.min(S.mp,player.mana+S.mpReg*dt);player.hp=Math.min(S.hp,player.hp+(S.hpReg+(HD.fx.heal?S.hp*HD.fx.heal/100:0))*dt);}
@@ -1433,7 +1441,8 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     }
     const cur=hero.attack,slow=cur?(cur.type==='block'?.45:.72):1,speed=155*slow*sf;
     const ox=hero.x,oy=hero.y;World.move(hero,vx*speed*dt,vy*speed*dt);
-    const moved=Math.hypot(hero.x-ox,hero.y-oy);hero.moving=moved>.05;if(hero.moving)hero.walk+=moved*.09/Math.max(1,sf*(seatH()?1.3:1));
+    const moved=Math.hypot(hero.x-ox,hero.y-oy);hero.moving=moved>.05;if(hero.moving){const w0=hero.walk;hero.walk+=moved*.09/Math.max(1,sf*(seatH()?1.3:1));
+      if(Math.floor(hero.walk/Math.PI)!==Math.floor(w0/Math.PI)){const wk=player.equipment.wings&&LH_Look.of(player.equipment.wings.type);LH_Audio.play(seatH()?'hoof':wk&&wk.kind==='wings'?'glide':'step');}}
     const len=Math.hypot(vx,vy),mouseOn=mouseAim&&time-mouseAim.t<3;
     if(!cur){
       if(mouseOn){const dx=mouseAim.x-hero.x,dy=mouseAim.y-(hero.y-20),l=Math.hypot(dx,dy)||1;hero.aim={x:dx/l,y:dy/l};if(Math.abs(dx)>4)hero.facing=dx<0?-1:1;}
@@ -1587,10 +1596,10 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     c.restore();curLook=null;return true;
   }
   window.mapGame={itemIcon,travel,hero,player,camera,monsters,allies,get route(){return route;},get seen(){return [...seen];},get safe(){return safe;},get HD(){return HD;},now:()=>time,screenPoint,goTo,cast,message,activateBurst,svg,save,unsaved,checkpoint,server,op,refreshHD,syncMerc,
-    hammer(color){let n=0;const t=setInterval(()=>{burst(hero.x+hero.facing*14,hero.y-26,color||'#ffcf7a',6,140);if(color)fx.push({kind:'ring',x:hero.x,y:hero.y-20,r0:6,r1:46,color,age:0,life:.4,lw:3});else shake(2);if(++n>=3)clearInterval(t);},380);},
-    levelUp,
+    hammer(color){let n=0;const t=setInterval(()=>{LH_Audio.play('anvil');burst(hero.x+hero.facing*14,hero.y-26,color||'#ffcf7a',6,140);if(color)fx.push({kind:'ring',x:hero.x,y:hero.y-20,r0:6,r1:46,color,age:0,life:.4,lw:3});else shake(2);if(++n>=3)clearInterval(t);},380);},
+    levelUp,musicScene,
     setHold(v){holdAttack=!!v;},
-    enhanceFx(ok){const c=ok?'#ffd77a':'#9aa0a6';fx.push({kind:'ring',x:hero.x,y:hero.y-20,r0:6,r1:ok?80:40,color:c,age:0,life:.5,lw:4});burst(hero.x,hero.y-24,c,ok?24:10,ok?200:90);},
+    enhanceFx(ok){LH_Audio.play(ok?'enhanceOk':'enhanceFail');const c=ok?'#ffd77a':'#9aa0a6';fx.push({kind:'ring',x:hero.x,y:hero.y-20,r0:6,r1:ok?80:40,color:c,age:0,life:.5,lw:4});burst(hero.x,hero.y-24,c,ok?24:10,ok?200:90);},
     home(){if(World.id!==World.DEFAULT){travel(World.DEFAULT);return;}route=[];targetNPC=null;dialogNPC=null;dialogEl.hidden=true;keys.clear();joystick={x:0,y:0};hero.attack=null;hero.mountAct=null;projectiles.length=0;Object.assign(hero,World.spawn);allies.forEach((e,i)=>{e.x=hero.x+FORM[i%6][0];e.y=hero.y+FORM[i%6][1];if(!World.canStand(e.x,e.y)){e.x=hero.x;e.y=hero.y;}e.path=null;});resize();},
     // Chọn bản đồ (menu): về trạm nghỉ ở cổng vùng đó; thiếu cấp thì không đi
     async goto(id){

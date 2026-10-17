@@ -199,6 +199,13 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
 
+## Bản 10.8: âm thanh
+
+- Toàn bộ âm thanh **tổng hợp bằng Web Audio** trong trình duyệt (`src/03-audio.js`, không tải file, không tốn băng thông): bật / tắt ở menu **Âm thanh** (lưu trong máy, khóa `lh-am`). iPhone chỉ phát sau thao tác chạm đầu tiên.
+- **Nhạc nền** ngũ cung gảy kiểu đàn tranh, tự sinh không lặp, đổi theo cảnh: làng (nhẹ, có luyến như đàn bầu), trong thành (thêm tiếng chuông), hoang dã (ngũ cung thứ, trống trầm), gần trùm còn sống (nhanh, trống dồn). Tiếng cảnh: gió, chim (làng / thành), dế và cú (hoang dã), gầm trầm (trùm).
+- **Tiếng động**: vung kiếm, đấm, dộng khiên, đâm giáo, phép (gậy), bắn cung, nỏ; trúng đòn thường / chí mạng; đỡ đòn; bị đánh; gục; hồi sinh; hạ quái, hạ trùm; nhặt đồng / đồ / đồ hiếm; nhiệm vụ xong; lên cấp; bước chân (đi bộ, vó thú, lướt khi đeo cánh); chiêu thú cưỡi; chiêu trùm (sét / đóng băng); qua cổng; vào vùng an toàn; búa rèn, gia cường thành / bại, dung hợp cánh; mở bảng, bấm nút, mua hàng.
+- Điểm gắn trong `06-game.js` (`LH_Audio.play(...)`, `musicScene()`), `07-ui.js` (nút `#amBtn`, tiếng bấm nút). Tên tiếng xem bảng `SFX` trong `03-audio.js`.
+
 ## Bản 10.7: sửa trang tải đứng ở ~96% (máy chủ chậm)
 
 - Nguyên nhân: gói dữ liệu tĩnh (quái, nhiệm vụ, vật phẩm, cửa hàng của 20 vùng…) đã ~122 KB, vượt giới hạn 100 KB một ô của CacheService; code cũ chỉ đệm khi dưới 95 KB nên **mọi lệnh gọi** đều đọc lại 15 tab Sheet → quá 25 giây là trang coi như rớt mạng, thử lại, nhìn như đứng ở 96%.

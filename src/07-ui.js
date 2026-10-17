@@ -64,7 +64,7 @@ window.startUI=(session)=>{
   let npcPanel=false;
   function closeMenu(){menu.hidden=true;$('#settingsBtn').setAttribute('aria-expanded','false');}
   function closeModal(){if(npcPanel){npcPanel=false;game.checkpoint();}$('#overlay').hidden=true;shopSel=null;previewWho=null;$('#scene').focus();}
-  function openModal(titleHtml,content,wide=false){delete $('#modalCard').dataset.mk;game.stop();game.closeDialog();closeMenu();$('#modalCard').classList.toggle('wide',wide);$('#overlayTitle').innerHTML=titleHtml;const keep=$('#overlay').hidden?0:$('#modalCard').scrollTop;$('#overlayBody').innerHTML=content;$('#overlay').hidden=false;$('#modalCard').scrollTop=keep;}
+  function openModal(titleHtml,content,wide=false){if($('#overlay').hidden)LH_Audio.play('open');delete $('#modalCard').dataset.mk;game.stop();game.closeDialog();closeMenu();$('#modalCard').classList.toggle('wide',wide);$('#overlayTitle').innerHTML=titleHtml;const keep=$('#overlay').hidden?0:$('#modalCard').scrollTop;$('#overlayBody').innerHTML=content;$('#overlay').hidden=false;$('#modalCard').scrollTop=keep;}
   function questHtml(){
     const V=villagers(),s=V.filter(n=>game.seen.includes(n.id)).length,total=V.length;if(s<total)return svg('talk')+`Gặp dân làng ${s}/${total}`;
     const act=Object.entries(p.quests.active);
@@ -199,7 +199,7 @@ window.startUI=(session)=>{
     openModal(`<div class="shop-tabs">${tabs.map(([k,ic,tx])=>`<button data-tab="${k}" class="${tab===k?'on':''}">${svg(ic)}${tx}</button>`).join('')}</div><div class="purse">${coins(p.copper)}${ruby(p.rubies)}</div>`,`<div class="shop-sub">${svg(META.icon)}${META.title}${tab==='enh'?'':' · chạm 2 lần để '+(tab==='buy'?'mua':'bán')}</div>${body}`,true);
     document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{shopSel=null;showShop(id,b.dataset.tab);});
     document.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{shopQ=b.dataset.q;shopSel=null;showShop(id,'buy');});
-    document.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{const type=b.dataset.buy;if(shopSel!==type){shopSel=type;showShop(id,'buy');return;}run(b,game.op({t:'buy',type,q:shopQ,...(RG?{shop:id}:{})}).then(r=>{game.message(svg('check')+`Đã mua <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b>`);shopSel=null;showShop(id,'buy');}));});
+    document.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{const type=b.dataset.buy;if(shopSel!==type){shopSel=type;showShop(id,'buy');return;}run(b,game.op({t:'buy',type,q:shopQ,...(RG?{shop:id}:{})}).then(r=>{LH_Audio.play('buy');game.message(svg('check')+`Đã mua <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b>`);shopSel=null;showShop(id,'buy');}));});
     document.querySelectorAll('[data-sell]').forEach(b=>b.onclick=()=>{const i=b.dataset.sell;if(shopSel!==i){shopSel=i;showShop(id,'sell');return;}run(b,game.op({t:'sell',i:Number(i)}).then(r=>{game.message(svg('coin')+'Đã bán '+esc(Player.nameOf(r.item))+' '+coins(r.v));shopSel=null;showShop(id,'sell');}));});
     document.querySelectorAll('[data-enh]').forEach(b=>b.onclick=()=>{const [w,k]=b.dataset.enh.split(':');enhSel={where:w,key:w==='eq'?k:Number(k)};showShop(id,'enh');});
     const go=$('#enhGo');if(go)go.onclick=()=>{const t0=Date.now();const cur=enhSel.where==='sk'?p.skillSlots[enhSel.key]:enhSel.where==='bag'?p.bag[enhSel.key]:p.equipment[enhSel.key],ce=info(cur)&&info(cur).element;go.innerHTML=svg(id==='wizard'?'book':'anvil')+(id==='wizard'?'Đang luyện':'Đang rèn')+'…';game.hammer(ce?EL[ce].color:null);run(go,game.op(enhSel.where==='sk'?{t:'enhSk',key:enhSel.key,shop:id}:{t:'enh',where:enhSel.where==='bag'?'bag':'eq',key:enhSel.key,shop:id}).then(r=>new Promise(ok=>setTimeout(()=>ok(r),Math.max(0,550-(Date.now()-t0))))).then(r=>{const name=info(r.item).name;game.enhanceFx(r.ok);game.message(r.ok?svg('check')+`Thành công! ${esc(name)} +${r.to}`:svg('close')+`Thất bại\u{2026} ${esc(name)} về +${r.to}`);showShop(id,'enh');}),()=>showShop(id,'enh'));};
@@ -363,7 +363,7 @@ window.startUI=(session)=>{
       <div class="enh-rows"><div><small>Thú</small><b>${M?esc(Player.nameOf(M)):'—'}</b></div><div><small>Vật liệu</small><b>${X?esc(Player.nameOf(X)):'—'}</b></div><div><small>Phí</small><b>${ruby(cost)}</b></div><div><small>Tỉ lệ</small><b>${rate}%</b></div></div>
       <button id="fuseGo" class="primary big-btn"${can?'':' disabled'}>${svg('wings')}Dung hợp</button>`,true);
     document.querySelectorAll('[data-fz]').forEach(b=>b.onclick=()=>{const [k,i]=b.dataset.fz.split(':');fuseSel[k]=fuseSel[k]===Number(i)?null:Number(i);showFuse();});
-    const go=$('#fuseGo');if(go)go.onclick=()=>{const t0=Date.now();go.innerHTML=svg('wings')+'Đang luyện…';game.hammer('#c8a0ff');run(go,game.op({t:'fuse',m:fuseSel.m,x:fuseSel.x}).then(r=>new Promise(ok=>setTimeout(()=>ok(r),Math.max(0,900-(Date.now()-t0))))).then(r=>{game.enhanceFx(r.ok);game.message(r.ok?svg('check')+`Dung hợp thành công! <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b> (${r.lines} dòng)`:svg('close')+'Dung hợp thất bại… thú cưỡi về +'+(r.mount.lv||0));fuseSel={m:null,x:null};game.refreshHD();showFuse();}),()=>showFuse());};
+    const go=$('#fuseGo');if(go)go.onclick=()=>{const t0=Date.now();go.innerHTML=svg('wings')+'Đang luyện…';game.hammer('#c8a0ff');run(go,game.op({t:'fuse',m:fuseSel.m,x:fuseSel.x}).then(r=>new Promise(ok=>setTimeout(()=>ok(r),Math.max(0,900-(Date.now()-t0))))).then(r=>{game.enhanceFx(r.ok);if(r.ok)LH_Audio.play('fuse');game.message(r.ok?svg('check')+`Dung hợp thành công! <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b> (${r.lines} dòng)`:svg('close')+'Dung hợp thất bại… thú cưỡi về +'+(r.mount.lv||0));fuseSel={m:null,x:null};game.refreshHD();showFuse();}),()=>showFuse());};
   }
   /* ---------- Nạp thẻ (thành trì): chọn gói → mã QR chuyển khoản VietQR về tài khoản cấu hình; hồng ngọc cộng tay sau khi nhận tiền ---------- */
   let napSel=null;
@@ -401,6 +401,11 @@ window.startUI=(session)=>{
   $('#avatarBtn').onclick=showAttributes;
   $('#settingsBtn').onclick=()=>{menu.hidden=!menu.hidden;$('#settingsBtn').setAttribute('aria-expanded',String(!menu.hidden));};
   $('#lockBtn').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();game.toggleLock();});$('#saveBtn').onclick=save;$('#mapBtn').onclick=showMaps;
+  // Âm thanh: bật / tắt (lưu trong máy)
+  const amBtn=$('#amBtn'),amPaint=()=>{amBtn.classList.toggle('off',!LH_Audio.on);amBtn.querySelector('span').textContent=LH_Audio.on?'Âm thanh: bật':'Âm thanh: tắt';};amPaint();
+  amBtn.onclick=()=>{LH_Audio.toggle();amPaint();if(LH_Audio.on){LH_Audio.unlock();LH_Audio.play('open');game.musicScene();}game.message(svg('sound')+(LH_Audio.on?'Âm thanh: bật':'Âm thanh: tắt'));};
+  // tiếng bấm cho mọi nút trong game
+  document.getElementById('lu-hanh').addEventListener('click',e=>{if(e.target.closest('button'))LH_Audio.play('ui');},true);
   // Tình trạng: phiên bản, phần chơi chưa lưu, lần gọi máy chủ và lỗi gần đây (chụp màn hình gửi khi game có vấn đề)
   function showDiag(){
     closeMenu();const D=LH_DIAG.data,v=document.querySelector('.version');

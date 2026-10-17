@@ -1,4 +1,4 @@
-/*! Lữ Hành v10.7 · khởi động · https://github.com/vnthudao-source/lu-hanh */
+/*! Lữ Hành v10.8 · khởi động · https://github.com/vnthudao-source/lu-hanh */
 /* ================= MÀN HÌNH CHỜ: thanh tải 0\u{2013}100%, cảnh làng + lời dẫn truyện =================
    Dùng chung cho file khởi động (tải tài nguyên trang) và game (kết nối máy chủ, tải nhân vật, dựng bản đồ). */
 window.LH_Loader=window.LH_Loader||(()=>{
@@ -91,7 +91,7 @@ window.LH_Loader=window.LH_Loader||(()=>{
 })();
 ;/* ================= KHỞI ĐỘNG: hiện màn hình chờ ngay, tải CSS + JS của game có đếm phần trăm ================= */
 (function(){
-  var me=document.currentScript,base=(me&&me.src||'').replace(/[^\/]*$/,''),FILES={"css":{"name":"lu-hanh.css","size":40164},"js":{"name":"lu-hanh.js","size":383195}};
+  var me=document.currentScript,base=(me&&me.src||'').replace(/[^\/]*$/,''),FILES={"css":{"name":"lu-hanh.css","size":40208},"js":{"name":"lu-hanh.js","size":393897}};
   window.LH_BASE=window.LH_BASE||base;
   var L=window.LH_Loader.show({label:'T\u{1EA3}i t\u{00E0}i nguy\u{00EA}n trang',bg:'tai_game'});
   function plain(){var l=document.createElement('link');l.rel='stylesheet';l.href=base+FILES.css.name;document.head.appendChild(l);var s=document.createElement('script');s.src=base+FILES.js.name;s.charset='utf-8';document.head.appendChild(s);}
