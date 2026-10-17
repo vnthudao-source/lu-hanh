@@ -294,25 +294,25 @@ linh:[
   // Trả lời sai quá quiz_sai_toi_da hoặc chọn "chưa biết" → Thầy đồ giao việc săn quái (quai × so_luong, quái của vùng tương ứng); săn xong thầy chỉ đáp án đúng, chọn lại được thưởng (quiz_thuong_lo %).
   const MAPSEQ=['rung-truc','dam-lay','dinh-may','co-loa','bien-dong','nui-lua','rung-ma','bang-nguyen','thang-long','cuu-trung','thuy-cung','hoang-mac-xuong','thien-son','hoa-lu','dia-nguc-mon','dao-rong','vuc-yeu-tinh','cung-trang','phu-xuan','thien-dinh'];
   const MAPMOB={'rung-truc':'khi-rung','dam-lay':'dia-khong-lo','dinh-may':'ung-tuyet','co-loa':'am-binh','bien-dong':'cua-khong-lo','nui-lua':'nham-thach-thu','rung-ma':'ma-troi','bang-nguyen':'voi-ma-mut','thang-long':'phan-quan','cuu-trung':'thien-binh','thuy-cung':'tom-tuong','hoang-mac-xuong':'xuong-kho','thien-son':'tien-hac','hoa-lu':'tho-phi','dia-nguc-mon':'nguu-dau','dao-rong':'giao-long','vuc-yeu-tinh':'ho-ly','cung-trang':'tho-ngoc','phu-xuan':'ngu-lam-phan','thien-dinh':'thien-tuong'};
-  const BO=[['NV003','Lộ phong',5],['NV004','Thư phổ',6],['NV007','Thư pháp Việt — khái niệm',7],['NV011','Lâm mô',7],['NV014','Cơ bản công',7],['NV016','Tứ đại ấn thạch',7],['NV017','Dụng uyển — Khỏa thúc',7],['NV019','Nguyên tắc bút thuận',15],['NV023','Thể chữ — Kiểu chữ',60],['NV026','Thức thế',30],
-   ['NV029','Chương pháp (Bố cục)',8],['NV032','Bức thức — Bồi biểu',8],['NV035','Ấn chương — Lạc khoản',60],['NV038','Giống và khác — Đúng và sai',30],['NV041','Sự tự nhiên — Sự cân bằng',9],['NV044','Phi bạch',9],['NV046','Nhãn pháp',60],['DX_AN_CHUONG','Ấn chương',10],['DX_VUONG_HI_CHI','Vương Hi Chi',10],['DX_AU_DUONG_TUAN','Âu Dương Tuân',10]];
+  // v10.13: chỉ còn các bộ DX_* (bộ NV*, SKQ* bị bỏ, máy chủ cũng lọc); 3 bộ gắn 3 vùng đầu
+  const BO=[['DX_AN_CHUONG','Ấn chương',10],['DX_VUONG_HI_CHI','Vương Hi Chi',12],['DX_AU_DUONG_TUAN','Âu Dương Tuân',15]];
   GAME_DATA.bo_cau_hoi=BO.map(([id,ten,thuong_hong_ngoc],i)=>({id,ten,thu_tu:i+1,thuong_hong_ngoc,quai:MAPMOB[MAPSEQ[i]],so_luong:8,ban_do:MAPSEQ[i]}));
-  const CH=[ // [bộ, câu, A, B, C, D, đáp án] — mẫu; đầy đủ đọc từ bảng OCD_Quest
-   ['NV003','Lộ phong là gì?','Là cách đặt bút để đầu bút lộ ra tự nhiên khi bắt đầu hoặc chuyển động nét viết','Là cách giữ toàn bộ đầu bút chìm trong lòng nét viết','Là kỹ thuật làm cho nét bút luôn có độ dày đồng đều','Là cách kết thúc nét bằng việc thu bút thật nhanh','A'],
-   ['NV003','Khi thực hiện nét lộ phong cần chú ý tới điều gì?','Chỉ cần quan tâm đến tốc độ đưa bút','Hướng đặt bút, trạng thái của đầu mao bút và phần mao bút được sử dụng','Chỉ cần giữ cổ tay cố định trong suốt quá trình viết','Chỉ cần điều chỉnh lượng mực trên đầu bút','B'],
-   ['NV003','Trái với lộ phong là nét gì?','Trung phong','Tật phong','Tàng phong','Hồi phong','C'],
-   ['NV003','Lộ phong thường thể hiện những ý vị nào?','Sự kín đáo, ổn định và thu mình','Sự mềm mại, chậm rãi và cân bằng','Sự tròn đầy, đều đặn và không biến hóa','Sự nguy hiểm, rõ ràng, không che giấu, hướng di chuyển và sự khởi đầu','D'],
-   ['NV003','Vì sao lộ phong được sử dụng nhiều trong thư pháp?','Vì tạo cảm giác tự nhiên và giúp nét chữ trở nên đa dạng hơn','Vì giúp mọi nét chữ có hình dạng giống hệt nhau','Vì loại bỏ hoàn toàn sự biến đổi của đầu bút','Vì không cần quan tâm đến hướng vận bút','A'],
-   ['NV004','Thư phổ là gì?','Là sách hướng dẫn viết chữ hoặc tập hợp những nội dung đặc sắc theo một chủ đề','Là danh sách các loại bút và mực được sử dụng trong thư pháp','Là bản ghi chép riêng về lịch sử của một triều đại','Là tập hợp các bài thơ không có hướng dẫn hoặc nhận định','A'],
-   ['NV004','Vì sao thư phổ quan trọng đối với người học thư pháp?','Vì có thể thay thế hoàn toàn mọi hình thức luyện tập','Vì là tài liệu cần có, đặc biệt với người mới khi không có thầy hướng dẫn trực tiếp','Vì chỉ dùng để tra cứu tên các danh gia thư pháp','Vì giúp người học không cần quan sát hoặc phân tích chữ viết','B'],
-   ['NV004','Ngoài việc tập hợp nội dung theo chủ đề, thư phổ nên cung cấp thêm những gì?','Các mẫu chữ được sắp xếp ngẫu nhiên','Hệ thống lý thuyết và những nhận định của người biên soạn hoặc người viết','Danh sách vật liệu dùng để làm giấy viết','Một bảng xếp hạng các kiểu chữ phổ biến','B'],
-   ['NV004','Thư phổ của thư pháp Việt Nam thời kỳ đầu tiên là cuốn nào?','"Thư pháp Việt - Dành cho người mới bắt đầu" của Thanh Phong Bùi Khắc Sáng','Nghệ thuật viết chữ Việt hiện đại của tác giả Đăng Học','Lịch sử thư pháp Việt Nam qua các thời kỳ của tác giả Đăng Học','"Thư pháp Việt - Lý thuyết và thực hành" của tác giả Đăng Học','D'],
-   ['NV004','Nếu được sử dụng đúng cách, thư phổ có thể giúp người học đạt được điều gì?','Chỉ ghi nhớ tên các tác phẩm mà không cần luyện viết','Gia tăng nhãn lực và mở rộng kiến thức trong quá trình học','Viết đúng mọi kiểu chữ ngay sau lần đọc đầu tiên','Không cần tiếp tục quan sát chữ mẫu hoặc thực hành','B'],
-   ['NV011','Theo sách, "Mô" được hiểu là cách nào?','Đặt giấy lên chữ mẫu rồi dùng bút đồ theo','Chỉ nhìn mẫu rồi viết lại','Học thuộc rồi viết không nhìn mẫu','Tự sáng tạo hoàn toàn','A'],
-   ['NV011','"Lâm" trong lâm mô được hiểu là gì?','Chỉ tô theo viền chữ','Viết lại theo mẫu chữ trên bi thiếp','Chỉ chép nội dung văn bản','Khắc chữ lên đá','B'],
-   ['NV011','Theo sách, "đối lâm" là gì?','Nhìn chữ trực tiếp và viết theo','Học thuộc rồi viết','Viết theo trí nhớ và thêm ý riêng','Đồ theo đường viền','A'],
-   ['NV011','Theo sách, nhận định nào đúng?','Lâm dễ được hình nhưng mất ý','Mô dễ được ý nhưng mất hình','Lâm dễ được ý nhưng mất hình','Lâm và Mô hoàn toàn giống nhau','C'],
-   ['NV011','Vì sao Thiếp có giá trị cảm thụ cao hơn Bi theo phần trình bày trong sách?','Thiếp luôn có kích thước lớn hơn','Thiếp là chân tích chưa qua xử lý, còn Bi có thể bị biến dạng','Thiếp chỉ dùng cho người mới','Bi không có chữ','B']
+  const CH=[ // [bộ, câu, A, B, C, D, đáp án] — chép từ bảng OCD_Quest tab CauHoi (3 bộ DX_*)
+   ['DX_AN_CHUONG','Ấn âm văn tạo dấu như thế nào trên giấy?','Chữ đỏ, nền trắng','Chữ đen, nền đỏ','Chữ trắng, nền đỏ','Chữ đỏ, nền đen','C'],
+   ['DX_AN_CHUONG','Ấn dương văn có đặc điểm nào?','Chữ khắc nổi, in ra chữ đỏ','Khắc chìm, dấu chữ trắng trên nền đỏ','Khắc nổi, dấu chữ trắng trên nền đỏ','Khắc nổi, in ra chữ đen','A'],
+   ['DX_AN_CHUONG','Vì sao cần trộn đều chu sa trước khi đóng ấn?','Để chu sa khô nhanh và bám giấy hơn','Để màu đỏ chuyển sang sắc đen','Để mặt ấn được phủ kín bằng dầu','Để dầu và phần thịt hòa đều, hạn chế loang dầu','D'],
+   ['DX_AN_CHUONG','Danh chương chủ yếu giúp người xem biết điều gì?','Cho biết loại giấy và kích thước tác phẩm','Ai là người viết tác phẩm','Ghi lại nội dung chính của tác phẩm','Đánh dấu vị trí cần bồi biểu','B'],
+   ['DX_AN_CHUONG','Theo bài đọc, kích thước con dấu nên thế nào?','Lớn hơn chữ chính văn để tạo điểm nhấn','Luôn giữ cùng kích thước bất kể chính văn','Bằng hoặc nhỏ hơn chữ chính văn','Tỷ lệ phải dựa theo khổ giấy, không xét chữ chính văn','C'],
+   ['DX_VUONG_HI_CHI','Theo bài viết, tên tự của Vương Hi Chi là gì?','Hữu Quân','Dật Thiếu','Hiến Chi','Thảo Thánh','B'],
+   ['DX_VUONG_HI_CHI','Tác phẩm Lan Đình Tự được Vương Hi Chi viết trong hoàn cảnh nào theo bài viết?','Trong một buổi tế lễ tại triều đình','Sau khi dâng thư lên hoàng đế','Trong chuyến đi sứ đến kinh đô','Trong một buổi tụ họp bạn hữu, uống rượu và làm thơ','D'],
+   ['DX_VUONG_HI_CHI','Vì sao chiếc ao được gọi là Mặc Trì theo câu chuyện trong bài?','Vì ông thường rửa bút ở đó khiến nước ao đen dần','Vì nước ao vốn có màu đen tự nhiên','Vì ao nằm cạnh nơi chế mực của địa phương','Vì tên ao được đặt theo hình dáng giống nghiên mực','A'],
+   ['DX_VUONG_HI_CHI','Theo bài viết, việc quan sát ngỗng giúp Vương Hi Chi học được điều gì?','Cách phối hợp lực ngón tay để giữ bút','Cách điều chỉnh độ đậm nhạt của mực','Cách vận dụng cổ tay linh hoạt','Cách giữ quản bút thẳng đứng suốt quá trình viết','C'],
+   ['DX_VUONG_HI_CHI','Điều gì đã xảy ra với bản gốc Lan Đình Tự theo bài viết?','Bản gốc được lưu giữ nguyên vẹn tại một thư viện ở Sơn Âm','Bản gốc thất lạc, về sau chỉ còn các bản được người đời lâm mô','Bản gốc thất lạc, về sau còn các bản lâm mô','Bản gốc còn nguyên trên tấm bia tại Lan Đình','B'],
+   ['DX_AU_DUONG_TUAN','Âu Dương Tuân sinh vào năm nào và qua đời vào năm nào?','498–563','538–570','625–691','557–641','D'],
+   ['DX_AU_DUONG_TUAN','Sau biến cố của cha, ai đã nhận nuôi và dạy Âu Dương Tuân học chữ, thư tịch?','Ngu Thế Nam','Giang Tổng','Trần Thúc Đạt','Bùi Củ','B'],
+   ['DX_AU_DUONG_TUAN','Năm 624, Âu Dương Tuân cùng các cộng sự phụng chiếu biên soạn bộ sách nào?','Tùy thư','Ngụy thư','Nghệ văn loại tụ','Văn tuyển','C'],
+   ['DX_AU_DUONG_TUAN','Đặc điểm nào phù hợp nhất với phong cách Âu thể trong bài viết?','Kết cấu nghiêm cẩn, bút lực cương kiện, thế chữ hiểm mà vững','Phong cách phóng túng, thiên về chữ Thảo và giảm thiểu quy phạm','Nét mềm tròn, ít phân biệt trọng tâm và kết cấu','Chủ yếu dựa vào tốc độ, không chú trọng pháp tắc','A'],
+   ['DX_AU_DUONG_TUAN','Khi bắt gặp bia do Sách Tĩnh viết, Âu Dương Tuân đã làm gì?','Chép lại bia trong một buổi rồi lập tức rời đi','Xin mang bia về thư phòng để nghiên cứu','Trở lại vào dịp khác để so sánh với các bản thác','Ở lại ba ngày để quan sát và nghiền ngẫm từng nét','D']
   ];
   {const n={};GAME_DATA.cau_hoi=CH.map(([bo,cau,a,b,c,d,dap_an])=>{n[bo]=(n[bo]||0)+1;return {id:bo+'-Q'+String(n[bo]).padStart(2,'0'),bo,thu_tu:n[bo],cau,a,b,c,d,dap_an};});}
   // Lính thành trì (cột thanh): chỉ thuê được ở thành đó, chỉ số cao, đồ theo thành; mỗi ngày nhận ngẫu nhiên một kỹ năng sách (hệ) — xem Player.mercDaily
@@ -334,6 +334,20 @@ linh:[
    {khoa:'quiz_thuong_lo',gia_tri:50,ghi_chu:'Thầy đồ: % thưởng khi trả lời sau khi được chỉ đáp án'},
    {khoa:'quiz_kinh_nghiem',gia_tri:300,ghi_chu:'Thầy đồ: kinh nghiệm thưởng mỗi bộ câu hỏi (nhân với thứ tự bộ)'},
    {khoa:'chet_mat_do',gia_tri:1,ghi_chu:'Gục ngã thì mất toàn bộ đồ đang mặc (1 = bật, 0 = tắt). Cấp, sách, lính, thú thu phục, túi đồ giữ nguyên'},
-   {khoa:'linh_thanh_he_so',gia_tri:100,ghi_chu:'Lính thành trì: % chỉ số so với bảng linh (chỉnh độ mạnh chung)'}
+   {khoa:'linh_thanh_he_so',gia_tri:100,ghi_chu:'Lính thành trì: % chỉ số so với bảng linh (chỉnh độ mạnh chung)'},
+   {khoa:'linh_diem_cap',gia_tri:3,ghi_chu:'v10.13 · Lính thành trì chào thuê: điểm chỉ số cộng thêm mỗi cấp (chia ngẫu nhiên vào 4 chỉ số, đổi suất mỗi ngày)'},
+   {khoa:'su_kien_phut',gia_tri:5,ghi_chu:'v10.13 · Sự kiện đột xuất ở làng / thành: bao nhiêu phút một lần (theo mốc đồng hồ)'},
+   {khoa:'co_may_man_toi_da',gia_tri:10,ghi_chu:'v10.13 · Cỏ may mắn: số cỏ dùng tối đa một lần gia cường / dung hợp (mỗi cỏ +1% tỉ lệ)'}
   );
+  // v10.13: quái sự kiện đột xuất (không có trong bãi quái; hiện theo sự kiện ngoài vùng an toàn gần cổng). Máu / sát thương theo cấp vùng.
+  const EVM=[ // [id, tên, máu, sát thương, tốc, chạy, bán kính, cao, tầm đánh, tầm gần, hồi chiêu ms, vung tay ms, đồng, đẩy lùi %, hồi sinh, exp, bản đồ]
+   ['ke-trom-cho','Kẻ trộm chó',160,6,80,260,22,56,220,50,1100,350,40,30,9999,40,'thanh-moc'],
+   ['linh-phuong-bac','Lính phương Bắc',3600,600,70,190,24,58,280,60,1300,450,400,30,9999,500,'co-loa'],
+   ['tuong-phuong-bac','Tướng phương Bắc',14000,900,60,160,34,72,320,80,1700,600,2500,15,9999,2500,'co-loa'],
+   ['dao-tac','Đạo tặc',110000,4800,80,230,24,56,300,60,1200,400,9000,30,9999,9000,'thang-long'],
+   ['ho-du','Hổ dữ sổng chuồng',1500000,21000,90,260,36,60,320,70,1300,450,60000,40,9999,60000,'hoa-lu'],
+   ['gian-te','Gian tế áo đen',11000000,64000,95,280,24,56,300,60,1000,350,300000,30,9999,250000,'phu-xuan']
+  ];
+  for(const [id,ten,mau,sat_thuong,toc_do,toc_chay,ban_kinh,cao,tam_danh,tam_gan,hoi_chieu_ms,vung_tay_ms,dong,day_lui_phan_tram,hoi_sinh_giay,kinh_nghiem,ban_do] of EVM)
+    GAME_DATA.quai.push({id,ten,mau,sat_thuong,toc_do,toc_chay,ban_kinh,cao,tam_danh,tam_gan,hoi_chieu_ms,vung_tay_ms,dong,day_lui_phan_tram,boss:0,hoi_sinh_giay,dep_phan_van:1500,hoan_hao_phan_van:350,huyen_thoai_phan_van:0,than_phan_van:0,hong_ngoc_it:0,hong_ngoc_nhieu:0,loai_sat_thuong:'thuong',ti_le_x2:10,kinh_nghiem,ban_do,ky_nang:''});
 }

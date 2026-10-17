@@ -490,5 +490,6 @@
    }
   }
  ],
- "trees": []
+ "trees": [],
+ "hazard": "freeze"
 }

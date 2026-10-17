@@ -77,7 +77,7 @@ window.LH_Loader=window.LH_Loader||(()=>{
     step(pct,label,next){mount();target=Math.max(target,pct);cap=Math.max(target,next||pct);if(label!=null)lbl.textContent=label;return L;},
     async done(opt={}){
       mount();target=cap=100;lbl.textContent=opt.label||'S\u{1EB5}n s\u{00E0}ng';
-      await new Promise(r=>setTimeout(r,450));
+      await new Promise(r=>setTimeout(r,opt.fast?150:450));
       await storyDone;
       if(opt.confirm){goBtn.hidden=false;await new Promise(ok=>{goBtn.onclick=ok;});}
       const wait=Math.max(0,(opt.min||0)-(Date.now()-t0));if(wait)await new Promise(r=>setTimeout(r,wait));

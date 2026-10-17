@@ -338,3 +338,13 @@ button.fx-vang{color:#ffe08a}button.fx-cau-vong{color:#ffb0ff}button.fx-lua{colo
 .story-talk p{margin:0 0 6px;line-height:1.5;font-size:15px}
 .story-bar{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .shop-sub .loading{color:var(--muted);font-style:italic}
+/* v10.13 */
+.wing-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin:8px 0}
+.wing-card{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 6px;border-radius:12px;background:#0f201980;border:1px solid var(--line);text-align:center}
+.wing-card .ti svg{width:40px;height:40px}
+.wing-card b{font-size:12px}.wing-card small{font-size:10px;color:var(--muted)}
+.luck-bar{display:flex;align-items:center;gap:8px;margin:8px 0;flex-wrap:wrap}
+.luck-bar input{width:64px}
+.ev-banner{position:absolute;left:50%;top:64px;transform:translateX(-50%);background:#3a1a2acc;border:1px solid #ff7aa0;color:#ffe0ea;padding:6px 14px;border-radius:12px;font-size:13px;z-index:5;pointer-events:none;display:flex;gap:8px;align-items:center}
+.ev-banner svg{width:16px;height:16px}
+.coin.luck{color:#9fe8a8}.coin.luck svg{width:14px;height:14px}

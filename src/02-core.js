@@ -89,7 +89,7 @@ function LH_Core(A){
       return {token:newToken(a),account:pub(a)};
     },
     chars(p){
-      const a=auth(p.token),list=where('nhan_vat','tai_khoan',a.id).filter(c=>(c.trang_thai==='active'||c.trang_thai==='merc')).map(c=>({...charView(c),look:lookOf(c)}));
+      const a=auth(p.token),list=where('nhan_vat','tai_khoan',a.id).filter(c=>(c.trang_thai==='active'||c.trang_thai==='merc')).map(c=>{if(c.trang_thai==='merc'){c.trang_thai='active';c.gia_danh_thue=0;c.gia_hong_ngoc=0;A.update('nhan_vat',c);}return {...charView(c),look:lookOf(c)};});
       const cs=claimSum(a.id);
       return {account:pub(a),chars:list,max:cfg('so_nhan_vat_toi_da')||5,claim:cs.copper,claimRuby:cs.ruby};
     },
@@ -134,32 +134,16 @@ function LH_Core(A){
       });
     },
     save(p){return H.play({...p,ops:[]});},
-    // Cho thuê / hủy cho thuê: đọc và ghi dòng nhân vật trong khóa (không ghi đè phần lưu mới hơn của lệnh khác)
-    mercRegister(p){
-      const a=auth(p.token),price=Math.max(0,Math.floor(Number(p.price)||0)),ruby=Math.max(0,Math.floor(Number(p.ruby)||0));
-      if(!(price>=100)&&!(ruby>=1))fail('GIA_SAI');
-      if(p.playing&&p.playing===p.charId)fail('DANG_CHOI');
-      return A.lock(()=>{const c=ownChar(a,p.charId,'active');c.trang_thai='merc';c.gia_danh_thue=price;c.gia_hong_ngoc=ruby;c.cap_nhat=A.now();A.update('nhan_vat',c);return {char:charView(c)};});
+    // v10.13: bỏ chức năng cho thuê nhân vật giữa người chơi (mercRegister / mercCancel / mercList / mercBuy); nhân vật đang ở trạng thái merc cũ tự về active khi mở lều
+    // v10.13: Thầy đồ chấm ngay (không khóa, không ghi Sheet): trả câu sai + chữ ký; trình duyệt áp dụng op 'quiz' kèm chữ ký, máy chủ kiểm chữ ký khi nhận gói lưu
+    quizCheck(p){
+      const a=auth(p.token);A.rules&&A.rules();const bo=String(p.bo||''),Q=Player.QUIZ[bo];if(!Q||!Q.qs.length)fail('QUIZ');
+      const c=ownChar(a,p.charId,'active'),ans=Array.isArray(p.ans)?p.ans.map(x=>String(x||'').toUpperCase()):[];const wrong=[];Q.qs.forEach((q,i)=>{if(ans[i]!==q.ans)wrong.push(i);});
+      return {total:Q.qs.length,ok:Q.qs.length-wrong.length,wrong,sig:A.sign?A.sign(Player.quizKey(c.id,bo,wrong)):''};
     },
-    mercCancel(p){const a=auth(p.token);return A.lock(()=>{const c=ownChar(a,p.charId,'merc');c.trang_thai='active';c.gia_danh_thue=0;c.gia_hong_ngoc=0;A.update('nhan_vat',c);return {char:charView(c)};});},
-    mercList(p){
-      const a=auth(p.token);
-      return {list:where('nhan_vat','trang_thai','merc').filter(c=>c.tai_khoan!==a.id).map(c=>{let eq={};try{eq=(JSON.parse(c.luu||'{}').player||{}).equipment||{};}catch(e){}return {...charView(c),equipment:eq,look:lookOf(c)};})};
-    },
-    mercBuy(p){
-      const a=auth(p.token);
-      return A.lock(()=>{
-        const b=ownChar(a,p.charId,'active'),t=find('nhan_vat','id',p.targetId);
-        if(!t||t.trang_thai!=='merc'||t.tai_khoan===a.id)fail('LINH_KHONG_CON');
-        let eq={};try{eq=(JSON.parse(t.luu||'{}').player||{}).equipment||{};}catch(e){}
-        const price=Number(t.gia_danh_thue)||0,ruby=Number(t.gia_hong_ngoc)||0,fee=(cfg('phi_cho')||0)/100,st=stateOf(b);
-        if(st.player.copper<price)fail('KHONG_DU_TIEN');if(st.player.rubies<ruby)fail('KHONG_DU_HONG_NGOC');if(st.player.mercs.length>=Player.MAX_MERC)fail('DU_LINH');
-        Player.addMerc(st.player,{name:t.ten,gender:t.gioi_tinh,stats:charView(t).stats,equipment:eq,src:'player',from:t.id,cmd:10});
-        st.player.copper-=price;st.player.rubies-=ruby;storeState(b,st,st.player);
-        t.trang_thai='sold';t.nguoi_mua=p.charId;t.cap_nhat=A.now();A.update('nhan_vat',t);
-        A.insert('cho',{id:'ch-'+A.uid(),loai:'linh',nguoi_ban:t.tai_khoan,nhan_vat_ban:t.id,vat_pham:'',gia:price,tien_nhan:Math.floor(price*(1-fee)),hong_ngoc:ruby,hong_ngoc_nhan:Math.floor(ruby*(1-fee)),trang_thai:'da_ban',nguoi_mua:p.charId,tao_luc:A.now(),ban_luc:A.now(),da_nhan:0});
-        return {name:t.ten,price,ruby,state:st.player};
-      });
+    // xem đáp án sau khi đủ manh mối (đọc trạng thái, không khóa)
+    quizShow(p){
+      const a=auth(p.token);const c=ownChar(a,p.charId,'active'),st=stateOf(c),bo=String(p.bo||''),Q=Player.QUIZ[bo],z=st.player.quiz&&st.player.quiz[bo];if(!Q)fail('QUIZ');if(!(z&&z.reveal))fail('QUIZ_CHUA');return {show:Q.qs.map(q=>q.ans)};
     },
     marketList(p){
       const a=auth(p.token),rows=where('cho','trang_thai','mo').filter(r=>r.loai==='do');
@@ -211,5 +195,5 @@ function LH_Core(A){
     }
   };
   // v10.12: lệnh kèm pre = gói phần chơi chưa gửi {bid,sentAt,save,ops} → chạy play trước trong cùng lượt gọi (một lượt thay vì hai)
-  return {handle(action,p){try{if(!H[action])fail('KHONG_CO_LENH');p=p||{};let pre=null;if(p.pre&&typeof p.pre==='object'&&action!=='play'&&action!=='save'){const r=H.play({token:p.token,charId:p.charId,...p.pre});pre={results:r.results,savedAt:r.savedAt};}return {ok:true,...H[action](p),...(pre?{pre}:{})};}catch(e){return {ok:false,error:String(e.message||e)};}}};
+  return {handle(action,p){try{if(!H[action])fail('KHONG_CO_LENH');p=p||{};if(typeof Player!=='undefined'){Player._sign=A.sign||null;Player._sid=String(p.charId||'');}let pre=null;if(p.pre&&typeof p.pre==='object'&&action!=='play'&&action!=='save'){const r=H.play({token:p.token,charId:p.charId,...p.pre});pre={results:r.results,savedAt:r.savedAt};}return {ok:true,...H[action](p),...(pre?{pre}:{})};}catch(e){return {ok:false,error:String(e.message||e)};}finally{if(typeof Player!=='undefined'){Player._sign=null;Player._sid='';}}}};
 }

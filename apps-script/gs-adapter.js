@@ -60,7 +60,7 @@ function lhStatic_(){
   for(const tab of LH_BO_SUNG)if(LH_SHEETS[LH_STATIC[tab]]&&Array.isArray(out[tab])&&out[tab].length){const has=new Set(out[tab].map(r=>lhKhoa_(tab,r)));for(const r of LH_DEFAULT[tab]||[])if(!has.has(lhKhoa_(tab,r)))out[tab].push(r);}
   // Câu hỏi Thầy đồ từ bảng ngoài
   for(const [tab,N] of Object.entries(LH_NGOAI)){if(!N.id)continue;try{const sh=SpreadsheetApp.openById(N.id).getSheetByName(N.tab);if(!sh||sh.getLastRow()<2)continue;
-    const rows=lhRows_(sh).map(r=>Object.fromEntries(Object.entries(N.cot).map(([k,c])=>[k,r[c]===undefined?'':r[c]]))).filter(r=>r.id&&r.cau);if(rows.length)out[tab]=rows;}catch(e){Logger.log('Không đọc được bảng ngoài '+tab+': '+e);}}
+    const rows=lhRows_(sh).map(r=>Object.fromEntries(Object.entries(N.cot).map(([k,c])=>[k,r[c]===undefined?'':r[c]]))).filter(r=>r.id&&r.cau&&!/^(NV|SKQ)/i.test(String(r.bo||''))); /* v10.13: bỏ bộ NV*, SKQ* */if(rows.length)out[tab]=rows;}catch(e){Logger.log('Không đọc được bảng ngoài '+tab+': '+e);}}
   // Mã băm nội dung (trình duyệt lưu đệm, gửi lại h để khỏi tải lại)
   {const s0=JSON.stringify(out);let h=5381;for(let i=0;i<s0.length;i++)h=((h*33)^s0.charCodeAt(i))>>>0;out._h=s0.length.toString(36)+'-'+h.toString(36);}
   // Ảnh tĩnh: chỉ gửi các dòng đã dán link
@@ -121,8 +121,11 @@ const LH=LH_Core({
   rules:()=>{if(!LH_RULES.ok){Player.load(lhStatic_());LH_RULES.ok=true;}},
   // không gửi đáp án Thầy đồ xuống trình duyệt (máy chủ chấm)
   hideAnswers:d=>({...d,cau_hoi:(d.cau_hoi||[]).map(r=>{const o={...r};delete o.dap_an;delete o.DapAn;return o;})}),
-  lock:fn=>{const l=LockService.getScriptLock();l.waitLock(15000);try{return fn();}finally{l.releaseLock();}}
+  lock:fn=>{const l=LockService.getScriptLock();l.waitLock(15000);try{return fn();}finally{l.releaseLock();}},
+  // v10.13: chữ ký kết quả Thầy đồ (HMAC với khóa bí mật sinh một lần, lưu trong Script Properties LH_KEY)
+  sign:s=>Utilities.computeHmacSha256Signature(s,lhKhoaBiMat_(),Utilities.Charset.UTF_8).map(b=>((b+256)%256).toString(16).padStart(2,'0')).join('')
 });
+function lhKhoaBiMat_(){const P=PropertiesService.getScriptProperties();let k=P.getProperty('LH_KEY');if(!k){k=Utilities.getUuid()+Utilities.getUuid();P.setProperty('LH_KEY',k);}return k;}
 // Lệnh ghi có mã rid: gửi lại cùng mã (mạng rớt, đổi đường GET/POST) thì trả lại kết quả cũ, không chạy lần hai
 function lhRun_(p){
   LH_DB.fresh();
@@ -307,5 +310,16 @@ function capNhatV1012(){
   const a=ghi('ban_do','id',['cap']),b=ghi('cau_hinh','khoa',['gia_tri'],r=>r.khoa==='cap_toi_da'),c=ghi('nhiem_vu','id',['npc','noi','npc_ten'],r=>/^tc-/.test(String(r.id)));
   const d=xoa('vat_pham',r=>/^khung-/.test(String(r.id))||(String(r.o)==='cos'&&String(r.loai)==='khung')),e=xoa('cua_hang',r=>/^khung-/.test(String(r.id)));
   xoaBoNhoDem();Logger.log('ban_do: '+a+' ô cấp · cau_hinh cap_toi_da: '+b+' · nhiem_vu Tìm con: '+c+' ô npc · xóa '+d+' khung ở vat_pham, '+e+' ở cua_hang');
+}
+// v10.13: lò rèn chỉ bán vũ khí (mũ / giáp / quần / găng / hài / áo choàng sang hiệu buôn), bỏ bộ câu hỏi NV* / SKQ*. kiemTra chỉ thêm dòng mới nên cần dọn dòng cũ:
+// xóa dòng cua_hang 'thanh-*' không còn trong bảng mặc định, xóa bo_cau_hoi / cau_hoi mã NV* SKQ*. Chạy một lần sau khi dán Code.gs mới.
+function capNhatV1013(){
+  lhDuLieuBoSung_();
+  const xoa=(tab,test)=>{const file=LH_SHEETS[LH_STATIC[tab]];if(!file)return 0;const sh=SpreadsheetApp.openById(file).getSheetByName(tab);if(!sh||sh.getLastRow()<2)return 0;
+    const v=sh.getDataRange().getValues(),h=v[0].map(String);let n=0;for(let i=v.length-1;i>=1;i--){const r=Object.fromEntries(h.map((k,j)=>[k,v[i][j]]));if(test(r)){sh.deleteRow(i+1);n++;}}return n;};
+  const keep=new Set((LH_DEFAULT.cua_hang||[]).map(r=>String(r.cua_hang)+'|'+String(r.id)));
+  const a=xoa('cua_hang',r=>/^thanh-/.test(String(r.cua_hang))&&!keep.has(String(r.cua_hang)+'|'+String(r.id)));
+  const b=xoa('bo_cau_hoi',r=>/^(NV|SKQ)/i.test(String(r.id))),c=xoa('cau_hoi',r=>/^(NV|SKQ)/i.test(String(r.bo||r.id)));
+  xoaBoNhoDem();Logger.log('Xóa '+a+' dòng hàng thành trì cũ, '+b+' bộ câu hỏi, '+c+' câu hỏi NV/SKQ');
 }
 function kiemTra(){try{lhDuLieuBoSung_();}catch(e){Logger.log('Chưa bổ sung được quái / nhiệm vụ mới: '+e);}try{const n=lhHinhAnhBoSung_();if(n)Logger.log('Thêm '+n+' dòng ảnh mới vào file Hình ảnh');}catch(e){Logger.log('Chưa bổ sung được file Hình ảnh: '+e);}xoaBoNhoDem();const d=lhStatic_();Logger.log(Object.keys(d).map(k=>k+': '+d[k].length+' dòng').join('\n'));LH_DB.rows('tai_khoan');LH_DB.rows('nhan_vat');LH_DB.rows('cho');Logger.log('Bảng người chơi sẵn sàng. Quyền gửi mail: '+MailApp.getRemainingDailyQuota()+' thư/ngày');}

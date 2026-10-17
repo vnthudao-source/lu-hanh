@@ -1,4 +1,4 @@
-/*! Lữ Hành v10.12 · khởi động · https://github.com/vnthudao-source/lu-hanh */
+/*! Lữ Hành v10.13 · khởi động · https://github.com/vnthudao-source/lu-hanh */
 /* ================= MÀN HÌNH CHỜ: thanh tải 0\u{2013}100%, cảnh làng + lời dẫn truyện =================
    Dùng chung cho file khởi động (tải tài nguyên trang) và game (kết nối máy chủ, tải nhân vật, dựng bản đồ). */
 window.LH_Loader=window.LH_Loader||(()=>{
@@ -78,7 +78,7 @@ window.LH_Loader=window.LH_Loader||(()=>{
     step(pct,label,next){mount();target=Math.max(target,pct);cap=Math.max(target,next||pct);if(label!=null)lbl.textContent=label;return L;},
     async done(opt={}){
       mount();target=cap=100;lbl.textContent=opt.label||'S\u{1EB5}n s\u{00E0}ng';
-      await new Promise(r=>setTimeout(r,450));
+      await new Promise(r=>setTimeout(r,opt.fast?150:450));
       await storyDone;
       if(opt.confirm){goBtn.hidden=false;await new Promise(ok=>{goBtn.onclick=ok;});}
       const wait=Math.max(0,(opt.min||0)-(Date.now()-t0));if(wait)await new Promise(r=>setTimeout(r,wait));
@@ -91,7 +91,7 @@ window.LH_Loader=window.LH_Loader||(()=>{
 })();
 ;/* ================= KHỞI ĐỘNG: hiện màn hình chờ ngay, tải CSS + JS của game có đếm phần trăm ================= */
 (function(){
-  var me=document.currentScript,base=(me&&me.src||'').replace(/[^\/]*$/,''),FILES={"css":{"name":"lu-hanh.css","size":43864},"js":{"name":"lu-hanh.js","size":439585}};
+  var me=document.currentScript,base=(me&&me.src||'').replace(/[^\/]*$/,''),FILES={"css":{"name":"lu-hanh.css","size":44827},"js":{"name":"lu-hanh.js","size":449872}};
   window.LH_BASE=window.LH_BASE||base;
   var L=window.LH_Loader.show({label:'T\u{1EA3}i t\u{00E0}i nguy\u{00EA}n trang',bg:'tai_game'});
   function plain(){var l=document.createElement('link');l.rel='stylesheet';l.href=base+FILES.css.name;document.head.appendChild(l);var s=document.createElement('script');s.src=base+FILES.js.name;s.charset='utf-8';document.head.appendChild(s);}

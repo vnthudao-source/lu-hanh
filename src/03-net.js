@@ -19,7 +19,7 @@ const LocalServer=(()=>{
   const core=LH_Core({
     rows:t=>load()[t],insert:(t,o)=>{load()[t].push(o);persist();},update:(t,o)=>{const a=load()[t],i=a.findIndex(x=>x.id===o.id);if(i>=0)a[i]=o;persist();},
     mail:()=>{},devMail:true,hash:sha256,now:()=>Date.now(),uid:()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4),
-    staticData:()=>GAME_DATA,lock:fn=>fn()
+    staticData:()=>GAME_DATA,lock:fn=>fn(),sign:s=>sha256('lh-local|'+s)
   });
   // đọc lại mỗi lệnh: game và Chợ phiên mở ở 2 thẻ vẫn dùng chung dữ liệu
   return {handle:(action,p)=>{db=null;return JSON.parse(JSON.stringify(core.handle(action,p)));}};
@@ -109,7 +109,7 @@ async function netDiag(e){
   try{const r=await fetch(LH_API+(LH_API.includes('?')?'&':'?')+'t='+Date.now());const j=JSON.parse(await r.text());return Error(j&&j.ok?'POST_LOI':'KHONG_TRUY_CAP');}
   catch(x){return Error('KHONG_TRUY_CAP');}
 }
-const NET_SAFE=new Set(['ping','data','login','chars','load','alive','marketList','mercList']);
+const NET_SAFE=new Set(['ping','data','login','chars','load','alive','marketList','quizCheck','quizShow']);
 // lỗi mạng mỗi trình duyệt báo một kiểu: Chrome "Failed to fetch", Safari "Load failed", Firefox "NetworkError…"
 const netErr=e=>/failed to fetch|load failed|networkerror|network request failed|the internet connection/i.test(String(e&&e.message))?Error('Failed to fetch'):e;
 const netMsg=e=>NET_ERR[e&&e.message]||(e&&e.message==='Failed to fetch'?'Không kết nối được máy chủ Việt Nam, kiểm tra mạng rồi thử lại':'Lỗi: '+(e&&e.message||e));

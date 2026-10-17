@@ -177,6 +177,15 @@
     for(const [k,v] of Object.entries(spec.sky||{}))out.sky[k]=sky(v);
     return out;
   };
+  // v10.13: hình quái sự kiện đột xuất (kẻ trộm chó, quân phương Bắc, đạo tặc, hổ dữ, gian tế) — đăng ký sẵn trong game, không cần gói bản đồ
+  setTimeout(()=>{try{A.add('su-kien',K=>A.gen({mon:{
+    'ke-trom-cho':{body:'human',s:.95,c:['#4a3a2a','#2a1a10','#8a7a60','#6b4a2e'],weapon:'club',hat:'hood',skin:'#d9ad80',eye:'#2a2018'},
+    'linh-phuong-bac':{body:'human',s:1,c:['#8a2a2a','#5a1a1a','#d8c060','#c0c0c0'],weapon:'spear',hat:'helm',armor:1,skin:'#e4c69b',eye:'#2a2018'},
+    'tuong-phuong-bac':{body:'human',s:1.5,c:['#6a1a1a','#3a0a0a','#ffd040','#d0d0d8'],weapon:'sword',hat:'helm',armor:1,skin:'#e4c69b',eye:'#ff6060',glow:'#ff404033'},
+    'dao-tac':{body:'human',s:.95,c:['#2a2a3a','#14141e','#8a8aa0','#c0c0c0'],weapon:'sword',hat:'hood',skin:'#d9ad80',eye:'#ffd040'},
+    'ho-du':{body:'quad',s:1.25,c:['#e08a2e','#7a3a10','#f0c070','#2a1a0a'],tail:1,eye:'#ffe060'},
+    'gian-te':{body:'human',s:1,c:['#1a1a22','#0a0a10','#5a5a70','#c03030'],weapon:'sword',hat:'hood',skin:'#c8a080',eye:'#ff3040',glow:'#ff204022'}
+  },ring:{'tuong-phuong-bac':'#ff6060'}}));}catch(e){}},0);
   // gói mới có thể trả về cả npc
   const add0=A.add;A.add=(id,fn)=>{if(A.packs[id]||typeof fn!=='function')return;A.packs[id]=true;const r=fn(K)||{};for(const k of ['theme','obj','mon','sky','ring','npc'])Object.assign(A[k],r[k]||{});};
 })();
