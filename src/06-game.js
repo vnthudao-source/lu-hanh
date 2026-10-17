@@ -454,15 +454,15 @@ window.startGame=(session)=>{
     if(T==='shield')return st.right==='shield'?'front':'back';if(T==='staff')return st.right==='staff'?'front':'back';
     return 'front';
   }
-  // Quay trái (7 giờ): học theo dáng quay phải — món tay sau thân (tay phải: kiếm/gậy) khuất sau người, chỉ lộ chút lưỡi;
-  // món tay trái (khiên) đưa ra trước, thấy trọn. Khi tay phải ra đòn thì vũ khí vung ra trước như thường.
-  const HIDE_ANG={sword:-.95,staff:-1.2,punch:-1.6};
+  // Quay trái (7 giờ, theo phác thảo của tác giả): tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn;
+  // tay trái co lại, khiên đưa ra bên hông phía sau (mặt ngoài nhìn thẳng), cả hai vẽ trước thân. Khi ra đòn thì về dáng đòn như thường.
+  const HIDE_ANG={sword:-.78,staff:-1.0,punch:-1.6};
   function handSide(P,st,facing,a){
     if(facing>0){const dW=st.two?-5:-15,dO=st.two?-5:15;P.front.x+=dW;P.back.x+=dO;if(P.trail)P.trail.cx+=dW;P.sh={front:{x:-8,y:-23},back:{x:8,y:-23}};}
     else{P.sh={front:{x:8,y:-23},back:{x:-8,y:-23}};
       const ah=atkHand(a,st);
-      if(!st.two&&ah!=='front'&&ah!=='both'&&!P.heal&&!(P.block&&st.right==='shield')){P.hide=true;P.front={x:6,y:-12,ang:HIDE_ANG[st.right]!==undefined?HIDE_ANG[st.right]:-1.4};
-        if(ah!=='back'&&!P.block)P.back={x:-7,y:-14,ang:P.back.ang};}}
+      if(!st.two&&ah!=='front'&&ah!=='both'&&!P.heal&&!(P.block&&st.right==='shield')){P.hide=true;P.front={x:13,y:-9,ang:HIDE_ANG[st.right]!==undefined?HIDE_ANG[st.right]:-1.1};
+        if(ah!=='back'&&!P.block)P.back={x:-15,y:-14,ang:P.back.ang};}}
     return P;
   }
   function drawArm(c,sx,sy,hx,hy,sleeve,skin){
@@ -615,8 +615,7 @@ window.startGame=(session)=>{
     }
     const hipSword=()=>{if(sheathed&&st.right==='sword')held('sword',{x:-6,y:-9,ang:2.75},'carry',st.tintR,st.lvR,st.itR);};
     // quay trái: món tay phải (kiếm, gậy) vẽ trước thân → khuất sau người, chỉ lộ phần lưỡi nhô lên vai
-    if(sheathed){}
-    else if(hide){held(st.right,P.front,'back',st.tintR,st.lvR,st.itR);drawArm(c,P.sh.front.x,P.sh.front.y,P.front.x,P.front.y,sleeve,skin);}
+    if(sheathed||hide){}
     else{if(!st.two&&!backTop)held(st.left,P.back,'back',st.tintL,st.lvL,st.itL);
       if(!backTop)drawArm(c,P.sh.back.x,P.sh.back.y,P.back.x,P.back.y,sleeve,skin);}
     const skirt=LP&&LP.kind==='skirt',pants=LP&&!skirt?LP.main:SKIN,boot=LS?LS.main:null;
@@ -643,11 +642,10 @@ window.startGame=(session)=>{
     if(LH)LH_Look.hat(c,LH,fem);
     if(sheathed)hipSword(); // kiếm dắt bên hông: chuôi ở thắt lưng, lưỡi chếch ra sau
     else if(st.two){held(st.right,P.front,'front',st.tintR,st.lvR,st.itR);c.fillStyle=skin;c.beginPath();c.arc(P.back.x,P.back.y,3.4,0,PI2);c.fill();}
-    else if(hide){held(st.left,P.back,'front',st.tintL,st.lvL,st.itL);} // quay trái: khiên / món tay trái ra trước, thấy trọn mặt ngoài
+    else if(hide){held(st.left,P.back,'front',st.tintL,st.lvL,st.itL);held(st.right,P.front,'front',st.tintR,st.lvR,st.itR);drawArm(c,P.sh.back.x,P.sh.back.y,P.back.x,P.back.y,sleeve,skin);} // quay trái: khiên bên hông sau (mặt ngoài), kiếm chĩa lên trước, cả hai thấy trọn
     else held(st.right,P.front,'front',st.tintR,st.lvR,st.itR);
     if(backTop){held(st.left,P.back,'back',st.tintL,st.lvL,st.itL);drawArm(c,P.sh.back.x,P.sh.back.y,P.back.x,P.back.y,sleeve,skin);}
-    if(hide)drawArm(c,P.sh.back.x,P.sh.back.y,P.back.x,P.back.y,sleeve,skin);
-    else drawArm(c,P.sh.front.x,P.sh.front.y,P.front.x,P.front.y,sleeve,skin);
+    drawArm(c,P.sh.front.x,P.sh.front.y,P.front.x,P.front.y,sleeve,skin);
     if(P.trail&&P.trail.to>P.trail.from){const tr=P.trail;c.save();c.globalAlpha=.5*tr.fade;c.fillStyle=el?EL[el].color:'#f4ead0';c.beginPath();c.arc(tr.cx,tr.cy,tr.r+6,tr.from,tr.to);c.arc(tr.cx,tr.cy,tr.r-14,tr.to,tr.from,true);c.closePath();c.fill();c.restore();}
     if(myth.length)LH_Look.mythAura(c,myth,t);
     if(P.heal){c.save();c.globalAlpha=.7;c.fillStyle='#bff5c4';c.beginPath();c.arc(P.front.x,P.front.y,6,0,PI2);c.arc(P.back.x,P.back.y,6,0,PI2);c.fill();c.restore();}

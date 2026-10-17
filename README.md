@@ -195,12 +195,16 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 - **Quay trái**: khiên đưa ra trước vẽ **mặt ngoài nhìn thẳng** (tròn, có núm và đinh tán, viền theo màu bộ); kiếm/gậy khuất sau người nay chếch hẳn về bên trái, lưỡi nhô qua vai.
 - **Trong vùng an toàn** (làng, thành trì) nhân vật, lính đi theo và người chơi ảo **thu vũ khí**: tay vung theo bước đi; kiếm dắt bên hông (chuôi ở thắt lưng, lưỡi chếch ra sau); khiên, cung, nỏ, giáo, gậy, kiếm thứ hai đeo sau lưng. Ra đòn (đánh thường) hoặc chặn thì cầm lại; túi đồ, chân dung, chợ cho thuê vẫn hiện dáng cầm vũ khí.
 
+## Bản 10.5: dáng quay trái theo phác thảo
+
+- Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
+
 ## Ra bản mới
 
 1. Sửa trong `src/` (và `VERSION`).
 2. `node tools/build.mjs`
-3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-10.5`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
-4. Trên Blogspot đổi `@ban-10.4` thành `@ban-10.5` (trang game và trang Chợ phiên).
+3. Commit lên `main`, rồi tạo nhánh phát hành `ban-<số bản>` (ví dụ `ban-10.6`) trỏ vào commit đó. Nhánh phát hành không bao giờ sửa lại, nên bộ nhớ đệm của jsDelivr không giữ nhầm bản cũ.
+4. Trên Blogspot đổi `@ban-10.5` thành `@ban-10.6` (trang game và trang Chợ phiên).
 5. Nếu `Code.gs` đổi: dán lại vào Apps Script, Triển khai → Quản lý triển khai → Sửa → Phiên bản mới (giữ nguyên URL).
 
 ## Dữ liệu trong Sheet
