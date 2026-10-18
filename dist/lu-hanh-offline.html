@@ -5647,7 +5647,8 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     const [name,g]=PK_NAMES[Math.floor(Math.random()*PK_NAMES.length)],L=Math.max(Player.mapLevel(World.id),player.level||1),st=12+L*2;
     const d=Player.makeMerc({name,gender:g,stats:{strength:st,agility:st,vitality:st+4,intelligence:st}});try{botGear(d,L+3,Math.random);}catch(e){}d.name=name;
     let p=null;for(let k=0;k<20&&!p;k++){const a=Math.random()*PI2,r=300+Math.random()*120,x=hero.x+Math.cos(a)*r,y=hero.y+Math.sin(a)*r;if(World.canStand(x,y)&&!World.isSafe(x,y))p={x,y};}if(!p)return;
-    const e=makeBot(500,d,{x:p.x,y:p.y,r:T},p.x,p.y,false);e.tut=true;e.pk=true;e.name=name;e.max=e.hp=Math.max(60,Math.round((HD.tot.dmgMin+HD.tot.dmgMax)/2*HD.dmgMul*(Number(CFG.pk_so_don)||16))); // máu \u{2248} pk_so_don đòn thường của nhân vậte.cd=time+1.2;
+    // máu kẻ đánh lén \u{2248} pk_so_don đòn thường của nhân vật
+    const e=makeBot(500,d,{x:p.x,y:p.y,r:T},p.x,p.y,false);e.tut=true;e.pk=true;e.name=name;e.max=e.hp=Math.max(60,Math.round((HD.tot.dmgMin+HD.tot.dmgMax)/2*HD.dmgMul*(Number(CFG.pk_so_don)||16)));e.cd=time+1.2;
     bots.push(e);pk={e,t:time};tutSay(e,['Đồ ngon đấy, để lại đây!','Hang này là của ta!','Nộp mạng đi!'][Math.floor(Math.random()*3)],3);
     message(svg('sword')+esc(name)+' lao vào đánh lén \u{b7} đánh trả để nhận 1 lượt chiêu mộ miễn phí ở Thanh Mộc!',4.5);LH_Audio.play('boss');
   }
