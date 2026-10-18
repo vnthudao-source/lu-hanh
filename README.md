@@ -199,6 +199,14 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
 
+## Bản 10.18
+
+Vẽ lại thú cưỡi và boss (module mới `src/04-boss.js`, `LH_BOSS`):
+- Thú cưỡi có hình riêng đúng tên: Phượng Hoàng Lửa (chim phượng cam đỏ, đuôi dài, bốc lửa), Cửu Vĩ Hồ Ly (cáo chín đuôi xòe, lửa hồ ly), Huyền Vũ (rùa mai lục giác, rắn quấn), Thiên Mã (ngựa có cánh lông vũ), rồng (rồng phương Đông uốn lượn cưỡi mây, Kim Long màu vàng), kỳ lân (vảy, móng guốc, đầu rồng một sừng, bờm và đuôi lửa).
+- Loài thú cưỡi mới trong `BEASTS`: `phuong`, `cuuvi`, `rua`, `thienma` (đòn phím 4 dùng lại đòn kỳ lân / hổ / voi / ngựa). Dòng Sheet cũ ghi loài cũ (kylan, tiger, elephant, horse) tự đổi sang loài mới; ghi loài mới trên Sheet cũng được.
+- 26 boss vẽ chi tiết: tướng / vua / thần (giáp vảy, hộ tâm kính, áo choàng bay, mũ theo vai, binh khí: đại đao, giáo, kiếm phát sáng, trượng ngọc / trăng, chùy gai, hào quang), rồng phương Đông (thân uốn, vảy bụng, bờm, sừng nai, râu, ngọc, cánh, phun lửa), chim thần (lớp lông, sấm sét, gió xoáy), hồ ly chín đuôi, trăn tinh và rắn hổ mang, Chúa Sơn Lâm, Ngư Tinh, Thạch Tinh, Mộc Tinh. Ảnh `quai:<mã>` trong file Hình ảnh vẫn được ưu tiên.
+- Ảnh vật phẩm thú cưỡi (`dist/anh/vat_pham`) vẽ lại; hàm `capNhatAnhThuCuoi` thay ảnh thú cưỡi trong file Hình ảnh (chỉ những ảnh do capNhatAnh chép, ảnh tự đặt giữ nguyên).
+
 ## Bản 10.17
 
 Hệ số mới trong `cau_hinh` (kiemTra tự thêm; sửa trên Sheet rồi chạy `xoaBoNhoDem`):

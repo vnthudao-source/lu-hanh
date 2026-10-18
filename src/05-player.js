@@ -10,7 +10,11 @@ const Player=(()=>{
     ice:{name:'Băng',icon:'ice',color:'#8fd3ff',glow:'#effaff',st:['int']},demon:{name:'Ma công',icon:'demon',color:'#c0508a',glow:'#ffb8dc',st:['cmd']},light:{name:'Ánh sáng',icon:'light',color:'#ffe680',glow:'#fffbe0',st:['vit']}
   };
   const BEASTS={horse:{seat:24,skill:'Đá hậu',icon:'mount',cmd:5},tiger:{seat:28,skill:'Vồ mồi',icon:'tiger',cmd:10},elephant:{seat:46,skill:'Dày xéo',icon:'elephant',cmd:15},
-    kylan:{seat:26,skill:'Lân hỏa',icon:'spark',cmd:12},rong:{seat:40,skill:'Long tức',icon:'demon',cmd:20}}; // v10.3: kỳ lân (lửa quanh mình), rồng (phun lửa phía trước)
+    kylan:{seat:26,skill:'Lân hỏa',icon:'spark',cmd:12},rong:{seat:33,skill:'Long tức',icon:'demon',cmd:20},
+    // v10.18: phượng hoàng (lửa quanh mình như kỳ lân), cửu vĩ hồ (lao tới như hổ), huyền vũ (dày xéo như voi), thiên mã (đá hậu như ngựa)
+    phuong:{seat:32,skill:'Phượng hỏa',icon:'feather',cmd:14,act:'kylan'},cuuvi:{seat:30,skill:'Hồ hỏa',icon:'demon',cmd:12,act:'tiger'},rua:{seat:44,skill:'Huyền giáp',icon:'shield',cmd:16,act:'elephant'},thienma:{seat:24,skill:'Đá hậu',icon:'wings',cmd:8,act:'horse'}};
+  // thú cưỡi đã có trên Sheet với loài cũ: đổi sang loài đúng hình (Sheet ghi loài mới thì giữ theo Sheet)
+  const BEAST_FIX={'phuong-hoang':['kylan','phuong'],'cuu-vi-ho':['tiger','cuuvi'],'huyen-vu':['elephant','rua'],'thien-ma':['horse','thienma']}; // v10.3: kỳ lân (lửa quanh mình), rồng (phun lửa phía trước)
   const GROUPS=[['str','Sức mạnh','punch'],['agi','Nhanh nhẹn','feather'],['vit','Sức khỏe','heart'],['int','Trí tuệ','spark'],['cmd','Mệnh lệnh','flag']];
   const FX_NAMES={stun:'Choáng',execute:'Kết liễu',shield:'Lá chắn',wave:'Sóng chém',aura:'Hào khí',cleave:'Chém lan',manaShield:'Khiên mana',lifesteal:'Hút máu',haste:'Thần tốc',burn:'Thiêu đốt',counter:'Phản công',heal:'Hồi phục',revive:'Hồi sinh',
     frost:'Băng giá',venom:'Độc',rage:'Cuồng nộ',luck:'May mắn',expUp:'Tinh thông',coinUp:'Phú quý',dmgPct:'Uy lực',defPct:'Kiên cố',clone:'Phân thân'}; // v10.13: hiệu ứng thú thần thoại // v10.3: hiệu ứng đồ thành trì
@@ -43,7 +47,7 @@ const Player=(()=>{
     for(const r of data.thuoc_tinh||[])ADD[r.ma]={name:r.ten,group:r.nhom,unit:r.don_vi||'',ranges:[null,...['dep','hoan_hao','huyen_thoai','than'].map(k=>[num(r[k+'_thap']),num(r[k+'_cao'],num(r[k+'_thap']))])]};
     for(const r of data.vat_pham||[]){
       const slot=r.o||null,d={name:r.ten,slot,kind:r.loai||slot,grip:r.cam||'one',atk:num(r.cong),def:num(r.thu),speed:num(r.toc)/100,price:num(r.gia),tint:r.mau||null};
-      if(slot==='mount'){d.beast=r.thu_cuoi||'horse';d.cmd=num(r.menh_lenh,BEASTS[d.beast].cmd);if(d.beast!=='horse')d.icon=d.beast;}
+      if(slot==='mount'){d.beast=BEASTS[r.thu_cuoi]?r.thu_cuoi:'horse';const fx=BEAST_FIX[r.id];if(fx&&d.beast===fx[0])d.beast=fx[1];d.cmd=num(r.menh_lenh,BEASTS[d.beast].cmd);if(d.beast!=='horse')d.icon=BEASTS[d.beast].act?BEASTS[d.beast].icon:d.beast;}
       if(slot==='book'){d.icon='book';d.element=r.he;}
       if(!slot)d.icon=r.loai||'ore';
       if(slot==='wings'&&/^canh-/.test(r.id))d.wing=true; // cánh dung hợp (không mua, không rơi)
@@ -75,7 +79,7 @@ const Player=(()=>{
     for(const r of data.tuong||[]){TUONG[r.id]={id:r.id,name:r.nhan_vat,gender:r.gioi_tinh==='f'?'f':'m',desc:r.mo_ta||'',color:r.mau||'#c8823e',setL:'tq-'+r.id,setM:'tt-'+r.id};addSet(r,'tq-'+r.id,'l',1,'',r.mau||'#e8c070');addSet(r,'tt-'+r.id,'m',1.5,'',r.mau||'#ffb0d0');}
     for(const r of data.do_than||[]){
       const d={name:r.ten,slot:r.o,kind:r.loai,grip:r.cam||'one',atk:num(r.cong),def:num(r.thu),speed:num(r.toc)/100,price:num(r.gia,20000),tint:r.mau||null,q:'m',fx:r.hieu_ung,fxv:num(r.gia_tri),fxText:r.mo_ta,myth:true};
-      if(d.slot==='mount'){d.beast=r.thu_cuoi||'horse';d.cmd=BEASTS[d.beast].cmd;}
+      if(d.slot==='mount'){d.beast=BEASTS[r.thu_cuoi]?r.thu_cuoi:'horse';d.cmd=BEASTS[d.beast].cmd;}
       items[r.id]=d;
     }
     const QM=num(CFG.quai_nhan_mau,1),QD=num(CFG.quai_nhan_sat_thuong,1),BN=num(CFG.boss_nhan,1),qx=(v,k)=>v>0?Math.max(1,Math.round(v*k)):v; // v10.16: hệ số máu / sát thương mọi quái (cau_hinh)

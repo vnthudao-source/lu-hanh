@@ -591,21 +591,9 @@ window.startGame=(session)=>{
     roundRect(c,-14,-58,22,8,2,'#6b3a24');
   }
   // Kỳ lân: thân ngựa vảy vàng, sừng, bờm lửa
-  function drawKylan(c,tint,moving,walk,t){
-    const col=tint||'#e8c060';drawHorse(c,col,moving,walk,t);
-    c.strokeStyle=shade(col,-.3);c.lineWidth=1;for(let k=-14;k<=10;k+=6){c.beginPath();c.arc(k,-22,4,Math.PI*1.1,Math.PI*1.9);c.stroke();}
-    const f=Math.sin(t*9);c.save();c.shadowColor='#ff8a3d';c.shadowBlur=10;for(let k=0;k<4;k++){const ph=(t*1.3+k/4)%1;c.globalAlpha=1-ph;ell(c,-24+k*2-ph*6,-30-ph*18,4-ph*2,6-ph*3,k%2?'#ff9a3d':'#ffd27a');}
-    c.globalAlpha=1;ell(c,31,-52+f,2.5,4,'#ffd27a');c.restore();poly(c,[26,-50,30,-66,33,-50],'#fff0b0');
-  }
-  // Rồng: mượn dáng rồng của bộ sinh (04-gen), thu nhỏ, thêm yên
-  let dragonFn=null;
-  function drawRong(c,tint,moving,walk,t){
-    if(!dragonFn&&LH_ART.gen)dragonFn=LH_ART.gen({mon:{'cuoi-rong':{body:'dragon',s:.62,c:[tint||'#2a6a5a','#1a4a3a','#8ad0b0','#ffd040'],eye:'#ffe060',wing:1}}}).mon['cuoi-rong'];
-    if(!dragonFn){drawHorse(c,tint||'#2a6a5a',moving,walk,t);return;}
-    c.save();c.translate(6,0);dragonFn(c,{moving,walk},{},{col:v=>v,g:walk,open:false,t,atk:false});c.restore();
-    roundRect(c,-8,-42,18,7,3,'#6b3a24');line(c,[1,-35,1,-20],'#4a2c18',1.5);
-  }
-  function drawMount(c,md,moving,walk,t){if(md.beast==='tiger'){c.save();c.scale(1.3,1.3);drawTiger(c,moving,walk,t,true,md.tint&&md.tint!=='#e08a2e'?md.tint:null);c.restore();}else if(md.beast==='elephant')drawElephantMount(c,md.tint,moving,walk,t);else if(md.beast==='kylan')drawKylan(c,md.tint,moving,walk,t);else if(md.beast==='rong')drawRong(c,md.tint,moving,walk,t);else drawHorse(c,md.tint||'#7a4b2a',moving,walk,t);}
+  // v10.18: kỳ lân, rồng, phượng hoàng, cửu vĩ hồ, huyền vũ vẽ ở src/04-boss.js (LH_BOSS.mount)
+  function drawMount(c,md,moving,walk,t){if(md.beast==='tiger'){c.save();c.scale(1.3,1.3);drawTiger(c,moving,walk,t,true,md.tint&&md.tint!=='#e08a2e'?md.tint:null);c.restore();}else if(md.beast==='elephant')drawElephantMount(c,md.tint,moving,walk,t);else if(LH_BOSS.mount[md.beast])LH_BOSS.mount[md.beast](c,md.tint,moving,walk,t); // v10.18: phượng hoàng, cửu vĩ hồ, huyền vũ
+    else if(md.beast==='thienma'){LH_BOSS.mount.wings(c,t,moving,false);drawHorse(c,md.tint||'#fff4e0',moving,walk,t);LH_BOSS.mount.wings(c,t,moving,true);}else drawHorse(c,md.tint||'#7a4b2a',moving,walk,t);}
   function seatOf(eq){if(safe)return 0;const md=eq&&eq.mount&&Player.info(eq.mount);return md?Player.BEASTS[md.beast].seat:0;}
   function seatH(){return seatOf(player.equipment);}
   // Thú cưỡi nghiêng người khi dùng kỹ năng: ngựa chổng hậu, voi chồm lên, hổ lao tới
@@ -705,6 +693,7 @@ window.startGame=(session)=>{
     const pic=LH_IMG.pic('quai:'+m.type);
     const art=!pic&&LH_ART.mon[m.type];
     if(pic){if(fl)c.filter='brightness(1.8)';drawPic(c,pic,Math.max(M.h*1.3,M.r*2),m.moving?-Math.abs(Math.sin(g))*3:0);c.filter='none';}
+    else if(LH_BOSS[m.type])LH_BOSS[m.type](c,m,M,{t:time,open,col,g,fl,atk:!!m.atk}); // v10.18: boss vẽ chi tiết
     else if(art)art(c,m,M,{t:time,open,col,g,fl,atk:!!m.atk});
     else if(!['deer','lion','elephant','croc','chua-son-lam','ngu-tinh'].includes(m.type)){World.monPack(m.type);ell(c,0,-M.h*.45,M.r,M.h*.45,col('#5a4a3a'));ell(c,M.r*.6,-M.h*.7,3,3,'#ffd27a');}
     else if(m.type==='deer'){
@@ -1039,7 +1028,7 @@ window.startGame=(session)=>{
     hero.aim=aim;if(Math.abs(aim.x)>.12)hero.facing=aim.x<0?-1:1;
     if(id==='mount'){
       const md=Player.info(player.equipment.mount),big=md.beast==='elephant';
-      hero.mountAct={type:md.beast,start:time,dur:big?.9:.7,hit:big?.55:.45,done:false,aim:{...aim}};
+      hero.mountAct={type:Player.BEASTS[md.beast].act||md.beast,start:time,dur:big?.9:.7,hit:big?.55:.45,done:false,aim:{...aim}};
       floater(hero.x,hero.y-80-seatH(),Player.BEASTS[md.beast].skill,'#ffe0a0',13);LH_Audio.play('roar');window.GameUI?.refresh();return true;
     }
     if(st.dual)hero.swing^=1;
@@ -1715,7 +1704,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     else if(kind==='shield'){c.translate(N*.46,N/2);c.scale(N/34,N/34);drawShield(c,false,false,T0,d.tint);}
     else if(kind==='bow'){c.translate(N/2,N/2);c.rotate(-Math.PI/4);c.scale(N/52,N/52);drawBow(c,0,true,null,d.tint);}
     else if(kind==='crossbow'){c.translate(N*.52,N/2);c.rotate(-Math.PI/4);c.scale(N/54,N/54);drawCrossbow(c,{string:6,bolt:true},null,d.tint);}
-    else if(d.slot==='mount'){const b=d.beast||'horse',k=N/(b==='elephant'?110:b==='tiger'?92:84);c.translate(N*.5,N*.86);c.scale(k,k);drawMount(c,{...d,tint:L&&(L.legend||L.fx)?d.tint:d.tint},false,0,T0);
+    else if(d.slot==='mount'){const b=d.beast||'horse',k=N/(b==='elephant'?110:b==='tiger'?92:b==='rua'?104:b==='phuong'?96:b==='cuuvi'?98:b==='thienma'?92:84);c.translate(N*.5,N*.86);c.scale(k,k);drawMount(c,{...d,tint:L&&(L.legend||L.fx)?d.tint:d.tint},false,0,T0);
       if(L&&L.legend){c.fillStyle=L.main;c.fillRect(-14,-36-(b==='elephant'?18:0),22,7);c.fillStyle=L.trim;c.fillRect(-14,-30-(b==='elephant'?18:0),22,1.6);}}
     else if(d.slot==='book'){const col=d.element&&EL[d.element]?EL[d.element].color:'#c9a43a';c.translate(N/2,N/2);c.rotate(-.12);c.scale(N/64,N/64);
       roundRect(c,-20,-24,40,48,4,shade(col,-.45));roundRect(c,-17,-24,37,46,3,col);c.fillStyle='#f4ead0';c.fillRect(-20,20,40,4);line(c,[-14,-24,-14,22],shade(col,-.5),2);

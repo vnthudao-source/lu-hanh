@@ -227,6 +227,28 @@ function capNhatAnh(){
   }
   xoaBoNhoDem();Logger.log('Đã chép '+n+' ảnh vào Drive'+(left?', còn '+left+' ảnh: chạy lại capNhatAnh':', xong'));
 }
+// v10.18: thú cưỡi vẽ lại (phượng hoàng, cửu vĩ hồ, huyền vũ, thiên mã, rồng, kỳ lân…). Chạy một lần: chép ảnh webp mới cho các dòng thú cưỡi
+// mà link_anh đang trỏ tới ảnh do capNhatAnh chép (thư mục ảnh của game). Ảnh bạn tự tải lên nơi khác giữ nguyên. File Drive cũ không xóa.
+// Hết giờ giữa chừng thì chạy lại: dòng đã chép được nhớ, không chép lần hai.
+function capNhatAnhThuCuoi(){lhChepLaiAnh_(ma=>Player.items[ma]&&Player.items[ma].slot==='mount');}
+function lhChepLaiAnh_(chon){
+  const t0=Date.now(),ss=SpreadsheetApp.openById(LH_SHEETS.hinh_anh),sh=ss.getSheetByName('hinh_anh')||ss.getSheets()[0];
+  const h=sh.getRange(1,1,1,sh.getLastColumn()).getValues()[0].map(String),ci=k=>h.indexOf(k),last=sh.getLastRow();if(last<2||ci('link_anh')<0)return;
+  Player.load(lhStatic_());const v=sh.getRange(1,1,last,h.length).getValues(),folder=DriveApp.getFolderById(LH_ANH_FOLDER);
+  const PR=PropertiesService.getScriptProperties(),key='lh-anh-lai-'+Player.VERSION,done=new Set((PR.getProperty(key)||'').split(',').filter(Boolean));let n=0,left=0,skip=0;
+  const ofGame=link=>{const m=/\/d\/([\w-]{20,})/.exec(String(link||''))||/[?&]id=([\w-]{20,})/.exec(String(link||''));if(!m)return !String(link||'').trim();try{const it=DriveApp.getFileById(m[1]).getParents();while(it.hasNext())if(it.next().getId()===LH_ANH_FOLDER)return true;}catch(e){}return false;};
+  for(let i=1;i<v.length;i++){
+    const nhom=String(v[i][ci('nhom')]).trim(),ma=String(v[i][ci('ma')]).trim();if(nhom!=='vat_pham'||!chon(ma)||done.has(ma))continue;
+    if(Date.now()-t0>270000){left++;continue;}
+    if(!ofGame(v[i][ci('link_anh')])){skip++;done.add(ma);continue;}
+    try{const file='vat_pham/'+ma.replace(/:/g,'_')+'.webp',blob=UrlFetchApp.fetch(LH_ANH_CDN+file).getBlob().setName(file.split('/').pop());
+      const f=folder.createFile(blob);try{f.setSharing(DriveApp.Access.ANYONE_WITH_LINK,DriveApp.Permission.VIEW);}catch(e){}
+      sh.getRange(i+1,ci('link_anh')+1).setValue('https://drive.google.com/file/d/'+f.getId()+'/view');done.add(ma);n++;
+    }catch(e){Logger.log('Không chép được '+ma+': '+e);}
+  }
+  PR.setProperty(key,[...done].join(','));xoaBoNhoDem();
+  Logger.log('Đã thay '+n+' ảnh'+(skip?', giữ '+skip+' ảnh bạn tự đặt':'')+(left?', còn '+left+' ảnh: chạy lại':', xong'));
+}
 // Làm mới ảnh: ghi giờ sửa file Drive của từng link vào cột phien_ban. Thay ảnh bằng "Quản lý phiên bản" / tải đè cùng tên
 // (link không đổi) thì trình duyệt vẫn giữ ảnh cũ; có phien_ban mới, game tải lại ảnh đó. Tự chạy mỗi giờ (lần đầu chạy tay để tạo lịch).
 function lamMoiAnh(){
