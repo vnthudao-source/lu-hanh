@@ -786,6 +786,7 @@ window.startGame=(session)=>{
     if(m.dead)return 0;const M=MON[m.type];
     const r=atk.abs?{dmg:Math.max(1,Math.round(atk.abs)),tag:'',color:atk.color||'#fff1c4',size:13}:rollHit(atk.D,atk.mul,atk.owner);
     let dmg=r.dmg;const f=atk.owner==='hero'&&!atk.abs?HD.fx:{};
+    if(!atk.abs&&M.def>0)dmg=Math.max(1,Math.round(dmg*Player.armorMul(M.def,player.level||1))); // v10.35: thủ của quái (cột thu) theo cấp nhân vật
     // v10.22: sách Hỏa đốt cháy quái (giữ chân trùm bỏ chạy, làm tan giáp băng, chặn tái sinh)
     if(atk.el==='fire'&&!atk.abs&&(atk.owner==='hero'||atk.owner==='merc')){m.scorch=time+3;const k=(HD.bef&&HD.bef.fire)||1;if(!(m.burn&&m.burn.until>time&&m.burn.dps>dmg*.04*k))m.burn={dps:Math.max(1,dmg*.04*k),until:time+3,color:'#ff8a3d'};}
     // v10.33: sách Băng — Vỡ băng: đòn của nhân vật vào quái đang bị đóng băng thêm % sát thương (bang_vo_bang × bậc × phẩm chất)
@@ -1120,7 +1121,7 @@ window.startGame=(session)=>{
     if(time<hero.blockUntil&&front){d*=.2;blocked=true;burst(hero.x+hero.facing*20,hero.y-22,'#f4dd9a',10,150);}
     else if(Math.random()*100<S.block){d*=.2;tag='Đỡ ';blocked=true;burst(hero.x+hero.facing*20,hero.y-22,'#f4dd9a',8,120);}
     LH_Audio.play(blocked?'block':'hurt');
-    d*=100/(100+S.def*(dbfOn('armor')?2:4));d*=1-S.dmgRed/100;
+    d*=Player.armorMul(S.def*(dbfOn('armor')?.5:1),Player.monLv(m.type));d*=1-S.dmgRed/100; // v10.35: thủ theo cấp quái
     const red={hoan_hao:S.perfRed,huyen_thoai:S.legRed,than:S.mythRed}[M.dtype]||0;d*=1-red/100;
     d=Math.max(1,Math.round(d));
     if(hero.shieldHp>0){const a=Math.min(hero.shieldHp,d);hero.shieldHp-=a;d-=a;}
@@ -1373,7 +1374,7 @@ window.startGame=(session)=>{
   }
   function hurtBot(e,dmg){
     if(e.dead)return;const S=e.D.tot;if(Math.random()*100<S.dodge){floater(e.x,e.y-60,'Né','#cfe8ff',12);return;}
-    const d=Math.max(1,Math.round(dmg*100/(100+S.def*4)*(1-S.dmgRed/100)));e.hp-=d;e.hurt=time;
+    const d=Math.max(1,Math.round(dmg*Player.armorMul(S.def,Player.mapLevel(World.id))*(1-S.dmgRed/100)));e.hp-=d;e.hurt=time;
     if(e.hp<=0){e.hp=0;e.dead=1;e.respawnAt=time+20;e.attack=null;burst(e.x,e.y-20,'#cfcfcf',16,140);}
   }
   // Quái thu phục: đi theo, cắn/húc quái khác. Chết là mất hẳn
@@ -1391,7 +1392,7 @@ window.startGame=(session)=>{
     if(e&&e.bot)return hurtBot(e,dmg);
     if(!e||e.hp<=0)return;let d;
     if(e.pet)d=Math.max(1,Math.round(dmg*.8));
-    else{const S=e.D.tot;if(Math.random()*100<S.dodge){floater(e.x,e.y-60,'Né','#cfe8ff',13);return;}d=dmg*100/(100+S.def*4)*(1-S.dmgRed/100)*(1-(e.red||0)/100);if(Math.random()*100<S.block)d*=.2;e.hitAt=time;d=Math.max(1,Math.round(d));}
+    else{const S=e.D.tot;if(Math.random()*100<S.dodge){floater(e.x,e.y-60,'Né','#cfe8ff',13);return;}d=dmg*Player.armorMul(S.def,Player.mapLevel(World.id))*(1-S.dmgRed/100)*(1-(e.red||0)/100);if(Math.random()*100<S.block)d*=.2;e.hitAt=time;d=Math.max(1,Math.round(d));}
     e.hp-=d;e.hurt=time;floater(e.x,e.y-(e.pet?MON[e.type].h+12:62),'-'+d,'#ffb0a0',13);
     if(e.hp<=0){
       e.hp=0;e.data.hpFrac=0;const i=allies.indexOf(e);if(i>=0)allies.splice(i,1);burst(e.x,e.y-20,'#cfcfcf',18,150);

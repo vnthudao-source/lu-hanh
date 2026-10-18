@@ -348,6 +348,20 @@ function capNhatV1012(){
   xoaBoNhoDem();Logger.log('ban_do: '+a+' ô cấp · cau_hinh cap_toi_da: '+b+' · nhiem_vu Tìm con: '+c+' ô npc · xóa '+d+' khung ở vat_pham, '+e+' ở cua_hang');
 }
 // v10.30: Hang Cướp còn 14 tên cướp (ghi lại dòng hang_cuop_so_cuop). Chạy một lần sau khi dán Code.gs mới.
+// v10.35: cân bằng toàn bộ — chép máu, sát thương, kinh nghiệm, thủ (cột mới thu) của mọi quái (tools/canbang.mjs), kinh nghiệm thưởng nhiệm vụ,
+// đường kinh nghiệm mới (exp_tang 250) và bậc sách 6–7 lên Sheet. Các dòng cấu hình mới (tốc đánh, tốc chạy, thủ, phạt chênh cấp, bậc đồ cao) do kiemTra thêm. Chạy kiemTra trước rồi chạy hàm này một lần.
+function capNhatV1035(){
+  lhDuLieuBoSung_();
+  const ghi=(tab,khoa,cols,chon)=>{const file=LH_SHEETS[LH_STATIC[tab]];if(!file)return 0;const sh=SpreadsheetApp.openById(file).getSheetByName(tab);if(!sh||sh.getLastRow()<2)return 0;
+    const v=sh.getDataRange().getValues(),h=v[0].map(String),ck=h.indexOf(khoa);if(ck<0)return 0;const def=new Map((LH_DEFAULT[tab]||[]).filter(r=>!chon||chon(r)).map(r=>[String(r[khoa]),r]));let n=0;
+    const out=v.map(r=>r.slice());
+    for(let i=1;i<v.length;i++){const d=def.get(String(v[i][ck]));if(!d)continue;for(const c of cols){const j=h.indexOf(c);if(j<0)continue;const val=d[c]===undefined||d[c]===null?'':d[c];if(String(v[i][j])!==String(val)){out[i][j]=val;n++;}}}
+    if(n)sh.getRange(1,1,out.length,h.length).setValues(out);return n;};
+  const a=ghi('quai','id',['mau','sat_thuong','kinh_nghiem','thu']),b=ghi('nhiem_vu','id',['thuong_kinh_nghiem']);
+  const keys=['sach_chi_so_hoa','sach_chi_so_thuy','sach_chi_so_tho','sach_chi_so_moc','sach_chi_so_loi','sach_chi_so_phong','sach_chi_so_sang','hoa_sat_thuong','thuy_hut_mau','tho_phan_don','kim_giam_sat_thuong','moc_hoi_mau','phong_ti_le','exp_tang','sach_bac_cap','sach_chi_so_bac','sach_menh_lenh_bac','sach_moi_cap_bac','sach_hieu_ung_bac','sach_hong_ngoc_bac','ma_so_quai_bac','ma_boss_bac','quai_nhan_mau','quai_nhan_sat_thuong','quai_nhan_kinh_nghiem','boss_nhan'];
+  const c=ghi('cau_hinh','khoa',['gia_tri','ghi_chu'],r=>keys.includes(String(r.khoa)));
+  xoaBoNhoDem();Logger.log('Đã ghi: quai '+a+' ô, nhiem_vu '+b+' ô, cau_hinh '+c+' ô (v10.35)');
+}
 // v10.34: 10 vùng cấp 400–999 — ghi cap_toi_da = 999 và lời kết mới của việc Tìm con tc-8 (con gái bị đưa qua Hư Không); các vùng, quái, dòng cấu hình mới do kiemTra thêm. Chạy kiemTra trước rồi chạy hàm này một lần.
 function capNhatV1034(){
   lhDuLieuBoSung_();

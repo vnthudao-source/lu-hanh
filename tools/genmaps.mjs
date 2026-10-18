@@ -296,8 +296,9 @@ function build(M,idx){
   const camps=M.kind==='battle'?[ // v10.34: chiến trường — bốn bãi quân đông quanh doanh trại
     {name:'Bãi '+M.mobs[0][1].toLowerCase(),x:9,y:21,r:4,mon:{[M.mobs[0][0]]:10,[M.mobs[1][0]]:4}},{name:'Bãi '+M.mobs[1][1].toLowerCase(),x:39,y:21,r:4,mon:{[M.mobs[1][0]]:8,[M.mobs[0][0]]:5}},
     {name:'Tiền quân',x:10,y:9,r:3,mon:{[M.mobs[0][0]]:7,[M.mobs[1][0]]:3}},{name:'Hậu quân',x:38,y:9,r:3,mon:{[M.mobs[1][0]]:6,[M.mobs[0][0]]:4}}]
-    :M.citadel?[{name:'Bãi '+M.mobs[0][1].toLowerCase(),x:7,y:16,r:3,mon:{[M.mobs[0][0]]:6,[M.mobs[1][0]]:2}},{name:'Bãi '+M.mobs[1][1].toLowerCase(),x:40,y:28,r:3,mon:{[M.mobs[1][0]]:5,[M.mobs[0][0]]:2}}]
-    :[{name:'Bãi '+M.mobs[0][1].toLowerCase(),x:10,y:20,r:3,mon:{[M.mobs[0][0]]:6,[M.mobs[1][0]]:2}},{name:'Bãi '+M.mobs[1][1].toLowerCase(),x:38,y:12,r:3,mon:{[M.mobs[1][0]]:5,[M.mobs[0][0]]:2}}];
+    // v10.35: thêm Bãi luyện công — bãi quái đông để cày kinh nghiệm
+    :M.citadel?[{name:'Bãi '+M.mobs[0][1].toLowerCase(),x:7,y:16,r:3,mon:{[M.mobs[0][0]]:6,[M.mobs[1][0]]:2}},{name:'Bãi '+M.mobs[1][1].toLowerCase(),x:40,y:28,r:3,mon:{[M.mobs[1][0]]:5,[M.mobs[0][0]]:2}},{name:'Bãi luyện công',x:7,y:6,r:3,mon:{[M.mobs[0][0]]:9,[M.mobs[1][0]]:3}}]
+    :[{name:'Bãi '+M.mobs[0][1].toLowerCase(),x:10,y:20,r:3,mon:{[M.mobs[0][0]]:6,[M.mobs[1][0]]:2}},{name:'Bãi '+M.mobs[1][1].toLowerCase(),x:38,y:12,r:3,mon:{[M.mobs[1][0]]:5,[M.mobs[0][0]]:2}},{name:'Bãi luyện công',x:37,y:24,r:3,mon:{[M.mobs[0][0]]:9,[M.mobs[1][0]]:3}}];
   const lair=M.citadel?{x:40,y:4}:{x:24,y:8};
   const keep=(x,y)=>inSafe(x,y)||Math.hypot(x-spawn.x,y-spawn.y)<=2.2||camps.some(c=>(x-c.x)**2+(y-c.y)**2<=(c.r+1.5)**2)||Math.hypot(x-lair.x,y-lair.y)<5||(ex&&Math.abs(x-ex.x-1)<=3&&Math.abs(y-ex.y)<=3)||(Math.abs(x-ent.x-1)<=3&&Math.abs(y-ent.y)<=3)||(M.kind==='battle'&&x>=17&&x<=33&&y>=2&&y<=14)||(M.kind==='arena'&&Math.hypot(x-24,y-17)<=7.2);
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){
@@ -314,7 +315,7 @@ function build(M,idx){
   if(M.citadel){for(let y=safe.y0;y<=safe.y1;y++)for(let x=safe.x0;x<=safe.x1;x++)g[y][x]=(x+y)%7===0?',':'.';}
   // đường đất: vào → sảnh → ra, và tới hai bãi
   const path=[];const road=(ax,ay,bx,by)=>{let x=ax,y=ay;while(x!==bx){path.push([x,y]);x+=Math.sign(bx-x);}while(y!==by){path.push([x,y]);y+=Math.sign(by-y);}path.push([x,y]);};
-  road(ent.x+1,ent.y,spawn.x,spawn.y);if(ex)road(spawn.x,spawn.y,ex.x+ (ex.w>1?1:0),ex.y+(ex.h>1?1:0));road(spawn.x,spawn.y,camps[0].x,camps[0].y);road(spawn.x,spawn.y,camps[1].x,camps[1].y);road(spawn.x,spawn.y,lair.x,lair.y);
+  road(ent.x+1,ent.y,spawn.x,spawn.y);if(ex)road(spawn.x,spawn.y,ex.x+ (ex.w>1?1:0),ex.y+(ex.h>1?1:0));for(const c of camps)road(spawn.x,spawn.y,c.x,c.y);road(spawn.x,spawn.y,lair.x,lair.y);
   for(const [px,py] of path){for(const [dx,dy] of [[0,0],[1,0],[0,1]]){const x=px+dx,y=py+dy;if(x>0&&x<W-1&&y>0&&y<H-1&&(g[y][x]==='#'||g[y][x]==='~'||g[y][x]==='"'))g[y][x]='.';}if(g[py][px]!=='~'&&!inSafe(px,py))g[py][px]=':';}
   for(const P of [ent,ex].filter(Boolean))for(let y=P.y;y<P.y+(P.h||1);y++)for(let x=P.x;x<P.x+(P.w||1);x++)g[y][x]='.';
   // vật trang trí

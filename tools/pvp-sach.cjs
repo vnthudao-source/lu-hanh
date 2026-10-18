@@ -21,7 +21,7 @@ function hero(L,el,q,lv,bookT){
   const keep=seed;seed=99991+L*7+lv;Object.assign(s.equipment,gear(L,q,lv));   // cùng một bộ đồ cho mọi hệ
 
   for(let i=0;i<5;i++){const b=P.roll(BOOK[el],q,rnd);b.t=bookT;b.lv=lv;s.skillSlots[i]=b;}
-  seed=keep;const D=P.derive(s);return {el,D,S:D.tot,B:D.bfx||{},bef:D.bef||{}};
+  seed=keep;const D=P.derive(s);return {el,L,D,S:D.tot,B:D.bfx||{},bef:D.bef||{}};
 }
 // Xoay vòng kỹ năng như người chơi: Cao cấp → Trung cấp → Cơ bản → đánh thường (hồi chiêu giảm theo cdr từ Trí tuệ, tốn mana)
 const SKL=[['advanced',28,10,.55,5,.75],['intermediate',18,6,1.2,1,1.15],['basic',10,3,.7,3,.85]],W={dur:.42,mana:.9,cd:1.1};
@@ -46,7 +46,7 @@ function duel(A,B){
       if(time<a.morph)v*=num(CFG.phong_hoa_sat_thuong,2);
       if(a.h.B.shatter&&time<d.stun&&d.frz)v*=1+a.h.B.shatter/100;
       v+=S.trueDmg||0;
-      const red=x=>{let y=x;if(rnd()*100<D.block)y*=.2;y*=100/(100+D.def*4);y*=1-(D.dmgRed||0)/100;return Math.max(1,y);};
+      const red=x=>{let y=x;if(rnd()*100<D.block)y*=.2;y*=P.armorMul(D.def,a.h.L);y*=1-(D.dmgRed||0)/100;return Math.max(1,y);};
       let dmg=red(v);const ms=d.h.D.fx.manaShield;if(ms){const part=Math.min(d.mp,dmg*ms/100);d.mp-=part;d.hp-=dmg-part;}else d.hp-=dmg;
       const ls=a.h.D.fx.lifesteal;if(ls)a.hp=Math.min(S.hp,a.hp+dmg*ls/100);
       const Bf=a.h.B;
