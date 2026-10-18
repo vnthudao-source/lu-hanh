@@ -133,6 +133,13 @@ function LH_Core(A){
         A.insert('nhan_vat',c);return {char:charView(c)};
       });
     },
+    // v10.31: xoá nhân vật (gõ đúng tên để xác nhận); còn hàng bày ở chợ thì phải hủy trước. Đánh dấu deleted, tên được dùng lại
+    delChar(p){
+      const a=auth(p.token);
+      return A.lock(()=>{const c=ownChar(a,p.charId);if(c.trang_thai!=='active'&&c.trang_thai!=='merc')fail('SAI_TRANG_THAI');if(String(p.name||'').trim()!==String(c.ten))fail('SAI_TEN');
+        if(where('cho','nhan_vat_ban',c.id).some(r=>r.trang_thai==='mo'))fail('CON_HANG_CHO');
+        c.trang_thai='deleted';c.cap_nhat=A.now();A.update('nhan_vat',c);return {id:c.id};});
+    },
     load(p){
       const a=auth(p.token);
       return A.lock(()=>{const c=ownChar(a,p.charId,'active'),st=stateOf(c);if(!c.luu)storeState(c,st,st.player);return {char:charView(c),save:{player:st.player,pos:st.save.pos||null,seen:st.save.seen||[]}};});

@@ -90,8 +90,22 @@
     const chip=(t,v)=>`<span class="ti-c"><small>${t}</small><b>${v}</b></span>`;
     el.innerHTML=`<div class="ti-head"><b>${esc(c.name)}</b><small>Lv. ${k.level||c.level||1} · ${c.gender==='f'?'Nữ':'Nam'}</small></div>
       <div class="ti-stats">${chip('Sức mạnh',m.str)}${chip('Nhanh nhẹn',m.agi)}${chip('Sức khỏe',m.vit)}${chip('Trí tuệ',m.int)}${chip('Mệnh lệnh',m.cmd)}${k.dmg?chip('Sát thương',k.dmg[0]+'–'+k.dmg[1]):''}${k.hp?chip('Máu',k.hp):''}${chip('Lính',(k.mercs||0)+'/'+Player.MAX_MERC)}${k.pets?chip('Quái thu phục',k.pets):''}</div>
+      ${c.status==='merc'?'':`<div class="ti-del"><button class="ghost" id="tDel">✕ Xoá nhân vật</button></div>`}
       ${c.status==='merc'?`<p class="hint2">Đang cho thuê ở Chợ phiên · ${c.price?money(c.price):''}${c.price&&c.ruby?' + ':''}${c.ruby?c.ruby+' hồng ngọc':''}</p>`:`<button class="primary big-btn" id="tEnter">Vào làng</button>`}`;
     const b=$('#tEnter');if(b)b.onclick=()=>enter(c.id,r.claim,b);
+    const dl=$('#tDel');if(dl)dl.onclick=()=>delForm(c);
+  }
+  // v10.31: xoá nhân vật — gõ đúng tên để xác nhận, xoá vĩnh viễn (tên được dùng lại)
+  function delForm(c){
+    const el=$('#tentInfo');if(!el)return;
+    el.innerHTML=`<div class="ti-head"><b>Xoá ${esc(c.name)}?</b></div><p class="hint2">Nhân vật, đồ, lính, tiền và hồng ngọc của nhân vật này sẽ mất vĩnh viễn, không lấy lại được. Gõ đúng tên <b>${esc(c.name)}</b> để xác nhận.</p>
+      <input id="tDelName" class="ti-del-in" autocomplete="off" placeholder="${esc(c.name)}"><div class="ti-del-row"><button id="tDelNo">Thôi</button><button class="danger big-btn" id="tDelGo" disabled>Xoá vĩnh viễn</button></div>`;
+    const inp=$('#tDelName'),go=$('#tDelGo');inp.focus();inp.oninput=()=>{go.disabled=inp.value.trim()!==c.name;};
+    $('#tDelNo').onclick=()=>info();
+    go.onclick=async()=>{busy(go,true);try{await Net.call('delChar',{charId:c.id,name:inp.value.trim()});
+        try{localStorage.removeItem('lh-last-map-'+c.id);LH_Local.clear(c.id);}catch(e){}
+        const r=T.r;r.chars=r.chars.filter(x=>x.id!==c.id);charsKeep(r);T.sel=Math.min(T.sel,Math.max(0,r.chars.length));note('Đã xoá '+c.name,true);info();}
+      catch(e){busy(go,false);note(netMsg(e));}};
   }
   function createForm(el){
     const total=Number(Player.CFG.diem_khoi_tao)||50;T.st=T.st||{strength:13,agility:13,vitality:12,intelligence:12};const st=T.st;
@@ -188,7 +202,7 @@
       // v10.12: gói bản đồ nhân vật đứng lần trước tải song song với lệnh load (khóa lh-last-map-<id>)
       let lastMap='';try{lastMap=localStorage.getItem('lh-last-map-'+charId)||'';}catch(e){}if(lastMap)World.prefetch(lastMap);
       await LH_Local.push(charId);
-      const r=await Net.call('load',{charId});
+      const [r]=await Promise.all([Net.call('load',{charId}),dataReady]);
       L.step(45,'Dựng làng Thanh Mộc',88);
       // dựng bản đồ nhân vật đang đứng (bản đồ chưa có trong game thì tải gói dữ liệu; lỗi thì về làng)
       const mid=(r.save&&r.save.pos&&r.save.pos.map)||World.DEFAULT,got=await World.enter(mid);try{localStorage.setItem('lh-last-map-'+charId,got);}catch(e){}
@@ -201,6 +215,7 @@
       await L.done({label:'Vào làng'});
     }catch(e){L.hide();root.hidden=false;note(netMsg(e));busy(btn,false);}
   }
+  let dataReady=Promise.resolve();
   (async()=>{
     // nối tiếp thanh tải của file khởi động (nếu có), rồi tới kết nối máy chủ và tải nhân vật
     const from=L.visible?70:0;L.show({keep:from>0,label:'Kết nối máy chủ Việt Nam',bg:'tai_game'}).step(from,'Kết nối máy chủ Việt Nam',from+(100-from)*.45);
@@ -211,9 +226,11 @@
     let pChars=null;
     if(Net.online){
       if(Net.token)pChars=Net.call('chars').catch(e=>({__err:e}));
-      try{const d=await Net.call('data',{h:cached?cached.h:''});
+      // v10.31: dữ liệu tĩnh tải song song, không chặn đăng nhập / căn lều; chỉ chờ lúc bấm Vào làng
+      dataReady=(async()=>{try{const d=await Net.call('data',{h:cached?cached.h:''});
         if(!d.same&&d.data&&d.data.vat_pham){Player.load(d.data);LH_IMG.set(d.data.hinh_anh);paintPortal();try{localStorage.setItem('lh-data-cache',JSON.stringify({h:d.h||'',data:d.data}));}catch(e){}}
-      }catch(e){if(!cached)note('Không tải được dữ liệu từ máy chủ, dùng dữ liệu mặc định');}
+      }catch(e){if(!cached)note('Không tải được dữ liệu từ máy chủ, dùng dữ liệu mặc định');}})();
+      if(!cached)await dataReady; // lần đầu (chưa có dữ liệu trong máy) vẫn chờ
     }
     L.step(from+(100-from)*.45,Net.token?'Tải nhân vật':'Sẵn sàng',from+(100-from)*.92);
     if(Net.token)await chars(undefined,pChars);else auth('login');

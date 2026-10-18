@@ -199,6 +199,14 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
 
+## Bản 10.31 — vào lều nhanh, xoá nhân vật, sách Phong hoá quái, sách Thổ Trêu ngươi, PK ở Hang động, cỏ may mắn khi chiêu mộ
+- Vào phòng chọn nhân vật nhanh: dữ liệu tĩnh tải song song (không chặn đăng nhập / căn lều, chỉ chờ khi bấm Vào làng nếu chưa xong); máy chủ giữ đệm dữ liệu 6 giờ (`LH_CACHE_GIAY`), hàm `tuDongLamMoi()` tạo trigger tự xoá đệm khi sửa tay Sheet.
+- Xoá nhân vật: nút «Xoá nhân vật» trong căn lều, gõ đúng tên để xác nhận; lệnh `delChar` (đánh dấu `deleted`, tên dùng lại được; còn hàng bày ở chợ thì phải hủy trước).
+- Sách Phong: mỗi đòn trúng có % hoá thành chính quái đó, sát thương ×`phong_hoa_sat_thuong` (2). % = `phong_hoa_ti_le` × (bậc thành × phẩm chất) + `phong_hoa_moi_cap` × cấp luyện; thời gian = max(`phong_hoa_giay` 6, cấp luyện) giây.
+- Sách Thổ: Sức khỏe của sách ×`tho_suc_khoe_nhan` (2); «Trêu ngươi»: mỗi đòn trúng có % (`tho_treu_ti_le` × bậc × phẩm chất + 1%/cấp) kéo mọi quái trong `tho_treu_ban_kinh` quay sang đánh nhân vật `tho_treu_giay` giây.
+- Hang động: đang đánh quái thì thỉnh thoảng (`pk_ti_le` % mỗi `pk_giay` giây) một người chơi ảo đánh lén; máu ≈ `pk_so_don` đòn của nhân vật, mỗi đòn trừ ~`pk_sat_thuong` % máu (hạ được người chơi). Đánh thắng: lệnh `pkWin` → 1 lượt chiêu mộ miễn phí (`flags.freeRecruit`, tối đa 5) dùng ở Thanh Mộc.
+- Đơn chiêu mộ dùng được cỏ may mắn: mỗi cỏ chuyển `co_may_man_chieu_mo` % từ lính thường sang tinh nhuệ + thiện chiến; % huyền thoại, thần thoại không đổi.
+
 ## Bản 10.30 — người chơi ảo trêu chuyện Hang Cướp, còn 14 tên cướp
 - Trả lời sai mật khẩu đánh dấu `caveBad`. Lần đầu về làng Thanh Mộc sau đó: người chơi ảo gần nhất nói «Ở đây không phải truyện cổ tích đâu!», «“Vừng ơi mở ra” kkk», «Đáp án phải là D “Bà ơi đừng la!”» (dấu `caveTaunt`). Các lần sau, khi chưa trả lời đúng, cứ 1–2,5 phút lại có người nhắc.
 - `hang_cuop_so_cuop` 40 → 14 (chạy `capNhatV1030()` để ghi vào Sheet).

@@ -150,8 +150,9 @@ const Player=(()=>{
   const bookFx=it=>lst('sach_hieu_ung_bac','0.4,0.6,0.8,1,1.2',bookBac(it))*lst('sach_hieu_ung_pham_chat','1,1.15,1.3,1.5,1.8',qIdx(it));
   const bookPerLv=it=>lst('sach_moi_cap_bac','0.5,1,1.5,2,3',bookBac(it));
   const bookStat=it=>{const d=info(it);if(!d||!d.element)return {};const b=bookBac(it),k=ELEMENTS[d.element].st,
+    // v10.31: sách Thổ cộng Sức khỏe ×tho_suc_khoe_nhan
     base=d.element==='demon'?lst('sach_menh_lenh_bac','5,10,15,20,20',b):lst('sach_chi_so_bac','3,8,15,25,40',b),
-    v=Math.round(base*lst('sach_pham_chat_he_so','1,1.3,1.7,2.3,3',qIdx(it))+bookPerLv(it)*(it.lv||0));return Object.fromEntries(k.map(x=>[x,k.length>1?Math.ceil(v/2):v]));};
+    v=Math.round((base*lst('sach_pham_chat_he_so','1,1.3,1.7,2.3,3',qIdx(it))+bookPerLv(it)*(it.lv||0))*(d.element==='earth'?num(CFG.tho_suc_khoe_nhan,2):1));return Object.fromEntries(k.map(x=>[x,k.length>1?Math.ceil(v/2):v]));};
   // Sách Ma công: số quái tối đa, hệ số thu phục trùm
   const demonOf=it=>{const b=bookBac(it),q=qIdx(it);return {b,q,lv:it.lv||0,ef:bookFx(it),max:lst('ma_so_quai_bac','1,2,2,3,3',b)+lst('ma_so_quai_pham_chat','0,0,0,1,1',q),boss:lst('ma_boss_bac','0,0,0.05,0.1,0.2',b)};};
   // Thú cưỡi: Mệnh lệnh cần = mức theo loài + cấp thú (d.cmd) + phẩm chất + cấp gia cường
@@ -298,7 +299,11 @@ const Player=(()=>{
     const books={},blv={},bef={};let demon=null;for(const it of (s.skillSlots||[])){const d=info(it);if(d&&d.element){const e=d.element,f=bookFx(it);books[e]=true;blv[e]=Math.max(blv[e]??-1,it.lv||0);bef[e]=Math.max(bef[e]||0,f);for(const [k,v] of Object.entries(bookStat(it)))add(k,v);
       if(e==='demon'){const o=demonOf(it);if(!demon||o.ef>demon.ef||(o.ef===demon.ef&&o.lv>demon.lv))demon=o;}}}
     const r1=v=>Math.round(v*10)/10,pc=(k,f,e)=>blv[e]>=0?r1(num(CFG[k],f)*bef[e]+num(CFG.sach_ti_le_cap,1)*blv[e]):0;
-    const bfx={thunder:pc('loi_ti_le',12,'thunder'),wind:pc('phong_ti_le',20,'wind'),ice:pc('bang_ti_le',10,'ice'),light:pc('sang_ti_le',15,'light'),demon:blv.demon>=0?blv.demon:-1};
+    const bfx={thunder:pc('loi_ti_le',12,'thunder'),wind:pc('phong_ti_le',20,'wind'),ice:pc('bang_ti_le',10,'ice'),light:pc('sang_ti_le',15,'light'),demon:blv.demon>=0?blv.demon:-1,
+      // v10.31: Phong — mỗi đòn trúng có % hoá thành chính quái đó (sát thương ×2), tỉ lệ theo bậc × phẩm chất + cấp luyện; thời gian = max(6, cấp luyện) giây
+      morph:blv.wind>=0?r1(num(CFG.phong_hoa_ti_le,3)*bef.wind+num(CFG.phong_hoa_moi_cap,.3)*blv.wind):0,morphSec:blv.wind>=0?Math.max(num(CFG.phong_hoa_giay,6),blv.wind):0,
+      // v10.31: Thổ — Trêu ngươi: mỗi đòn trúng có % kéo mọi quái quanh nhân vật quay sang đánh mình
+      taunt:blv.earth>=0?r1(num(CFG.tho_treu_ti_le,20)*bef.earth+num(CFG.sach_ti_le_cap,1)*blv.earth):0};
     if(books.water)add('mpReg',r1(num(CFG.thuy_hoi_mana,3)*bef.water));if(books.wood)add('hpReg',r1(num(CFG.moc_hoi_mau,2)*bef.wood));if(books.earth)add('reflect',r1(num(CFG.tho_phan_don,30)*bef.earth));if(books.metal)add('dmgRed',r1(num(CFG.kim_giam_sat_thuong,25)*bef.metal));
     const fireK=books.fire?1+num(CFG.hoa_sat_thuong,25)*bef.fire/100:1;
     const st=s.stats||{},al=s.alloc||{};
@@ -339,8 +344,11 @@ const Player=(()=>{
   const mountPow=()=>num(CFG.thu_cuoi_nhan_chi_so,1); // v10.17: công, thủ và đòn của thú cưỡi
   // Đơn chiêu mộ (chieu_mo_hong_ngoc hồng ngọc một lần): rút phẩm cấp theo chieu_mo_ti_le; thường / tinh nhuệ / thiện chiến lấy mẫu lính của thành đang đứng,
   // huyền thoại / thần thoại là danh tướng (TUONG) mặc sẵn bộ huyền thoại / bộ thần, tháo ra cho người chơi dùng được. Giá theo cấp thành (f = cấp/300)
-  function recruitRoll(mapId,rng,now){
-    const P=cfgList('chieu_mo_ti_le','50,35,10,3,2'),tot=P.reduce((a,b)=>a+b,0);let x=rng()*tot,ti=P.length-1;for(let i=0;i<P.length;i++){x-=P[i];if(x<0){ti=i;break;}}
+  function recruitRoll(mapId,rng,now,luck=0){
+    const P=cfgList('chieu_mo_ti_le','50,35,10,3,2').map(num);
+    // v10.31: cỏ may mắn chuyển % từ lính thường sang tinh nhuệ, thiện chiến (chia đôi); không đổi % huyền thoại, thần thoại
+    if(luck>0){const mv=Math.min(P[0],luck*num(CFG.co_may_man_chieu_mo,2));P[0]-=mv;P[1]+=mv/2;P[2]+=mv/2;}
+    const tot=P.reduce((a,b)=>a+b,0);let x=rng()*tot,ti=P.length-1;for(let i=0;i<P.length;i++){x-=P[i];if(x<0){ti=i;break;}}
     const tier=TIERS[ti],base=Math.max(1,mapLevel(mapId)||1),f=Math.max(0,Math.min(1,base/300)),lv=Math.max(1,ti>=3?base+Math.floor(rng()*11):base+[0,10,20,35,50][ti]+Math.floor(rng()*11));
     // v10.25: danh tướng (Huyền thoại, Thần thoại) không theo hệ lính thường: chỉ số cố định tuong_diem dù chiêu mộ ở làng hay thành cuối; cấp = cấp nơi chiêu mộ (+0..10)
     const pts=ti>=3?tuongPts(tier):Math.round(lv*num(CFG.linh_diem_cap,3)*(1+ti*.25)),keys=['strength','agility','vitality','intelligence'],w=keys.map(()=>rng()+.15),L=Math.round;
@@ -356,7 +364,9 @@ const Player=(()=>{
     o.price=ti===0?{copper:lerp(1,100)*10000}:ti===1?(f<.25?{copper:L(100+300*f/.25)*10000}:{rubies:lerp(10,100)}):ti===2?{rubies:lerp(100,500)}:{rubies:Math.round(ti===4?num(CFG.tuong_gia_than,2000):num(CFG.tuong_gia_huyen_thoai,500))}; // v10.25: giá danh tướng như nhau mọi nơi
     o.map=mapId;o.at=now;return o;
   }
-  function recruit(s,mapId,rng,now){const cost=num(CFG.chieu_mo_hong_ngoc,100);if(s.rubies<cost)throw Error('RUBY');s.rubies-=cost;s.recruit=recruitRoll(String(mapId||''),rng,now);return s.recruit;}
+  function recruit(s,mapId,rng,now,luck=0,free=false){if(s.recruit)throw Error('CHIEU_MO_DO');const cost=num(CFG.chieu_mo_hong_ngoc,100);
+    if(free){if(String(mapId)!=='thanh-moc')throw Error('CHI_THANH_MOC');if(!(num(s.flags.freeRecruit)>0))throw Error('HET_LUOT');}else if(s.rubies<cost)throw Error('RUBY');
+    const L=useLuck(s,luck);if(free)s.flags.freeRecruit=num(s.flags.freeRecruit)-1;else s.rubies-=cost;s.recruit=recruitRoll(String(mapId||''),rng,now,L);return s.recruit;}
   function recruitHire(s,rng){
     const o=s.recruit;if(!o)throw Error('CHIEU_MO');if(s.mercs.length>=MAX_MERC)throw Error('MERC_FULL');
     if(num(o.price.copper)>s.copper)throw Error('MONEY');if(num(o.price.rubies)>s.rubies)throw Error('RUBY');
@@ -547,7 +557,7 @@ const Player=(()=>{
     if(Number.isFinite(+p.rs))s.rs=(+p.rs)|0;
     s.copper=Math.floor(n(p.copper,0,Number.MAX_SAFE_INTEGER,0));s.rubies=Math.floor(n(p.rubies,0,Number.MAX_SAFE_INTEGER,0));s.luck=Math.floor(n(p.luck,0,9999,0));
     s.stats.command=Math.floor(n(p.stats&&p.stats.command,0,999,s.stats.command));
-    if(p.flags){s.flags.river=!!p.flags.river;s.flags.hunted=!!p.flags.hunted;if(Array.isArray(p.flags.tutGift))s.flags.tutGift=p.flags.tutGift.slice(0,6).map(String);if(p.flags.tutDied)s.flags.tutDied=true;if(p.flags.caveOk)s.flags.caveOk=true;if(Number.isFinite(+p.flags.caveDay)&&p.flags.caveDay!=null)s.flags.caveDay=Math.floor(+p.flags.caveDay);if(p.flags.wells&&typeof p.flags.wells==='object')for(const [k,v] of Object.entries(p.flags.wells))if(/^gieng-\d+$/.test(k)&&Number.isFinite(+v))s.flags.wells[k]=+v;for(const [k,v] of Object.entries(p.flags.kills||{}))if(MON[k])s.flags.kills[k]=Math.floor(n(v,0,1e9,0));}
+    if(p.flags){s.flags.river=!!p.flags.river;s.flags.hunted=!!p.flags.hunted;if(Array.isArray(p.flags.tutGift))s.flags.tutGift=p.flags.tutGift.slice(0,6).map(String);if(p.flags.tutDied)s.flags.tutDied=true;if(p.flags.caveOk)s.flags.caveOk=true;if(num(p.flags.freeRecruit)>0)s.flags.freeRecruit=Math.min(5,Math.floor(num(p.flags.freeRecruit)));if(Number.isFinite(+p.flags.caveDay)&&p.flags.caveDay!=null)s.flags.caveDay=Math.floor(+p.flags.caveDay);if(p.flags.wells&&typeof p.flags.wells==='object')for(const [k,v] of Object.entries(p.flags.wells))if(/^gieng-\d+$/.test(k)&&Number.isFinite(+v))s.flags.wells[k]=+v;for(const [k,v] of Object.entries(p.flags.kills||{}))if(MON[k])s.flags.kills[k]=Math.floor(n(v,0,1e9,0));}
     const extra=[],eq=Object.fromEntries(slots.map(k=>[k,null]));
     for(const k of slots){const it=valid(p.equipment&&p.equipment[k]);if(!it)continue;const d=items[it.type];const ok=(d.slot==='hand'?(k==='left'||k==='right'):d.slot===k)&&(!d.gender||d.gender===s.gender);if(ok)eq[k]=it;else extra.push(it);}
     if(isTwo(eq.left)){extra.push(eq.left);eq.left=null;}
@@ -615,7 +625,7 @@ const Player=(()=>{
   // Các lệnh làm thay đổi tiền/đồ, chạy trên máy chủ (và trên trình duyệt ở chế độ ngoại tuyến)
   // số lần hạ một loài quái trong một lượt hồi sinh: bãi quái lớn có nhiều con cùng loài (Sheet cau_hinh gioi_han_ha_quai)
   const KILL_LIMIT=id=>MON[id].boss?1:num(CFG.gioi_han_ha_quai,16);
-  const PREDICT=new Set(['kill','buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff','av','fuse','use','cos','die','quiz','quizHunt','eventWin','recruit','recruitHire','tutGift','cavePass','caveChest']);
+  const PREDICT=new Set(['kill','buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff','av','fuse','use','cos','die','quiz','quizHunt','eventWin','recruit','recruitHire','tutGift','cavePass','caveChest','pkWin']);
   // v10.13: khóa chữ ký kết quả Thầy đồ (máy chủ ký bằng khóa bí mật; trình duyệt chỉ áp dụng trước, máy chủ kiểm khi nhận gói lưu)
   const quizKey=(cid,bo,wrong)=>'quiz|'+cid+'|'+bo+'|'+(wrong||[]).join(',');
   function applyOp(s,op,srv,now=Date.now(),rng=Math.random){
@@ -689,7 +699,9 @@ const Player=(()=>{
     if(t==='pt'){spendPoints(s,String(op.k),op.n);return {k:op.k,points:s.points};}
     if(t==='dismiss'){const i=Math.floor(op.i),m=s.mercs[i];dismissMerc(s,i);return {name:m?m.name:''};}
     // v10.14: đơn chiêu mộ — gửi (tốn hồng ngọc, rút phẩm cấp), nhận lính đang chào, hoặc bỏ qua
-    if(t==='recruit'){return {offer:recruit(s,op.map,rng,now),rubies:s.rubies};}
+    if(t==='recruit'){return {offer:recruit(s,op.map,rng,now,op.luck,!!op.free),rubies:s.rubies,luck:s.luck,free:num(s.flags.freeRecruit)};}
+    // v10.31: thắng người chơi ảo đánh lén ở Hang động → 1 lượt chiêu mộ miễn phí ở Thanh Mộc (cách nhau ít nhất 60 giây, giữ tối đa 5 lượt)
+    if(t==='pkWin'){srv.pkAt=num(srv.pkAt);if(now-srv.pkAt<60000)throw Error('NHANH_QUA');srv.pkAt=now;s.flags.freeRecruit=Math.min(5,num(s.flags.freeRecruit)+1);return {free:s.flags.freeRecruit};}
     if(t==='recruitHire'){const m=recruitHire(s,rng);return {mid:m.mid,name:m.name,lv:m.lv,tier:m.tier};}
     if(t==='recruitDrop'){s.recruit=null;return {};}
     throw Error('LENH');

@@ -37,7 +37,7 @@ function lhRows_(sh,cols){
 }
 // Bộ nhớ đệm dữ liệu tĩnh (v10.7): gói dữ liệu đã hơn 100 KB (giới hạn một ô CacheService) nên nén gzip rồi chia nhiều ô; trước đây quá 95 KB là bỏ không đệm,
 // khiến mọi lệnh gọi phải đọc lại toàn bộ Sheet (rất chậm, trang tải đứng ở ~96%).
-const LH_CACHE_GIAY=300;
+const LH_CACHE_GIAY=21600; // v10.31: giữ 6 giờ (trước 5 phút) cho vào game nhanh; kiemTra, capNhat…, xoaBoNhoDem và trigger tuDongLamMoi tự xoá đệm khi Sheet đổi
 function lhCachePut_(key,s){
   try{const z=Utilities.base64Encode(Utilities.gzip(Utilities.newBlob(s,'text/plain')).getBytes()),o={},n=Math.ceil(z.length/90000);
     for(let i=0;i<n;i++)o[key+'-'+i]=z.slice(i*90000,(i+1)*90000);o[key]=n+':'+z.length;CacheService.getScriptCache().putAll(o,LH_CACHE_GIAY);}catch(e){}
@@ -148,6 +148,12 @@ function doGet(e){
   return ContentService.createTextOutput(q?lhRun_(p):JSON.stringify(LH.handle('ping',{}))).setMimeType(ContentService.MimeType.JSON);
 }
 function xoaBoNhoDem(){lhCacheXoa_('lh-data');}
+// v10.31: chạy một lần — tạo trigger: sửa tay bất kỳ file Sheet dữ liệu tĩnh nào (cấu hình, vật phẩm, quái…) thì tự xoá bộ nhớ đệm, game nhận số mới ngay
+function tuDongLamMoi(){
+  const have=new Set(ScriptApp.getProjectTriggers().filter(t=>t.getHandlerFunction()==='xoaBoNhoDem').map(t=>t.getTriggerSourceId()));let n=0;
+  for(const [k,id] of Object.entries(LH_SHEETS)){if(!id||k==='nguoi_choi'||have.has(id))continue;ScriptApp.newTrigger('xoaBoNhoDem').forSpreadsheet(id).onEdit().create();n++;}
+  Logger.log('Đã tạo '+n+' trigger tự xoá bộ nhớ đệm khi sửa Sheet');
+}
 // Dọn bảng chợ: món đã hủy, món đã bán và đã nhận tiền chuyển sang tab cho_cu (bảng cho chỉ còn hàng đang bày + tiền chưa nhận).
 // caiDat tạo lịch chạy hằng ngày lúc 3 giờ sáng; chạy tay lúc nào cũng được.
 function donCho(){
