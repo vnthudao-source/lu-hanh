@@ -199,6 +199,16 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
 
+## Bản 10.16
+
+Năm hệ số mới trong tab `cau_hinh` (kiemTra tự thêm; sửa trên Sheet rồi chạy `xoaBoNhoDem` là có hiệu lực, không cần dán lại mã):
+- `linh_nhan_chi_so` = 2: máu và sát thương mọi lính đánh thuê ×2 (nhân thêm với hệ số phẩm cấp `linh_he_so`).
+- `linh_nhan_menh_lenh` = 10: Mệnh lệnh cần để cho lính đi theo = cột `menh_lenh` của lính × 10. Khi vào game, lính vượt quá Mệnh lệnh hiện có tự chuyển sang nghỉ.
+- `quai_nhan_mau` = 0.25, `quai_nhan_sat_thuong` = 0.25: máu và sát thương mọi quái, boss, quái sự kiện còn 1/4. Kinh nghiệm, tiền rơi giữ nguyên; quái thu phục giữ chỉ số gốc.
+- `thu_cuoi_nhan_gia` = 20: giá thú cưỡi ở cửa hàng ×20 (giá bán lại theo tỉ lệ cũ nên cũng ×20).
+
+Nạp thẻ có 6 gói vàng (tab `goi_nap`, cột mới `vang`): 20K → 100 vàng · 50K → 275 · 100K → 600 · 200K → 1.300 · 500K → 3.500 · 1 triệu → 7.500. Cộng tay: `napVang('tên', số vàng)` hoặc `napGoi('tên', 'vang-100')` (napGoi cũng dùng được cho gói hồng ngọc). Nhật ký tab `nap_the` thêm cột `vang`.
+
 ## Bản 10.15
 
 - Bổ sung 631 ảnh vật phẩm vẽ sẵn còn thiếu (`dist/anh/vat_pham`): Đao, Chùy, đồ của 4 thành, đồ vùng và 60 bộ huyền thoại / thần của 30 danh tướng. Hàm `capNhatAnh` hết báo lỗi 404.

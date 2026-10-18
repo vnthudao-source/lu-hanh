@@ -272,19 +272,27 @@ function taoNhanVatThu(username,cap){
     c.luu=JSON.stringify({v:Player.VERSION,player:p,pos:null,seen:[],srv:{}});LH_DB.insert('nhan_vat',c);Logger.log('Đã tạo '+d.ten+' (cấp '+cap+')');
   }
 }
-// Nạp hồng ngọc tay sau khi nhận tiền chuyển khoản (NPC Nạp thẻ chỉ hiện mã QR, không tự cộng):
-// napHongNgoc('tên nhân vật', 120) hoặc napHongNgoc('tên đăng nhập', 120) (cộng vào nhân vật đầu tiên đang hoạt động của tài khoản). Ghi nhật ký vào tab nap_the.
-function napHongNgoc(ten,soLuong){
-  ten=String(ten||'').trim();soLuong=Math.floor(Number(soLuong)||0);if(!ten||soLuong<=0){Logger.log('Cú pháp: napHongNgoc(\'tên nhân vật hoặc tên đăng nhập\', số hồng ngọc)');return;}
+// Nạp tay sau khi nhận tiền chuyển khoản (NPC Nạp thẻ chỉ hiện mã QR, không tự cộng). Tên = tên nhân vật hoặc tên đăng nhập
+// (cộng vào nhân vật đầu tiên đang hoạt động của tài khoản). Ghi nhật ký vào tab nap_the.
+//   napHongNgoc('tên', 120)      cộng 120 hồng ngọc
+//   napVang('tên', 600)          cộng 600 vàng (v10.16)
+//   napGoi('tên', 'vang-100')    cộng đúng số hồng ngọc / vàng của gói trong tab goi_nap (cột id)
+function napHongNgoc(ten,soLuong){lhNap_(ten,Math.floor(Number(soLuong)||0),0);}
+function napVang(ten,soVang){lhNap_(ten,0,Math.floor(Number(soVang)||0));}
+function napGoi(ten,goi){Player.load(lhStatic_());const G=Player.TOPUPS.find(g=>g.id===String(goi||'').trim());if(!G){Logger.log('Không có gói '+goi+'. Các gói: '+Player.TOPUPS.map(g=>g.id).join(', '));return;}lhNap_(ten,G.ruby,G.gold);}
+function lhNap_(ten,ruby,vang){
+  ten=String(ten||'').trim();ruby=Math.max(0,Math.floor(ruby||0));vang=Math.max(0,Math.floor(vang||0));
+  if(!ten||!(ruby>0||vang>0)){Logger.log("Cú pháp: napHongNgoc('tên', số hồng ngọc) · napVang('tên', số vàng) · napGoi('tên', 'mã gói')");return;}
   Player.load(lhStatic_());
   let c=LH_DB.where('nhan_vat','ten_khoa',ten.toLowerCase()).find(x=>x.trang_thai==='active'||x.trang_thai==='merc');
   if(!c){const a=LH_DB.find('tai_khoan','username',ten.toLowerCase());if(a)c=LH_DB.where('nhan_vat','tai_khoan',a.id).find(x=>x.trang_thai==='active'||x.trang_thai==='merc');}
   if(!c){Logger.log('Không thấy nhân vật / tài khoản '+ten);return;}
   const l=LockService.getScriptLock();l.waitLock(15000);
-  try{let save={};try{save=JSON.parse(c.luu||'{}');}catch(e){}const p=save.player||Player.create({name:c.ten,gender:c.gioi_tinh});p.rubies=Math.floor(Number(p.rubies)||0)+soLuong;save.player=p;save.v=Player.VERSION;c.luu=JSON.stringify(save);c.cap_nhat=Date.now();LH_DB.update('nhan_vat',c);}
+  try{let save={};try{save=JSON.parse(c.luu||'{}');}catch(e){}const p=save.player||Player.create({name:c.ten,gender:c.gioi_tinh});p.rubies=Math.floor(Number(p.rubies)||0)+ruby;p.copper=Math.floor(Number(p.copper)||0)+vang*10000;save.player=p;save.v=Player.VERSION;c.luu=JSON.stringify(save);c.cap_nhat=Date.now();LH_DB.update('nhan_vat',c);}
   finally{l.releaseLock();}
-  try{const ss=SpreadsheetApp.openById(LH_SHEETS.nguoi_choi);let sh=ss.getSheetByName('nap_the');if(!sh){sh=ss.insertSheet('nap_the');sh.appendRow(['luc','nhan_vat','tai_khoan','hong_ngoc']);sh.setFrozenRows(1);}sh.appendRow([new Date(),c.ten,c.tai_khoan,soLuong]);}catch(e){}
-  Logger.log('Đã cộng '+soLuong+' hồng ngọc cho '+c.ten);
+  try{const ss=SpreadsheetApp.openById(LH_SHEETS.nguoi_choi);let sh=ss.getSheetByName('nap_the');if(!sh){sh=ss.insertSheet('nap_the');sh.appendRow(['luc','nhan_vat','tai_khoan','hong_ngoc','vang']);sh.setFrozenRows(1);}
+    else if(String(sh.getRange(1,5).getValue())!=='vang')sh.getRange(1,5).setValue('vang');sh.appendRow([new Date(),c.ten,c.tai_khoan,ruby,vang]);}catch(e){}
+  Logger.log('Đã cộng '+[ruby?ruby+' hồng ngọc':'',vang?vang+' vàng':''].filter(Boolean).join(' và ')+' cho '+c.ten);
 }
 // v10.10: chép lại máu, sát thương của quái các vùng cấp 20+ (có cột ban_do) từ số liệu mặc định vào tab quai — tác giả giảm máu còn 1/5, sát thương gấp đôi.
 // Chạy một lần sau khi dán bản mới: capNhatQuai(). Chỉ ghi đè hai cột mau, sat_thuong; dòng do bạn tự thêm (không có trong mặc định) giữ nguyên.

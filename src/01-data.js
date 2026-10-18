@@ -79,6 +79,11 @@ cau_hinh:[
  {khoa:'tri_tue_chinh_xac',gia_tri:4,ghi_chu:'v10.14 · Trí tuệ: mỗi 100 điểm cộng thêm % chính xác cung, nỏ'},
  {khoa:'tri_tue_hoi_mana',gia_tri:2,ghi_chu:'v10.14 · Trí tuệ: mỗi 100 điểm cộng thêm mana hồi mỗi giây'},
  {khoa:'menh_lenh_sat_thuong',gia_tri:50,ghi_chu:'v10.14 · Mệnh lệnh: mỗi 100 điểm cộng thêm % sát thương cho lính thuê và quái thu phục'},
+ {khoa:'linh_nhan_chi_so',gia_tri:2,ghi_chu:'v10.16 · Máu và sát thương mọi lính đánh thuê nhân với số này (nhân thêm với hệ số phẩm cấp linh_he_so)'},
+ {khoa:'linh_nhan_menh_lenh',gia_tri:10,ghi_chu:'v10.16 · Mệnh lệnh cần để cho một lính đi theo = cột menh_lenh của lính × số này'},
+ {khoa:'quai_nhan_mau',gia_tri:0.25,ghi_chu:'v10.16 · Máu mọi quái và boss nhân với số này (0.25 = còn 1/4). Quái thu phục giữ máu gốc'},
+ {khoa:'quai_nhan_sat_thuong',gia_tri:0.25,ghi_chu:'v10.16 · Sát thương mọi quái và boss nhân với số này (0.25 = còn 1/4). Quái thu phục giữ sát thương gốc'},
+ {khoa:'thu_cuoi_nhan_gia',gia_tri:20,ghi_chu:'v10.16 · Giá thú cưỡi ở cửa hàng nhân với số này (giá bán lại cũng theo)'},
  {khoa:'link_cho_phien',gia_tri:'https://ikynagame.blogspot.com/p/cho-phien.html',ghi_chu:'Địa chỉ trang Chợ phiên (mua bán giữa người chơi, nhân vật đi theo)'}
 ],
 // cap = cấp hiện tại; ti_le = % thành công lên cấp kế; thất bại: cấp về ngẫu nhiên từ that_bai_tu đến that_bai_den (để trống = giữ nguyên)
@@ -146,8 +151,10 @@ cua_hang:[
 ],
 // Gói nạp (v10.6): NPC Nạp thẻ ở thành trì hiện gói, sinh mã QR chuyển khoản (VietQR). Hồng ngọc cộng tay bằng hàm napHongNgoc trong Apps Script sau khi nhận tiền.
 goi_nap:[
- ['goi-20','Gói 20K',20000,20,'Dùng thử'],['goi-50','Gói 50K',50000,55,'Tặng 10%'],['goi-100','Gói 100K',100000,120,'Tặng 20%'],['goi-200','Gói 200K',200000,260,'Tặng 30%'],['goi-500','Gói 500K',500000,700,'Tặng 40%'],['goi-1000','Gói 1 triệu',1000000,1500,'Tặng 50%']
-].map(([id,ten,tien,hong_ngoc,mo_ta],i)=>({id,ten,tien,hong_ngoc,mo_ta,thu_tu:i+1})),
+ ['goi-20','Gói 20K',20000,20,'Dùng thử'],['goi-50','Gói 50K',50000,55,'Tặng 10%'],['goi-100','Gói 100K',100000,120,'Tặng 20%'],['goi-200','Gói 200K',200000,260,'Tặng 30%'],['goi-500','Gói 500K',500000,700,'Tặng 40%'],['goi-1000','Gói 1 triệu',1000000,1500,'Tặng 50%'],
+ // v10.16: gói vàng (cột vang = số vàng; 1 vàng = 100 bạc = 10.000 đồng). Cộng tay bằng hàm napVang
+ ['vang-20','Gói vàng 20K',20000,0,'Dùng thử',100],['vang-50','Gói vàng 50K',50000,0,'Tặng 10%',275],['vang-100','Gói vàng 100K',100000,0,'Tặng 20%',600],['vang-200','Gói vàng 200K',200000,0,'Tặng 30%',1300],['vang-500','Gói vàng 500K',500000,0,'Tặng 40%',3500],['vang-1000','Gói vàng 1 triệu',1000000,0,'Tặng 50%',7500]
+].map(([id,ten,tien,hong_ngoc,mo_ta,vang],i)=>({id,ten,tien,hong_ngoc,mo_ta,thu_tu:i+1,vang:vang||0})),
 // Diện mạo (v10.3): NPC Thợ truyền thần ở thành trì cấp cao bán; mỗi dòng là một bộ da + tóc + râu + mắt + dấu trên mặt. gia = đồng, hong_ngoc = hồng ngọc (0 cả hai = miễn phí). gioi_tinh trống = cả hai.
 // kieu_toc: '' búi tóc · xoa (xõa dài) · dung (dựng) · khan (khăn buộc) · troc (đầu trọc). dau: seo (sẹo má) · not (nốt ruồi) · ve (vẽ mặt) · hoa (hoa cài, nữ). Ảnh chân dung riêng: giao_dien:chan_dung_<id> trong file Hình ảnh
 dien_mao:[
