@@ -341,6 +341,17 @@ function capNhatV1012(){
   const d=xoa('vat_pham',r=>/^khung-/.test(String(r.id))||(String(r.o)==='cos'&&String(r.loai)==='khung')),e=xoa('cua_hang',r=>/^khung-/.test(String(r.id)));
   xoaBoNhoDem();Logger.log('ban_do: '+a+' ô cấp · cau_hinh cap_toi_da: '+b+' · nhiem_vu Tìm con: '+c+' ô npc · xóa '+d+' khung ở vat_pham, '+e+' ở cua_hang');
 }
+// v10.22: chiến thuật trùm (cột ky_nang tab quai: tron, bay, giap-bang, hoi-mau, phan-giap) và cửa hàng sách chỉ bán tới Hoàn hảo (Huyền thoại, Thần rơi từ trùm).
+// kiemTra thêm các dòng cấu hình mới (sach_gia_nhan, sach_roi_*, boss_nhan_sat_thuong, nguoi_choi_ao_*). Hàm này ghi cột ky_nang của 7 trùm và cột pham_chat của các dòng sách. Chạy một lần sau khi dán Code.gs mới.
+function capNhatV1022(){
+  lhDuLieuBoSung_();let n=0;
+  const tab=(t,f)=>{const file=LH_SHEETS[LH_STATIC[t]];if(!file)return;const sh=SpreadsheetApp.openById(file).getSheetByName(t);if(!sh||sh.getLastRow()<2)return;const v=sh.getDataRange().getValues(),h=v[0].map(String);f(sh,v,h);};
+  tab('quai',(sh,v,h)=>{const ci=h.indexOf('id'),ck=h.indexOf('ky_nang');if(ci<0||ck<0)return;const def=new Map((LH_DEFAULT.quai||[]).filter(r=>/tron|bay|giap-bang|hoi-mau|phan-giap/.test(String(r.ky_nang||''))).map(r=>[String(r.id),r.ky_nang]));
+    for(let i=1;i<v.length;i++){const q=def.get(String(v[i][ci]));if(q!==undefined&&String(v[i][ck])!==String(q)){sh.getRange(i+1,ck+1).setValue(q);n++;}}});
+  tab('cua_hang',(sh,v,h)=>{const cs=h.indexOf('cua_hang'),ci=h.indexOf('id'),cq=h.indexOf('pham_chat');if(cs<0||ci<0||cq<0)return;const def=new Map((LH_DEFAULT.cua_hang||[]).filter(r=>/^book-/.test(String(r.id))).map(r=>[r.cua_hang+'|'+r.id,r.pham_chat]));
+    for(let i=1;i<v.length;i++){const q=def.get(v[i][cs]+'|'+v[i][ci]);if(q!==undefined&&String(v[i][cq])!==String(q)){sh.getRange(i+1,cq+1).setValue(q);n++;}}});
+  xoaBoNhoDem();Logger.log('Đã ghi '+n+' ô (ky_nang trùm, pham_chat sách)');
+}
 // v10.21: sách bán đủ 5 phẩm chất (Thường, Đẹp, Hoàn hảo, Huyền thoại, Thần) ở Đạo sĩ làng và Pháp sư các thành; thêm Người giữ rương (rương chung tài khoản, cột ruong ở tab tai_khoan tự thêm).
 // kiemTra thêm các dòng cấu hình mới (sach_*, ma_*, thu_phuc_*, thu_cuoi_*, ruong_so_o). Hàm này ghi cột pham_chat của các dòng sách trong tab cua_hang. Chạy một lần sau khi dán Code.gs mới.
 function capNhatV1021(){

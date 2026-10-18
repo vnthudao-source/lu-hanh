@@ -72,7 +72,14 @@ wr('dist/cho-phien-offline.html',page(`Chợ phiên · thử ngoại tuyến`,ch
 // ---- đoạn dán vào Blogspot
 const cdn=`https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@ban-${V.replace(/^v/,'')}/dist/`;
 const cfg=`<script>${cfgJs(API)}</script>`;
-wr('blogspot/nhung-vao-blogspot.html',`<!-- Lữ Hành ${V} · trang GAME: dán vào bài/trang Blogspot (chế độ HTML). Bản mới: đổi số sau @ban- -->\n${cfg}\n<script charset="utf-8" src="${cdn}lu-hanh-boot.js"></script>\n`);
+// v10.22: che giao diện Blogspot ngay khi trình duyệt đọc tới đoạn nhúng (nền tối + chữ Lữ Hành), màn hình chờ của game hiện đè lên sau
+const HIDE_CSS='html.lh-boot,html.lh-boot body{background:#0d1712!important;overflow:hidden!important;touch-action:manipulation}html.lh-boot body>*:not(#lh-loader):not(#lu-hanh):not(#lh-cover){visibility:hidden!important}#lh-cover{position:fixed;inset:0;z-index:2147483500;display:flex;align-items:center;justify-content:center;background:#0d1712;color:#f6dc9c;font:600 38px/1 Georgia,serif;letter-spacing:1px}';
+const VIEWPORT="(function(){var m=document.querySelector('meta[name=viewport]');if(!m){m=document.createElement('meta');m.name='viewport';(document.head||document.documentElement).appendChild(m);}m.content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover';})();";
+const cover=`<style>${HIDE_CSS}</style>\n<script>document.documentElement.classList.add('lh-boot');${VIEWPORT}(function(){if(document.getElementById('lh-cover'))return;var d=document.createElement('div');d.id='lh-cover';d.textContent='L\\u1eef H\\u00e0nh';(document.body||document.documentElement).appendChild(d);})();</script>`;
+wr('blogspot/nhung-vao-blogspot.html',`<!-- Lữ Hành ${V} · trang GAME: dán vào bài/trang Blogspot (chế độ HTML). Bản mới: đổi số sau @ban- -->\n${cover}\n${cfg}\n<script charset="utf-8" src="${cdn}lu-hanh-boot.js"></script>\n`);
+// v10.22: đoạn dán vào Chủ đề → Chỉnh sửa HTML, ngay sau thẻ <head>: trang game không hiện giao diện Blogspot dù chỉ một khung hình, chặn phóng to khi chạm hai lần
+const gamePath=new URL('https://ikynagame.blogspot.com/').pathname; // trùng window.LH_GAME
+wr('blogspot/dau-trang-blogspot.html',`<!-- Lữ Hành ${V} · DÁN MỘT LẦN vào Chủ đề → Chỉnh sửa HTML, ngay sau thẻ <head>. Chỉ có tác dụng ở trang game (đường dẫn ${gamePath}); các trang khác của blog giữ nguyên. -->\n<script>//<![CDATA[\n(function(){var p=location.pathname;if(p===${JSON.stringify(gamePath)}||p===${JSON.stringify(gamePath)}+'index.html'){document.documentElement.classList.add('lh-boot');${VIEWPORT}}})();\n//]]></script>\n<style>/*<![CDATA[*/${HIDE_CSS}/*]]>*/</style>\n`);
 wr('blogspot/cho-phien.html',`<!-- Lữ Hành ${V} · trang CHỢ PHIÊN: tạo Trang mới tên "cho-phien" trên Blogspot, dán vào (chế độ HTML). -->\n<link rel="stylesheet" href="${cdn}cho-phien.css">\n${cfg}\n<script charset="utf-8" src="${cdn}cho-phien.js"></script>\n`);
 // ---- Code.gs
 const ctx={};vm.runInNewContext(rd('src/01-data.js')+';'+rd('src/01-data-vung.js')+';'+rd('src/01-data-canbang.js')+';'+rd('src/05-player.js')+';this.GD=GAME_DATA;this.P=Player;',ctx);

@@ -36,7 +36,8 @@ window.startGame=(session)=>{
   const $=s=>document.querySelector(s),clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,t)=>a+(b-a)*t,seg=(p,a,b)=>clamp((p-a)/(b-a),0,1),E=t=>t<.5?2*t*t:1-((-2*t+2)**2)/2;
   const svg=id=>`<svg class="icon"><use href="#i-${id}"/></svg>`;
   // Thông báo ngắn: icon + vài chữ/số
-  function message(html){$('#toast').innerHTML=html;$('#toast').style.opacity=1;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').style.opacity=0,2400);}
+  function message(html,sec){$('#toast').innerHTML=html;$('#toast').style.opacity=1;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').style.opacity=0,(sec||2.4)*1000);}
+  const esc=t=>String(t).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[ch]);
   // Ảnh tĩnh (Sheet hinh_anh) vẽ thay hình mặc định: chân chạm gốc, quay mặt sang phải
   function drawPic(c,im,h,bob){const w=h*im.naturalWidth/im.naturalHeight;c.drawImage(im,-w/2,-h+bob,w,h);}
   function roundRect(c,x,y,w,h,r,color){c.fillStyle=color;c.beginPath();c.roundRect(x,y,w,h,r);c.fill();}
@@ -685,7 +686,7 @@ window.startGame=(session)=>{
     if(m.dead){alpha=clamp(1-(time-m.deadAt)/1.2,0,1);if(alpha<=0)return;}
     const fl=time-m.hurt<.1,col=v=>fl?'#fff3e6':v,g=m.walk;
     c.save();c.globalAlpha=alpha;ell(c,m.x,m.y+3,M.r*1.2,M.r*.45,'#243d3540');
-    c.translate(m.x,m.y);c.scale(m.facing,1);
+    c.translate(m.x,m.y-(m.fly||0));c.scale(m.facing,1);
     let lunge=0,open=false;
     if(m.atk){if(time<m.atk.at)lunge=-5*clamp((time-(m.atk.at-M.windup))/M.windup,0,1);else{lunge=12*Math.max(0,1-(time-m.atk.at)/.3);open=true;}}
     c.translate(lunge,0);if(m.dead)c.rotate(-.5*(1-alpha));
@@ -783,6 +784,15 @@ window.startGame=(session)=>{
     if(m.dead)return 0;const M=MON[m.type];
     const r=atk.abs?{dmg:Math.max(1,Math.round(atk.abs)),tag:'',color:atk.color||'#fff1c4',size:13}:rollHit(atk.D,atk.mul,atk.owner);
     let dmg=r.dmg;const f=atk.owner==='hero'&&!atk.abs?HD.fx:{};
+    // v10.22: sách Hỏa đốt cháy quái (giữ chân trùm bỏ chạy, làm tan giáp băng, chặn tái sinh)
+    if(atk.el==='fire'&&!atk.abs&&(atk.owner==='hero'||atk.owner==='merc')){m.scorch=time+3;const k=(HD.bef&&HD.bef.fire)||1;if(!(m.burn&&m.burn.until>time&&m.burn.dps>dmg*.04*k))m.burn={dps:Math.max(1,dmg*.04*k),until:time+3,color:'#ff8a3d'};}
+    const TAC=M.tac||[],melee=!atk.abs&&!atk.ranged,tip=(t,col)=>{if(time>(m.tipAt||0)){m.tipAt=time+1.2;const cc=center(m);floater(cc.x,cc.y-M.h*.5-26,t,col,12);}};
+    if(TAC.length){
+      if(TAC.includes('giap-bang')&&atk.owner!=='burn'){if(atk.el==='fire'&&!atk.abs){if(!(m.melt>time))tip('Giáp băng tan!','#ffb070');m.melt=time+5;}else if(!(m.melt>time)){dmg=Math.max(1,Math.round(dmg*.3));tip('Giáp băng','#a0e0ff');}}
+      if(TAC.includes('bay')&&m.flyUntil>time&&melee){dmg=Math.max(1,Math.round(dmg*.15));tip('Trên cao · cần đánh xa','#c0d8ff');}
+      if(TAC.includes('phan-giap')&&melee){dmg=Math.max(1,Math.round(dmg*.6));if(atk.owner==='hero'&&time>(m.reflAt||0)){m.reflAt=time+.4;hurtHero(dmg*.15/.6,m);tip('Da đá dội đòn','#c8b8a0');}}
+      if(TAC.includes('tron')&&m.fleeing&&melee&&atk.owner!=='burn'){dmg=Math.max(1,Math.round(dmg*.3));tip('Chạy xa · cần bắn theo','#ff80c0');}
+    }
     if(f.execute&&!M.boss&&(m.hp-dmg)/m.max<f.execute/100){dmg=Math.max(dmg,m.hp);r.tag='Kết liễu';}
     m.hp-=dmg;m.hurt=time;m.aggro=time+8;if(atk.owner!=='bot')m.heroDmg=(m.heroDmg||0)+dmg;
     const c=center(m);if(atk.owner==='bot')floater(c.x+(Math.random()*16-8),c.y-M.h*.5,String(dmg),'#cfc7b6',11);else floater(c.x+(Math.random()*16-8),c.y-M.h*.5,String(dmg),r.color,r.size); // v10.13: chỉ số, màu theo loại sát thương (trắng · hoàn hảo · huyền thoại · thần)
@@ -820,7 +830,7 @@ window.startGame=(session)=>{
   function nova(x,y,r,atk,except){fx.push({kind:'ring',x,y,r0:10,r1:r,color:atk.el?EL[atk.el].color:'#ffd9a0',age:0,life:.45,lw:5});for(const m of monsters){if(m.dead||m===except)continue;const c=center(m),d=Math.hypot(c.x-x,c.y-y);if(d<r+MON[m.type].r)hitMonster(m,{...atk,knock:60},(c.x-x)/(d||1),(c.y-y)/(d||1));}}
   function spawnProjectile(o,ang,atk,d,home,missed){
     const ox=o.x+Math.cos(ang)*26,oy=o.y-20-(o.seat||0)+Math.sin(ang)*20;
-    projectiles.push({kind:d.kind,x:ox,y:oy,vx:Math.cos(ang)*d.speed,vy:Math.sin(ang)*d.speed,sp:d.speed,age:0,life:(d.range||400)/d.speed,atk:{...atk,knock:d.kind==='bolt'?50:25},el:atk.el,pierce:d.pierce||0,splash:d.splash||0,hit:new Set(),gy:20+(o.seat||0),home:home||null,missed:missed||null});
+    projectiles.push({kind:d.kind,x:ox,y:oy,vx:Math.cos(ang)*d.speed,vy:Math.sin(ang)*d.speed,sp:d.speed,age:0,life:(d.range||400)/d.speed,atk:{...atk,ranged:true,knock:d.kind==='bolt'?50:25},el:atk.el,pierce:d.pierce||0,splash:d.splash||0,hit:new Set(),gy:20+(o.seat||0),home:home||null,missed:missed||null});
   }
   function resolveAttack(a,idx=0){
     const d0=ATK[a.type],RM=1+(HD.tot.range||0)/100,d=RM>1?{...d0,range:d0.range*RM}:d0,sk=SK[a.skill],el=HD.books.fire?'fire':a.elem; // Tầm đánh (dòng cánh): nới tầm mọi đòn
@@ -846,6 +856,7 @@ window.startGame=(session)=>{
     if(a.skill==='normal'&&HD.fx.wave&&++hero.waveCount%4===0){nova(hero.x,hero.y-12,150,{...atk,mul:atk.mul*HD.fx.wave/100},null);burst(hero.x,hero.y-20,'#ffb070',20,200);}
   }
   function kill(m,owner){
+    if(m.chase&&!m.chase.ent.dead){const e=m.chase.ent;floater(e.x,e.y-84,'Đa tạ đại hiệp!','#ffe6a8',14);m.chase=null;}
     const M=MON[m.type];m.dead=true;m.deadAt=time;m.respawn=m.ev?1e18:time+M.respawn;m.atk=null;m.burn=null;m.leap=null;
     if(owner==='bot'&&(m.heroDmg||0)<m.max*.3){burst(m.x,m.y-M.h*.4,'#e9dcb4',12);return;}
     moneyFloat(m.x,m.y-M.h-6,Player.killCopper(M));burst(m.x,m.y-M.h*.4,'#e9dcb4',16);LH_Audio.play(M.boss?'boss':'kill');
@@ -1261,23 +1272,51 @@ window.startGame=(session)=>{
      chưa có thì dùng bộ người chơi mặc định với đồ đạc khác nhau. Quái do người chơi ảo hạ không cho thưởng (trừ khi mình đã đánh từ 30% máu) ---------- */
   const bots=[];let botPool=[],botPoolAt=-1e9;
   const BOT_DEF=[['Lữ khách Bình','m',['sword-iron','shield-wood','hat','armor-leather','shoes']],['Nữ hiệp Lan Anh','f',['bow-hunt','hat','armor','shoes-leather']],['Tráng sĩ Dũng','m',['spear-iron','armor-iron','pants-guard','gloves-leather']],['Đạo sĩ Huyền','m',['staff-jade','hat-iron','armor','shoes']],
-    ['Cung thủ Mai','f',['crossbow-war','armor-leather','pants','shoes-leather']],['Võ sinh Khôi','m',['sword-steel','sword-iron','gloves','shoes-iron']],['Nữ tướng Thảo','f',['sword-steel','shield-iron','armor-iron','hat-iron']],['Hiệp khách Phong','m',['bow','pants-guard','gloves-leather','wings']]];
+    ['Cung thủ Mai','f',['crossbow-war','armor-leather','pants','shoes-leather']],['Võ sinh Khôi','m',['sword-steel','sword-iron','gloves','shoes-iron']],['Nữ tướng Thảo','f',['sword-steel','shield-iron','armor-iron','hat-iron']],['Hiệp khách Phong','m',['bow','pants-guard','gloves-leather','wings']],
+    ['Kiếm khách Long','m',[]],['Nữ kiếm Vân','f',[]],['Thợ săn Tùng','m',[]],['Tiểu thư Ngọc','f',[]],['Thư sinh Minh','m',[]],['Nữ hiệp Hà','f',[]],['Lãng tử Hải','m',[]],['Cô nương Liên','f',[]]]; // v10.22: thêm tên cho người chơi ảo trong thành
   function loadBotPool(){return Promise.resolve();} // v10.13: bỏ cho thuê nhân vật → bot dùng tên mẫu, không hỏi máy chủ
-  function botData(i){
-    const L=Player.mapLevel(World.id),src=botPool[i],rng=Math.random;
-    if(src)return Player.makeMerc({name:src.name,gender:src.gender,stats:src.stats,equipment:src.equipment});
-    const [name,g,gear]=BOT_DEF[(i+World.id.length)%BOT_DEF.length],st=12+L*2+Math.floor(rng()*6),q=L>=10?'p':L>=5?'g':rng()<.5?'g':'n';
-    const m=Player.makeMerc({name,gender:g,stats:{strength:st,agility:st,vitality:st+4,intelligence:st}});let hand=0;
-    for(const id of gear){const d=Player.items[id];if(!d)continue;const it=Player.roll(id,q,rng);if(d.slot==='hand'){const sl=d.grip==='two'?'right':hand++?'left':'right';m.equipment[sl]=it;}else m.equipment[d.slot]=it;}
+  // v10.22: đồ của người chơi ảo theo cấp bản đồ — bản đồ càng cao đồ càng đẹp (phẩm chất, cấp cường hóa, đồ bậc thành, bộ Huyền thoại / Thần ở vùng cao)
+  const shopLvOf=k=>{const mm=String(k).match(/^thanh-(.+?)(?:-ren|-thu|-sach)?$/);return mm?Player.mapLevel(mm[1]):1;};
+  function botGear(m,L,rng){
+    const pick=a=>a[Math.floor(rng()*a.length)],lvR=mx=>Math.max(0,Math.floor(rng()*(mx+1)));
+    if(L>=170&&rng()<(L>=290?.55:L>=235?.4:.25)){
+      const want=L>=290&&rng()<.5?'m':'l',sets=Object.values(Player.SETS).filter(S=>S.q===want&&(!S.gender||S.gender===m.gender));
+      if(sets.length){const S=pick(sets),lv=want==='m'?6+lvR(6):8+lvR(7);for(const id of S.pieces){const d=Player.items[id];if(!d||d.slot==='mount')continue;const it=Player.roll(id,d.q||want,rng);it.lv=lv;m.equipment[d.slot==='hand'?(/:left$/.test(id)?'left':'right'):d.slot]=it;}return;}
+    }
+    const q=L<20?(rng()<.6?'n':'g'):L<70?(rng()<.7?'g':'p'):L<170?(rng()<.4?'g':'p'):(rng()<.25?'l':'p'),lv=L<20?0:lvR(Math.min(12,Math.round(L/20)));
+    const by={};for(const [k,rows] of Object.entries(Player.SHOPS)){const sl=shopLvOf(k);if(sl>L)continue;for(const r of rows){const d=Player.items[r.id];if(!d||!d.slot||['cos','book','mount','quest'].includes(d.slot)||d.ruby||d.set||(d.gender&&d.gender!==m.gender))continue;
+      const slot=d.slot==='hand'?(d.kind==='shield'?'left':'right'):d.slot,v=((d.atk||0)*2+(d.def||0))*(1+(r.t||0)/25);(by[slot]=by[slot]||[]).push({id:r.id,t:r.t||0,v,d});}}
+    for(const slot of ['right','hat','armor','pants','gloves','shoes','wings','left']){const a=(by[slot]||[]).sort((x,y)=>y.v-x.v).slice(0,4);if(!a.length)continue;if(slot==='left'&&(m.equipment.right&&Player.isTwo(m.equipment.right)||rng()<.4))continue;if(slot==='wings'&&rng()<.5)continue;
+      const c=pick(a),it=Player.roll(c.id,c.d.q||q,rng,c.t);it.lv=lv;m.equipment[slot]=it;}
+  }
+  function botData(i,L){
+    L=L==null?Player.mapLevel(World.id):L;const rng=Math.random;
+    const [name,g]=BOT_DEF[(i+World.id.length)%BOT_DEF.length],st=12+L*2+Math.floor(rng()*6);
+    const m=Player.makeMerc({name,gender:g,stats:{strength:st,agility:st,vitality:st+4,intelligence:st}});
+    try{botGear(m,L,rng);}catch(e){}
     return m;
   }
+  function makeBot(i,data,home,x,y,town){const D=Player.derive(data);return {bot:true,town:!!town,key:'bot'+i,data,D,name:data.name,home,x,y,facing:1,moving:false,walk:0,aim:{x:1,y:0},attack:null,hurt:-9,dead:0,deadAt:0,blockUntil:0,barrierUntil:0,cd:0,swing:0,stuck:0,path:null,max:Math.round(D.tot.hp*3),hp:Math.round(D.tot.hp*3)};}
+  // ô đứng được trong vùng an toàn quanh điểm vào (làng, thành)
+  function safeSpot(cx,cy,R){for(let k=0;k<40;k++){const a=Math.random()*PI2,r=Math.random()*R,x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;if(World.canStand(x,y)&&World.isSafe(x,y))return {x,y};}return null;}
   function spawnBots(){
-    bots.length=0;const n=Math.max(0,Math.min(8,Number(CFG.nguoi_choi_ao??4))),camps=World.camps;if(!n||!camps.length)return;
-    for(let i=0;i<n;i++){
-      const cp=camps[i%camps.length],data=botData(i),D=Player.derive(data),a=Math.random()*PI2,r=Math.random()*cp.r*.8;
-      const e={bot:true,key:'bot'+i,data,D,name:data.name,home:cp,x:cp.x+Math.cos(a)*r,y:cp.y+Math.sin(a)*r,facing:1,moving:false,walk:0,aim:{x:1,y:0},attack:null,hurt:-9,dead:0,deadAt:0,blockUntil:0,barrierUntil:0,cd:0,swing:0,stuck:0,path:null,max:Math.round(D.tot.hp*3)};
-      if(!World.canStand(e.x,e.y)){e.x=cp.x;e.y=cp.y;}e.hp=e.max;bots.push(e);
+    bots.length=0;botRunAt=time+20+Math.random()*30;const n=Math.max(0,Math.min(8,Number(CFG.nguoi_choi_ao??4))),camps=World.camps;
+    if(n&&camps.length)for(let i=0;i<n;i++){
+      const cp=camps[i%camps.length],data=botData(i),a=Math.random()*PI2,r=Math.random()*cp.r*.8,e=makeBot(i,data,cp,cp.x+Math.cos(a)*r,cp.y+Math.sin(a)*r);
+      if(!World.canStand(e.x,e.y)){e.x=cp.x;e.y=cp.y;}bots.push(e);
     }
+    // v10.22: người chơi ảo đi lại trong làng / thành (đồ theo cấp thành)
+    const nt=Math.max(0,Math.min(10,Number(CFG.nguoi_choi_ao_thanh??5))),sp0=World.spawn,nc=World.npcs.find(n=>n.panel&&World.isSafe(n.x,n.y)),sp=World.isSafe(sp0.x,sp0.y)?sp0:nc?{x:nc.x,y:nc.y}:null; // làng: quanh điểm vào; thành: quanh dân thành có việc
+    if(nt&&sp)for(let i=0;i<nt;i++){const p=safeSpot(sp.x,sp.y,14*T);if(!p)continue;const e=makeBot(100+i,botData(i+8),{x:p.x,y:p.y,r:5*T},p.x,p.y,true);bots.push(e);}
+  }
+  // v10.22: thỉnh thoảng một người chơi ảo bị quái rượt, còn ít máu, chạy về làng / thành (điểm vào bản đồ)
+  let botRunAt=0;
+  function botRunEvent(){
+    const gap=Number(CFG.nguoi_choi_ao_chay_giay??60);if(!(gap>0)||time<botRunAt)return;botRunAt=time+gap*(.5+Math.random());
+    const sp0=World.spawn,nc=World.npcs.find(n=>n.panel&&World.isSafe(n.x,n.y)),sp=World.isSafe(sp0.x,sp0.y)||!nc?sp0:{x:nc.x,y:nc.y},cand=bots.filter(e=>!e.dead&&!e.town&&!e.flee);if(!cand.length)return;const e=cand[Math.floor(Math.random()*cand.length)];
+    let mon=null,bd=520;for(const m of monsters){if(m.dead||MON[m.type].boss||m.type==='deer')continue;const d=Math.hypot(m.x-e.x,m.y-e.y);if(d<bd){bd=d;mon=m;}}if(!mon)return;
+    e.hp=Math.round(e.max*(.12+Math.random()*.12));e.flee={until:time+45,to:{x:sp.x,y:sp.y}};e.attack=null;mon.chase={ent:e,until:time+14};mon.aggro=time+14;
+    floater(e.x,e.y-80,'Cứu với!','#ffb0a0',15);if(Math.hypot(e.x-hero.x,e.y-hero.y)<700)message(svg('user')+`${esc(e.name)} bị ${esc(MON[mon.type].name)} rượt, ít máu, đang chạy về ${World.isSafe(sp.x,sp.y)?(Player.REGIONS.find(r=>r.id===World.id)?'thành':'làng'):'cổng'}!`,3.5);
   }
   function botHit(e,a){
     const d=ATK[a.type],atk={D:e.D,mul:d.dmg*.6,el:null,owner:'bot',knock:d.knock},ang=Math.atan2(a.aim.y,a.aim.x),ox=e.x,oy=e.y-18;
@@ -1287,7 +1326,11 @@ window.startGame=(session)=>{
   function updateBots(dt){
     for(const e of bots){
       e.moving=false;
-      if(e.dead){if(time>e.respawnAt){Object.assign(e,{dead:0,hp:e.max,x:e.home.x,y:e.home.y,attack:null,path:null});}continue;}
+      if(e.dead){if(time>e.respawnAt){Object.assign(e,{dead:0,hp:e.max,x:e.home.x,y:e.home.y,attack:null,path:null,flee:null,gone:0});}continue;}
+      if(e.flee){const f=e.flee,dd=Math.hypot(f.to.x-e.x,f.to.y-e.y);if(dd<34||time>f.until){e.dead=1;e.gone=1;e.flee=null;e.respawnAt=time+40;burst(e.x,e.y-20,'#ffe6a8',12,120);continue;}
+        steer(e,f.to,145*(1+e.D.tot.moveSpd/100),dt,11,false);e.moving=e.stepMoved>.05;e.walk+=e.stepMoved*.09;if(Math.abs(f.to.x-e.x)>3)e.facing=f.to.x<e.x?-1:1;if(time>(e.cryAt||0)){e.cryAt=time+3+Math.random()*2;floater(e.x,e.y-82,['Cứu với!','Chạy mau!','Về làng thôi!'][Math.floor(Math.random()*3)],'#ffb0a0',12);}continue;}
+      if(e.town){if(!e.wander||time>e.wander.t){const go=Math.random()<.55,p=go?safeSpot(e.home.x,e.home.y,e.home.r):null;e.wander={t:time+3+Math.random()*6,x:p?p.x:null,y:p?p.y:null};}
+        if(e.wander.x!=null&&Math.hypot(e.wander.x-e.x,e.wander.y-e.y)>8){steer(e,{x:e.wander.x,y:e.wander.y},70,dt,11,false);e.moving=e.stepMoved>.05;e.walk+=e.stepMoved*.09;if(Math.abs(e.wander.x-e.x)>3)e.facing=e.wander.x<e.x?-1:1;}else if(e.wander.x!=null)e.wander.x=null;continue;}
       if(e.attack){const a=e.attack,p=(time-a.start)/a.dur;if(!a.hitDone&&p>=a.hit){a.hitDone=true;botHit(e,a);}if(p>=1)e.attack=null;}
       const st=Player.stance(e.data),d=ATK[st.type];
       let target=null,bd=300;for(const m of monsters){if(m.dead||MON[m.type].boss)continue;const dd=Math.hypot(m.x-e.x,m.y-e.y);if(dd<bd&&Math.hypot(m.x-e.home.x,m.y-e.home.y)<e.home.r+260){bd=dd;target=m;}}
@@ -1340,6 +1383,7 @@ window.startGame=(session)=>{
   }
   /* ---------- Quái vật và trùm ---------- */
   function pickTarget(m){
+    if(m.chase){const e=m.chase.ent;if(time<m.chase.until&&!e.dead&&!World.isSafe(e.x,e.y))return {x:e.x,y:e.y,isHero:false,ent:e,ok:true,d:Math.hypot(e.x-m.x,e.y-m.y)};m.chase=null;}
     let best=null,bd=1e9;
     const cand=[{x:hero.x,y:hero.y,isHero:true,ok:!hero.dead}];for(const e of allies)cand.push({x:e.x,y:e.y,isHero:false,ent:e,ok:e.hp>0});for(const e of bots)cand.push({x:e.x,y:e.y,isHero:false,ent:e,ok:!e.dead});
     for(const c of cand){if(!c.ok||World.isSafe(c.x,c.y))continue;const d=Math.hypot(c.x-m.x,c.y-m.y);if(d<bd){bd=d;best=c;}}
@@ -1374,6 +1418,24 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     return true;
   }
   // Chạy trốn: chọn hướng thoáng gần với hướng ngược kẻ đuổi nhất (không lao đầu vào bụi cây, bờ nước)
+  // v10.22: chiến thuật trùm (cột ky_nang): tron · bay · hoi-mau (giap-bang, phan-giap xử lý trong hitMonster). Trả true = trùm đã tự di chuyển lượt này
+  const tacSeen=new Set();
+  function tacHint(m,M){if(tacSeen.has(m.type))return;tacSeen.add(m.type);const t=M.tac.map(k=>Player.SKILLS[k]).filter(Boolean);message(svg('eye')+`<b>${esc(M.name)}</b> · ${t.map(x=>x.name+': '+x.desc).join(' · ')}<br><small>${t.map(x=>x.hint).join(' · ')}</small>`,7);}
+  function bossTactics(m,M,dt){
+    const T=M.tac,c=center(m);if(m.aggro>time)tacHint(m,M);
+    if(T.includes('hoi-mau')&&m.hp<m.max&&!(m.burn&&m.burn.until>time)){m.hp=Math.min(m.max,m.hp+m.max*.01*dt);if(time>(m.regAt||0)&&m.aggro>time){m.regAt=time+1.5;floater(c.x,c.y-M.h*.5-20,'Tái sinh','#90e070',12);}}
+    if(T.includes('bay')&&m.aggro>time){if(!m.flyNext)m.flyNext=time+6;if(time>=m.flyNext){m.flyUntil=time+4;m.flyNext=time+12;floater(c.x,c.y-M.h-20,'Bay lên cao!','#c0d8ff',16);}}
+    m.fly=m.flyUntil>time?60*Math.min(1,(m.flyUntil-time)/.4,(time-(m.flyUntil-4))/.4):0;
+    if(T.includes('tron')){
+      if(!m.fleeing&&m.hp<m.max*.2&&time>(m.fleeCd||0)){if(m.scorch>time){if(time>(m.pinAt||0)){m.pinAt=time+3;floater(c.x,c.y-M.h-20,'Lửa giữ chân!','#ffb070',15);}}else{m.fleeing={until:time+7};m.atk=null;m.leap=null;m.cast=null;floater(c.x,c.y-M.h-20,'Bỏ chạy!','#ff80c0',18);message(svg('eye')+`${esc(M.name)} bỏ chạy! Đốt cháy bằng sách Hỏa hoặc bắn theo, không thì nó hồi đầy máu`,4);}}
+      if(m.fleeing){
+        if(m.scorch>time){m.fleeing=null;m.fleeCd=time+6;m.stunUntil=time+2;floater(c.x,c.y-M.h-20,'Bị lửa thiêu, ngã quỵ!','#ffb070',16);burst(c.x,c.y,'#ff8a3d',24,180);return true;}
+        if(time>m.fleeing.until||Math.hypot(m.x-hero.x,m.y-hero.y)>760){m.fleeing=null;m.fleeCd=time+10;m.hp=m.max;m.x=m.hx;m.y=m.hy;m.aggro=0;m.burn=null;burst(m.x,m.y-30,'#ff80c0',30,200);message(svg('close')+`${esc(M.name)} đã trốn về hang và hồi đầy máu`,4);return true;}
+        moveMon(m,fleeGoal(m,hero.x,hero.y),M.run*1.6,dt,M);return true;
+      }
+    }
+    return false;
+  }
   function fleeGoal(m,fx,fy){
     const base=Math.atan2(m.y-fy,m.x-fx);if(m.fleeGoal&&time<m.fleeGoalUntil)return m.fleeGoal;
     for(const o of [0,.45,-.45,.9,-.9,1.4,-1.4,1.9,-1.9,2.5,-2.5,Math.PI]){const a=base+o;let ok=true;for(const d of [50,100,160,220]){const px=m.x+Math.cos(a)*d,py=m.y+Math.sin(a)*d;if(!World.canStand(px,py,14)||World.isSafe(px,py)){ok=false;break;}}if(ok){m.fleeGoal={x:m.x+Math.cos(a)*220,y:m.y+Math.sin(a)*220};m.fleeGoalUntil=time+.9;return m.fleeGoal;}}
@@ -1428,6 +1490,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
         m.moving=false;if(Math.random()<.5)burst(m.x+(Math.random()-.5)*60,m.y-Math.random()*M.h,'#ff6030',3,120);continue;}
       if(m.dead){if(time>m.respawn){Object.assign(m,{dead:false,hp:m.max,heroDmg:0,cast:null,tubao:null,skillCd:0,x:m.hx,y:m.hy,atk:null,aggro:-9,flee:0,burn:null,leap:null,stunUntil:0,frozenUntil:0,slowUntil:0,fearUntil:0,path:null,stuck:0});}continue;}
       if(m.burn){if(time<m.burn.until){m.burnAcc+=m.burn.dps*dt;if(m.burnAcc>=1){const v=Math.floor(m.burnAcc);m.burnAcc-=v;hitMonster(m,{abs:v,owner:'burn',color:m.burn.color||'#ff9a3d'},0,0);if(m.dead)continue;}}else m.burn=null;}
+      if(M.tac&&M.tac.length&&bossTactics(m,M,dt))continue;
       if(time<m.stunUntil||time<m.frozenUntil){m.moving=false;continue;}
       const slowK=time<m.slowUntil?m.slowK:1;
       if(time<m.fearUntil){moveMon(m,fleeGoal(m,hero.x,hero.y),M.run*slowK,dt,M);continue;}
@@ -1443,13 +1506,13 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
         if(m.type==='elephant')hostile=canSee&&angry;
         else if(m.type==='croc')hostile=canSee&&(dist<M.aggro||angry)&&homeD<230;
         // sư tử, trùm và quái các vùng mới: thấy người là đánh, đuổi không quá xa ổ
-        else if(m.type!=='deer')hostile=canSee&&(dist<M.aggro||angry)&&(M.boss?homeD<420:m.type==='lion'||homeD<380);
+        else if(m.type!=='deer')hostile=canSee&&(m.chase?true:(dist<M.aggro||angry)&&(M.boss?homeD<420:m.type==='lion'||homeD<380));
         if(hostile)m.tgt=tg.isHero?'hero':tg.ent;
         if(m.type==='deer'){if(m.flee>time||(dist<110&&canSee)){const g=fleeGoal(m,tg?tg.x:m.x-1,tg?tg.y:m.y);tx=g.x-m.x;ty=g.y-m.y;spd=m.flee>time?M.run:M.speed*1.6;}}
         else if(hostile){
           if(M.skills&&M.skills.length&&!m.cast&&time>(m.skillCd||0)&&dist<M.aggro){
             if(M.skills.includes('tubao')&&!m.tubao&&m.hp<m.max*.15){m.tubao={at:time+2.2};floater(m.x,m.y-M.h-24,'Tự bạo!','#ff2020',20);fx.push({kind:'ring',x:m.x,y:m.y,r0:20,r1:260,color:'#ff3020',age:0,life:2.2,lw:3});continue;}
-            const list=M.skills.filter(k=>k!=='tubao');
+            const list=M.skills.filter(k=>k!=='tubao'&&!(Player.SKILLS[k]||{}).passive);
             if(list.length){const kind=list[(m.skillIdx=((m.skillIdx||0)+1)%list.length)],S=Player.SKILLS[kind];m.cast={kind,at:time+1.1,x:tg.x,y:tg.y};LH_Audio.play(kind==='freeze'?'freeze':'bolt');m.skillCd=time+(Number(CFG.trum_ky_nang_giay)||7);
               floater(m.x,m.y-M.h-24,S.name,S.color,17);fx.push({kind:'ring',x:tg.x,y:tg.y,r0:130,r1:30,color:S.color,age:0,life:1.1,lw:3});}
           }
@@ -1543,7 +1606,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     World.bridges.forEach((B,i)=>{const sd=hero.x<B.x0*T?'w':hero.x>(B.x1+1)*T?'e':bridgeSide[i];if(sd!==bridgeSide[i]){const was=bridgeSide[i];bridgeSide[i]=sd;if(was)checkpoint();}});
     if(time-prefAt>1){prefAt=time;for(const P of World.portals)if(Math.hypot((P.x+.5)*T-hero.x,(P.y+.5)*T-hero.y)<T*9)World.prefetch(P.to);}
     {const P=World.portalAt(hero.x,hero.y);if(!P)portalArmed=true;else if(portalArmed&&!travelling&&!hero.dead){portalArmed=false;const need=Player.mapLevel(P.to);if((player.level||1)<need)message(svg('lock')+'Cần cấp '+need+' để vào '+(P.label||(LH_MAPS[P.to]&&LH_MAPS[P.to].name)||''));else{checkpoint();travel(P.to,P.tx,P.ty);}}}
-    updateNPCs(dt);updateProjectiles(dt);updateMonsters(dt);updateAllies(dt);updateBots(dt);updateDbf(dt);if(((time*4)|0)!==((time-dt)*4|0))evTick();updateStrikes();updateVillage(dt);updateEffects(dt);
+    updateNPCs(dt);updateProjectiles(dt);updateMonsters(dt);updateAllies(dt);updateBots(dt);botRunEvent();updateDbf(dt);if(((time*4)|0)!==((time-dt)*4|0))evTick();updateStrikes();updateVillage(dt);updateEffects(dt);
     const a=hero.attack;
     if(a){const p=(time-a.start)/a.dur;while(a.hitIdx<a.cycles&&p>=(a.hitIdx+a.hit)/a.cycles){resolveAttack(a,a.hitIdx);a.hitIdx++;}if(p>=1)hero.attack=null;}
     const ma=hero.mountAct;
@@ -1609,7 +1672,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     layers.sort((a,b)=>a[0]-b[0]);
     for(const [,o] of layers){
       if(o===hero){drawHero(ctx,hero,st,el,time);drawDbf();if(hero.shieldHp>0){ctx.save();ctx.globalAlpha=.3+Math.sin(time*6)*.08;ctx.strokeStyle='#ffe9a8';ctx.lineWidth=2.5;ctx.beginPath();ctx.ellipse(hero.x,hero.y-24-seatH(),26,36,0,0,PI2);ctx.stroke();ctx.restore();}}
-      else if(o.key&&o.data){const e=o;if(e.pet){drawPet(e);}else{drawHero(ctx,e,Player.stance(e.data),null,time,{who:e.data,labelColor:e.bot?'#ffd9a8':e.tier&&e.tier!=='n'?(Player.RAR[e.tier]||{}).color||'#bfe3ff':'#bfe3ff',label:e.bot||safe});const sh=seatOf(e.data.equipment);if(e.hp<e.max){roundRect(ctx,e.x-18,e.y-78-sh,36,4,2,'#0a120ecc');roundRect(ctx,e.x-18,e.y-78-sh,36*e.hp/e.max,4,2,'#7fd38a');}}}
+      else if(o.key&&o.data){const e=o;if(e.pet){drawPet(e);}else{drawHero(ctx,e,Player.stance(e.data),null,time,{who:e.data,labelColor:e.bot?'#ffd9a8':e.tier&&e.tier!=='n'?(Player.RAR[e.tier]||{}).color||'#bfe3ff':'#bfe3ff',label:e.bot||safe});const sh=seatOf(e.data.equipment);if(e.hp<e.max){roundRect(ctx,e.x-18,e.y-78-sh,36,4,2,'#0a120ecc');roundRect(ctx,e.x-18,e.y-78-sh,36*e.hp/e.max,4,2,e.hp<e.max*.3?'#e05a4a':'#7fd38a');}}}
       else if(o.amb)drawAmbient(o);
       else if(LH_ART.obj[o.kind])LH_ART.obj[o.kind](ctx,o,time);
       else if(o.kind==='tree')tree(o);else if(o.kind==='house')house(o);else if(o.kind==='banyan')banyan(o);else if(o.kind==='well')well(o);else if(o.kind==='fire')campfire(o);else if(o.role)drawNPC(o);else drawMonster(o);
@@ -1732,7 +1795,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
       checkpoint();return travel(id);
     },
     get mapId(){return World.id;},
-    toggleLock,get lockOn(){return lockOn;},get bots(){return bots;},
+    toggleLock,get lockOn(){return lockOn;},get bots(){return bots;},botRun(){botRunAt=0;botRunEvent();},
     stop(){route=[];targetNPC=null;keys.clear();joystick={x:0,y:0};holdAttack=false;},
     closeDialog(){dialogNPC=null;dialogEl.hidden=true;}};
 };

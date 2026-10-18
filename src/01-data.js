@@ -122,6 +122,12 @@ cau_hinh:[
  {khoa:'thu_cuoi_cap_bo_than',gia_tri:330,ghi_chu:'v10.21 · Thú cưỡi Thần (bộ Thần, ngựa sắt…): tính như thú bán ở thành cấp này'},
  // v10.21: rương đồ chung của tài khoản (Người giữ rương ở làng và các thành)
  {khoa:'ruong_so_o',gia_tri:60,ghi_chu:'v10.21 · Số ô đồ trong rương chung của mỗi tài khoản'},
+ {khoa:'sach_gia_nhan',gia_tri:100,ghi_chu:'v10.22 · Giá mua sách nhân số này (so với bản 10.21)'},
+ {khoa:'sach_roi_huyen_thoai_phan_van',gia_tri:300,ghi_chu:'v10.22 · Sách Huyền thoại chỉ rơi từ trùm: phần vạn mỗi lần hạ trùm vùng (300 = 3%; trùm thế giới ×3). Cửa hàng chỉ bán tới Hoàn hảo'},
+ {khoa:'sach_roi_than_phan_van',gia_tri:50,ghi_chu:'v10.22 · Sách Thần chỉ rơi từ trùm: phần vạn mỗi lần hạ trùm vùng (50 = 0,5%; trùm thế giới ×3)'},
+ {khoa:'boss_nhan_sat_thuong',gia_tri:1.2,ghi_chu:'v10.22 · Sát thương trùm vùng nhân thêm số này (1.2 = +20%). Hắc Đế, Hắc Thiên Ma giữ nguyên (đã cân cho mốc 1 năm)'},
+ {khoa:'nguoi_choi_ao_thanh',gia_tri:5,ghi_chu:'v10.22 · Số người chơi ảo đi lại trong làng / thành (0 = tắt)'},
+ {khoa:'nguoi_choi_ao_chay_giay',gia_tri:60,ghi_chu:'v10.22 · Trung bình bao nhiêu giây lại có một người chơi ảo bị quái rượt, ít máu, chạy về làng / thành (0 = tắt)'},
  {khoa:'link_cho_phien',gia_tri:'https://ikynagame.blogspot.com/p/cho-phien.html',ghi_chu:'Địa chỉ trang Chợ phiên (mua bán giữa người chơi, nhân vật đi theo)'}
 ],
 // cap = cấp hiện tại; ti_le = % thành công lên cấp kế; thất bại: cấp về ngẫu nhiên từ that_bai_tu đến that_bai_den (để trống = giữ nguyên)
@@ -186,7 +192,7 @@ vu_khi:[
 cua_hang:[
  ...['sword-iron','sword-steel','shield-wood','shield-iron','staff-jade','bow-hunt','spear-iron','crossbow-war','saber-iron','mace-iron','hat-iron','armor-leather','armor-iron','pants-guard','gloves-leather','shoes-leather','shoes-iron'].map((id,i)=>({cua_hang:'smith',id,pham_chat:'n,g',gia:'',thu_tu:i+1,bac:0})),
  ...['mount','mount-brown','mount-black','mount-white','mount-tiger','mount-elephant'].map((id,i)=>({cua_hang:'trainer',id,pham_chat:'n',gia:'',thu_tu:i+1,bac:0})),
- ...['book-fire','book-water','book-earth','book-metal','book-wood','book-loi','book-phong','book-bang','book-ma','book-sang'].map((id,i)=>({cua_hang:'wizard',id,pham_chat:'n,g,p,l,m',gia:'',thu_tu:i+1,bac:0}))
+ ...['book-fire','book-water','book-earth','book-metal','book-wood','book-loi','book-phong','book-bang','book-ma','book-sang'].map((id,i)=>({cua_hang:'wizard',id,pham_chat:'n,g,p',gia:'',thu_tu:i+1,bac:0}))
 ],
 // Gói nạp (v10.6): NPC Nạp thẻ ở thành trì hiện gói, sinh mã QR chuyển khoản (VietQR). Hồng ngọc cộng tay bằng hàm napHongNgoc trong Apps Script sau khi nhận tiền.
 goi_nap:[
@@ -307,7 +313,7 @@ quai:[
  ['doi-quy','Dơi quỷ',450,34,95,230,20,56,260,52,1,.3,75,.4,0,18,.14,.03,0,0,'0-0','thuong',10],
  ['nhen-doc','Nhện độc',1200,52,50,150,28,32,240,64,1.6,.5,120,.25,0,22,.16,.032,0,0,'0-0','thuong',10],
  ['dai-bang','Đại Bàng Tinh',9000,75,70,190,46,100,320,120,1.8,.65,2200,.06,1,240,.8,.4,0,0,'8-20','hoan_hao',20]
-].map(([id,ten,mau,sat_thuong,toc_do,toc_chay,ban_kinh,cao,tam_danh,tam_gan,hoi_chieu,vung_tay,dong,day_lui,boss,hoi_sinh_giay,ti_le_dep,ti_le_hoan_hao,ti_le_huyen_thoai,ti_le_than,hong_ngoc,loai_sat_thuong,ti_le_x2])=>{const [ha,hb]=hong_ngoc.split('-').map(Number),v=x=>Math.round(x*10000);return {id,ten,mau,sat_thuong,toc_do,toc_chay,ban_kinh,cao,tam_danh,tam_gan,hoi_chieu_ms:Math.round(hoi_chieu*1000),vung_tay_ms:Math.round(vung_tay*1000),dong,day_lui_phan_tram:Math.round(day_lui*100),boss,hoi_sinh_giay,dep_phan_van:v(ti_le_dep),hoan_hao_phan_van:v(ti_le_hoan_hao),huyen_thoai_phan_van:v(ti_le_huyen_thoai),than_phan_van:v(ti_le_than),hong_ngoc_it:ha,hong_ngoc_nhieu:hb,loai_sat_thuong,ti_le_x2,kinh_nghiem:{deer:8,lion:20,elephant:50,croc:25,'chua-son-lam':300,'ngu-tinh':800,'bo-cap':45,'ken-ken':40,'chan-tinh':900,'thach-tinh':1000,'soi-tuyet':55,'gau-nui':110,'ho-tinh':1200,'doi-quy':60,'nhen-doc':130,'dai-bang':1500}[id]||0};}),
+].map(([id,ten,mau,sat_thuong,toc_do,toc_chay,ban_kinh,cao,tam_danh,tam_gan,hoi_chieu,vung_tay,dong,day_lui,boss,hoi_sinh_giay,ti_le_dep,ti_le_hoan_hao,ti_le_huyen_thoai,ti_le_than,hong_ngoc,loai_sat_thuong,ti_le_x2])=>{const [ha,hb]=hong_ngoc.split('-').map(Number),v=x=>Math.round(x*10000);return {ky_nang:({'ho-tinh':'tron','dai-bang':'bay','thach-tinh':'phan-giap'})[id]||'',id,ten,mau,sat_thuong,toc_do,toc_chay,ban_kinh,cao,tam_danh,tam_gan,hoi_chieu_ms:Math.round(hoi_chieu*1000),vung_tay_ms:Math.round(vung_tay*1000),dong,day_lui_phan_tram:Math.round(day_lui*100),boss,hoi_sinh_giay,dep_phan_van:v(ti_le_dep),hoan_hao_phan_van:v(ti_le_hoan_hao),huyen_thoai_phan_van:v(ti_le_huyen_thoai),than_phan_van:v(ti_le_than),hong_ngoc_it:ha,hong_ngoc_nhieu:hb,loai_sat_thuong,ti_le_x2,kinh_nghiem:{deer:8,lion:20,elephant:50,croc:25,'chua-son-lam':300,'ngu-tinh':800,'bo-cap':45,'ken-ken':40,'chan-tinh':900,'thach-tinh':1000,'soi-tuyet':55,'gau-nui':110,'ho-tinh':1200,'doi-quy':60,'nhen-doc':130,'dai-bang':1500}[id]||0};}),
 nhiem_vu:[
  ['q-huou','Săn hươu','Dân làng cần thịt hươu cho hội làng.','deer',5,200,0,'','','khong'],
  ['q-su-tu','Trừ sư tử','Sư tử bên Đông Ngạn hay vồ người đi rừng.','lion',3,500,0,'','','khong'],

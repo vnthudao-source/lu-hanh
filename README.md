@@ -199,6 +199,17 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
 
+## Bản 10.22 — che Blogspot, chặn phóng to, người chơi ảo, chiến thuật trùm, sách rơi từ trùm
+
+- **Không còn thấy giao diện Blogspot**: đoạn nhúng mới phủ nền tối + chữ “Lữ Hành” ngay khi trình duyệt đọc tới, màn hình chờ hiện đè lên. Muốn che hoàn toàn từ khung hình đầu tiên: dán `blogspot/dau-trang-blogspot.html` một lần vào Chủ đề → Chỉnh sửa HTML, ngay sau `<head>` (chỉ áp dụng cho trang game).
+- **Chặn phóng to trên điện thoại**: khóa viewport (`user-scalable=no`), `touch-action:manipulation` cho toàn game, chặn chụm hai ngón / chạm hai lần.
+- **Người chơi ảo**: đồ theo cấp bản đồ (vùng thấp đồ thường, vùng cao đồ hoàn hảo cường hóa, từ cấp 170 có người mặc trọn bộ Huyền thoại / Thần); 5 người đi lại trong làng, thành (`nguoi_choi_ao_thanh`); khoảng mỗi phút (`nguoi_choi_ao_chay_giay`) một người bị quái rượt, ít máu, kêu cứu chạy về làng / thành — hạ con quái là được cảm ơn.
+- **Trùm vùng +20% sát thương** (`boss_nhan_sat_thuong`); Hắc Đế, Hắc Thiên Ma giữ nguyên (đã cân cho mốc 1 năm).
+- **Chiến thuật trùm** (cột `ky_nang`): `tron` Hồ Tinh chín đuôi, Cửu Vĩ Hồ — dưới 20% máu bỏ chạy, thoát là hồi đầy máu; đốt cháy bằng sách Hỏa giữ chân (ngã quỵ 2 giây) hoặc bắn tầm xa (cận chiến chỉ 30%). `bay` Đại Bàng Tinh, Lôi Điểu — 4 giây mỗi 12 giây bay lên cao, cận chiến 15%. `giap-bang` Băng Hoàng — giảm 70% sát thương, đòn lửa làm tan giáp 5 giây. `hoi-mau` Mộc Tinh — hồi 1% máu/giây, đốt cháy / độc thì ngừng. `phan-giap` Thạch Tinh — cận chiến 60% và dội 15% vào người đánh. Lần đầu giao chiến game hiện mẹo đánh. Sách Hỏa nay gây cháy (mất máu dần 3 giây).
+- **Sách**: cửa hàng chỉ bán Thường, Đẹp, Hoàn hảo; giá × 100 (`sach_gia_nhan`). Sách Huyền thoại / Thần chỉ rơi khi hạ trùm: 3% / 0,5% mỗi lần (trùm thế giới × 3), bậc sách theo cấp vùng của trùm.
+- Mô phỏng 100 người chơi: 100/100 hạ boss cuối, trung vị 12,8 tháng (không đổi).
+- Sheet: chạy `kiemTra` rồi `capNhatV1022()` một lần.
+
 ## Bản 10.21 — rương chung, thú cưỡi cần Mệnh lệnh, sách theo bậc và phẩm chất, Trí tuệ giữ quái
 
 - **Người giữ rương** ở làng Thanh Mộc và 4 thành (Cổ Loa, Thăng Long, Hoa Lư, Phú Xuân): mỗi tài khoản một rương chung (`ruong_so_o` = 60 ô), nhân vật nào cũng gửi / lấy được đồ, tiền, hồng ngọc. Máy chủ giữ rương ở cột `ruong` của tab `tai_khoan` (tự thêm). Đồ nhiệm vụ không gửi được.

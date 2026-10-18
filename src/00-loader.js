@@ -18,7 +18,15 @@ window.LH_Loader=window.LH_Loader||(()=>{
   let el,fill,pctEl,lbl,story,goBtn,cv,bgImg=null,shown=0,target=0,cap=0,raf=0,t0=0,scene=false,storyDone=Promise.resolve();
   // Ảnh tĩnh đã lưu từ lần vào trước (Sheet hinh_anh): logo, nền màn hình chờ
   const pics=()=>{try{return JSON.parse(localStorage.getItem('lh-img')||'{}')||{};}catch(e){return {};}};
+  // v10.22: chặn phóng to trên điện thoại (chạm hai lần, chụm hai ngón) và ẩn giao diện trang chứa game
+  let noZoom=false;
+  function lockZoom(){if(noZoom)return;noZoom=true;try{document.documentElement.classList.add('lh-boot');let m=document.querySelector('meta[name=viewport]');if(!m){m=document.createElement('meta');m.name='viewport';document.head.appendChild(m);}m.content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover';
+    const s=document.createElement('style');s.textContent='html.lh-boot,html.lh-boot body{touch-action:manipulation;-webkit-text-size-adjust:100%}#lu-hanh,#lu-hanh *,#lh-loader,#lh-loader *{touch-action:manipulation}#lu-hanh canvas#scene,#lu-hanh .pad{touch-action:none}';document.head.appendChild(s);
+    for(const ev of ['gesturestart','gesturechange'])document.addEventListener(ev,e=>e.preventDefault(),{passive:false});
+    document.addEventListener('dblclick',e=>{if(!(e.target&&e.target.closest&&e.target.closest('input,textarea')))e.preventDefault();},{passive:false});
+    document.addEventListener('touchmove',e=>{if(e.touches&&e.touches.length>1)e.preventDefault();},{passive:false});}catch(e){}}
   function mount(){
+    lockZoom();const cv0=document.getElementById('lh-cover');if(cv0)cv0.remove();
     if(el&&document.body.contains(el))return;
     if(!document.getElementById('lh-loader-css')){const s=document.createElement('style');s.id='lh-loader-css';s.textContent=CSS;document.head.appendChild(s);}
     el=document.getElementById('lh-loader');

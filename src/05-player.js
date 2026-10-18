@@ -32,7 +32,13 @@ const Player=(()=>{
   // Kỹ năng trùm (cột ky_nang ở tab quai, cách nhau dấu phẩy): tên hiện, màu, thời gian hiệu ứng (giây)
   const SKILLS={slow:{name:'Trì trệ',desc:'giảm tốc đánh 40%',color:'#c8b060',dur:6},freeze:{name:'Đóng băng',desc:'đứng yên',color:'#80d8ff',dur:1.6},stun:{name:'Sét giật',desc:'choáng',color:'#ffe060',dur:1.4},
     weak:{name:'Suy nhược',desc:'giảm sát thương 40%',color:'#c060ff',dur:6},armor:{name:'Phá giáp',desc:'giảm phòng ngự 50%',color:'#ff9040',dur:6},poison:{name:'Trúng độc',desc:'mất máu dần',color:'#80e060',dur:5},
-    bomb:{name:'Nổ',desc:'nổ tại chỗ đứng, sát thương lớn',color:'#ff5030',dur:0},tubao:{name:'Tự bạo',desc:'khi yếu, trùm nổ tung',color:'#ff2020',dur:0}};
+    bomb:{name:'Nổ',desc:'nổ tại chỗ đứng, sát thương lớn',color:'#ff5030',dur:0},tubao:{name:'Tự bạo',desc:'khi yếu, trùm nổ tung',color:'#ff2020',dur:0},
+    // v10.22: chiến thuật trùm (bị động, không phải đòn đánh) — cần cách đánh riêng mới hạ được
+    tron:{name:'Bỏ chạy',desc:'còn dưới 20% máu thì bỏ chạy về hang, thoát được là hồi đầy máu',hint:'Dùng sách Hỏa đốt cháy để giữ chân, hoặc cung, nỏ, gậy phép bắn theo khi trùm bỏ chạy',color:'#ff80c0',dur:0,passive:1},
+    bay:{name:'Bay lượn',desc:'thỉnh thoảng bay lên cao, đòn cận chiến chỉ còn 15% sát thương',hint:'Đổi sang cung, nỏ hoặc gậy phép khi trùm bay lên',color:'#c0d8ff',dur:0,passive:1},
+    'giap-bang':{name:'Giáp băng',desc:'giáp băng giảm 70% sát thương nhận vào',hint:'Gắn sách Hỏa: đòn lửa làm tan giáp băng trong 5 giây',color:'#a0e0ff',dur:0,passive:1},
+    'hoi-mau':{name:'Tái sinh',desc:'mỗi giây hồi 1% máu',hint:'Đốt cháy (sách Hỏa) hoặc làm trúng độc thì trùm ngừng hồi máu',color:'#90e070',dur:0,passive:1},
+    'phan-giap':{name:'Da đá',desc:'đòn cận chiến chỉ còn 60% sát thương và dội lại 15% vào người đánh',hint:'Đánh từ xa bằng cung, nỏ, gậy phép để không bị dội đòn',color:'#c8b8a0',dur:0,passive:1}};
   // Loại vũ khí (tab vu_khi): sát thương, tầm đánh, độ lan, thời gian một đòn, mana kỹ năng, thời gian hồi chiêu, nội tại mỗi đòn
   const W_DEF={punch:{name:'Tay không',dmg:.55,range:50,spread:75,dur:.32,mana:1,cd:1,passive:12}};
   const weapon=t=>WEAPONS[t]||W_DEF[t]||W_DEF.punch;
@@ -84,8 +90,8 @@ const Player=(()=>{
       if(d.slot==='mount'){d.beast=BEASTS[r.thu_cuoi]?r.thu_cuoi:'horse';d.cmd=BEASTS[d.beast].cmd;}
       items[r.id]=d;
     }
-    const QM=num(CFG.quai_nhan_mau,1),QD=num(CFG.quai_nhan_sat_thuong,1),BN=num(CFG.boss_nhan,1),qx=(v,k)=>v>0?Math.max(1,Math.round(v*k)):v; // v10.16: hệ số máu / sát thương mọi quái (cau_hinh)
-    for(const r of data.quai||[])MON[r.id]={name:r.ten,hp:qx(num(r.mau),QM*(num(r.boss)?BN:1)),dmg:qx(num(r.sat_thuong),QD*(num(r.boss)?BN:1)),hpBase:num(r.mau),dmgBase:num(r.sat_thuong),speed:num(r.toc_do),run:num(r.toc_chay),r:num(r.ban_kinh),h:num(r.cao),aggro:num(r.tam_danh),range:num(r.tam_gan),cd:num(r.hoi_chieu_ms)/1000,windup:num(r.vung_tay_ms)/1000,copper:num(r.dong),knock:num(r.day_lui_phan_tram)/100,boss:num(r.boss),respawn:num(r.hoi_sinh_giay,15),drops:{g:num(r.dep_phan_van)/1e4,p:num(r.hoan_hao_phan_van)/1e4,l:num(r.huyen_thoai_phan_van)/1e4,m:num(r.than_phan_van)/1e4},rubies:[num(r.hong_ngoc_it),num(r.hong_ngoc_nhieu)],dtype:r.loai_sat_thuong||'thuong',crit:num(r.ti_le_x2),exp:num(r.kinh_nghiem,Math.max(1,Math.round(num(r.mau)/8))),map:String(r.ban_do||'').trim()||undefined,skills:String(r.ky_nang||'').split(/[,\s]+/).filter(k=>SKILLS[k])};
+    const QM=num(CFG.quai_nhan_mau,1),QD=num(CFG.quai_nhan_sat_thuong,1),BN=num(CFG.boss_nhan,1),BD=num(CFG.boss_nhan_sat_thuong,1),qx=(v,k)=>v>0?Math.max(1,Math.round(v*k)):v; // v10.16: hệ số máu / sát thương mọi quái (cau_hinh)
+    for(const r of data.quai||[])MON[r.id]={name:r.ten,hp:qx(num(r.mau),QM*(num(r.boss)?BN:1)),dmg:qx(num(r.sat_thuong),QD*(num(r.boss)?BN*(num(r.boss)===1?BD:1):1)),hpBase:num(r.mau),dmgBase:num(r.sat_thuong),speed:num(r.toc_do),run:num(r.toc_chay),r:num(r.ban_kinh),h:num(r.cao),aggro:num(r.tam_danh),range:num(r.tam_gan),cd:num(r.hoi_chieu_ms)/1000,windup:num(r.vung_tay_ms)/1000,copper:num(r.dong),knock:num(r.day_lui_phan_tram)/100,boss:num(r.boss),respawn:num(r.hoi_sinh_giay,15),drops:{g:num(r.dep_phan_van)/1e4,p:num(r.hoan_hao_phan_van)/1e4,l:num(r.huyen_thoai_phan_van)/1e4,m:num(r.than_phan_van)/1e4},rubies:[num(r.hong_ngoc_it),num(r.hong_ngoc_nhieu)],dtype:r.loai_sat_thuong||'thuong',crit:num(r.ti_le_x2),exp:num(r.kinh_nghiem,Math.max(1,Math.round(num(r.mau)/8))),map:String(r.ban_do||'').trim()||undefined,skills:String(r.ky_nang||'').split(/[,\s]+/).filter(k=>SKILLS[k]),tac:String(r.ky_nang||'').split(/[,\s]+/).filter(k=>SKILLS[k]&&SKILLS[k].passive)};
     for(const r of data.nhiem_vu||[])QUESTS[r.id]={id:r.id,name:r.ten,desc:r.mo_ta,target:r.muc_tieu,count:num(r.so_luong,1),copper:num(r.thuong_dong),rubies:num(r.thuong_hong_ngoc),item:r.thuong_do||'',itemQ:r.pham_chat_do||'n',repeat:r.lap_lai!=='khong',lv:num(r.cap_toi_thieu),exp:num(r.thuong_kinh_nghiem,Math.round(num(r.thuong_dong)/10)),req:r.yeu_cau||'',end:r.loi_ket||'',story:!!num(r.truyen),npc:r.npc||'',at:r.noi||'',npcName:r.npc_ten||''};
     // Thầy đồ: bộ câu hỏi (bo_cau_hoi) + câu hỏi (cau_hoi; máy chủ đọc tab CauHoi của bảng OCD_Quest, cột dap_an không gửi xuống trình duyệt)
     // v10.13: bỏ các bộ mã NV* và SKQ* (chỉ giữ bộ DX_*)
@@ -185,6 +191,9 @@ const Player=(()=>{
   // quai_roi_do = 0 thì quái không rơi hồng ngọc, đồ đạc
   const killCopper=(M,up=0)=>{const c=Math.round(num(M&&M.copper)*num(CFG.quai_nhan_tien,1)*(1+num(up)/100)),cap=num(CFG.quai_tien_toi_da,0);return cap>0?Math.min(cap,c):c;};
   const killExp=(M,up=0)=>{const e=num(M&&M.exp);return e>0?Math.max(1,Math.round(e*num(CFG.quai_nhan_kinh_nghiem,1)*(1+num(up)/100))):0;};
+  // v10.22: trùm rơi sách Huyền thoại / Thần (hệ ngẫu nhiên), bậc sách theo cấp vùng của trùm; trùm thế giới tỉ lệ ×3
+  const BOOK_IDS=()=>Object.keys(items).filter(k=>items[k].slot==='book'&&items[k].element);
+  function bossBook(monId,rng){const M=MON[monId];if(!M||!M.boss)return null;const k=M.boss===2?3:1,pm=num(CFG.sach_roi_than_phan_van,50)/1e4*k,pl=num(CFG.sach_roi_huyen_thoai_phan_van,300)/1e4*k,x=rng();const q=x<pm?'m':x<pm+pl?'l':null;if(!q)return null;const ids=BOOK_IDS();if(!ids.length)return null;return roll(ids[Math.floor(rng()*ids.length)],q,rng,regionLv(regionOf(monId)));}
   function rollDrop(monId,rng=Math.random,luck=1){
     const M=MON[monId];if(!M||CFG.quai_roi_do!==undefined&&CFG.quai_roi_do!==''&&!num(CFG.quai_roi_do))return {items:[],rubies:0};
     const lvl=regionLv(regionOf(monId)),tier=lvl>=20?lvl:0,out=[],tries=M.boss===2?3:M.boss?2:1,cap=Math.max(dropCap(),lvl>=105?4:lvl>=70?3:0),R=q=>RAR[q]?RAR[q].tier<=cap:true;
@@ -407,7 +416,7 @@ const Player=(()=>{
   // v10.21: không ghi cửa hàng thì lấy dòng ở cửa hàng làng trước (trước đây lấy dòng cuối cùng → sách mua ở Đạo sĩ làng thành sách bậc Phú Xuân, giá Phú Xuân)
   const shopRow=(type,shop)=>{if(shop&&SHOPS[shop])return SHOPS[shop].find(r=>r.id===type)||null;let row=null,town=null;for(const k in SHOPS){const r=SHOPS[k].find(x=>x.id===type);if(!r)continue;if(/^thanh-/.test(k)){if(!town)town=r;}else if(!row)row=r;}return row||town;};
   // Giá: Đẹp ×he_so_gia_do_dep, Hoàn hảo ×he_so_gia_hoan_hao (%). Đồ phẩm chất cố định (huyền thoại, thần) bán trong cửa hàng thành trì thì tính theo giá dòng hàng
-  function shopPrice(type,q='n',shop){const d=items[type];if(!d)return 0;const row=shopRow(type,shop),p=row&&row.price?row.price:d.price;if(d.q)return Math.round(p);if(d.slot==='book')return Math.round(p*lst('sach_gia_pham_chat','1,5,20,100,400',Math.max(0,QORD.indexOf(q))));return Math.round(p*(q==='g'?num(CFG.he_so_gia_do_dep,250)/100:q==='p'?num(CFG.he_so_gia_hoan_hao,600)/100:1));}
+  function shopPrice(type,q='n',shop){const d=items[type];if(!d)return 0;const row=shopRow(type,shop),p=row&&row.price?row.price:d.price;if(d.q)return Math.round(p);if(d.slot==='book')return Math.round(p*num(CFG.sach_gia_nhan,100)*lst('sach_gia_pham_chat','1,5,20,100,400',Math.max(0,QORD.indexOf(q))));return Math.round(p*(q==='g'?num(CFG.he_so_gia_do_dep,250)/100:q==='p'?num(CFG.he_so_gia_hoan_hao,600)/100:1));}
   // v10.21: sách Huyền thoại, Thần thêm giá hồng ngọc theo bậc thành
   function shopRuby(type,q='n',shop){const d=items[type];if(!d)return 0;if(d.ruby)return d.ruby;if(d.slot!=='book')return 0;const row=shopRow(type,shop);return Math.round(lst('sach_hong_ngoc_pham_chat','0,0,0,20,100',Math.max(0,QORD.indexOf(q)))*lst('sach_hong_ngoc_bac','1,2,4,7,10',bacOfT(row&&row.t)));}
   function buy(s,type,q='n',rng=Math.random,shop){const d=items[type];const row=shopRow(type,shop);if(!d||!(row&&row.price||d.price||d.ruby)||(d.q&&!row))throw Error('ITEM');if(row&&!row.q.includes(d.q||q))throw Error('ITEM');const price=d.ruby?0:shopPrice(type,q,shop),rb=shopRuby(type,d.q?'n':q,shop);if(s.copper<price)throw Error('MONEY');if(s.rubies<rb)throw Error('RUBY');const i=s.bag.indexOf(null);if(i<0)throw Error('BAG_FULL');s.copper-=price;s.rubies-=rb;s.bag[i]=roll(type,d.q?'n':q,rng,row&&row.t||0);return i;}
@@ -601,6 +610,7 @@ const Player=(()=>{
       const D=derive(s),F=D.fx||{},copper=killCopper(M,F.coinUp),exp=killExp(M,F.expUp);
       s.copper+=copper;s.flags.kills[op.mon]=(s.flags.kills[op.mon]||0)+1;
       const drop=rollDrop(op.mon,rng,1+num(F.luck)/100),items=[],lost=[];s.rubies+=drop.rubies;
+      {const bk=M.boss?bossBook(op.mon,rng):null;if(bk)drop.items.push(bk);} // v10.22: sách Huyền thoại, Thần chỉ rơi từ trùm
       for(const it of drop.items){try{addItem(s,it);items.push(it);}catch(e){lost.push(it);}}
       const done=questProgress(s,op.mon).filter(id=>s.quests.active[id]>=QUESTS[id].count);
       // Thầy đồ: việc săn quái lấy manh mối đáp án

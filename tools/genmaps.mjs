@@ -12,7 +12,7 @@ const MAPS=[
  {id:'rung-truc',name:'Rừng Trúc',lv:20,from:'hang-dong',seed:21,theme:{g:['#7fa860','#5f8a48'],d:'bamboo',r:['#8d9a7a','#5f6a52','#3d4636'],w:['#6fb0c0','#3f8aa0'],p:'#8a7048'},sky:null,rock:.58,water:.78,dry:.3,
   deco:[['truc',{base:'tree',shape:'bamboo',c:['#5a7a3a','#6f9a44','#9ac860']},.09],['da',{base:'rock',c:['#8d9a7a','#4d5a42']},.015],['mieu',{base:'shrine',c:['#9a9484','#6b2d1e']},.004]],
   mobs:[['khi-rung','Khỉ rừng',{body:'quad',s:.7,c:['#8a6a3a','#5a4020','#d8b888','#5a4020'],tail:1,eye:'#1a1010'}],['ran-ho','Rắn hổ mang',{body:'snake',s:.8,c:['#4a6a2a','#2a4a18','#c8d070'],eye:'#e8e020'}]],
-  boss:['moc-tinh','Mộc Tinh',{body:'golem',s:.9,c:['#4a6a2a','#2f4a1c','#8ab860'],eye:'#d8ff60',glow:'#a8ff80'},'slow'],ring:'#a8d860'},
+  boss:['moc-tinh','Mộc Tinh',{body:'golem',s:.9,c:['#4a6a2a','#2f4a1c','#8ab860'],eye:'#d8ff60',glow:'#a8ff80'},'slow,hoi-mau'],ring:'#a8d860'},
  {id:'dam-lay',name:'Đầm Lầy',lv:35,hazard:'slow',from:'sa-mac',seed:33,theme:{g:['#5e6e3a','#45552a'],d:'moss',r:['#6a6e5a','#454a3a','#2a2e22'],w:['#5a7a5a','#3a5a46'],p:'#6a5a3a',ripple:'#9ab08055'},sky:{n:30,col:'#c8d8b0',size:14,vx:12,vy:4,tint:'#2a3a2018'},rock:.62,water:.62,dry:.4,
   deco:[['cay-kho',{base:'tree',shape:'dead',c:['#4a3a2a']},.05],['co-lac',{base:'tree',shape:'round',s:.7,c:['#4a3a2a','#5a7a3a','#8aa050']},.03],['xuong',{base:'bones',c:['#d8d2c4']},.012]],
   mobs:[['dia-khong-lo','Đỉa khổng lồ',{body:'snake',s:.9,c:['#3a2a3a','#201820','#8a5a7a'],eye:'#ff6060'}],['ech-doc','Ếch độc',{body:'blob',s:.9,c:['#6aa040','#3a6a20','#c8e860'],eye:'#1a1010'}]],
@@ -20,7 +20,7 @@ const MAPS=[
  {id:'dinh-may',name:'Đỉnh Mây',lv:55,from:'nui-tuyet',seed:45,theme:{g:['#dfe8ee','#c4d3dc'],d:'cloud',r:['#aab6bf','#7a858e','#58626a'],w:['#bcd8ea','#9ac0dc'],p:'#b8ab98',sd:'#e8eef2'},sky:{n:26,col:'#ffffff',size:22,vx:16,vy:2,tint:'#dfe8f020'},rock:.6,water:.9,dry:.3,
   deco:[['thong',{base:'tree',shape:'cone',c:['#5a4232','#3a6a4a','#5a8a6a']},.05],['da-xanh',{base:'rock',c:['#aab6bf','#58626a']},.02],['cot-may',{base:'pillar',c:['#c8ccd0','#8a9298'],broken:1},.004]],
   mobs:[['ung-tuyet','Ưng tuyết',{body:'bird',s:.9,c:['#e8e8f0','#9aa0b0','#ffffff','#e8b040'],eye:'#1a1010'}],['de-nui','Dê núi',{body:'quad',s:.8,c:['#d8d0c0','#8a8070','#f0ece0','#6a5a40'],horn:1,eye:'#1a1010'}]],
-  boss:['loi-dieu','Lôi Điểu',{body:'bird',s:1.8,c:['#3a3a6a','#20204a','#8a8aff','#ffe040'],eye:'#ffff80',horn:1,slow:1},'stun,slow'],ring:'#8a8aff'},
+  boss:['loi-dieu','Lôi Điểu',{body:'bird',s:1.8,c:['#3a3a6a','#20204a','#8a8aff','#ffe040'],eye:'#ffff80',horn:1,slow:1},'stun,slow,bay'],ring:'#8a8aff'},
  {id:'co-loa',name:'Thành Cổ Loa',lv:70,from:'rung-truc',seed:57,citadel:1,theme:{g:['#8a9a5a','#6f8048'],d:'grass',r:['#9a9484','#6a6456','#44403a'],w:['#6fa8c0','#3f80a0'],p:'#a08a60',sd:'#b0a070'},sky:null,rock:.66,water:.8,dry:.35,
   deco:[['da-co',{base:'rock',c:['#9a9484','#44403a']},.012],['co-thu',{base:'tree',shape:'round',c:['#5a4232','#4a7a3a','#7aa850']},.035],['tru-gay',{base:'pillar',c:['#b0a890','#6a6456'],broken:1},.006]],
   mobs:[['am-binh','Âm binh',{body:'human',s:.9,c:['#6a7a8a','#3a4a5a','#9aaabb','#c8c8d0'],see:1,weapon:'spear',hat:'helm',skin:'#9aaabb',eye:'#80ff80'}],['quy-doi','Quỷ đói',{body:'human',s:.85,c:['#5a4a4a','#3a2a2a','#9a8a8a'],hat:'hood',weapon:'club',skin:'#b0a0a0',eye:'#ff6060'}]],
@@ -56,7 +56,7 @@ const MAPS=[
  {id:'bang-nguyen',name:'Băng Nguyên',lv:150,hazard:'freeze',from:'bien-dong',seed:105,theme:{g:['#e4eef6','#c6d8e6'],d:'ice',r:['#9ab0c4','#6a8096','#48596a'],w:['#b6dbeb','#86bcd7'],p:'#c0ccd4',sd:'#dde8f0',ripple:'#ffffff66'},sky:{n:50,col:'#ffffff',size:2,vx:20,vy:40,tint:'#d8e8ff14'},rock:.6,water:.72,dry:.4,
   deco:[['bang-tru',{base:'crystal',c:['#bfe3f4','#ffffff']},.02],['thong-tuyet',{base:'tree',shape:'cone',c:['#4a3a32','#dfe8ee','#f6fbff']},.03],['xuong-voi',{base:'bones',c:['#f0ece0']},.008]],
   mobs:[['voi-ma-mut','Voi ma mút',{body:'quad',s:1.5,c:['#7a5a40','#4a3020','#b09070','#f0ece0'],horn:1,eye:'#1a1010'}],['yeu-tuyet','Yêu tuyết',{body:'human',s:1.1,c:['#e8f0f8','#b0c0d0','#ffffff','#80c0ff'],hat:'horn',weapon:'club',skin:'#c8d8e8',eye:'#60a0ff'}]],
-  boss:['bang-hoang','Băng Hoàng',{body:'human',s:1.9,c:['#6aa0d0','#3a6090','#c0e0ff','#ffffff'],hat:'crown',weapon:'staff',armor:1,skin:'#d0e8ff',eye:'#80ffff',glow:'#a0e0ff55'},'freeze,slow'],ring:'#a0e0ff'},
+  boss:['bang-hoang','Băng Hoàng',{body:'human',s:1.9,c:['#6aa0d0','#3a6090','#c0e0ff','#ffffff'],hat:'crown',weapon:'staff',armor:1,skin:'#d0e8ff',eye:'#80ffff',glow:'#a0e0ff55'},'freeze,slow,giap-bang'],ring:'#a0e0ff'},
  {id:'thang-long',name:'Kinh Thành Thăng Long',lv:170,from:'rung-ma',seed:117,citadel:1,theme:{g:['#9a9a7a','#80805e'],d:'brick',r:['#8a7a6a','#5a4e44','#3a322c'],w:['#6fa8c0','#3f80a0'],p:'#b0a080',sd:'#a8a080'},sky:{n:18,col:'#ffd080',size:3,vx:8,vy:-6,glow:1,tint:'#30201010'},rock:.66,water:.84,dry:.3,
   deco:[['den-long',{base:'lantern',c:['#5a2a1a','#ff7040']},.012,{light:'#ffb060'}],['hoe',{base:'tree',shape:'round',c:['#5a4232','#5a8a3a','#9ac860']},.03],['tuong-da',{base:'pillar',c:['#b0a890','#6a6456']},.005]],
   mobs:[['phan-quan','Phản quân',{body:'human',s:1,c:['#5a3a3a','#3a2020','#9a7a7a','#c0a060'],weapon:'sword',hat:'helm',armor:1,skin:'#e1c295',eye:'#1a1010'}],['hac-ky','Hắc kỵ',{body:'quad',s:1.3,c:['#2a2a30','#141418','#5a5a66','#c0a060'],tail:1,eye:'#ff4040'}]],
@@ -125,7 +125,7 @@ const MAPS=[
  {id:'vuc-yeu-tinh',name:'Vực Yêu Tinh',lv:270,hazard:'slow',from:'dao-rong',seed:213,theme:{g:['#4a3a5a','#36284a'],d:'moss',r:['#5a4a6a','#3a2e48','#241c30'],w:['#6a4a9a','#4a2a7a'],p:'#5a4a60',sd:'#54486a',ripple:'#d0a0ff55'},sky:{n:36,col:'#ff80d0',size:2.5,vx:10,vy:-10,glow:1,dark:'rgba(20,8,30,.6)',tint:'#30104018'},rock:.6,water:.82,dry:.4,
   deco:[['cay-yeu',{base:'tree',shape:'round',c:['#3a2a40','#8a3a9a','#d060c0']},.05],['den-yeu',{base:'lantern',c:['#3a2040','#ff80d0']},.012,{light:'#ff80d0'}],['hoa-doc',{base:'crystal',c:['#c040a0','#ff80d0']},.01]],
   mobs:[['ho-ly','Hồ ly',{body:'quad',s:1,c:['#e0a060','#a06030','#fff0d0','#c04040'],tail:1,eye:'#ff4080'}],['yeu-tang','Yêu tăng',{body:'human',s:1.1,c:['#8a3a5a','#5a1a3a','#d080a0','#e0b040'],hat:'hood',weapon:'staff',skin:'#c0a0b0',eye:'#ff40a0',glow:'#ff40a044'}]],
-  boss:['cuu-vi-ho','Cửu Vĩ Hồ',{body:'quad',s:2.2,c:['#f0e0d0','#c0a080','#ffffff','#ff4080'],tail:1,horn:1,eye:'#ff2080',glow:'#ff40a055'},'weak,freeze,poison,stun'],ring:'#ff40a0'},
+  boss:['cuu-vi-ho','Cửu Vĩ Hồ',{body:'quad',s:2.2,c:['#f0e0d0','#c0a080','#ffffff','#ff4080'],tail:1,horn:1,eye:'#ff2080',glow:'#ff40a055'},'weak,freeze,poison,stun,tron'],ring:'#ff40a0'},
  {id:'cung-trang',name:'Cung Trăng',lv:280,from:'vuc-yeu-tinh',seed:225,theme:{g:['#d8dce8','#bcc4d8'],d:'cloud',r:['#a8b0c8','#788098','#565c70'],w:['#c8d8f8','#a0b8e8'],p:'#c0c4d4',sd:'#e8ecf4'},sky:{n:60,col:'#ffffff',size:1.6,vx:4,vy:-6,glow:1,dark:'rgba(10,14,40,.45)',tint:'#1a2a6a1a'},rock:.6,water:.88,dry:.3,
   deco:[['cot-ngoc',{base:'pillar',c:['#e8ecf8','#a0a8c0']},.012],['cay-que',{base:'tree',shape:'round',c:['#8a7a6a','#c0d0f0','#ffffff']},.03],['ngoc-trang',{base:'crystal',c:['#e8f0ff','#ffffff']},.012,{light:'#e8f0ff'}]],
   mobs:[['tho-ngoc','Thỏ ngọc chiến binh',{body:'quad',s:.9,c:['#f8f8ff','#c0c8d8','#ffffff','#ff8080'],eye:'#ff4040'}],['nguyet-binh','Nguyệt binh',{body:'human',s:1.1,c:['#c0c8e8','#8088b0','#f0f4ff','#e0b040'],weapon:'spear',hat:'helm',armor:1,skin:'#e8e8f8',eye:'#4060ff',glow:'#c0d0ff33'}]],
@@ -234,7 +234,7 @@ function goodsRows(){
     for(const [id,ten,loai,cam,cong,thu,mau,fx,v,mo] of G.fx){const oo=['sword','shield','staff','bow','spear','crossbow','saber','mace'].includes(loai)?'hand':loai;vp.push({id,ten,o:oo,loai,cam,cong,thu,toc:0,gia:R(8000*G.mul),mau,thu_cuoi:'',menh_lenh:0,he:'',pham_chat:'p',hieu_ung:fx,gia_tri:v,mo_ta:mo});ch.push({cua_hang:'thanh-'+M.id+(oo==='hand'?'-ren':oo==='mount'&&M.npcs.some(n=>n.role==='nguoi-nuoi-ngua')?'-thu':''),id,pham_chat:'p',gia:'',thu_tu:o++,bac:M.lv});}
   }
   // v10.12: Pháp sư mỗi thành bán 10 quyển sách ngũ hành bậc = cấp thành (chỉ số sách ×(1+bậc/25)), giá × mul/2
-  for(const M of MAPS){if(!M.goods)continue;let o=1;for(const [id,gia] of BOOKS)ch.push({cua_hang:'thanh-'+M.id+'-sach',id,pham_chat:'n,g,p,l,m',gia:R(gia*M.goods.mul/2),thu_tu:o++,bac:M.lv});}
+  for(const M of MAPS){if(!M.goods)continue;let o=1;for(const [id,gia] of BOOKS)ch.push({cua_hang:'thanh-'+M.id+'-sach',id,pham_chat:'n,g,p',gia:R(gia*M.goods.mul/2),thu_tu:o++,bac:M.lv});}
   return {vat_pham:vp,cua_hang:ch};
 }
 // ---- sinh ô nền và vật

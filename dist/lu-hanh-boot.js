@@ -1,4 +1,4 @@
-/*! Lữ Hành v10.21 · khởi động · https://github.com/vnthudao-source/lu-hanh */
+/*! Lữ Hành v10.22 · khởi động · https://github.com/vnthudao-source/lu-hanh */
 /* ================= MÀN HÌNH CHỜ: thanh tải 0\u{2013}100%, cảnh làng + lời dẫn truyện =================
    Dùng chung cho file khởi động (tải tài nguyên trang) và game (kết nối máy chủ, tải nhân vật, dựng bản đồ). */
 window.LH_Loader=window.LH_Loader||(()=>{
@@ -19,7 +19,15 @@ window.LH_Loader=window.LH_Loader||(()=>{
   let el,fill,pctEl,lbl,story,goBtn,cv,bgImg=null,shown=0,target=0,cap=0,raf=0,t0=0,scene=false,storyDone=Promise.resolve();
   // Ảnh tĩnh đã lưu từ lần vào trước (Sheet hinh_anh): logo, nền màn hình chờ
   const pics=()=>{try{return JSON.parse(localStorage.getItem('lh-img')||'{}')||{};}catch(e){return {};}};
+  // v10.22: chặn phóng to trên điện thoại (chạm hai lần, chụm hai ngón) và ẩn giao diện trang chứa game
+  let noZoom=false;
+  function lockZoom(){if(noZoom)return;noZoom=true;try{document.documentElement.classList.add('lh-boot');let m=document.querySelector('meta[name=viewport]');if(!m){m=document.createElement('meta');m.name='viewport';document.head.appendChild(m);}m.content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover';
+    const s=document.createElement('style');s.textContent='html.lh-boot,html.lh-boot body{touch-action:manipulation;-webkit-text-size-adjust:100%}#lu-hanh,#lu-hanh *,#lh-loader,#lh-loader *{touch-action:manipulation}#lu-hanh canvas#scene,#lu-hanh .pad{touch-action:none}';document.head.appendChild(s);
+    for(const ev of ['gesturestart','gesturechange'])document.addEventListener(ev,e=>e.preventDefault(),{passive:false});
+    document.addEventListener('dblclick',e=>{if(!(e.target&&e.target.closest&&e.target.closest('input,textarea')))e.preventDefault();},{passive:false});
+    document.addEventListener('touchmove',e=>{if(e.touches&&e.touches.length>1)e.preventDefault();},{passive:false});}catch(e){}}
   function mount(){
+    lockZoom();const cv0=document.getElementById('lh-cover');if(cv0)cv0.remove();
     if(el&&document.body.contains(el))return;
     if(!document.getElementById('lh-loader-css')){const s=document.createElement('style');s.id='lh-loader-css';s.textContent=CSS;document.head.appendChild(s);}
     el=document.getElementById('lh-loader');
@@ -91,7 +99,7 @@ window.LH_Loader=window.LH_Loader||(()=>{
 })();
 ;/* ================= KHỞI ĐỘNG: hiện màn hình chờ ngay, tải CSS + JS của game có đếm phần trăm ================= */
 (function(){
-  var me=document.currentScript,base=(me&&me.src||'').replace(/[^\/]*$/,''),FILES={"css":{"name":"lu-hanh.css","size":45004},"js":{"name":"lu-hanh.js","size":542188}};
+  var me=document.currentScript,base=(me&&me.src||'').replace(/[^\/]*$/,''),FILES={"css":{"name":"lu-hanh.css","size":45004},"js":{"name":"lu-hanh.js","size":552810}};
   window.LH_BASE=window.LH_BASE||base;
   var L=window.LH_Loader.show({label:'T\u{1EA3}i t\u{00E0}i nguy\u{00EA}n trang',bg:'tai_game'});
   function plain(){var l=document.createElement('link');l.rel='stylesheet';l.href=base+FILES.css.name;document.head.appendChild(l);var s=document.createElement('script');s.src=base+FILES.js.name;s.charset='utf-8';document.head.appendChild(s);}
