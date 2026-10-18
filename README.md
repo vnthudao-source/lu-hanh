@@ -199,6 +199,10 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
 
+## Bản 10.30 — người chơi ảo trêu chuyện Hang Cướp, còn 14 tên cướp
+- Trả lời sai mật khẩu đánh dấu `caveBad`. Lần đầu về làng Thanh Mộc sau đó: người chơi ảo gần nhất nói «Ở đây không phải truyện cổ tích đâu!», «“Vừng ơi mở ra” kkk», «Đáp án phải là D “Bà ơi đừng la!”» (dấu `caveTaunt`). Các lần sau, khi chưa trả lời đúng, cứ 1–2,5 phút lại có người nhắc.
+- `hang_cuop_so_cuop` 40 → 14 (chạy `capNhatV1030()` để ghi vào Sheet).
+
 ## Bản 10.29 — kết thúc hướng dẫn tân thủ, phó bản Hang Cướp
 - Hướng dẫn tân thủ kết thúc ở Thợ rèn: «Không có tiền thì qua đây làm gì? Muốn có đồ ngon phải có tiền!!!», «Hãy đi làm thuê cho Lý Trưởng và hắn sẽ trả tiền công cho ngươi!» → «Hoàn thành nhiệm vụ giới thiệu tân thủ».
 - Bản đồ mới `maps/hang-cuop.json` (+ `.art.js`: đống vàng `gold`, bạc nén `bac`), cổng ở ô 24,7 Sa mạc (chân tháp cổ). Không ghi vào tab `ban_do` nên không hiện trong bảng dịch chuyển.

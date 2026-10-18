@@ -1729,7 +1729,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     cave=null;
     if(World.id==='sa-mac'&&caveChase>time){ // toán cướp rượt ra tận ngoài hang
       const P=World.portals.find(q=>q.to==='hang-cuop'),px=P?(P.x+.5)*T:hero.x,py=P?(P.y+.5)*T:hero.y,list=[];
-      for(let i=0;i<12;i++){const a=Math.random()*PI2,r=10+Math.random()*50;let x=px+Math.cos(a)*r,y=py+Math.sin(a)*r;if(!World.canStand(x,y)){x=hero.x;y=hero.y;}const e=robBot(i,x,y,i===0);e.hunt=true;bots.push(e);list.push(e);}
+      for(let i=0;i<Math.min(12,CAVE_N());i++){const a=Math.random()*PI2,r=10+Math.random()*50;let x=px+Math.cos(a)*r,y=py+Math.sin(a)*r;if(!World.canStand(x,y)){x=hero.x;y=hero.y;}const e=robBot(i,x,y,i===0);e.hunt=true;bots.push(e);list.push(e);}
       cave={ph:'chase',robs:list,t:time,out:true};tutSay(list[0],'Chạy đâu cho thoát!',3);return;}
     caveChase=0;if(World.id!=='hang-cuop')return;
     const ok=!!(player.flags&&player.flags.caveOk),ch=tutPtAt(16,4);
@@ -1753,6 +1753,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     op({t:'cavePass'}).catch(()=>{});
   }
   function caveWrong(){
+    seen.add('caveBad');
     const L=cave.robs[0];cave.ph='fight';cave.t=time;tutSay(L,'Sai rồi! Đánh nó!',3);shake(4);
     const cry=['Xông lên!','Dám lừa bọn ta à!','Bắt lấy nó!','Đánh!'];cave.robs.forEach((e,k)=>{e.hunt=true;if(k&&k%5===0)tutSay(e,cry[k%4],2.2);});
     message(svg('close')+'Sai mật khẩu! Cả toán cướp lao vào · chạy ra cửa hang!',4.5);
@@ -1785,6 +1786,18 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     if(C.ph==='vanish'){if(age>1.6){for(const e of C.robs){burst(e.x,e.y-24,'#cfc6b8',10,120);const i=bots.indexOf(e);if(i>=0)bots.splice(i,1);}C.robs=[];C.ph='chest';C.chest=C.ch;C.t=time;burst(C.ch.x,C.ch.y-20,'#ffe08a',30,200);message(svg('spark')+'Toán cướp để lại một rương báu!',4);}return;}
     if(C.ph==='fight'){for(const e of C.robs)hunt(e,138);return;}
     if(C.ph==='chest'){if(C.want&&Math.hypot(hero.x-C.chest.x,hero.y-C.chest.y)<90){C.want=false;caveOpen();}}
+  }
+  // v10.30: về làng Thanh Mộc sau khi bị toán cướp rượt — người chơi ảo trêu lần đầu, sau đó thỉnh thoảng nhắc mật khẩu (tới khi trả lời đúng)
+  let gossipAt=0,gossipLine=0;
+  function caveGossip(){
+    if(time<gossipAt)return;gossipAt=time+1;
+    if(World.id!=='thanh-moc'||!seen.has('caveBad')||(player.flags&&player.flags.caveOk)||tut||hero.dead||busy()||!World.isSafe(hero.x,hero.y))return;
+    const near=bots.filter(e=>!e.dead&&!e.rob&&!e.tut&&Math.hypot(e.x-hero.x,e.y-hero.y)<520).sort((a,b)=>Math.hypot(a.x-hero.x,a.y-hero.y)-Math.hypot(b.x-hero.x,b.y-hero.y));if(!near.length)return;
+    if(!seen.has('caveTaunt')){seen.add('caveTaunt');checkpoint();
+      ['Ở đây không phải truyện cổ tích đâu!','«Vừng ơi mở ra» kkk','Đáp án phải là D «Bà ơi đừng la!»'].forEach((t,k)=>setTimeout(()=>{const e=near[k%near.length];if(e&&!e.dead){e.facing=hero.x<e.x?-1:1;tutSay(e,t,3.6);}},k*1900));
+      gossipAt=time+60+Math.random()*60;return;}
+    gossipAt=time+70+Math.random()*80;const e=near[0];e.facing=hero.x<e.x?-1:1;
+    tutSay(e,['Nhớ nhé: «Bà ơi đừng la!»','Toán cướp dưới tháp cổ vẫn chờ mật khẩu đấy!','Vừng ơi mở ra… kkk','Đáp án là D đó bạn ơi!','Lại bị cướp rượt về à? Nhớ chọn D nha!'][gossipLine++%5],3.4);
   }
   function caveOpen(){
     const C=cave;if(!C||!C.chest)return;route=[];
@@ -1883,7 +1896,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     World.bridges.forEach((B,i)=>{const sd=hero.x<B.x0*T?'w':hero.x>(B.x1+1)*T?'e':bridgeSide[i];if(sd!==bridgeSide[i]){const was=bridgeSide[i];bridgeSide[i]=sd;if(was)checkpoint();}});
     if(time-prefAt>1){prefAt=time;for(const P of World.portals)if(Math.hypot((P.x+.5)*T-hero.x,(P.y+.5)*T-hero.y)<T*9)World.prefetch(P.to);}
     {const P=World.portalAt(hero.x,hero.y);if(!P)portalArmed=true;else if(portalArmed&&!travelling&&!hero.dead){portalArmed=false;const need=Player.mapLevel(P.to);if((player.level||1)<need)message(svg('lock')+'Cần cấp '+need+' để vào '+(P.label||(LH_MAPS[P.to]&&LH_MAPS[P.to].name)||''));else{checkpoint();travel(P.to,P.tx,P.ty);}}}
-    updateNPCs(dt);updateProjectiles(dt);updateMonsters(dt);updateAllies(dt);updateBots(dt);botRunEvent();if(tutPending&&time>1.5&&!busy()){tutPending=false;if(tutOn())tutStart();else if(tut2On())tut2Resume();}if(tut)tutUpdate(dt);if(cave)caveUpdate(dt);updateDbf(dt);if(((time*4)|0)!==((time-dt)*4|0))evTick();updateStrikes();updateVillage(dt);updateEffects(dt);
+    updateNPCs(dt);updateProjectiles(dt);updateMonsters(dt);updateAllies(dt);updateBots(dt);botRunEvent();if(tutPending&&time>1.5&&!busy()){tutPending=false;if(tutOn())tutStart();else if(tut2On())tut2Resume();}if(tut)tutUpdate(dt);if(cave)caveUpdate(dt);caveGossip();updateDbf(dt);if(((time*4)|0)!==((time-dt)*4|0))evTick();updateStrikes();updateVillage(dt);updateEffects(dt);
     const a=hero.attack;
     if(a){const p=(time-a.start)/a.dur;while(a.hitIdx<a.cycles&&p>=(a.hitIdx+a.hit)/a.cycles){resolveAttack(a,a.hitIdx);a.hitIdx++;}if(p>=1)hero.attack=null;}
     const ma=hero.mountAct;
