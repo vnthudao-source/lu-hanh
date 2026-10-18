@@ -26,6 +26,18 @@ cau_hinh:[
  {khoa:'thuy_hut_mau',gia_tri:20,ghi_chu:'v10.33 · Sách Thủy: % sát thương gây ra hồi thành máu (nhân bậc × phẩm chất, tối đa 60%)'},
  {khoa:'bang_vo_bang',gia_tri:120,ghi_chu:'v10.33 · Sách Băng: % sát thương thêm lên mục tiêu đang bị đóng băng (nhân bậc × phẩm chất)'},
  {khoa:'hoi_day_giay',gia_tri:10,ghi_chu:'v10.33 · Hồi đầy máu khi trúng đòn (Sức khỏe): số giây chờ giữa hai lần'},
+ {khoa:'chien_truong_dot_giay',gia_tri:16,ghi_chu:'v10.34 · Cổ Chiến Trường: mỗi đợt quân tràn ra cách nhau bao nhiêu giây'},
+ {khoa:'chien_truong_so_quai',gia_tri:12,ghi_chu:'v10.34 · Cổ Chiến Trường: số quân mỗi đợt (mỗi đợt sau thêm 1, tối đa +10)'},
+ {khoa:'chien_truong_toi_da',gia_tri:45,ghi_chu:'v10.34 · Cổ Chiến Trường: tối đa bao nhiêu quân của các đợt cùng lúc'},
+ {khoa:'chien_truong_doat_giay',gia_tri:3,ghi_chu:'v10.34 · Cổ Chiến Trường: đứng cạnh cờ soái bao nhiêu giây thì đoạt được cờ (mở cổng sang Lưu Sa Hà)'},
+ {khoa:'an_co_hong_ngoc',gia_tri:30,ghi_chu:'v10.34 · Cổ Chiến Trường: hồng ngọc thưởng khi đoạt cờ soái'},
+ {khoa:'vo_dai_so_don',gia_tri:22,ghi_chu:'v10.34 · Võ Đài Thập Tướng: máu danh tướng trận 1 = số đòn thường của nhân vật'},
+ {khoa:'vo_dai_so_don_tang',gia_tri:4,ghi_chu:'v10.34 · Võ Đài Thập Tướng: mỗi trận sau danh tướng chịu thêm bao nhiêu đòn'},
+ {khoa:'vo_dai_sat_thuong',gia_tri:6,ghi_chu:'v10.34 · Võ Đài Thập Tướng: mỗi đòn danh tướng trận 1 trừ % máu tối đa của nhân vật'},
+ {khoa:'vo_dai_sat_thuong_tang',gia_tri:0.6,ghi_chu:'v10.34 · Võ Đài Thập Tướng: mỗi trận sau thêm % máu mỗi đòn'},
+ {khoa:'vo_dai_cap_tang',gia_tri:25,ghi_chu:'v10.34 · Võ Đài Thập Tướng: mỗi trận sau danh tướng mạnh thêm bao nhiêu cấp'},
+ {khoa:'vo_dai_hong_ngoc',gia_tri:5,ghi_chu:'v10.34 · Võ Đài Thập Tướng: thắng trận thứ n thưởng n × số này hồng ngọc'},
+ {khoa:'cuu_con_hong_ngoc',gia_tri:999,ghi_chu:'v10.34 · Hỗn Nguyên Điện: hồng ngọc thưởng khi đưa con gái về làng Thanh Mộc'},
  {khoa:'tho_suc_khoe_nhan',gia_tri:2,ghi_chu:'v10.31 · (thôi dùng từ v10.33 — thay bằng sach_chi_so_tho)'},
  {khoa:'tho_treu_ti_le',gia_tri:20,ghi_chu:'v10.31 · Sách Thổ: % mỗi đòn trúng Trêu ngươi (nhân theo bậc × phẩm chất, cộng sach_ti_le_cap mỗi cấp luyện)'},
  {khoa:'tho_treu_ban_kinh',gia_tri:260,ghi_chu:'v10.31 · Sách Thổ: bán kính Trêu ngươi (điểm ảnh, 48 = 1 ô)'},
@@ -79,7 +91,7 @@ cau_hinh:[
  {khoa:'gieng_hoi_giay',gia_tri:300,ghi_chu:'Giếng cổ: số giây để nước đầy lại sau khi dùng'},
  {khoa:'exp_goc',gia_tri:60,ghi_chu:'Kinh nghiệm cần để lên cấp 2. Cấp L cần exp_goc × L^(exp_tang/100)'},
  {khoa:'exp_tang',gia_tri:150,ghi_chu:'Độ tăng kinh nghiệm cần mỗi cấp (150 = lũy thừa 1,5)'},
- {khoa:'cap_toi_da',gia_tri:400,ghi_chu:'Cấp cao nhất của nhân vật (v10.12: 400)'},
+ {khoa:'cap_toi_da',gia_tri:999,ghi_chu:'Cấp cao nhất của nhân vật (v10.12: 400 · v10.34: 999, thêm 10 vùng 400–999)'},
  {khoa:'diem_moi_cap',gia_tri:5,ghi_chu:'Điểm cộng chỉ số nhận được mỗi lần lên cấp'},
  {khoa:'sach_chi_so',gia_tri:4,ghi_chu:'Mỗi sách gắn vào ô kỹ năng cộng chừng này điểm vào chỉ số theo hệ (Mộc chia đôi cho Sức khỏe và Trí tuệ)'},
  {khoa:'sach_moi_cap',gia_tri:2,ghi_chu:'Mỗi cấp gia cường sách cộng thêm'},
@@ -429,7 +441,7 @@ linh:[
    ['tc-5','Trong ngực áo tướng giặc','thang-long','hac-long-tuong',1,'an-thanh-dien','Hắc Long Tướng cầm đầu phản quân Thăng Long giữ một phôi đá Thanh Điền khắc dở chữ "Bình An".','Hắn khai: "Con bé được đưa về Hoang Mạc Xương, cho Hắc Mộ Vương." Bạn siết chặt ấn đá, lên đường.'],
    ['tc-6','Bức thư đóng ấn','hoang-mac-xuong','xuong-kho',8,'an-ba-lam','Xương khô ngoài hoang mạc ôm theo một bức thư đóng ấn Ba Lâm — ấn khắc tên con gái bạn.','Thư viết: "Đưa nó ra Đảo Rồng, đổi lấy chìa khóa Thiên Đình." Hải Long Vương là kẻ nhận hàng.'],
    ['tc-7','Vân đỏ Xương Hoá','dao-rong','hai-long-vuong',1,'an-xuong-hoa','Hải Long Vương ngoài Đảo Rồng giữ ấn Xương Hoá vân đỏ.','Trên ấn khắc: "Thiên Đình — tầng cao nhất". Chỉ còn một cánh cửa nữa. Hắc Thiên Ma đang giữ chìa khóa.'],
-   ['tc-8','Cánh cửa Thiên Đình','thien-dinh','hac-thien-ma',1,'an-tho-son','Hắc Thiên Ma trên Thiên Đình giữ ấn Thọ Sơn — chìa khóa mở cánh cửa nơi con gái bạn bị nhốt.','Cánh cửa mở. Con bé ngồi giữa phòng, tay vẫn cầm bút tập viết. "Bố!" — Bạn đã phá đảo và tìm được con. Hành trình vẫn còn dài, nhưng từ nay hai cha con đi cùng nhau.']
+   ['tc-8','Cánh cửa Thiên Đình','thien-dinh','hac-thien-ma',1,'an-tho-son','Hắc Thiên Ma trên Thiên Đình giữ ấn Thọ Sơn — chìa khóa mở cánh cửa nơi con gái bạn bị nhốt.','Cánh cửa mở — căn phòng trống trơn, chỉ còn cây bút tập viết của con bé rơi dưới sàn. Hắc Thiên Ma hấp hối cười: "Muộn rồi… nó đã bị đưa qua Hư Không, tới tận Hỗn Nguyên Điện." Từ cấp 400, cổng phía bắc Thiên Đình mở ra Hư Không Giới — hành trình cứu con vẫn chưa kết thúc.']
   ];
   STORY.forEach(([id,ten,vung,muc_tieu,so_luong,thuong_do,mo_ta,loi_ket],i)=>GAME_DATA.nhiem_vu.push({id,ten,mo_ta,muc_tieu,so_luong,thuong_dong:2000*(i+1)*(i+1),thuong_hong_ngoc:5+i*5,thuong_do,pham_chat_do:'n',lap_lai:'khong',thuong_kinh_nghiem:800*(i+1)*(i+1),yeu_cau:i?STORY[i-1][0]:'',loi_ket,truyen:1,npc:STORY_NPC[id][0],noi:STORY_NPC[id][1],npc_ten:STORY_NPC[id][2]}));
   // Thầy đồ (làng, thành trì): bộ câu hỏi thư pháp từ sách "Thư pháp Việt". Máy chủ đọc tab CauHoi của bảng OCD_Quest (xem Code.gs LH_NGOAI); dưới đây là bộ mặc định khi chưa đọc được.

@@ -156,7 +156,49 @@ const MAPS=[
  {id:'thien-dinh',name:'Thiên Đình',lv:300,from:'phu-xuan',also:'cung-trang',seed:249,theme:{g:['#f4ecd0','#e4d8b0'],d:'cloud',r:['#e0d0a0','#b09a60','#7a6a40'],w:['#fff0b0','#f8d870'],p:'#f0e4c0',sd:'#faf4e0',ripple:'#ffffff88'},sky:{n:40,col:'#fff8c0',size:3,vx:10,vy:-12,glow:1,tint:'#fff0c014'},rock:.62,water:.86,dry:.3,
   deco:[['cot-thien',{base:'pillar',s:1.3,c:['#f0e4c0','#d0a040']},.014],['may-ngu-sac',{base:'crystal',c:['#fff8d0','#ffffff']},.012,{light:'#fff8d0'}],['dao-tien',{base:'tree',shape:'round',c:['#8a6a40','#ffb0d0','#ffe0f0']},.03]],
   mobs:[['thien-tuong','Thiên tướng',{body:'human',s:1.3,c:['#f0e0a0','#c0a050','#fffaf0','#ffd040'],weapon:'spear',hat:'helm',armor:1,skin:'#f0dcc0',eye:'#1a1010',glow:'#ffe08044'}],['than-thu','Thần thú',{body:'dragon',s:.7,c:['#e8c060','#a08030','#fff0b0','#ff8040'],eye:'#ff4040',wing:1}]],
-  boss:['hac-thien-ma','Hắc Thiên Ma',{body:'dragon',s:1.6,c:['#1a0a2a','#0a0414','#6a3a8a','#ff2060'],eye:'#ff2060',wing:1,breath:'#c040ff'},'freeze,weak,armor,bomb,tubao'],ring:'#ff2060'}
+  boss:['hac-thien-ma','Hắc Thiên Ma',{body:'dragon',s:1.6,c:['#1a0a2a','#0a0414','#6a3a8a','#ff2060'],eye:'#ff2060',wing:1,breath:'#c040ff'},'freeze,weak,armor,bomb,tubao'],ring:'#ff2060'},
+ // ---- v10.34: 10 bản đồ cấp 400–999 sau Thiên Đình (mở khi cấp 400 và đã hạ Hắc Thiên Ma). kind: battle = chiến trường đoạt cờ, arena = võ đài 10 danh tướng, final = cứu con gái
+ {id:'hu-khong',name:'Hư Không Giới',lv:400,from:'thien-dinh',seed:261,gate:'kill:hac-thien-ma',theme:{g:['#2a2440','#1f1a33'],d:'cloud',r:['#4a4068','#30284a','#1a1430'],w:['#6a5aa8','#3a2a78'],p:'#3a3456',sd:'#2e2848',ripple:'#c0b0ff55'},sky:{n:60,col:'#e0d8ff',size:2,vx:3,vy:-3,glow:1,dark:'rgba(8,4,24,.55)',tint:'#2010401a'},rock:.62,water:.8,dry:.3,
+  deco:[['tinh-thach',{base:'crystal',c:['#a090ff','#ffffff']},.016,{light:'#b0a0ff'}],['cot-hu',{base:'pillar',s:1.2,c:['#5a5080','#2a2448'],broken:1},.008],['da-troi',{base:'rock',c:['#4a4068','#1a1430']},.02]],
+  mobs:[['hu-anh','Hư ảnh',{body:'human',s:1.1,c:['#7a70b0','#3a3070','#c0b8ff','#e0d8ff'],see:1,weapon:'sword',hat:'hood',skin:'#b0a8e0',eye:'#ffffff',glow:'#a090ff44'}],['tinh-thu','Tinh thú',{body:'quad',s:1.2,c:['#3a3070','#1a1440','#a090ff','#ffffff'],horn:1,glow:'#a090ff',eye:'#ffffff'}]],
+  boss:['hu-khong-vuong','Hư Không Vương',{body:'golem',s:1.5,c:['#3a3070','#1a1440','#c0b0ff'],eye:'#ffffff',glow:'#c0b0ff'},'freeze,weak,armor,bomb'],ring:'#c0b0ff'},
+ {id:'huyet-hai',name:'Huyết Hải',lv:460,hazard:'burn',from:'hu-khong',seed:273,theme:{g:['#5a2a2a','#432020'],d:'ash',r:['#6a3a36','#4a2420','#2a1210'],w:['#b02020','#7a0a10'],p:'#6a4038',sd:'#5a3028',ripple:'#ff808066'},sky:{n:30,col:'#ff6060',size:2.5,vx:8,vy:-14,glow:1,tint:'#40000818'},rock:.62,water:.6,dry:.35,sea:1,
+  deco:[['xuong-huyet',{base:'bones',c:['#e8d0c8']},.014],['san-ho-mau',{base:'crystal',c:['#ff4040','#ffb0b0']},.012,{light:'#ff6060'}],['da-mau',{base:'rock',c:['#6a3a36','#2a1210']},.02]],
+  mobs:[['huyet-ngu','Huyết ngư',{body:'snake',s:1.2,c:['#c03030','#701010','#ff9090','#ffe060'],eye:'#ffff60'}],['xich-giao','Xích giao',{body:'dragon',s:.8,c:['#a02020','#600a0a','#ff8060','#ffd040'],eye:'#ffff80',breath:'#ff6040'}]],
+  boss:['huyet-ma-long','Huyết Ma Long',{body:'dragon',s:1.6,c:['#801010','#400408','#ff4040','#ffd040'],eye:'#ffff60',wing:1,breath:'#ff2020'},'poison,weak,bomb,tubao'],ring:'#ff4040'},
+ {id:'chien-truong',name:'Cổ Chiến Trường',lv:520,from:'huyet-hai',seed:285,kind:'battle',theme:{g:['#6a5a40','#544630'],d:'ash',r:['#7a6a54','#4a4034','#2a241c'],w:['#5a6a70','#3a4a50'],p:'#7a6448',sd:'#8a7450'},sky:{n:36,col:'#ffb070',size:2,vx:24,vy:-6,glow:1,tint:'#3018081a'},rock:.7,water:.88,dry:.5,
+  deco:[['giao-gay',{base:'bones',c:['#a09080']},.02],['co-rach',{base:'flag',c:['#4a3a2a','#7a2020','#2a1a10']},.006,{solid:false}],['xe-vo',{base:'rock',c:['#6a5040','#3a2a1a']},.012]],
+  mobs:[['tu-binh','Tử binh',{body:'human',s:1,c:['#5a5048','#3a3028','#9a8a78','#c0a060'],weapon:'spear',hat:'helm',armor:1,skin:'#a09080',eye:'#ff6040'}],['chien-ma-ma','Chiến mã ma',{body:'quad',s:1.3,c:['#3a3028','#1a1410','#7a6a58','#c0a060'],tail:1,eye:'#ff4040',glow:'#ff604044'}]],
+  boss:['nguyen-soai-ma','Nguyên Soái Ma',{body:'human',s:2,c:['#3a2a2a','#1a1010','#8a5a4a','#e0b040'],weapon:'saber',hat:'helm',armor:1,skin:'#9a7a6a',eye:'#ff4040',glow:'#ff604044'},'armor,stun,weak,bomb'],ring:'#ff6040'},
+ {id:'luu-sa',name:'Lưu Sa Hà',lv:580,hazard:'slow',from:'chien-truong',seed:297,gate:'hq:chien-truong',theme:{g:['#c8a868','#b09050'],d:'bone',r:['#a88a5a','#7a603a','#4a3a22'],w:['#a89060','#806a40'],p:'#d0b478',sd:'#e0c890',ripple:'#fff0c066'},sky:{n:50,col:'#f0d8a0',size:2,vx:50,vy:6,tint:'#c0a06012'},rock:.64,water:.66,dry:.6,
+  deco:[['xuong-lac-da',{base:'bones',c:['#f0e8d8']},.014],['cay-sa',{base:'tree',shape:'dead',c:['#6a5030']},.02],['bia-sa',{base:'shrine',c:['#b0986a','#5a4020']},.006]],
+  mobs:[['sa-yeu','Sa yêu',{body:'blob',s:1.2,c:['#d0b070','#907040','#fff0c0'],eye:'#3a2010'}],['bo-cap-vang','Bò cạp vàng',{body:'bug',s:1.2,c:['#e0b030','#8a6010','#fff080','#4a3010'],eye:'#1a1010'}]],
+  boss:['sa-ha-quai','Sa Hà Quái',{body:'golem',s:1.6,c:['#a08050','#5a4020','#e0c080'],eye:'#ff4040',glow:'#ffd08044'},'slow,armor,stun,bomb'],ring:'#e0c080'},
+ {id:'vo-dai',name:'Võ Đài Thập Tướng',lv:640,from:'luu-sa',seed:309,kind:'arena',theme:{g:['#8a7a5a','#706244'],d:'brick',r:['#9a8468','#6a5844','#3a3024'],w:['#5a8aa0','#3a6a80'],p:'#b09a70',sd:'#a89070'},sky:{n:20,col:'#ffd080',size:3,vx:6,vy:-8,glow:1,tint:'#40201010'},rock:.72,water:.9,dry:.3,
+  deco:[['den-vo-dai',{base:'lantern',c:['#5a2a1a','#ff7040']},.01,{light:'#ffb060'}],['gia-binh-khi',{base:'pillar',c:['#8a6a4a','#4a3a2a']},.008],['co-thu',{base:'tree',shape:'round',c:['#5a4232','#4a7a3a','#7aa850']},.02]],
+  mobs:[['vo-si-ma','Võ sĩ ma',{body:'human',s:1.1,c:['#6a3a2a','#3a1a10','#c08a6a','#e0b040'],weapon:'sword',hat:'khan',skin:'#c8a080',eye:'#ff4040'}],['su-tu-da','Sư tử đá',{body:'quad',s:1.4,c:['#9a9488','#5a564e','#d0ccc0','#e0b040'],eye:'#ff4040',spikes:1}]],
+  boss:['thiet-giap-tuong','Thiết Giáp Tướng',{body:'human',s:2,c:['#4a4a52','#22222a','#9a9aa8','#e0b040'],weapon:'mace',hat:'helm',armor:1,skin:'#b09888',eye:'#ffd040'},'armor,stun,weak'],ring:'#e0b040',
+  npcs:[{id:'trong-tai-vo-dai',role:'trong-tai',name:'Trọng tài võ đài',act:'turn',x:24,y:23,lines:['Võ đài Thập Tướng: mười danh tướng thiên hạ chờ người dám thượng đài.','Thắng đủ mười trận, cổng phía bắc tự mở. Thua thì về nghỉ, lần sau đánh tiếp trận dang dở.']}]},
+ {id:'van-kiem',name:'Vạn Kiếm Sơn',lv:700,from:'vo-dai',seed:321,gate:'hq:vo-dai',theme:{g:['#7a8288','#62696e'],d:'ice',r:['#8a9298','#5a6066','#33383c'],w:['#7aa0b8','#4a7088'],p:'#9aa0a4',sd:'#b0b6ba',ripple:'#ffffff55'},sky:{n:30,col:'#e8f0ff',size:2,vx:30,vy:4,tint:'#c0d0e012'},rock:.6,water:.86,dry:.3,
+  deco:[['kiem-cam',{base:'pillar',s:.7,c:['#c8d0d8','#6a7480']},.02],['thong-da',{base:'tree',shape:'cone',c:['#4a4038','#3a5a4a','#5a7a6a']},.03],['da-kiem',{base:'rock',c:['#8a9298','#33383c']},.02]],
+  mobs:[['kiem-linh','Kiếm linh',{body:'human',s:1,c:['#a0b8d0','#506880','#e8f4ff','#ffffff'],see:1,weapon:'sword',hat:'none',skin:'#d0e0f0',eye:'#80e0ff',glow:'#a0d8ff44'}],['thach-ho','Thạch hổ',{body:'quad',s:1.4,c:['#8a8a88','#4a4a48','#c8c8c0','#ff8040'],tail:1,eye:'#ff8040'}]],
+  boss:['kiem-ma','Kiếm Ma',{body:'human',s:2,c:['#2a3a4a','#101a24','#80a0c0','#c0e8ff'],weapon:'sword',hat:'hood',armor:1,skin:'#9ab0c0',eye:'#80e0ff',glow:'#80e0ff55'},'weak,stun,bomb,tubao'],ring:'#80e0ff'},
+ {id:'bang-hoa',name:'Băng Hỏa Lưỡng Giới',lv:770,hazard:'freeze',from:'van-kiem',seed:333,lava:1,theme:{g:['#d0dce8','#b4c4d4'],d:'ice',r:['#8a9aac','#5a6a7c','#38444e'],w:['#ff6a20','#c03a10'],p:'#c0c8d0',sd:'#e0e8f0',s:'#ff7a20',sg:'#ffd060',ripple:'#ffd06066'},sky:{n:44,col:'#ffffff',size:2,vx:-10,vy:30,tint:'#d0e0ff12'},rock:.62,water:.8,dry:.3,
+  deco:[['bang-hoa-tru',{base:'crystal',c:['#bfe3f4','#ff9a50']},.018,{light:'#ffb080'}],['thong-bang',{base:'tree',shape:'cone',c:['#4a3a32','#dfe8ee','#f6fbff']},.025],['da-nham',{base:'rock',c:['#5a4a46','#201816']},.015]],
+  mobs:[['bang-phach','Băng phách',{body:'blob',s:1.2,c:['#c0e8ff','#6aa8d8','#ffffff'],eye:'#205080',see:1,glow:'#a0e0ff'}],['hoa-diem-thu','Hỏa diệm thú',{body:'quad',s:1.3,c:['#c84a20','#7a2a10','#ffb060','#ffd040'],spikes:1,eye:'#ffff60',glow:'#ff802066'}]],
+  boss:['song-dau-long','Song Đầu Long',{body:'dragon',s:1.7,c:['#4a6a9a','#a03a20','#c0e0ff','#ffd040'],eye:'#ffffff',wing:1,breath:'#ffb060'},'freeze,bomb,weak,tubao'],ring:'#ffb060'},
+ {id:'cuu-u',name:'Cửu U Minh Phủ',lv:840,from:'bang-hoa',seed:345,theme:{g:['#2a2a30','#1e1e24'],d:'bone',r:['#3a3a44','#24242c','#121216'],w:['#3a5a4a','#1a3a2a'],p:'#34303a',sd:'#3a3442',ripple:'#80ffb044'},sky:{n:34,col:'#80ffb0',size:2.5,vx:6,vy:-10,glow:1,dark:'rgba(4,8,6,.74)',tint:'#08201018'},rock:.62,water:.8,dry:.4,
+  deco:[['den-u',{base:'lantern',c:['#2a3a30','#80ffb0']},.014,{light:'#80ffb0'}],['bia-u',{base:'shrine',c:['#4a4a54','#1a1a20']},.01],['cay-u',{base:'tree',shape:'dead',c:['#1e1a22']},.05]],
+  mobs:[['u-hon','U hồn',{body:'blob',s:1,c:['#90ffc0','#40a070','#e0ffe8'],eye:'#1a1010',see:1,glow:'#80ffb0'}],['quy-sai','Quỷ sai',{body:'human',s:1.2,c:['#2a2a3a','#14141e','#7a7a8a','#80ffb0'],weapon:'club',hat:'horn',skin:'#6a7a70',eye:'#80ffb0'}]],
+  boss:['minh-vuong','Minh Vương',{body:'human',s:2.1,c:['#1a1a2a','#0a0a14','#5a5a7a','#80ffb0'],weapon:'staff',hat:'crown',armor:1,skin:'#5a6a60',eye:'#80ffb0',glow:'#80ffb055'},'poison,freeze,weak,armor,tubao'],ring:'#80ffb0'},
+ {id:'hon-don-hai',name:'Hỗn Độn Hải',lv:920,from:'cuu-u',seed:357,theme:{g:['#2a3a4a','#1f2c3a'],d:'moss',r:['#3a4a5a','#24303c','#121a22'],w:['#2a4a7a','#122a52'],p:'#344250',sd:'#3a4858',ripple:'#80b0ff55'},sky:{n:40,col:'#a0c0ff',size:3,vx:-20,vy:-4,glow:1,dark:'rgba(4,8,20,.5)',tint:'#10204018'},rock:.6,water:.55,dry:.35,sea:1,
+  deco:[['xoay-hon-don',{base:'crystal',c:['#80a0ff','#ffffff']},.014,{light:'#80a0ff'}],['xuong-ca-voi',{base:'bones',c:['#d8e0e8']},.012],['da-hai',{base:'rock',c:['#3a4a5a','#121a22']},.02]],
+  mobs:[['hai-yeu','Hải yêu',{body:'human',s:1.1,c:['#3a6a9a','#1a3a6a','#a0d0ff','#ffe060'],weapon:'spear',hat:'crown',skin:'#a0c8e0',eye:'#ffe060',glow:'#80b0ff44'}],['thon-hai-thu','Thôn hải thú',{body:'snake',s:1.6,c:['#1a3a5a','#0a1a30','#6aa0d0','#ffe060'],horn:1,eye:'#ffe060'}]],
+  boss:['cuu-dau-xa','Cửu Đầu Xà',{body:'dragon',s:1.8,c:['#1a4a3a','#0a2a20','#60c0a0','#ff4060'],eye:'#ff4060',wing:1,breath:'#60ffc0'},'poison,freeze,bomb,weak,tubao'],ring:'#60ffc0'},
+ {id:'hon-nguyen',name:'Hỗn Nguyên Điện',lv:999,from:'hon-don-hai',seed:369,kind:'final',theme:{g:['#3a2e40','#2c2232'],d:'brick',r:['#5a4a5a','#3a2e3a','#1e161e'],w:['#c09040','#8a6020'],p:'#5a4858',sd:'#6a5868',ripple:'#ffe08066'},sky:{n:40,col:'#ffd080',size:3,vx:4,vy:-16,glow:1,dark:'rgba(12,6,16,.45)',tint:'#30102018'},rock:.66,water:.88,dry:.3,
+  deco:[['cot-hon-nguyen',{base:'pillar',s:1.4,c:['#6a5a6a','#e0b040']},.012],['den-hon-nguyen',{base:'lantern',c:['#3a1a2a','#ffd060']},.012,{light:'#ffd080'}],['da-den',{base:'rock',c:['#5a4a5a','#1e161e']},.015]],
+  mobs:[['hon-nguyen-ve','Hỗn Nguyên vệ',{body:'human',s:1.4,c:['#3a2a3a','#1a101a','#9a7a9a','#e0b040'],weapon:'spear',hat:'helm',armor:1,skin:'#a08890',eye:'#ffd040',glow:'#ffd04044'}],['ma-than-thu','Ma thần thú',{body:'golem',s:1.3,c:['#4a2a3a','#200a18','#c06090'],eye:'#ffd040',glow:'#ff60a0'}]],
+  boss:['hon-nguyen-ma-to','Hỗn Nguyên Ma Tổ',{body:'dragon',s:2,c:['#2a0a20','#100410','#a03070','#ffd040'],eye:'#ffd040',wing:1,breath:'#ff60c0'},'freeze,weak,armor,bomb,tubao,poison'],ring:'#ffd040'}
 ];
 // ---- quái: số liệu tăng theo bậc bản đồ (máu ×2, sát thương ×1,5, kinh nghiệm ×2 mỗi bản đồ; tỉ lệ rơi huyền thoại từ cấp 44, thần từ cấp 60)
 const R=(v)=>Math.round(v);
@@ -165,7 +207,7 @@ const R=(v)=>Math.round(v);
 const HP_K=1/5,DMG_K=2;
 const K_HP=i=>HP_K*(i<10?Math.pow(2,i):Math.pow(2,10)*Math.pow(1.5,i-10)),K_DMG=i=>DMG_K*(i<10?Math.pow(1.5,i):Math.pow(1.5,10)*Math.pow(1.25,i-10)),K_COIN=i=>i<10?Math.pow(1.8,i):Math.pow(1.8,10)*Math.pow(1.5,i-10);
 const MOB_SKILL=['slow','poison','weak','armor','frost'];
-const OLD_LV=[20,28,36,44,52,60,70,80,90,100,105,110,115,120,125,130,135,140,145,150];
+const OLD_LV=[20,28,36,44,52,60,70,80,90,100,105,110,115,120,125,130,135,140,145,150,150,150,150,150,150,150,150,150,150,150]; // v10.34: 10 vùng 400–999 dùng bảng rơi đồ cao nhất
 function monRows(){
   const rows=[];
   MAPS.forEach((M,i)=>{
@@ -216,10 +258,12 @@ const NPC_LOOK={
  'nap-the':{robe:'#8a4a1a',trim:'#ffd040',hat:'khan',hatc:'#5a2a0a',item:'scroll'},
  'tre-con':{robe:'#c04040',trim:'#ffe080',hat:'none',hair:'#2a2622',s:.62},
  'tre-con-2':{robe:'#3a6aa0',trim:'#ffe080',hat:'none',hair:'#2a2622',s:.58},
- 'tre-con-3':{robe:'#5a8a3a',trim:'#ffe080',hat:'non',s:.6,fem:1,skirt:1}
+ 'tre-con-3':{robe:'#5a8a3a',trim:'#ffe080',hat:'non',s:.6,fem:1,skirt:1},
+ 'trong-tai':{robe:'#8a2a1a',trim:'#e0b040',hat:'quan',hatc:'#2a1a10',item:'fan',beard:'#d8d0c0'} // v10.34: trọng tài võ đài
 };
 const ICON={'rung-truc':'wood','dam-lay':'water','dinh-may':'wind','co-loa':'shield','bien-dong':'water','nui-lua':'flame','rung-ma':'demon','bang-nguyen':'ice','thang-long':'flag','cuu-trung':'spark',
-  'thuy-cung':'water','hoang-mac-xuong':'earth','thien-son':'ice','hoa-lu':'shield','dia-nguc-mon':'flame','dao-rong':'demon','vuc-yeu-tinh':'demon','cung-trang':'light','phu-xuan':'flag','thien-dinh':'light'};
+  'thuy-cung':'water','hoang-mac-xuong':'earth','thien-son':'ice','hoa-lu':'shield','dia-nguc-mon':'flame','dao-rong':'demon','vuc-yeu-tinh':'demon','cung-trang':'light','phu-xuan':'flag','thien-dinh':'light',
+  'hu-khong':'spark','huyet-hai':'water','chien-truong':'flag','luu-sa':'earth','vo-dai':'sword','van-kiem':'metal','bang-hoa':'ice','cuu-u':'demon','hon-don-hai':'wind','hon-nguyen':'heart'};
 // ---- hàng hóa hiệu buôn thành trì: cùng một bộ mặt hàng, tên và màu riêng từng thành, bậc (bac) = cấp thành → chỉ số nhân theo bậc, giá nhân mul
 const GOODS_BASE=[ // [hậu tố mã, tên, ô, loại, cầm, công, thủ, giá gốc]
  ['kiem','Kiếm','hand','sword','one',16,0,600],['khien','Khiên','hand','shield','one',0,14,560],['gay','Gậy phép','hand','staff','one',13,0,520],['cung','Cung','hand','bow','two',15,0,560],['giao','Giáo','hand','spear','two',17,0,600],['dao','Đao','hand','saber','one',18,0,640],['chuy','Chùy','hand','mace','one',20,0,700],['no','Nỏ','hand','crossbow','two',19,0,700],
@@ -245,10 +289,13 @@ function build(M,idx){
   const ent={x:23,y:32,w:3,h:1},ex=next?(M.citadel?{x:46,y:16,w:1,h:2}:{x:23,y:1,w:3,h:1}):null;
   const spawn={x:24,y:29},safe=M.citadel?{x0:12,y0:7,x1:35,y1:24}:{x0:19,y0:27,x1:29,y1:32};
   const inSafe=(x,y)=>x>=safe.x0&&x<=safe.x1&&y>=safe.y0&&y<=safe.y1;
-  const camps=M.citadel?[{name:'Bãi '+M.mobs[0][1].toLowerCase(),x:7,y:16,r:3,mon:{[M.mobs[0][0]]:6,[M.mobs[1][0]]:2}},{name:'Bãi '+M.mobs[1][1].toLowerCase(),x:40,y:28,r:3,mon:{[M.mobs[1][0]]:5,[M.mobs[0][0]]:2}}]
+  const camps=M.kind==='battle'?[ // v10.34: chiến trường — bốn bãi quân đông quanh doanh trại
+    {name:'Bãi '+M.mobs[0][1].toLowerCase(),x:9,y:21,r:4,mon:{[M.mobs[0][0]]:10,[M.mobs[1][0]]:4}},{name:'Bãi '+M.mobs[1][1].toLowerCase(),x:39,y:21,r:4,mon:{[M.mobs[1][0]]:8,[M.mobs[0][0]]:5}},
+    {name:'Tiền quân',x:10,y:9,r:3,mon:{[M.mobs[0][0]]:7,[M.mobs[1][0]]:3}},{name:'Hậu quân',x:38,y:9,r:3,mon:{[M.mobs[1][0]]:6,[M.mobs[0][0]]:4}}]
+    :M.citadel?[{name:'Bãi '+M.mobs[0][1].toLowerCase(),x:7,y:16,r:3,mon:{[M.mobs[0][0]]:6,[M.mobs[1][0]]:2}},{name:'Bãi '+M.mobs[1][1].toLowerCase(),x:40,y:28,r:3,mon:{[M.mobs[1][0]]:5,[M.mobs[0][0]]:2}}]
     :[{name:'Bãi '+M.mobs[0][1].toLowerCase(),x:10,y:20,r:3,mon:{[M.mobs[0][0]]:6,[M.mobs[1][0]]:2}},{name:'Bãi '+M.mobs[1][1].toLowerCase(),x:38,y:12,r:3,mon:{[M.mobs[1][0]]:5,[M.mobs[0][0]]:2}}];
   const lair=M.citadel?{x:40,y:4}:{x:24,y:8};
-  const keep=(x,y)=>inSafe(x,y)||Math.hypot(x-spawn.x,y-spawn.y)<=2.2||camps.some(c=>(x-c.x)**2+(y-c.y)**2<=(c.r+1.5)**2)||Math.hypot(x-lair.x,y-lair.y)<5||(ex&&Math.abs(x-ex.x-1)<=3&&Math.abs(y-ex.y)<=3)||(Math.abs(x-ent.x-1)<=3&&Math.abs(y-ent.y)<=3);
+  const keep=(x,y)=>inSafe(x,y)||Math.hypot(x-spawn.x,y-spawn.y)<=2.2||camps.some(c=>(x-c.x)**2+(y-c.y)**2<=(c.r+1.5)**2)||Math.hypot(x-lair.x,y-lair.y)<5||(ex&&Math.abs(x-ex.x-1)<=3&&Math.abs(y-ex.y)<=3)||(Math.abs(x-ent.x-1)<=3&&Math.abs(y-ent.y)<=3)||(M.kind==='battle'&&x>=17&&x<=33&&y>=2&&y<=14)||(M.kind==='arena'&&Math.hypot(x-24,y-17)<=7.2);
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){
     if(x===0||y===0||x===W-1||y===H-1){g[y][x]='#';continue;}
     if(keep(x,y))continue;
@@ -291,6 +338,19 @@ function build(M,idx){
     // lối ra ở tường phải
     if(ex){for(let y=ex.y;y<ex.y+ex.h;y++)for(let x=x1+1;x<=ex.x;x++)g[y][x]='.';}
   }
+  // v10.34: chiến trường — doanh trại địch (rào gỗ hai cổng bắc nam, lều, trống trận, cờ soái giữa doanh); võ đài — sàn đá tròn, cột và cờ; điện cuối — lồng giam con gái
+  if(M.kind==='battle'){const X0=18,X1=30,Y0=3,Y1=13;
+    for(let x=X0;x<=X1;x+=3)if(Math.abs(x+1-23)>2){place('rao',x,Y1,{w:3});place('rao',x,Y0,{w:3});}
+    for(let y=Y0;y<=Y1;y++){g[y][X0-1]='#';g[y][X1+3]='#';}
+    for(const [x,y] of [[20,6],[29,6],[20,11],[29,11]])place('leu',x,y);
+    for(const [x,y] of [[21,9],[27,9]])place('trong-tran',x,y);
+    for(const [x,y] of [[19,4],[31,4],[19,12],[31,12],[22,13],[26,13]])place('duoc',x,y,{light:'#ffb060',solid:false});
+    place('co-doanh',24,7,{solid:false});}
+  if(M.kind==='arena'){const cx=24,cy=17;
+    for(let y=cy-7;y<=cy+7;y++)for(let x=cx-7;x<=cx+7;x++){const d=Math.hypot(x-cx,y-cy);if(d<=6.2&&g[y]&&g[y][x]!==undefined)g[y][x]=d<=5.4&&(x+y)%5===0?',':'.';}
+    for(let k=0;k<12;k++){const a=k/12*Math.PI*2;if(Math.abs(Math.sin(a))>.9)continue;place('cot-vo-dai',Math.round(cx+Math.cos(a)*6.6),Math.round(cy+Math.sin(a)*6.6));}
+    for(const [x,y] of [[cx-5,cy-5],[cx+5,cy-5],[cx-5,cy+5],[cx+5,cy+5]])place('co-vo-dai',x,y,{solid:false});}
+  if(M.kind==='final'){for(const [x,y] of [[20,12],[28,12],[20,16],[28,16],[20,20],[28,20]])place('den-hon-nguyen',x,y,{light:'#ffd080',solid:false});}
   // quái lẻ ngoài bãi
   const monsters=[{type:M.boss[0],x:lair.x,y:lair.y}];
   const free=(x,y)=>x>1&&x<W-2&&y>1&&y<H-2&&!blockedAt(x,y)&&!inSafe(x,y);
@@ -304,9 +364,9 @@ function build(M,idx){
   if(ex)portals.push({...ex,to:next.id,label:next.name});
   if(M.also){portals.push({x:1,y:16,w:1,h:2,to:M.also,label:MAPS.find(m=>m.id===M.also).name});for(let y=16;y<18;y++)for(let x=1;x<=4;x++)if(g[y][x]!=='.')g[y][x]='.';}
   // tx,ty của cổng: đứng ngay trong bản đồ đích, cạnh cổng về
-  const def={id:M.id,name:M.name,w:W,h:H,tiles:g.map(r=>r.join('')),spawn,safe,zones:[{name:M.citadel?'Trong thành':'Trạm nghỉ',...safe},{name:'Hang ổ '+M.boss[1],x0:lair.x-4,y0:lair.y-4,x1:lair.x+4,y1:lair.y+4}],
+  const def={id:M.id,name:M.name,w:W,h:H,tiles:g.map(r=>r.join('')),spawn,safe,zones:[{name:M.citadel?'Trong thành':'Trạm nghỉ',...safe},...(M.kind==='battle'?[{name:'Doanh trại địch',x0:18,y0:3,x1:32,y1:13}]:M.kind==='arena'?[{name:'Võ đài',x0:18,y0:11,x1:30,y1:23}]:[]),{name:'Hang ổ '+M.boss[1],x0:lair.x-4,y0:lair.y-4,x1:lair.x+4,y1:lair.y+4}],
     hazard:M.hazard||undefined, // v10.13: hiệu ứng vùng
-    camps,objects,trees:[],npcs:(M.npcs||[]).map(n=>({...n,...(n.x==null?{x:(n.x0+n.x1)/2,facing:1}:{})})),monsters,portals,theme:M.id,sky:M.sky?M.id:undefined,level:M.lv};
+    camps,objects,trees:[],...(M.kind==='battle'?{flag:{x:24,y:7},kind:'battle'}:M.kind==='arena'?{arena:{x:24,y:17,r:6},kind:'arena'}:M.kind==='final'?{rescue:{x:28,y:6},kind:'final'}:{}),npcs:(M.npcs||[]).map(n=>({...n,...(n.x==null?{x:(n.x0+n.x1)/2,facing:1}:{})})),monsters,portals,theme:M.id,sky:M.sky?M.id:undefined,level:M.lv};
   return def;
 }
 const defs=MAPS.map((M,i)=>build(M,i));
@@ -328,6 +388,8 @@ for(const [i,d] of defs.entries()){
   const M=MAPS[i];
   fs.writeFileSync(path.join(root,'maps',d.id+'.json'),JSON.stringify(d,null,1)+'\n');
   const obj={};for(const [k,v] of M.deco)obj[k]=v;
+  if(M.kind==='battle')Object.assign(obj,{rao:{base:'wall',c:['#6a4a2a','#3a2414','#8a6a40']},leu:{base:'tent',c:['#8a2a20','#4a3220']},'trong-tran':{base:'drum',c:['#6a1a10','#e8d0a0','#e0b040']},duoc:{base:'torch',c:['#4a3220','#ff8a30']},'co-doanh':{base:'flag',s:1.6,c:['#4a3220','#c02020','#ffd040']}});
+  if(M.kind==='arena')Object.assign(obj,{'cot-vo-dai':{base:'pillar',c:['#b0a080','#6a2a1a']},'co-vo-dai':{base:'flag',c:['#4a3220','#e0b040','#c02020']}});
   if(M.citadel)Object.assign(obj,{tuong:{base:'wall',c:['#8a7a66','#5a4e44','#b0a088']},'cong-thanh':{base:'gate',c:['#8a7a66','#e0b040','#6b2d1e']},nha:{base:'roof',c:['#c8b088','#6b2d1e','#e0b040']},den:{base:'lantern',c:['#5a2a1a','#ff7040']},co:{base:'flag',c:['#6a4a2a','#c03030','#e0b040']},trong:{base:'drum',c:['#8a2a1a','#e8d0a0','#e0b040']}});
   const mon={};for(const [id,,sp] of M.mobs)mon[id]=sp;mon[M.boss[0]]=M.boss[2];
   const npc={};for(const n of M.npcs||[])if(!npc[n.role])npc[n.role]=NPC_LOOK[n.role];
@@ -335,5 +397,5 @@ for(const [i,d] of defs.entries()){
   fs.writeFileSync(path.join(root,'maps',d.id+'.art.js'),`/* ${M.name} (cấp ${M.lv}) · sinh bởi tools/genmaps.mjs: nền, vật, quái, NPC vẽ bằng LH_ART.gen */\nK=>LH_ART.gen(${JSON.stringify(spec)})\n`);
 }
 // dữ liệu cho src/01-data.js (quái, nhiệm vụ, bản đồ)
-fs.writeFileSync(path.join(root,'src','01-data-vung.js'),'/* Sinh bởi tools/genmaps.mjs: quái, nhiệm vụ, bản đồ của 20 vùng cấp 20–150, hàng hóa hiệu buôn 4 thành trì (nối vào GAME_DATA; Sheet có dòng thì Sheet thắng) */\nconst GAME_DATA_VUNG=(d=>Object.fromEntries(Object.entries(d).map(([k,[h,...rows]])=>[k,rows.map(r=>Object.fromEntries(h.map((c,i)=>[c,r[i]])))])))('+JSON.stringify(Object.fromEntries(Object.entries({quai:monRows(),nhiem_vu:questRows(),ban_do:MAPS.map((M,i)=>({id:M.id,ten:M.name,cap:M.lv,bieu_tuong:ICON[M.id],thu_tu:5+i})),...goodsRows()}).map(([k,rows])=>{const h=Object.keys(rows[0]);return [k,[h,...rows.map(r=>h.map(c=>r[c]))]];})))+');\nfor(const k of Object.keys(GAME_DATA_VUNG))GAME_DATA[k]=(GAME_DATA[k]||[]).concat(GAME_DATA_VUNG[k]);\n');
+fs.writeFileSync(path.join(root,'src','01-data-vung.js'),'/* Sinh bởi tools/genmaps.mjs: quái, nhiệm vụ, bản đồ của 20 vùng cấp 20–150, hàng hóa hiệu buôn 4 thành trì (nối vào GAME_DATA; Sheet có dòng thì Sheet thắng) */\nconst GAME_DATA_VUNG=(d=>Object.fromEntries(Object.entries(d).map(([k,[h,...rows]])=>[k,rows.map(r=>Object.fromEntries(h.map((c,i)=>[c,r[i]])))])))('+JSON.stringify(Object.fromEntries(Object.entries({quai:monRows(),nhiem_vu:questRows(),ban_do:MAPS.map((M,i)=>({id:M.id,ten:M.name,cap:M.lv,bieu_tuong:ICON[M.id],thu_tu:5+i,khoa_mo:M.gate||''})),...goodsRows()}).map(([k,rows])=>{const h=Object.keys(rows[0]);return [k,[h,...rows.map(r=>h.map(c=>r[c]))]];})))+');\nfor(const k of Object.keys(GAME_DATA_VUNG))GAME_DATA[k]=(GAME_DATA[k]||[]).concat(GAME_DATA_VUNG[k]);\n');
 console.log('Đã sinh',defs.length,'bản đồ:',defs.map(d=>d.id+'('+d.objects.length+' vật, '+d.monsters.length+' quái lẻ)').join(', '));

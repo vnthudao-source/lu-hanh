@@ -24,10 +24,10 @@ function shopGear(L,lv){const best={};for(const [k,rows] of Object.entries(P.SHO
 function hero(L,gear){const s=P.create({name:'H',gender:'m'});s.level=L;const pts=(L-1)*num(P.CFG.diem_moi_cap||5);s.alloc={strength:Math.round(pts*.5),vitality:Math.round(pts*.35),agility:Math.round(pts*.15),intelligence:0,command:0};
   for(const k of Object.keys(s.equipment))s.equipment[k]=null;for(const [slot,id,q,lv] of gear){const it=P.roll(id,q||'n');it.lv=lv||0;s.equipment[slot]=it;}return P.derive(s);}
 const setGear=(sid,lv)=>P.SETS[sid].pieces.map(id=>{const d=P.items[id];return [d.slot==='hand'?(/:left$/.test(id)?'left':'right'):d.slot,id,d.q||'l',lv];});
-const REF={};const ref=L=>{L=Math.max(1,Math.min(400,Math.round(L)));if(!REF[L]){const D=hero(L,shopGear(L,L<20?0:6));REF[L]={D,dps:dpsOf(D,{type:'sword'}),hp:D.tot.hp};}return REF[L];};
+const REF={};const ref=L=>{L=Math.max(1,Math.min(999,Math.round(L)));if(!REF[L]){const D=hero(L,shopGear(L,L<20?0:6));REF[L]={D,dps:dpsOf(D,{type:'sword'}),hp:D.tot.hp};}return REF[L];};
 // sát thương thô một đòn để người chơi D trụ được live giây (đòn mỗi cd+windup giây, chí mạng ×2 theo tỉ lệ)
 const rawDmg=(D,M,live,skillK=1)=>{const heal=1+Math.min(.2,D.tot.fullHeal/100)*3,per=(M.cd+M.windup),crit=1+num(M.crit)/100;return D.tot.hp*heal/live*per/(takeK(D,M.dtype)*crit*skillK);};
-const REG=P.REGIONS.map(r=>({id:r.id,lv:P.mapLevel(r.id)})).sort((a,b)=>a.lv-b.lv),nextLv=id=>{const i=REG.findIndex(r=>r.id===id);return i>=0&&i<REG.length-1?REG[i+1].lv:400;};
+const REG=P.REGIONS.map(r=>({id:r.id,lv:P.mapLevel(r.id)})).sort((a,b)=>a.lv-b.lv),nextLv=id=>{const i=REG.findIndex(r=>r.id===id);return i>=0&&i<REG.length-1?REG[i+1].lv:Math.max(400,P.maxLevel());};
 const expNeed=L=>Math.round(num(P.CFG.exp_goc||60)*Math.pow(Math.max(1,L),num(P.CFG.exp_tang||150)/100));
 const hoursAt=L=>T.hours*Math.pow(L/400,T.curve);
 // kinh nghiệm mỗi con để ở giữa dải cấp của vùng, mỗi cấp mất đúng thời gian theo đường cong
@@ -37,13 +37,15 @@ const LEG=Object.keys(P.SETS).filter(k=>/^tq-/.test(k)),med=a=>a.slice().sort((x
 for(const [reg,list] of Object.entries(byReg)){const Lv=P.mapLevel(reg),Ln=nextLv(reg),normals=list.filter(r=>!num(r.boss)),mh=med(normals.map(r=>num(r.mau))),md=med(normals.map(r=>num(r.sat_thuong))),mx=med(normals.map(r=>num(r.kinh_nghiem)||1));
   const clip=v=>Math.max(T.clip[0],Math.min(T.clip[1],v));
   for(const r of list){const M=P.MON[r.id];let hp,dmg,exp;
-    if(r.id==='hac-thien-ma'){const Ds=LEG.map(sid=>hero(400,setGear(sid,15))),dps=med(Ds.map(D=>dpsOf(D,{type:'sword'}))),D=Ds[Math.floor(Ds.length/2)];hp=dps*T.finalTtk;dmg=rawDmg(D,M,T.finalLive,1.5);exp=expFor(Lv,400)*40;}
-    else if(num(r.boss)){const k2=num(r.boss)>=2,R=ref(Math.min(400,Lv+(k2?30:10)));hp=R.dps*(k2?T.boss2Ttk:T.bossTtk);dmg=rawDmg(R.D,M,k2?T.boss2Live:T.bossLive,1.4);exp=expFor(Lv,Ln)*(k2?30:15);}
+    if(r.id==='hac-thien-ma'||r.id==='hon-nguyen-ma-to'){const FL=r.id==='hac-thien-ma'?400:999;const Ds=LEG.map(sid=>hero(FL,setGear(sid,15))),dps=med(Ds.map(D=>dpsOf(D,{type:'sword'}))),D=Ds[Math.floor(Ds.length/2)];hp=dps*T.finalTtk;dmg=rawDmg(D,M,T.finalLive,1.5);exp=expFor(Lv,Math.max(Lv+1,FL))*40;}
+    else if(num(r.boss)){const k2=num(r.boss)>=2,R=ref(Math.min(Lv>=400?999:400,Lv+(k2?30:10)));hp=R.dps*(k2?T.boss2Ttk:T.bossTtk);dmg=rawDmg(R.D,M,k2?T.boss2Live:T.bossLive,1.4);exp=expFor(Lv,Ln)*(k2?30:15);}
     else{const R=ref(Lv),fh=clip(num(r.mau)/mh),fd=clip(num(r.sat_thuong)/md),fx=clip((num(r.kinh_nghiem)||1)/mx);hp=R.dps*T.ttk*fh;dmg=rawDmg(R.D,M,T.live/fd);exp=expFor(Lv,Ln)*Math.sqrt(fh*fd);}
     out[r.id]=[Math.max(1,Math.round(hp)),Math.max(1,Math.round(dmg)),Math.max(1,Math.round(exp))];}}
+// v10.34: giữ nguyên số đã cân của các loài cũ (đang dùng trên Sheet), chỉ tính thêm loài mới (10 vùng 400–999); muốn tính lại tất cả: node tools/canbang.mjs --all
+if(!process.argv.includes('--all')){try{const c={GAME_DATA:{quai:[]}};vm.createContext(c);vm.runInContext(fs.readFileSync(path.join(root,'src/01-data-canbang.js'),'utf8')+';this.X=LH_CAN_BANG',c);for(const [k,v] of Object.entries(c.X))out[k]=v;}catch(e){}}
 const head='/* Sinh bởi tools/canbang.mjs (v10.19): máu, sát thương, kinh nghiệm mọi quái theo cấp vùng. Đừng sửa tay — sửa bảng mục tiêu trong tools/canbang.mjs rồi chạy lại.\n   Trên Sheet: chạy capNhatV1019() một lần để chép các số này vào tab quai (cột mau, sat_thuong, kinh_nghiem). */\n';
 fs.writeFileSync(path.join(root,'src/01-data-canbang.js'),head+'const LH_CAN_BANG='+JSON.stringify(out)+';\nfor(const r of GAME_DATA.quai){const v=LH_CAN_BANG[r.id];if(v){r.mau=v[0];r.sat_thuong=v[1];r.kinh_nghiem=v[2];}}\n');
 // bảng tóm tắt
-const show=['deer','chua-son-lam','moc-tinh','tuong-am-binh','hoa-long','hac-long-tuong','ma-vuong','hac-de','hac-thien-ma'];
+const show=['deer','chua-son-lam','moc-tinh','tuong-am-binh','hoa-long','hac-long-tuong','ma-vuong','hac-de','hac-thien-ma','hu-anh','hu-khong-vuong','tu-binh','nguyen-soai-ma','kiem-ma','minh-vuong','hon-nguyen-ve','hon-nguyen-ma-to'];
 for(const k of show)if(out[k])console.log(k.padEnd(16),'lv',String(P.mapLevel(P.regionOf(k))).padStart(3),'máu',String(out[k][0]).padStart(9),'st',String(out[k][1]).padStart(7),'exp',String(out[k][2]).padStart(8));
 console.log('Đã ghi src/01-data-canbang.js:',Object.keys(out).length,'loài quái');

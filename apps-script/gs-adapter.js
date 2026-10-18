@@ -348,6 +348,16 @@ function capNhatV1012(){
   xoaBoNhoDem();Logger.log('ban_do: '+a+' ô cấp · cau_hinh cap_toi_da: '+b+' · nhiem_vu Tìm con: '+c+' ô npc · xóa '+d+' khung ở vat_pham, '+e+' ở cua_hang');
 }
 // v10.30: Hang Cướp còn 14 tên cướp (ghi lại dòng hang_cuop_so_cuop). Chạy một lần sau khi dán Code.gs mới.
+// v10.34: 10 vùng cấp 400–999 — ghi cap_toi_da = 999 và lời kết mới của việc Tìm con tc-8 (con gái bị đưa qua Hư Không); các vùng, quái, dòng cấu hình mới do kiemTra thêm. Chạy kiemTra trước rồi chạy hàm này một lần.
+function capNhatV1034(){
+  lhDuLieuBoSung_();
+  const ghi=(tab,khoa,cols,chon)=>{const file=LH_SHEETS[LH_STATIC[tab]];if(!file)return 0;const sh=SpreadsheetApp.openById(file).getSheetByName(tab);if(!sh||sh.getLastRow()<2)return 0;
+    const v=sh.getDataRange().getValues(),h=v[0].map(String),ck=h.indexOf(khoa);if(ck<0)return 0;const def=new Map((LH_DEFAULT[tab]||[]).filter(r=>!chon||chon(r)).map(r=>[String(r[khoa]),r]));let n=0;
+    for(let i=1;i<v.length;i++){const d=def.get(String(v[i][ck]));if(!d)continue;for(const c of cols){const j=h.indexOf(c);if(j<0)continue;const val=d[c]===undefined||d[c]===null?'':d[c];if(String(v[i][j])!==String(val)){sh.getRange(i+1,j+1).setValue(val);n++;}}}
+    return n;};
+  const a=ghi('cau_hinh','khoa',['gia_tri','ghi_chu'],r=>String(r.khoa)==='cap_toi_da'),b=ghi('nhiem_vu','id',['loi_ket'],r=>String(r.id)==='tc-8'),c=ghi('ban_do','id',['khoa_mo']);
+  xoaBoNhoDem();Logger.log('Đã ghi: cau_hinh '+a+' ô, nhiem_vu '+b+' ô, ban_do '+c+' ô (v10.34)');
+}
 // v10.33: cân bằng PvP sách (mô phỏng 9 hệ × 324 build): ghi lại hiệu ứng sách mới; các dòng sach_chi_so_*, thuy_hut_mau, bang_vo_bang, hoi_day_giay do kiemTra thêm. Chạy một lần sau khi dán Code.gs mới.
 function capNhatV1033(){
   lhDuLieuBoSung_();const file=LH_SHEETS[LH_STATIC.cau_hinh];if(!file)return;const sh=SpreadsheetApp.openById(file).getSheetByName('cau_hinh');if(!sh||sh.getLastRow()<2)return;

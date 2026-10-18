@@ -257,7 +257,7 @@ window.startUI=(session)=>{
   function storyHint(){
     const act=Object.keys(p.quests.active).map(id=>Player.QUESTS[id]).find(Q=>Q&&Q.story);
     if(act){const n=p.quests.active[act.id],M=Player.MON[act.target];return `<div class="qgroup story">${svg('heart')}<b>Tìm con</b><span>${esc(act.name)} · ${M?esc(M.name):''} ${Math.min(n,act.count)}/${act.count}</span></div><div class="qnpc">${svg(n>=act.count?'check':'talk')}<div><b>${n>=act.count?'Về gặp':'Xong việc về gặp'} ${esc(act.npcName||act.npc)}</b><small>${esc(regName(act.at))}</small></div></div>`;}
-    const nx=Player.storyNext(p);if(!nx)return Object.values(Player.QUESTS).some(Q=>Q.story)?`<div class="qgroup story">${svg('heart')}<b>Tìm con</b><span>Đã tìm được con gái · hành trình trọn vẹn</span></div>`:'';
+    const nx=Player.storyNext(p);if(!nx)return Object.values(Player.QUESTS).some(Q=>Q.story)?`<div class="qgroup story">${svg('heart')}<b>Tìm con</b><span>${Number(p.flags.rescue)>=2?'Đã đưa con gái về nhà · hành trình trọn vẹn':Number(p.flags.rescue)===1?'Đã cứu được An · đưa con về làng Thanh Mộc':'Manh mối cuối: An bị đưa qua Hư Không Giới tới Hỗn Nguyên Điện (cấp 999)'}</span></div>`:'';
     const need=Player.questLevel(nx),lock=(p.level||1)<need;
     return `<div class="qgroup story">${svg('heart')}<b>Tìm con</b><span>Lần theo manh mối qua từng vùng để cứu con gái</span></div><div class="qnpc">${svg(lock?'lock':'talk')}<div><b>${esc(nx.npcName||nx.npc)} đang có việc muốn nhờ bạn</b><small>${esc(regName(nx.at))}${lock?' · cần cấp '+need:' · tới gặp để biết việc gì'}</small></div></div>`;
   }
@@ -538,9 +538,9 @@ window.startUI=(session)=>{
   /* ---------- Chọn bản đồ: đi nhanh tới trạm nghỉ ở cổng từng vùng; thiếu cấp thì khóa ---------- */
   function showMaps(){
     closeMenu();const lv=p.level||1,cur=game.mapId;
-    const rows=Player.REGIONS.map(R=>{const need=Player.mapLevel(R.id),lock=lv<need,here=cur===R.id;
+    const rows=Player.REGIONS.map(R=>{const need=Player.mapLevel(R.id),lk=Player.mapLock(p,R.id),lock=!!lk,here=cur===R.id;
       const btn=here?`<span class="qprog">${svg('pin')}Đang ở</span>`:lock?`<span class="qprog">${svg('lock')}${need}</span>`:`<button class="primary" data-go="${R.id}">${svg('next')}Đi</button>`;
-      return `<div class="qrow map-row${lock?' dim':''}${here?' act':''}"><span class="map-ic">${svg(R.icon)}</span><div><b>${esc(R.name)}</b><small>${need>1?(lock?'Cần cấp '+need:'Từ cấp '+need):'Làng, vùng an toàn'}</small></div>${btn}</div>`;}).join('');
+      return `<div class="qrow map-row${lock?' dim':''}${here?' act':''}"><span class="map-ic">${svg(R.icon)}</span><div><b>${esc(R.name)}</b><small>${lock?esc(lk.msg):need>1?'Từ cấp '+need:'Làng, vùng an toàn'}</small></div>${btn}</div>`;}).join('');
     openModal(ttl('map','Bản đồ'),`<small class="sel-desc">Lv. ${lv} · đi thẳng tới trạm nghỉ ở cổng vùng (tự lưu trước khi đi).</small><div class="quest-rows" style="margin-top:8px">${rows}</div>`);
     document.querySelectorAll('[data-go]').forEach(b=>b.onclick=async()=>{b.disabled=true;closeModal();await game.goto(b.dataset.go);refresh();});
   }

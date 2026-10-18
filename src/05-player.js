@@ -99,7 +99,7 @@ const Player=(()=>{
     for(const r of (data.bo_cau_hoi||[]).filter(r=>boOk(r.id)))QUIZ[r.id]={id:r.id,name:r.ten||r.id,order:num(r.thu_tu,99),rubies:num(r.thuong_hong_ngoc,5),mon:r.quai||'',need:num(r.so_luong,0),map:r.ban_do||'',qs:[]};
     for(const r of data.cau_hoi||[]){const bo=String(r.bo||r.QuestID||'');if(!bo||!boOk(bo))continue;if(!QUIZ[bo])QUIZ[bo]={id:bo,name:bo,order:99,rubies:5,mon:'',need:0,map:'',qs:[]};QUIZ[bo].qs.push({id:r.id||r.QuestionID,n:num(r.thu_tu||r.ThuTu,QUIZ[bo].qs.length+1),q:r.cau||r.CauHoi||'',a:r.a||r.A||'',b:r.b||r.B||'',c:r.c||r.C||'',d:r.d||r.D||'',ans:String(r.dap_an||r.DapAn||'').trim().toUpperCase()});}
     for(const Q of Object.values(QUIZ))Q.qs.sort((x,y)=>x.n-y.n);
-    REGIONS.length=0;for(const r of data.ban_do||[])REGIONS.push({id:String(r.id),name:r.ten,lv:num(r.cap,1),icon:r.bieu_tuong||'pin',order:num(r.thu_tu,99)});REGIONS.sort((a,b)=>a.order-b.order);
+    REGIONS.length=0;for(const r of data.ban_do||[])REGIONS.push({id:String(r.id),name:r.ten,lv:num(r.cap,1),icon:r.bieu_tuong||'pin',order:num(r.thu_tu,99),gate:String(r.khoa_mo||'')});REGIONS.sort((a,b)=>a.order-b.order);
     TOPUPS.length=0;for(const r of data.goi_nap||[])TOPUPS.push({id:r.id,name:r.ten,vnd:num(r.tien),ruby:num(r.hong_ngoc),gold:num(r.vang),desc:r.mo_ta||'',order:num(r.thu_tu,99)});TOPUPS.sort((a,b)=>a.order-b.order);
     clear(AVATARS);for(const r of data.dien_mao||[])AVATARS[r.id]={id:r.id,name:r.ten,gender:r.gioi_tinh||'',price:num(r.gia),ruby:num(r.hong_ngoc),skin:r.mau_da||'#e1c295',hair:r.mau_toc||'#2a2622',style:r.kieu_toc||'',beard:r.rau||'',eye:r.mau_mat||'#2a2018',mark:r.dau||'',order:num(r.thu_tu,99)};
     for(const r of data.linh||[]){const k=r.thanh?num(CFG.linh_thanh_he_so,100)/100:1;MERCS[r.id]={id:r.id,name:r.ten,gender:r.gioi_tinh==='f'?'f':'m',price:num(r.gia),cmd:num(r.menh_lenh,5),stats:{strength:Math.round(num(r.suc_manh)*k),agility:Math.round(num(r.nhanh_nhen)*k),vitality:Math.round(num(r.suc_khoe)*k),intelligence:Math.round(num(r.tri_tue)*k),command:0},gear:String(r.trang_bi||'').split(',').map(x=>x.trim()).filter(Boolean),desc:r.mo_ta,map:r.thanh||''};}
@@ -472,6 +472,13 @@ const Player=(()=>{
   // REGIONS nạp từ tab ban_do (load); cấp của vùng có thể ghi đè bằng cau_hinh cap_<mã vùng, gạch dưới>
   const MON_REGION={'bo-cap':'sa-mac','ken-ken':'sa-mac','chan-tinh':'sa-mac','thach-tinh':'sa-mac','soi-tuyet':'nui-tuyet','gau-nui':'nui-tuyet','ho-tinh':'nui-tuyet','doi-quy':'hang-dong','nhen-doc':'hang-dong','dai-bang':'hang-dong'};
   const mapLevel=id=>{const R=REGIONS.find(r=>r.id===id);if(!R)return 1;return Math.max(1,num(CFG['cap_'+String(id).replace(/-/g,'_')],R.lv));};
+  // v10.34: khóa mở vùng ngoài cấp (cột khoa_mo tab ban_do): kill:<mã quái> = đã hạ quái đó, hq:<mã> = đã xong nhiệm vụ ẩn. mapLock → null (vào được) hoặc {lv?, msg}
+  const HQ_MSG={'chien-truong':'Đoạt cờ soái giữa doanh trại Cổ Chiến Trường để mở đường','vo-dai':'Thắng đủ 10 danh tướng ở Võ Đài Thập Tướng để mở đường'};
+  const mapLock=(s,id)=>{const R=REGIONS.find(r=>r.id===id);if(!R)return null;const need=mapLevel(id);if(((s&&s.level)||1)<need)return {lv:need,msg:'Cần cấp '+need};
+    for(const part of String(R.gate||'').split(',').map(x=>x.trim()).filter(Boolean)){const [k,v]=part.split(':');const f=(s&&s.flags)||{};
+      if(k==='kill'&&!(num(f.kills&&f.kills[v])>0))return {msg:'Cần hạ '+(MON[v]?MON[v].name:v)+' trước'};
+      if(k==='hq'&&!(f.hq&&f.hq[v]))return {msg:HQ_MSG[v]||'Cần xong nhiệm vụ ẩn của vùng trước'};}
+    return null;};
   const regionLv=id=>{const R=REGIONS.find(r=>r.id===id);return R?R.lv:1;};
   const regionOf=monId=>(MON[monId]&&MON[monId].map)||MON_REGION[monId]||'thanh-moc';
   const questLevel=Q=>Q?(Q.lv||mapLevel(regionOf(Q.target))):1;
@@ -563,7 +570,8 @@ const Player=(()=>{
     if(Number.isFinite(+p.rs))s.rs=(+p.rs)|0;
     s.copper=Math.floor(n(p.copper,0,Number.MAX_SAFE_INTEGER,0));s.rubies=Math.floor(n(p.rubies,0,Number.MAX_SAFE_INTEGER,0));s.luck=Math.floor(n(p.luck,0,9999,0));
     s.stats.command=Math.floor(n(p.stats&&p.stats.command,0,999,s.stats.command));
-    if(p.flags){s.flags.river=!!p.flags.river;s.flags.hunted=!!p.flags.hunted;if(Array.isArray(p.flags.tutGift))s.flags.tutGift=p.flags.tutGift.slice(0,6).map(String);if(p.flags.tutDied)s.flags.tutDied=true;if(p.flags.caveOk)s.flags.caveOk=true;if(num(p.flags.freeRecruit)>0)s.flags.freeRecruit=Math.min(5,Math.floor(num(p.flags.freeRecruit)));if(Number.isFinite(+p.flags.caveDay)&&p.flags.caveDay!=null)s.flags.caveDay=Math.floor(+p.flags.caveDay);if(p.flags.wells&&typeof p.flags.wells==='object')for(const [k,v] of Object.entries(p.flags.wells))if(/^gieng-\d+$/.test(k)&&Number.isFinite(+v))s.flags.wells[k]=+v;for(const [k,v] of Object.entries(p.flags.kills||{}))if(MON[k])s.flags.kills[k]=Math.floor(n(v,0,1e9,0));}
+    if(p.flags){s.flags.river=!!p.flags.river;s.flags.hunted=!!p.flags.hunted;if(Array.isArray(p.flags.tutGift))s.flags.tutGift=p.flags.tutGift.slice(0,6).map(String);if(p.flags.tutDied)s.flags.tutDied=true;if(p.flags.caveOk)s.flags.caveOk=true;if(num(p.flags.freeRecruit)>0)s.flags.freeRecruit=Math.min(5,Math.floor(num(p.flags.freeRecruit)));if(Number.isFinite(+p.flags.caveDay)&&p.flags.caveDay!=null)s.flags.caveDay=Math.floor(+p.flags.caveDay);if(p.flags.wells&&typeof p.flags.wells==='object')for(const [k,v] of Object.entries(p.flags.wells))if(/^gieng-\d+$/.test(k)&&Number.isFinite(+v))s.flags.wells[k]=+v;for(const [k,v] of Object.entries(p.flags.kills||{}))if(MON[k])s.flags.kills[k]=Math.floor(n(v,0,1e9,0));
+      if(p.flags.hq&&typeof p.flags.hq==='object'){const hq={};for(const k of Object.keys(HQ_MSG))if(p.flags.hq[k])hq[k]=1;if(Object.keys(hq).length)s.flags.hq=hq;}if(num(p.flags.duel)>0)s.flags.duel=Math.min(10,Math.floor(num(p.flags.duel)));if(num(p.flags.rescue)>0)s.flags.rescue=Math.min(2,Math.floor(num(p.flags.rescue)));}
     const extra=[],eq=Object.fromEntries(slots.map(k=>[k,null]));
     for(const k of slots){const it=valid(p.equipment&&p.equipment[k]);if(!it)continue;const d=items[it.type];const ok=(d.slot==='hand'?(k==='left'||k==='right'):d.slot===k)&&(!d.gender||d.gender===s.gender);if(ok)eq[k]=it;else extra.push(it);}
     if(isTwo(eq.left)){extra.push(eq.left);eq.left=null;}
@@ -596,7 +604,7 @@ const Player=(()=>{
     if(!save||!save.player)return {player:create(ch),pos:null,seen:[]};
     const s=restorePlayer(save.player,ch),pos=save.pos;
     // vùng chưa đủ cấp (sửa dữ liệu, đổi cấu hình): về làng
-    return {player:s,pos:pos&&!(typeof pos.map==='string'&&mapLevel(pos.map)>(s.level||1))&&canStand&&canStand(pos.x,pos.y)?{x:pos.x,y:pos.y,...(typeof pos.map==='string'?{map:pos.map}:{})}:null,seen:Array.isArray(save.seen)?save.seen.filter(v=>npcIds?npcIds.includes(v):typeof v==='string'&&/^[a-z0-9-]{1,40}$/.test(v)):[]};
+    return {player:s,pos:pos&&!(typeof pos.map==='string'&&mapLock(s,pos.map))&&canStand&&canStand(pos.x,pos.y)?{x:pos.x,y:pos.y,...(typeof pos.map==='string'?{map:pos.map}:{})}:null,seen:Array.isArray(save.seen)?save.seen.filter(v=>npcIds?npcIds.includes(v):typeof v==='string'&&/^[a-z0-9-]{1,40}$/.test(v)):[]};
   }
   /* ---------- v8: máy chủ quyết định tiền, đồ, gia cường ----------
      merge(S,C): S = trạng thái máy chủ (đồ nào tồn tại, tiền, hồng ngọc, nhiệm vụ),
@@ -631,7 +639,7 @@ const Player=(()=>{
   // Các lệnh làm thay đổi tiền/đồ, chạy trên máy chủ (và trên trình duyệt ở chế độ ngoại tuyến)
   // số lần hạ một loài quái trong một lượt hồi sinh: bãi quái lớn có nhiều con cùng loài (Sheet cau_hinh gioi_han_ha_quai)
   const KILL_LIMIT=id=>MON[id].boss?1:num(CFG.gioi_han_ha_quai,16);
-  const PREDICT=new Set(['kill','buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff','av','fuse','use','cos','die','quiz','quizHunt','eventWin','recruit','recruitHire','tutGift','cavePass','caveChest','pkWin']);
+  const PREDICT=new Set(['kill','buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff','av','fuse','use','cos','die','quiz','quizHunt','eventWin','recruit','recruitHire','tutGift','cavePass','caveChest','pkWin','hqFlag','duelWin','rescue','rescueHome']);
   // v10.13: khóa chữ ký kết quả Thầy đồ (máy chủ ký bằng khóa bí mật; trình duyệt chỉ áp dụng trước, máy chủ kiểm khi nhận gói lưu)
   const quizKey=(cid,bo,wrong)=>'quiz|'+cid+'|'+bo+'|'+(wrong||[]).join(',');
   function applyOp(s,op,srv,now=Date.now(),rng=Math.random){
@@ -707,6 +715,12 @@ const Player=(()=>{
     // v10.14: đơn chiêu mộ — gửi (tốn hồng ngọc, rút phẩm cấp), nhận lính đang chào, hoặc bỏ qua
     if(t==='recruit'){return {offer:recruit(s,op.map,rng,now,op.luck,!!op.free),rubies:s.rubies,luck:s.luck,free:num(s.flags.freeRecruit)};}
     // v10.31: thắng người chơi ảo đánh lén ở Hang động → 1 lượt chiêu mộ miễn phí ở Thanh Mộc (cách nhau ít nhất 60 giây, giữ tối đa 5 lượt)
+    // v10.34: nhiệm vụ ẩn 10 vùng 400–999 — đoạt cờ (Cổ Chiến Trường), võ đài 10 danh tướng (Võ Đài Thập Tướng), cứu con gái (Hỗn Nguyên Điện) rồi đưa về làng
+    if(t==='hqFlag'){if((s.level||1)<mapLevel('chien-truong'))throw Error('LEVEL');s.flags.hq=s.flags.hq||{};if(s.flags.hq['chien-truong'])throw Error('DA_XONG');s.flags.hq['chien-truong']=1;const ru=Math.max(0,Math.floor(num(CFG.an_co_hong_ngoc,30)));s.rubies+=ru;return {rubies:ru};}
+    if(t==='duelWin'){if((s.level||1)<mapLevel('vo-dai'))throw Error('LEVEL');const cur=Math.min(10,Math.floor(num(s.flags.duel))),k=Math.floor(num(op.n));if(k!==cur+1||k>10)throw Error('SAI_TRAN');srv.duelAt=num(srv.duelAt);if(now-srv.duelAt<8000)throw Error('NHANH_QUA');srv.duelAt=now;
+      s.flags.duel=k;const ru=Math.max(0,Math.floor(num(CFG.vo_dai_hong_ngoc,5)))*k;s.rubies+=ru;if(k===10){s.flags.hq=s.flags.hq||{};s.flags.hq['vo-dai']=1;}return {duel:k,rubies:ru};}
+    if(t==='rescue'){if(!(num(s.flags.kills&&s.flags.kills['hon-nguyen-ma-to'])>0))throw Error('CHUA_HA_TRUM');if(num(s.flags.rescue)>=1)throw Error('DA_CUU');s.flags.rescue=1;return {rescue:1};}
+    if(t==='rescueHome'){if(num(s.flags.rescue)!==1)throw Error('CHUA_CUU');s.flags.rescue=2;const ru=Math.max(0,Math.floor(num(CFG.cuu_con_hong_ngoc,999)));s.rubies+=ru;return {rescue:2,rubies:ru};}
     if(t==='pkWin'){srv.pkAt=num(srv.pkAt);if(now-srv.pkAt<60000)throw Error('NHANH_QUA');srv.pkAt=now;s.flags.freeRecruit=Math.min(5,num(s.flags.freeRecruit)+1);return {free:s.flags.freeRecruit};}
     if(t==='recruitHire'){const m=recruitHire(s,rng);return {mid:m.mid,name:m.name,lv:m.lv,tier:m.tier};}
     if(t==='recruitDrop'){s.recruit=null;return {};}
@@ -715,6 +729,6 @@ const Player=(()=>{
   load(typeof GAME_DATA!=='undefined'?GAME_DATA:{});
   const API={VERSION,BAG_SIZE,SKILL_SLOTS,MAX_LV,MAX_MERC,TIERS,TIER_NAME,tierMul,killCopper,killExp,mercDefMul,petDmgMul,mountPow,mercCost,mercPow,mercGainExp,TUONG,recruitRoll,MAX_ACTIVE_QUEST,ELEMENTS,BEASTS,GROUPS,FX_NAMES,STAT_KEYS,CFG,RAR,ADD,SHOPS,SETS,MON,QUESTS,MERCS,AVATARS,TOPUPS,QUIZ,NAME_FX,items,slots,skills,shopEnh,shopRow,fuse,mercDaily,mercOffers,dayOf,EVENTS,
     layout,relayout,load,info,kind,weapon,skillCost,cmdInfo,WEAPONS,PREDICT,seqRng,setFollow,fitFollow,mercCmd,mercGuard,isGen,petMax,PET_CAP,mountNeed,tameMin,bookFx,bookBac,demonOf,shopRuby,SHOP_ENH,expNeed,maxLevel,gainExp,spendPoints,mountGain,bookStat,mountCmd,qOf,rar,nameOf,stat,canEnhance,tradeable,gainOf,enhRate,enhCost,enhance,roll,rollDrop,create,derive,targets,equip,unequip,stance,isTwo,pairOk,setSkill,unsetSkill,toggleBook,element,money,shopPrice,buy,sell,sellPrice,addItem,cast,
-    aimAcc,isRanged,REGIONS,MON_REGION,SKILLS,mapLevel,regionLv,regionOf,questLevel,storyAt,storyNext,quizKey,questAccept,questProgress,questTurnIn,hireNpc,addMerc,mercEquip,mercUnequip,dismissMerc,makeMerc,cleanItem,serialize,restore,restorePlayer,merge,applyOp,allItems};
+    aimAcc,isRanged,REGIONS,MON_REGION,SKILLS,mapLevel,mapLock,regionLv,regionOf,questLevel,storyAt,storyNext,quizKey,questAccept,questProgress,questTurnIn,hireNpc,addMerc,mercEquip,mercUnequip,dismissMerc,makeMerc,cleanItem,serialize,restore,restorePlayer,merge,applyOp,allItems};
   return API;
 })();
