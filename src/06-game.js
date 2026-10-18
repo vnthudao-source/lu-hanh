@@ -859,7 +859,7 @@ window.startGame=(session)=>{
   function kill(m,owner){
     const M=MON[m.type];m.dead=true;m.deadAt=time;m.respawn=m.ev?1e18:time+M.respawn;m.atk=null;m.burn=null;m.leap=null;
     if(owner==='bot'&&(m.heroDmg||0)<m.max*.3){burst(m.x,m.y-M.h*.4,'#e9dcb4',12);return;}
-    moneyFloat(m.x,m.y-M.h-6,M.copper);burst(m.x,m.y-M.h*.4,'#e9dcb4',16);LH_Audio.play(M.boss?'boss':'kill');
+    moneyFloat(m.x,m.y-M.h-6,Player.killCopper(M));burst(m.x,m.y-M.h*.4,'#e9dcb4',16);LH_Audio.play(M.boss?'boss':'kill');
     // Phần thưởng tính ngay trên máy người chơi (cùng luật, cùng chuỗi ngẫu nhiên với máy chủ): túi rơi xuống là mở liền,
     // lệnh gom lại gửi máy chủ sau; máy chủ tính lại y hệt để lưu
     const sack={x:m.x+(Math.random()-.5)*10,y:m.y+4,born:time,boss:!!M.boss};loot.push(sack);
@@ -879,6 +879,8 @@ window.startGame=(session)=>{
     if(r.rubies){floater(x,y-dy,'+'+r.rubies,'#ff9ab8',14,'ruby');dy+=16;}
     if(r.exp){floater(x,y-dy,'+'+r.exp+' exp','#ffe08a',12);dy+=14;}
     if(r.up)levelUp(r.up);
+    if(r.mercUp&&r.mercUp.length)syncMerc(); // lính lên cấp: tính lại máu, sát thương
+    (r.mercUp||[]).forEach(u=>message(svg('flag')+String(u.name).replace(/[&<>"]/g,c=>'&#'+c.charCodeAt(0)+';')+' lên cấp '+u.lv));
     if(r.pet){petSpawn[r.pet.pid]={x:sack.x,y:sack.y};const M=MON[r.pet.type];floater(x,y-dy-10,'Thu phục '+M.name+'!',EL.demon.glow,16);fx.push({kind:'ring',x:sack.x,y:sack.y,r0:8,r1:90,color:EL.demon.color,age:0,life:.7,lw:5});burst(sack.x,sack.y-20,EL.demon.color,30,200);message(svg('check')+`Thu phục ${M.name} · đi theo bạn`);syncMerc();}
     r.items.forEach(it=>{const R=Player.rar(it),nm=Player.nameOf(it);floater(x,y-dy,nm,R.color,14);dy+=16;message(svg('bag')+`Nhặt được <b style="color:${R.color}">${nm}</b> \u{00b7} ${R.name}`);});
     (r.lost||[]).forEach(it=>message(svg('close')+'Túi đầy, rơi mất '+Player.nameOf(it)));
@@ -1048,14 +1050,15 @@ window.startGame=(session)=>{
     window.GameUI?.refresh();return true;
   }
   // Kỹ năng thú cưỡi: ngựa đá hậu (phía sau), hổ vồ mồi (lao tới), voi dày xéo (diện rộng)
+  // v10.17: sát thương đòn thú cưỡi × thu_cuoi_nhan_chi_so
   function mountStrike(m){
-    const el=HD.books.fire?'fire':Player.element(player),oy=hero.y-14,atk={D:HD,el,owner:'hero',knock:90};
-    if(m.type==='horse'){const ang=hero.facing>0?Math.PI:0;hitArc(hero.x,oy,ang,95,2.2,{...atk,mul:1.7,knock:160});fx.push({kind:'arc',x:hero.x,y:oy,ang,r:70,arc:1.8,color:'#f4ead0',age:0,life:.3});burst(hero.x-hero.facing*40,hero.y-10,'#d9cdb0',14,160);shake(4);}
-    else if(m.type==='tiger'){hitArc(hero.x,oy,0,85,PI2,{...atk,mul:2});fx.push({kind:'ring',x:hero.x,y:hero.y,r0:10,r1:85,color:'#ff9a3d',age:0,life:.35,lw:5});burst(hero.x,hero.y-20,'#ff9a3d',18,200);shake(5);}
+    const MS=Player.mountPow(),el=HD.books.fire?'fire':Player.element(player),oy=hero.y-14,atk={D:HD,el,owner:'hero',knock:90};
+    if(m.type==='horse'){const ang=hero.facing>0?Math.PI:0;hitArc(hero.x,oy,ang,95,2.2,{...atk,mul:1.7*MS,knock:160});fx.push({kind:'arc',x:hero.x,y:oy,ang,r:70,arc:1.8,color:'#f4ead0',age:0,life:.3});burst(hero.x-hero.facing*40,hero.y-10,'#d9cdb0',14,160);shake(4);}
+    else if(m.type==='tiger'){hitArc(hero.x,oy,0,85,PI2,{...atk,mul:2*MS});fx.push({kind:'ring',x:hero.x,y:hero.y,r0:10,r1:85,color:'#ff9a3d',age:0,life:.35,lw:5});burst(hero.x,hero.y-20,'#ff9a3d',18,200);shake(5);}
     // kỳ lân: Lân hỏa — vòng lửa quanh mình, quái trúng bị bỏng; rồng: Long tức — luồng lửa dài phía trước
-    else if(m.type==='kylan'){nova(hero.x,hero.y,130,{...atk,el:'fire',mul:2.2},null);for(const o of monsters)if(!o.dead&&Math.hypot(o.x-hero.x,o.y-hero.y)<130)o.burn={dps:HD.tot.dmgMax*.3/3,until:time+3};fx.push({kind:'ring',x:hero.x,y:hero.y,r0:10,r1:130,color:'#ff9a3d',age:0,life:.45,lw:6});burst(hero.x,hero.y-20,'#ffd27a',30,240);shake(6);}
-    else if(m.type==='rong'){const ang=Math.atan2(m.aim.y,m.aim.x);hitArc(hero.x,oy,ang,210,.9,{...atk,el:'fire',mul:2.6,knock:140});for(let k=1;k<=5;k++)burst(hero.x+Math.cos(ang)*k*40,oy+Math.sin(ang)*k*40,k%2?'#ff9a3d':'#ffd27a',8,160);fx.push({kind:'arc',x:hero.x,y:oy,ang,r:200,arc:.9,color:'#ff9a3d',age:0,life:.4});shake(7);}
-    else{nova(hero.x,hero.y,160,{...atk,mul:1.8},null);burst(hero.x,hero.y-6,'#d9cdb0',30,240);shake(9);}
+    else if(m.type==='kylan'){nova(hero.x,hero.y,130,{...atk,el:'fire',mul:2.2*MS},null);for(const o of monsters)if(!o.dead&&Math.hypot(o.x-hero.x,o.y-hero.y)<130)o.burn={dps:HD.tot.dmgMax*.3/3*MS,until:time+3};fx.push({kind:'ring',x:hero.x,y:hero.y,r0:10,r1:130,color:'#ff9a3d',age:0,life:.45,lw:6});burst(hero.x,hero.y-20,'#ffd27a',30,240);shake(6);}
+    else if(m.type==='rong'){const ang=Math.atan2(m.aim.y,m.aim.x);hitArc(hero.x,oy,ang,210,.9,{...atk,el:'fire',mul:2.6*MS,knock:140});for(let k=1;k<=5;k++)burst(hero.x+Math.cos(ang)*k*40,oy+Math.sin(ang)*k*40,k%2?'#ff9a3d':'#ffd27a',8,160);fx.push({kind:'arc',x:hero.x,y:oy,ang,r:200,arc:.9,color:'#ff9a3d',age:0,life:.4});shake(7);}
+    else{nova(hero.x,hero.y,160,{...atk,mul:1.8*MS},null);burst(hero.x,hero.y-6,'#d9cdb0',30,240);shake(9);}
   }
   /* ---------- Nhận sát thương: né, đỡ, phòng ngự, giảm sát thương theo loại, lá chắn, khiên mana, phản đòn ---------- */
   /* ---------- Kỹ năng trùm (cột ky_nang): hiệu ứng xấu lên nhân vật hero.dbf[loại]=hết lúc ---------- */
@@ -1228,7 +1231,7 @@ window.startGame=(session)=>{
         if(!World.canStand(e.x,e.y)){e.x=hero.x;e.y=hero.y;}
         if(w.pet)burst(e.x,e.y-20,EL.demon.color,18,160);}
       e.data=w.data;e.slot=i;
-      if(w.pet){const M=MON[w.data.type];e.type=w.data.type;e.max=M.hpBase||M.hp;e.name=M.name;}else{e.D=Player.derive(w.data);const tm=Player.tierMul(w.data)*Player.mercPow();e.D.tot.hp=Math.round(e.D.tot.hp*tm);e.D.dmgMul*=tm;e.max=e.D.tot.hp;e.name=w.data.name;e.tier=w.data.tier||'n';} // v10.14: lính phẩm cấp cao máu, sát thương nhân lên
+      if(w.pet){const M=MON[w.data.type];e.type=w.data.type;e.max=M.hpBase||M.hp;e.name=M.name;}else{e.D=Player.derive(w.data);const tm=Player.tierMul(w.data)*Player.mercPow();e.D.tot.hp=Math.round(e.D.tot.hp*tm);e.D.tot.def=Math.round(e.D.tot.def*Player.mercDefMul(w.data));e.D.dmgMul*=tm;e.max=e.D.tot.hp;e.name=w.data.name;e.tier=w.data.tier||'n';} // v10.14: lính phẩm cấp cao máu, sát thương nhân lên
       if(!e.hp)e.hp=Math.max(1,Math.round(e.max*(w.data.hpFrac||1)));e.hp=Math.min(e.hp,e.max);
       allies.push(e);
     });
@@ -1321,7 +1324,7 @@ window.startGame=(session)=>{
   // Quái thu phục: đi theo, cắn/húc quái khác. Chết là mất hẳn
   function updatePet(e,dt){
     const M=MON[e.type];
-    if(e.atk){if(time>=e.atk.at&&!e.atk.done){e.atk.done=true;const t=e.atk.tg;if(t&&!t.dead&&Math.hypot(t.x-e.x,t.y-e.y)<M.range+MON[t.type].r+40){const l=Math.hypot(t.x-e.x,t.y-e.y)||1;hitMonster(t,{abs:Math.max(6,M.dmgBase||M.dmg)*(1+player.level*.05)*(1+(HD.tot.petDmg||0)/100),owner:'pet',color:EL.demon.glow,knock:40},(t.x-e.x)/l,(t.y-e.y)/l);}}if(e.atk&&time>=e.atk.end)e.atk=null;e.data.hpFrac=e.hp/e.max;return;}
+    if(e.atk){if(time>=e.atk.at&&!e.atk.done){e.atk.done=true;const t=e.atk.tg;if(t&&!t.dead&&Math.hypot(t.x-e.x,t.y-e.y)<M.range+MON[t.type].r+40){const l=Math.hypot(t.x-e.x,t.y-e.y)||1;hitMonster(t,{abs:Math.max(6,M.dmgBase||M.dmg)*Player.petDmgMul()*(1+player.level*.05)*(1+(HD.tot.petDmg||0)/100),owner:'pet',color:EL.demon.glow,knock:40},(t.x-e.x)/l,(t.y-e.y)/l);}}if(e.atk&&time>=e.atk.end)e.atk=null;e.data.hpFrac=e.hp/e.max;return;}
     const target=!safe&&!hero.dead?nearestFoe(e,300):null;let goal=null;
     if(target){const dx=target.x-e.x,dist=Math.hypot(dx,target.y-e.y),reach=M.range*.8+MON[target.type].r+M.r*.5;if(Math.abs(dx)>3)e.facing=dx<0?-1:1;
       if(dist>reach)goal={x:target.x,y:target.y};else if(time>e.cd){const w=Math.max(.25,M.windup);e.atk={at:time+w,end:time+w+.35,done:false,tg:target};e.cd=time+w+Math.max(.8,M.cd);}}

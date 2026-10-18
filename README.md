@@ -199,6 +199,19 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
 
+## Bản 10.17
+
+Hệ số mới trong `cau_hinh` (kiemTra tự thêm; sửa trên Sheet rồi chạy `xoaBoNhoDem`):
+- `thu_phuc_sat_thuong` = 0.5: sát thương quái thu phục còn 1/2.
+- `linh_huyen_than_them` = 0.25: lính huyền thoại, thần thoại thêm 25% máu, sát thương, phòng ngự (huyền thoại ×3 → ×3,75; thần thoại ×4 → ×5).
+- Lính đi theo nhận cùng lượng kinh nghiệm như chủ khi hạ quái, lên cấp theo cùng bảng kinh nghiệm; mỗi cấp được `diem_moi_cap` điểm, tự chia vào 4 chỉ số theo tỉ lệ chỉ số đang có.
+- `boss_nhan` = 2: máu, sát thương boss ×2 (sau hệ số 1/4 chung → boss còn 1/2 so với gốc).
+- `thu_cuoi_nhan_chi_so` = 2: công, thủ thú cưỡi và sát thương đòn thú cưỡi (phím 4) ×2.
+- `thu_cuoi_menh_lenh_cap` = 0.5: thú cưỡi bán ở thành cần thêm Mệnh lệnh = cấp thành × 0.5 (Cổ Loa +35, Thăng Long +85, Hoa Lư +118, Phú Xuân +145). Thú cưỡi đang cưỡi mà vượt Mệnh lệnh thì khi vào game được cất vào túi.
+- `quai_nhan_tien` = 0.1, `quai_nhan_kinh_nghiem` = 0.1: tiền, kinh nghiệm hạ quái còn 1/10.
+- `quai_tien_toi_da` = 9999: mỗi con quái cho tối đa 99 bạc 99 đồng (không bao giờ ra vàng). 0 = không giới hạn.
+- `quai_roi_do` = 0: quái không rơi hồng ngọc, đồ đạc (1 = rơi như cũ).
+
 ## Bản 10.16
 
 Năm hệ số mới trong tab `cau_hinh` (kiemTra tự thêm; sửa trên Sheet rồi chạy `xoaBoNhoDem` là có hiệu lực, không cần dán lại mã):

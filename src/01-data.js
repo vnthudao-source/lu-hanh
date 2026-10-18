@@ -84,6 +84,15 @@ cau_hinh:[
  {khoa:'quai_nhan_mau',gia_tri:0.25,ghi_chu:'v10.16 · Máu mọi quái và boss nhân với số này (0.25 = còn 1/4). Quái thu phục giữ máu gốc'},
  {khoa:'quai_nhan_sat_thuong',gia_tri:0.25,ghi_chu:'v10.16 · Sát thương mọi quái và boss nhân với số này (0.25 = còn 1/4). Quái thu phục giữ sát thương gốc'},
  {khoa:'thu_cuoi_nhan_gia',gia_tri:20,ghi_chu:'v10.16 · Giá thú cưỡi ở cửa hàng nhân với số này (giá bán lại cũng theo)'},
+ {khoa:'thu_phuc_sat_thuong',gia_tri:0.5,ghi_chu:'v10.17 · Sát thương quái thu phục nhân với số này (0.5 = còn 1/2)'},
+ {khoa:'linh_huyen_than_them',gia_tri:0.25,ghi_chu:'v10.17 · Lính huyền thoại, thần thoại: thêm phần này vào máu, sát thương, phòng ngự (0.25 = thêm 25%)'},
+ {khoa:'boss_nhan',gia_tri:2,ghi_chu:'v10.17 · Máu và sát thương boss nhân thêm số này (sau quai_nhan_mau, quai_nhan_sat_thuong)'},
+ {khoa:'thu_cuoi_nhan_chi_so',gia_tri:2,ghi_chu:'v10.17 · Công, thủ của mọi thú cưỡi và sát thương đòn thú cưỡi (phím 4) nhân với số này'},
+ {khoa:'thu_cuoi_menh_lenh_cap',gia_tri:0.5,ghi_chu:'v10.17 · Thú cưỡi bán ở thành: Mệnh lệnh cần = mức của loài + cấp thành × số này (Cổ Loa 70 → +35, Phú Xuân 290 → +145)'},
+ {khoa:'quai_nhan_tien',gia_tri:0.1,ghi_chu:'v10.17 · Tiền nhận khi hạ quái nhân với số này (0.1 = còn 1/10)'},
+ {khoa:'quai_nhan_kinh_nghiem',gia_tri:0.1,ghi_chu:'v10.17 · Kinh nghiệm nhận khi hạ quái nhân với số này (0.1 = còn 1/10, tối thiểu 1)'},
+ {khoa:'quai_tien_toi_da',gia_tri:9999,ghi_chu:'v10.17 · Tiền tối đa mỗi con quái (đồng). 9999 = 99 bạc 99 đồng, không bao giờ ra vàng. 0 = không giới hạn'},
+ {khoa:'quai_roi_do',gia_tri:0,ghi_chu:'v10.17 · 1 = quái rơi hồng ngọc và đồ như cũ; 0 = quái không rơi gì'},
  {khoa:'link_cho_phien',gia_tri:'https://ikynagame.blogspot.com/p/cho-phien.html',ghi_chu:'Địa chỉ trang Chợ phiên (mua bán giữa người chơi, nhân vật đi theo)'}
 ],
 // cap = cấp hiện tại; ti_le = % thành công lên cấp kế; thất bại: cấp về ngẫu nhiên từ that_bai_tu đến that_bai_den (để trống = giữ nguyên)
