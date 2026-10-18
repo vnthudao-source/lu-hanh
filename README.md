@@ -199,6 +199,12 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
 
+## Bản 10.27 — hướng dẫn tân thủ
+- Nhân vật mới (cấp 1, chưa gặp ai) vào Thanh Mộc: 4 người chơi ảo (Béo Ca, Gầy Đệ, Tí Còi, Na Lém) tới bắt chuyện; Béo Ca hỏi (Chú/Cô theo giới tính), nút duy nhất «Đi theo».
+- Béo Ca dắt qua cầu ra bìa rừng Đông Ngạn, nhân vật tự đi theo; sư tử lao ra vồ gục Béo Ca, ba người còn lại chạy tán loạn về làng («Chạy đi tụi bay!», «Ối zồi ôi! Méo ổn rồi!»).
+- Sư tử hướng dẫn: 70% máu, đánh nửa sát thương, không làm người chơi gục. Hạ xong, Hiệp khách Vân chạy ra mời vào làng, rồi dẫn về; cả nhóm ở lại đi lại trong làng.
+- Xong thì lưu dấu `tut` (chỉ chạy một lần). Cấu hình `huong_dan_tan_thu` = 0 để tắt (kiemTra tự thêm dòng).
+
 ## Bản 10.26 — giá thú cưỡi thành ×10, chiêu mộ 100 hồng ngọc, Mệnh lệnh danh tướng 150–350
 
 - **Giá thú cưỡi**: Thanh Mộc giữ nguyên (2–60 vàng); các thành = giá bản 10.24 × 10 (`thu_cuoi_gia_thanh`): Cổ Loa 297–669, Thăng Long 595–1.338, Hoa Lư 1.190–2.677, Phú Xuân 2.210–4.971 vàng.

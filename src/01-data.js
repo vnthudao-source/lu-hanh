@@ -10,6 +10,7 @@ cau_hinh:[
  {khoa:'cung_no_x2',gia_tri:15,ghi_chu:'Cầm cung / nỏ: cộng thêm % tỉ lệ gây sát thương x2 (vũ khí khác không có)'},
  {khoa:'gioi_han_ha_quai',gia_tri:16,ghi_chu:'Hạ tối đa bao nhiêu con cùng một loài quái thường trong một lượt hồi sinh (chống gian lận; bãi quái lớn cần số lớn)'},
  {khoa:'nguoi_choi_ao',gia_tri:4,ghi_chu:'Số người chơi ảo đi săn ở mỗi bản đồ (0 = tắt)'},
+ {khoa:'huong_dan_tan_thu',gia_tri:1,ghi_chu:'v10.27 · Hướng dẫn tân thủ lần đầu vào Thanh Mộc (Béo Ca dắt ra bìa rừng, sư tử vồ). 0 = tắt'},
  {khoa:'trum_ky_nang_giay',gia_tri:7,ghi_chu:'Trùm ra chiêu đặc biệt (cột ky_nang ở tab quai) cách nhau bao nhiêu giây'},
  {khoa:'dong_do_mac',gia_tri:'def,hp,dodge,reflect,hpReg,mp',ghi_chu:'Đồ mặc: các chỉ số có thể ra dòng ngẫu nhiên (mã ở tab thuoc_tinh, cách nhau dấu phẩy)'},
  {khoa:'cuong_hoa_5_mau',gia_tri:80,ghi_chu:'Mặc 5 món từ +9: cộng thêm máu'},
