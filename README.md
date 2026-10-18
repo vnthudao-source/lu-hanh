@@ -199,6 +199,14 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
 
+## Bản 10.29 — kết thúc hướng dẫn tân thủ, phó bản Hang Cướp
+- Hướng dẫn tân thủ kết thúc ở Thợ rèn: «Không có tiền thì qua đây làm gì? Muốn có đồ ngon phải có tiền!!!», «Hãy đi làm thuê cho Lý Trưởng và hắn sẽ trả tiền công cho ngươi!» → «Hoàn thành nhiệm vụ giới thiệu tân thủ».
+- Bản đồ mới `maps/hang-cuop.json` (+ `.art.js`: đống vàng `gold`, bạc nén `bac`), cổng ở ô 24,7 Sa mạc (chân tháp cổ). Không ghi vào tab `ban_do` nên không hiện trong bảng dịch chuyển.
+- Vào hang (chưa có `flags.caveOk`): 40 cướp bịt mặt vây quanh, thủ lĩnh hỏi «Mật khẩu là gì?» với 4 lựa chọn (khung thoại có nút chọn `choices`). Đúng «D. Bà ơi đừng la!» → «Mật khẩu đúng!», toán cướp biến mất, để lại rương báu (lệnh `cavePass`).
+- Rương: lệnh máy chủ `caveChest`, 1 hồng ngọc mỗi ngày theo giờ Việt Nam (`flags.caveDay`); nhận rồi vào lại: «Toán cướp không để lại gì! Thùng trống rỗng!».
+- Sai mật khẩu: cả toán lao vào đánh rất nhẹ (`hang_cuop_sat_thuong` % máu, tối đa ~1 đòn/0,8 giây); chạy ra cửa hang thì 12 tên rượt tiếp ngoài Sa mạc tới trạm nghỉ mới bỏ đi. Chưa trả lời đúng (kể cả bị đánh gục) thì lần sau vào hang vẫn gặp lại toán cướp.
+- Cấu hình mới: `hang_cuop_so_cuop` 40, `hang_cuop_hong_ngoc` 1, `hang_cuop_sat_thuong` 2 (kiemTra tự thêm).
+
 ## Bản 10.28 — hướng dẫn tân thủ phần 2 (Lý trưởng, Ngư Tinh)
 - Vào làng: nhóm người chơi ảo nói «Qua gặp Lý trưởng kìa bạn!», «Bạn đánh cả sư tử thì kinh rồi!», «Nhà tôi cũng có 1 con sư tử», «Lão Lý trưởng dâm dê lắm»; mũi tên vàng chỉ tới Lý trưởng.
 - Gặp Lý trưởng: lời thoại riêng, bấm «Nhận đồ» được Nón lá, Áo vải, Quần vải, Dép cỏ (lệnh máy chủ `tutGift`, chỉ một lần; cờ `flags.tutGift`).

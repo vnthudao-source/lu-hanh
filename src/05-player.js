@@ -547,7 +547,7 @@ const Player=(()=>{
     if(Number.isFinite(+p.rs))s.rs=(+p.rs)|0;
     s.copper=Math.floor(n(p.copper,0,Number.MAX_SAFE_INTEGER,0));s.rubies=Math.floor(n(p.rubies,0,Number.MAX_SAFE_INTEGER,0));s.luck=Math.floor(n(p.luck,0,9999,0));
     s.stats.command=Math.floor(n(p.stats&&p.stats.command,0,999,s.stats.command));
-    if(p.flags){s.flags.river=!!p.flags.river;s.flags.hunted=!!p.flags.hunted;if(Array.isArray(p.flags.tutGift))s.flags.tutGift=p.flags.tutGift.slice(0,6).map(String);if(p.flags.tutDied)s.flags.tutDied=true;if(p.flags.wells&&typeof p.flags.wells==='object')for(const [k,v] of Object.entries(p.flags.wells))if(/^gieng-\d+$/.test(k)&&Number.isFinite(+v))s.flags.wells[k]=+v;for(const [k,v] of Object.entries(p.flags.kills||{}))if(MON[k])s.flags.kills[k]=Math.floor(n(v,0,1e9,0));}
+    if(p.flags){s.flags.river=!!p.flags.river;s.flags.hunted=!!p.flags.hunted;if(Array.isArray(p.flags.tutGift))s.flags.tutGift=p.flags.tutGift.slice(0,6).map(String);if(p.flags.tutDied)s.flags.tutDied=true;if(p.flags.caveOk)s.flags.caveOk=true;if(Number.isFinite(+p.flags.caveDay)&&p.flags.caveDay!=null)s.flags.caveDay=Math.floor(+p.flags.caveDay);if(p.flags.wells&&typeof p.flags.wells==='object')for(const [k,v] of Object.entries(p.flags.wells))if(/^gieng-\d+$/.test(k)&&Number.isFinite(+v))s.flags.wells[k]=+v;for(const [k,v] of Object.entries(p.flags.kills||{}))if(MON[k])s.flags.kills[k]=Math.floor(n(v,0,1e9,0));}
     const extra=[],eq=Object.fromEntries(slots.map(k=>[k,null]));
     for(const k of slots){const it=valid(p.equipment&&p.equipment[k]);if(!it)continue;const d=items[it.type];const ok=(d.slot==='hand'?(k==='left'||k==='right'):d.slot===k)&&(!d.gender||d.gender===s.gender);if(ok)eq[k]=it;else extra.push(it);}
     if(isTwo(eq.left)){extra.push(eq.left);eq.left=null;}
@@ -615,7 +615,7 @@ const Player=(()=>{
   // Các lệnh làm thay đổi tiền/đồ, chạy trên máy chủ (và trên trình duyệt ở chế độ ngoại tuyến)
   // số lần hạ một loài quái trong một lượt hồi sinh: bãi quái lớn có nhiều con cùng loài (Sheet cau_hinh gioi_han_ha_quai)
   const KILL_LIMIT=id=>MON[id].boss?1:num(CFG.gioi_han_ha_quai,16);
-  const PREDICT=new Set(['kill','buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff','av','fuse','use','cos','die','quiz','quizHunt','eventWin','recruit','recruitHire','tutGift']);
+  const PREDICT=new Set(['kill','buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff','av','fuse','use','cos','die','quiz','quizHunt','eventWin','recruit','recruitHire','tutGift','cavePass','caveChest']);
   // v10.13: khóa chữ ký kết quả Thầy đồ (máy chủ ký bằng khóa bí mật; trình duyệt chỉ áp dụng trước, máy chủ kiểm khi nhận gói lưu)
   const quizKey=(cid,bo,wrong)=>'quiz|'+cid+'|'+bo+'|'+(wrong||[]).join(',');
   function applyOp(s,op,srv,now=Date.now(),rng=Math.random){
@@ -660,6 +660,9 @@ const Player=(()=>{
       // v10.28: gục trong hướng dẫn tân thủ (Ngư Tinh) — mất cả quần áo trong túi (bộ Lý trưởng tặng, đồ khởi đầu), chỉ còn mảnh vải che thân
       if(op.tut&&Array.isArray(s.flags.tutGift)&&!s.flags.tutDied){s.flags.tutDied=true;const g=new Set(s.flags.tutGift),wear=new Set(['hat','armor','pants','gloves','shoes','wings']);s.bag.forEach((it,i)=>{const d=it&&items[it.type];if(it&&(g.has(it.uid)||(d&&wear.has(d.slot)&&!d.set&&!d.ruby))){lost.push(it);s.bag[i]=null;}});}
       return {lost};}
+    // v10.29: Hang Cướp — đọc đúng mật khẩu thì toán cướp tan; rương báu 1 hồng ngọc mỗi ngày (theo giờ Việt Nam)
+    if(t==='cavePass'){s.flags.caveOk=true;return {};}
+    if(t==='caveChest'){if(!s.flags.caveOk)throw Error('CHUA_MO');const day=Math.floor((now+7*3600000)/86400000);if(s.flags.caveDay===day)throw Error('TRONG_RONG');s.flags.caveDay=day;const n=Math.max(0,Math.floor(num(CFG.hang_cuop_hong_ngoc,1)));s.rubies+=n;return {rubies:n,day};}
     // v10.28: hướng dẫn tân thủ — Lý trưởng tặng một bộ quần áo (một lần)
     if(t==='tutGift'){if(s.flags.tutGift)throw Error('DA_NHAN');const ids=['hat','armor','pants','shoes'].filter(id=>items[id]);if(s.bag.filter(x=>!x).length<ids.length)throw Error('BAG_FULL');
       const got=ids.map(id=>{const it=roll(id,'n',rng);addItem(s,it);return it;});s.flags.tutGift=got.map(it=>it.uid);return {items:got};}
