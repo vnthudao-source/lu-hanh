@@ -199,6 +199,14 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
 
+## Bản 10.26 — giá thú cưỡi thành ×10, chiêu mộ 100 hồng ngọc, Mệnh lệnh danh tướng 150–350
+
+- **Giá thú cưỡi**: Thanh Mộc giữ nguyên (2–60 vàng); các thành = giá bản 10.24 × 10 (`thu_cuoi_gia_thanh`): Cổ Loa 297–669, Thăng Long 595–1.338, Hoa Lư 1.190–2.677, Phú Xuân 2.210–4.971 vàng.
+- **Đơn chiêu mộ** trở lại 100 hồng ngọc (tỉ lệ danh tướng giữ 1% · 0,3%).
+- **Danh tướng** cần 150–350 Mệnh lệnh như trước (ngẫu nhiên khi chiêu mộ, không theo nơi chiêu mộ); bỏ dòng `tuong_menh_lenh_*`.
+- Mô phỏng 100 người chơi: 98/100 hạ boss cuối, trung vị 22 tháng (nạp 5tr: 24,7; 10tr: 15,9) — chậm hơn mốc 1 năm vì danh tướng (nguồn bộ Huyền thoại / Thần) khó chiêu mộ.
+- Sheet: chạy `kiemTra` rồi `capNhatV1026()` một lần.
+
 ## Bản 10.25 — danh tướng độc lập, giá thú cưỡi
 
 - **Danh tướng** (lính Huyền thoại, Thần thoại) tách khỏi hệ lính thường: tổng điểm chỉ số cố định (`tuong_diem_huyen_thoai` 1.800, `tuong_diem_than` 2.600; Sức khỏe ít nhất 1/4) dù chiêu mộ ở Thanh Mộc hay Phú Xuân — chỉ khác cấp (cấp nơi chiêu mộ + 0..10). Giá như nhau mọi nơi (`tuong_gia_huyen_thoai` 500, `tuong_gia_than` 2.000 hồng ngọc), Mệnh lệnh cố định (40 / 60), luôn được máu tối thiểu theo quái vùng. Danh tướng đã chiêu mộ trước đây được nâng chỉ số lên đủ mức mới.

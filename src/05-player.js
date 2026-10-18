@@ -115,10 +115,12 @@ const Player=(()=>{
         if(d.price)d.price=Math.round(d.price*MK);if(MS!==1){d.atk=Math.round(d.atk*MS);d.def=Math.round(d.def*MS);}
         d.cmd=(BEASTS[d.beast]||BEASTS.horse).cmd+Math.round(L*MC);}
       if(MK!==1)for(const k in SHOPS)for(const r of SHOPS[k])if(r.price&&items[r.id].slot==='mount')r.price=Math.round(r.price*MK);
+      // v10.26: sau đó thú cưỡi ở các thành × thu_cuoi_gia_thanh (Thanh Mộc giữ nguyên)
       // v10.24: giá thú cưỡi làng Thanh Mộc × thu_cuoi_gia_lang; mỗi nơi bán kế tiếp (theo cấp thành) giá trung bình gấp thu_cuoi_gia_moi_thanh lần nơi trước, giữ tỉ lệ giữa các con trong cùng nơi
       {const GV=num(CFG.thu_cuoi_gia_lang,5),GT=num(CFG.thu_cuoi_gia_moi_thanh,2),pr=r=>r.price||num(items[r.id].price),avg=a=>a.reduce((x,r)=>x+pr(r),0)/Math.max(1,a.length);
         const list=Object.keys(SHOPS).map(k=>{const mm=k.match(/^thanh-(.+?)(?:-ren|-thu|-sach)?$/);return {k,L:mm?mapLevel(mm[1]):1,rows:SHOPS[k].filter(r=>items[r.id]&&items[r.id].slot==='mount'&&!items[r.id].ruby)};}).filter(x=>x.rows.length).sort((a,b)=>a.L-b.L);
-        let prev=0;for(const s of list){const sc=s.L<=1?GV:prev>0?prev*GT/Math.max(1,avg(s.rows)):1;for(const r of s.rows){const v=Math.max(1,Math.round(pr(r)*sc));r.price=v;items[r.id].price=v;}prev=avg(s.rows);}}}
+        let prev=0;for(const s of list){const sc=s.L<=1?GV:prev>0?prev*GT/Math.max(1,avg(s.rows)):1;for(const r of s.rows){const v=Math.max(1,Math.round(pr(r)*sc));r.price=v;items[r.id].price=v;}prev=avg(s.rows);}
+        const GC=num(CFG.thu_cuoi_gia_thanh,10);if(GC!==1)for(const s of list)if(s.L>1)for(const r of s.rows){const v=Math.round(r.price*GC);r.price=v;items[r.id].price=v;}}}
   }
   const info=i=>i&&items[i.type];
   const kind=i=>info(i)?info(i).kind:null;
@@ -343,7 +345,8 @@ const Player=(()=>{
     // v10.25: danh tướng (Huyền thoại, Thần thoại) không theo hệ lính thường: chỉ số cố định tuong_diem dù chiêu mộ ở làng hay thành cuối; cấp = cấp nơi chiêu mộ (+0..10)
     const pts=ti>=3?tuongPts(tier):Math.round(lv*num(CFG.linh_diem_cap,3)*(1+ti*.25)),keys=['strength','agility','vitality','intelligence'],w=keys.map(()=>rng()+.15),L=Math.round;
     let o;
-    if(ti>=3){const gs=Object.values(TUONG);if(!gs.length)throw Error('TUONG');const G=gs[Math.floor(rng()*gs.length)];o={tier,lv,gen:G.id,name:G.name,gender:G.gender,desc:G.desc,set:tier==='m'?G.setM:G.setL,cmd:15+Math.floor(rng()*Math.max(1,lv/20)),stats:Object.fromEntries(keys.map(k=>[k,12]))};}
+    // v10.26: danh tướng cần 150–350 Mệnh lệnh (cmd 15–35 × linh_nhan_menh_lenh), không theo nơi chiêu mộ
+    if(ti>=3){const gs=Object.values(TUONG);if(!gs.length)throw Error('TUONG');const G=gs[Math.floor(rng()*gs.length)];o={tier,lv,gen:G.id,name:G.name,gender:G.gender,desc:G.desc,set:tier==='m'?G.setM:G.setL,cmd:15+Math.floor(rng()*21),stats:Object.fromEntries(keys.map(k=>[k,12]))};}
     else{const pool=Object.values(MERCS).filter(T=>T.map===mapId),pl=pool.length?pool:Object.values(MERCS).filter(T=>!T.map);if(!pl.length)throw Error('MERC');const T=pl[Math.floor(rng()*pl.length)];o={tier,lv,tpl:T.id,name:T.name,gender:T.gender,desc:T.desc,gear:T.gear.slice(),cmd:T.cmd+Math.floor(rng()*Math.max(1,lv/25))+ti*2,stats:{...T.stats}};}
     // danh tướng: chỉ số nghiêng theo binh khí (gậy phép → trí tuệ, cung nỏ → nhanh nhẹn, còn lại → sức mạnh; có khiên → thêm sức khỏe)
     if(o.set&&SETS[o.set]){const wk=items[o.set+':right'],kd=wk?wk.kind:'';w[kd==='staff'?3:kd==='bow'||kd==='crossbow'?1:0]+=1.6;if(items[o.set+':left']&&items[o.set+':left'].kind==='shield')w[2]+=.6;}
@@ -366,7 +369,7 @@ const Player=(()=>{
     return {tier:o.tier,lv:Math.max(1,Math.floor(num(o.lv,1))),gen:TUONG[o.gen]?o.gen:'',tpl:MERCS[o.tpl]?o.tpl:'',name:String(o.name||'Lính').slice(0,20),gender:o.gender==='f'?'f':'m',desc:String(o.desc||'').slice(0,120),set:SETS[o.set]?o.set:'',gear:Array.isArray(o.gear)?o.gear.filter(g=>items[g]).slice(0,8):[],cmd:Math.max(1,Math.floor(num(o.cmd,10))),stats:st,price:{copper:Math.max(0,Math.floor(num(o.price&&o.price.copper))),rubies:Math.max(0,Math.floor(num(o.price&&o.price.rubies)))},map:String(o.map||''),at:Math.floor(num(o.at))};};
   function mercDaily(m,now=Date.now()){const T=m&&MERCS[m.tpl];if(!T||!T.map)return null;const day=Math.floor((now+7*3600e3)/864e5);let h=0;for(const ch of String(m.mid))h=(h*31+ch.charCodeAt(0))>>>0;const keys=Object.keys(ELEMENTS),el=keys[(h+day)%keys.length];return {el,name:ELEMENTS[el].name,skill:'Sách '+ELEMENTS[el].name};}
   // v10.16: Mệnh lệnh cần để dắt một lính = chỉ số cmd của lính × linh_nhan_menh_lenh; máu, sát thương lính × linh_nhan_chi_so
-  const mercCost=m=>isGen(m)?Math.round(m.tier==='m'?num(CFG.tuong_menh_lenh_than,60):num(CFG.tuong_menh_lenh_huyen_thoai,40)):Math.round(num(m&&m.cmd,5)*num(CFG.linh_nhan_menh_lenh,1)); // v10.25: danh tướng cần Mệnh lệnh cố định
+  const mercCost=m=>Math.round(num(m&&m.cmd,5)*num(CFG.linh_nhan_menh_lenh,1));
   const mercPow=()=>num(CFG.linh_nhan_chi_so,1);
   function mercCmd(s){return (s.mercs||[]).reduce((a,m)=>a+(m.on?mercCost(m):0),0);}
   // Mệnh lệnh: tổng, đã dùng (thú cưỡi, lính), còn trống

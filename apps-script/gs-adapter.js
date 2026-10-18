@@ -341,6 +341,14 @@ function capNhatV1012(){
   const d=xoa('vat_pham',r=>/^khung-/.test(String(r.id))||(String(r.o)==='cos'&&String(r.loai)==='khung')),e=xoa('cua_hang',r=>/^khung-/.test(String(r.id)));
   xoaBoNhoDem();Logger.log('ban_do: '+a+' ô cấp · cau_hinh cap_toi_da: '+b+' · nhiem_vu Tìm con: '+c+' ô npc · xóa '+d+' khung ở vat_pham, '+e+' ở cua_hang');
 }
+// v10.26: ghi lại giá đơn chiêu mộ 100 hồng ngọc và hệ số giá thú cưỡi mỗi thành ×2 (thu_cuoi_gia_moi_thanh); dòng thu_cuoi_gia_thanh = 10 do kiemTra thêm. Chạy một lần sau khi dán Code.gs mới.
+function capNhatV1026(){
+  lhDuLieuBoSung_();const file=LH_SHEETS[LH_STATIC.cau_hinh];if(!file)return;const sh=SpreadsheetApp.openById(file).getSheetByName('cau_hinh');if(!sh||sh.getLastRow()<2)return;
+  const v=sh.getDataRange().getValues(),h=v[0].map(String),ck=h.indexOf('khoa'),cv=h.indexOf('gia_tri');let n=0;
+  const want=new Map((LH_DEFAULT.cau_hinh||[]).filter(r=>['chieu_mo_ti_le','chieu_mo_hong_ngoc','thu_cuoi_gia_moi_thanh','thu_cuoi_gia_thanh'].includes(String(r.khoa))).map(r=>[String(r.khoa),r.gia_tri]));
+  for(let i=1;i<v.length;i++){const w=want.get(String(v[i][ck]));if(w!==undefined&&String(v[i][cv])!==String(w)){sh.getRange(i+1,cv+1).setValue(w);n++;}}
+  xoaBoNhoDem();Logger.log('cau_hinh: đã ghi '+n+' dòng (chieu_mo_*, thu_cuoi_gia_*)');
+}
 // v10.25: danh tướng (Huyền thoại, Thần thoại) tách khỏi hệ lính thường; ghi lại các dòng cấu hình đã có: tỉ lệ chiêu mộ (1% · 0,3%), giá đơn chiêu mộ 30 hồng ngọc, giá thú cưỡi mỗi thành ×10. Chạy một lần sau khi dán Code.gs mới.
 function capNhatV1025(){
   lhDuLieuBoSung_();const file=LH_SHEETS[LH_STATIC.cau_hinh];if(!file)return;const sh=SpreadsheetApp.openById(file).getSheetByName('cau_hinh');if(!sh||sh.getLastRow()<2)return;
