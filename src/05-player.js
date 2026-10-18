@@ -329,8 +329,9 @@ const Player=(()=>{
   const topTier=m=>m&&(m.tier==='l'||m.tier==='m'),topMul=m=>topTier(m)?1+num(CFG.linh_huyen_than_them,0):1; // v10.17: huyền thoại, thần thoại thêm máu, sát thương, phòng ngự
   const tierMul=m=>{const i=Math.max(0,TIERS.indexOf((m&&m.tier)||'n'));return Math.round(Math.max(1,num(cfgList('linh_he_so','1,1.5,2,3,4')[i],1))*topMul(m)*100)/100;};
   const mercDefMul=m=>topMul(m);
+  const isGen=m=>!!(m&&m.gen&&(m.tier==='l'||m.tier==='m')),tuongPts=t=>t==='m'?num(CFG.tuong_diem_than,2600):num(CFG.tuong_diem_huyen_thoai,1800);
   // v10.24: lính đủ cấp vùng (lv ≥ cấp vùng − 10) có máu tối thiểu = số đòn quái thường chịu được × sát thương quái vùng; giảm sát thương nhận, hồi máu mỗi giây theo phẩm cấp
-  function mercGuard(m,regionLv,mobDmg){const i=Math.max(0,TIERS.indexOf((m&&m.tier)||'n')),pick=(k,d)=>num(cfgList(k,d)[i]);const ok=num(m&&m.lv)>=num(regionLv)-num(CFG.linh_cap_lech,10);
+  function mercGuard(m,regionLv,mobDmg){const i=Math.max(0,TIERS.indexOf((m&&m.tier)||'n')),pick=(k,d)=>num(cfgList(k,d)[i]);const ok=isGen(m)||num(m&&m.lv)>=num(regionLv)-num(CFG.linh_cap_lech,10); // danh tướng: luôn được máu tối thiểu, mọi vùng
     return {hpMin:ok?Math.round(pick('linh_mau_toi_thieu','6,8,10,25,35')*num(mobDmg)):0,red:pick('linh_giam_sat_thuong','0,10,20,35,45'),reg:pick('linh_hoi_mau','0.5,1,1.5,3,4')};}
   const petDmgMul=()=>num(CFG.thu_phuc_sat_thuong,1); // v10.17: sát thương quái thu phục
   const mountPow=()=>num(CFG.thu_cuoi_nhan_chi_so,1); // v10.17: công, thủ và đòn của thú cưỡi
@@ -338,8 +339,9 @@ const Player=(()=>{
   // huyền thoại / thần thoại là danh tướng (TUONG) mặc sẵn bộ huyền thoại / bộ thần, tháo ra cho người chơi dùng được. Giá theo cấp thành (f = cấp/300)
   function recruitRoll(mapId,rng,now){
     const P=cfgList('chieu_mo_ti_le','50,35,10,3,2'),tot=P.reduce((a,b)=>a+b,0);let x=rng()*tot,ti=P.length-1;for(let i=0;i<P.length;i++){x-=P[i];if(x<0){ti=i;break;}}
-    const tier=TIERS[ti],base=Math.max(1,mapLevel(mapId)||1),f=Math.max(0,Math.min(1,base/300)),lv=Math.max(1,base+[0,10,20,35,50][ti]+Math.floor(rng()*11));
-    const pts=Math.round(lv*num(CFG.linh_diem_cap,3)*(1+ti*.25)),keys=['strength','agility','vitality','intelligence'],w=keys.map(()=>rng()+.15),L=Math.round;
+    const tier=TIERS[ti],base=Math.max(1,mapLevel(mapId)||1),f=Math.max(0,Math.min(1,base/300)),lv=Math.max(1,ti>=3?base+Math.floor(rng()*11):base+[0,10,20,35,50][ti]+Math.floor(rng()*11));
+    // v10.25: danh tướng (Huyền thoại, Thần thoại) không theo hệ lính thường: chỉ số cố định tuong_diem dù chiêu mộ ở làng hay thành cuối; cấp = cấp nơi chiêu mộ (+0..10)
+    const pts=ti>=3?tuongPts(tier):Math.round(lv*num(CFG.linh_diem_cap,3)*(1+ti*.25)),keys=['strength','agility','vitality','intelligence'],w=keys.map(()=>rng()+.15),L=Math.round;
     let o;
     if(ti>=3){const gs=Object.values(TUONG);if(!gs.length)throw Error('TUONG');const G=gs[Math.floor(rng()*gs.length)];o={tier,lv,gen:G.id,name:G.name,gender:G.gender,desc:G.desc,set:tier==='m'?G.setM:G.setL,cmd:15+Math.floor(rng()*Math.max(1,lv/20)),stats:Object.fromEntries(keys.map(k=>[k,12]))};}
     else{const pool=Object.values(MERCS).filter(T=>T.map===mapId),pl=pool.length?pool:Object.values(MERCS).filter(T=>!T.map);if(!pl.length)throw Error('MERC');const T=pl[Math.floor(rng()*pl.length)];o={tier,lv,tpl:T.id,name:T.name,gender:T.gender,desc:T.desc,gear:T.gear.slice(),cmd:T.cmd+Math.floor(rng()*Math.max(1,lv/25))+ti*2,stats:{...T.stats}};}
@@ -347,7 +349,8 @@ const Player=(()=>{
     if(o.set&&SETS[o.set]){const wk=items[o.set+':right'],kd=wk?wk.kind:'';w[kd==='staff'?3:kd==='bow'||kd==='crossbow'?1:0]+=1.6;if(items[o.set+':left']&&items[o.set+':left'].kind==='shield')w[2]+=.6;}
     const ws2=w.reduce((a,b)=>a+b,0);keys.forEach((k,i)=>{o.stats[k]=L(num(o.stats[k])+pts*w[i]/ws2);});o.stats.command=0;
     const lerp=(a,b)=>L(a+(b-a)*f);
-    o.price=ti===0?{copper:lerp(1,100)*10000}:ti===1?(f<.25?{copper:L(100+300*f/.25)*10000}:{rubies:lerp(10,100)}):ti===2?{rubies:lerp(100,500)}:ti===3?{rubies:lerp(500,1000)}:{rubies:lerp(1000,5000)};
+    if(ti>=3){const vi=keys.indexOf('vitality');if(w[vi]<ws2*.25){o.stats.vitality=Math.max(o.stats.vitality,L(pts*.25));}} // danh tướng: Sức khỏe ít nhất 1/4 số điểm
+    o.price=ti===0?{copper:lerp(1,100)*10000}:ti===1?(f<.25?{copper:L(100+300*f/.25)*10000}:{rubies:lerp(10,100)}):ti===2?{rubies:lerp(100,500)}:{rubies:Math.round(ti===4?num(CFG.tuong_gia_than,2000):num(CFG.tuong_gia_huyen_thoai,500))}; // v10.25: giá danh tướng như nhau mọi nơi
     o.map=mapId;o.at=now;return o;
   }
   function recruit(s,mapId,rng,now){const cost=num(CFG.chieu_mo_hong_ngoc,100);if(s.rubies<cost)throw Error('RUBY');s.rubies-=cost;s.recruit=recruitRoll(String(mapId||''),rng,now);return s.recruit;}
@@ -363,7 +366,7 @@ const Player=(()=>{
     return {tier:o.tier,lv:Math.max(1,Math.floor(num(o.lv,1))),gen:TUONG[o.gen]?o.gen:'',tpl:MERCS[o.tpl]?o.tpl:'',name:String(o.name||'Lính').slice(0,20),gender:o.gender==='f'?'f':'m',desc:String(o.desc||'').slice(0,120),set:SETS[o.set]?o.set:'',gear:Array.isArray(o.gear)?o.gear.filter(g=>items[g]).slice(0,8):[],cmd:Math.max(1,Math.floor(num(o.cmd,10))),stats:st,price:{copper:Math.max(0,Math.floor(num(o.price&&o.price.copper))),rubies:Math.max(0,Math.floor(num(o.price&&o.price.rubies)))},map:String(o.map||''),at:Math.floor(num(o.at))};};
   function mercDaily(m,now=Date.now()){const T=m&&MERCS[m.tpl];if(!T||!T.map)return null;const day=Math.floor((now+7*3600e3)/864e5);let h=0;for(const ch of String(m.mid))h=(h*31+ch.charCodeAt(0))>>>0;const keys=Object.keys(ELEMENTS),el=keys[(h+day)%keys.length];return {el,name:ELEMENTS[el].name,skill:'Sách '+ELEMENTS[el].name};}
   // v10.16: Mệnh lệnh cần để dắt một lính = chỉ số cmd của lính × linh_nhan_menh_lenh; máu, sát thương lính × linh_nhan_chi_so
-  const mercCost=m=>Math.round(num(m&&m.cmd,5)*num(CFG.linh_nhan_menh_lenh,1));
+  const mercCost=m=>isGen(m)?Math.round(m.tier==='m'?num(CFG.tuong_menh_lenh_than,60):num(CFG.tuong_menh_lenh_huyen_thoai,40)):Math.round(num(m&&m.cmd,5)*num(CFG.linh_nhan_menh_lenh,1)); // v10.25: danh tướng cần Mệnh lệnh cố định
   const mercPow=()=>num(CFG.linh_nhan_chi_so,1);
   function mercCmd(s){return (s.mercs||[]).reduce((a,m)=>a+(m.on?mercCost(m):0),0);}
   // Mệnh lệnh: tổng, đã dùng (thú cưỡi, lính), còn trống
@@ -500,6 +503,8 @@ const Player=(()=>{
       
       stats:{strength:num(o.stats&&o.stats.strength,10),agility:num(o.stats&&o.stats.agility,10),vitality:num(o.stats&&o.stats.vitality,10),intelligence:num(o.stats&&o.stats.intelligence,10),command:0},equipment:Object.fromEntries(slots.map(k=>[k,null])),hpFrac:1};
     const eq=o.equipment||{};for(const k of slots){const it=cleanItem(eq[k]);if(it)m.equipment[k]=it;}
+    // v10.25: danh tướng chiêu mộ trước đây (chỉ số theo cấp nơi chiêu mộ) được nâng lên đủ tuong_diem, giữ tỉ lệ chỉ số
+    if(isGen(m)){const K=['strength','agility','vitality','intelligence'],sum=K.reduce((a,k)=>a+num(m.stats[k]),0),want=tuongPts(m.tier)+48;if(sum>0&&sum<want){const r=want/sum;for(const k of K)m.stats[k]=Math.round(num(m.stats[k])*r);}}
     return m;
   }
   function hireNpc(s,id,rng=Math.random,o={},at=Date.now()){
@@ -679,7 +684,7 @@ const Player=(()=>{
   }
   load(typeof GAME_DATA!=='undefined'?GAME_DATA:{});
   const API={VERSION,BAG_SIZE,SKILL_SLOTS,MAX_LV,MAX_MERC,TIERS,TIER_NAME,tierMul,killCopper,killExp,mercDefMul,petDmgMul,mountPow,mercCost,mercPow,mercGainExp,TUONG,recruitRoll,MAX_ACTIVE_QUEST,ELEMENTS,BEASTS,GROUPS,FX_NAMES,STAT_KEYS,CFG,RAR,ADD,SHOPS,SETS,MON,QUESTS,MERCS,AVATARS,TOPUPS,QUIZ,NAME_FX,items,slots,skills,shopEnh,shopRow,fuse,mercDaily,mercOffers,dayOf,EVENTS,
-    layout,relayout,load,info,kind,weapon,skillCost,cmdInfo,WEAPONS,PREDICT,seqRng,setFollow,fitFollow,mercCmd,mercGuard,petMax,PET_CAP,mountNeed,tameMin,bookFx,bookBac,demonOf,shopRuby,SHOP_ENH,expNeed,maxLevel,gainExp,spendPoints,mountGain,bookStat,mountCmd,qOf,rar,nameOf,stat,canEnhance,tradeable,gainOf,enhRate,enhCost,enhance,roll,rollDrop,create,derive,targets,equip,unequip,stance,isTwo,pairOk,setSkill,unsetSkill,toggleBook,element,money,shopPrice,buy,sell,sellPrice,addItem,cast,
+    layout,relayout,load,info,kind,weapon,skillCost,cmdInfo,WEAPONS,PREDICT,seqRng,setFollow,fitFollow,mercCmd,mercGuard,isGen,petMax,PET_CAP,mountNeed,tameMin,bookFx,bookBac,demonOf,shopRuby,SHOP_ENH,expNeed,maxLevel,gainExp,spendPoints,mountGain,bookStat,mountCmd,qOf,rar,nameOf,stat,canEnhance,tradeable,gainOf,enhRate,enhCost,enhance,roll,rollDrop,create,derive,targets,equip,unequip,stance,isTwo,pairOk,setSkill,unsetSkill,toggleBook,element,money,shopPrice,buy,sell,sellPrice,addItem,cast,
     aimAcc,isRanged,REGIONS,MON_REGION,SKILLS,mapLevel,regionLv,regionOf,questLevel,storyAt,storyNext,quizKey,questAccept,questProgress,questTurnIn,hireNpc,addMerc,mercEquip,mercUnequip,dismissMerc,makeMerc,cleanItem,serialize,restore,restorePlayer,merge,applyOp,allItems};
   return API;
 })();

@@ -199,6 +199,14 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
 
+## Bản 10.25 — danh tướng độc lập, giá thú cưỡi
+
+- **Danh tướng** (lính Huyền thoại, Thần thoại) tách khỏi hệ lính thường: tổng điểm chỉ số cố định (`tuong_diem_huyen_thoai` 1.800, `tuong_diem_than` 2.600; Sức khỏe ít nhất 1/4) dù chiêu mộ ở Thanh Mộc hay Phú Xuân — chỉ khác cấp (cấp nơi chiêu mộ + 0..10). Giá như nhau mọi nơi (`tuong_gia_huyen_thoai` 500, `tuong_gia_than` 2.000 hồng ngọc), Mệnh lệnh cố định (40 / 60), luôn được máu tối thiểu theo quái vùng. Danh tướng đã chiêu mộ trước đây được nâng chỉ số lên đủ mức mới.
+- **Chiêu mộ khó hơn**: tỉ lệ ra Huyền thoại 1%, Thần thoại 0,3% (`chieu_mo_ti_le` = 55,33,10.7,1,0.3); giá mỗi đơn 30 hồng ngọc (`chieu_mo_hong_ngoc`, trước 100) để giữ mốc thời gian.
+- **Giá thú cưỡi**: Thanh Mộc giữ nguyên; mỗi nơi bán kế tiếp ×10 (`thu_cuoi_gia_moi_thanh`): Cổ Loa 149–335, Thăng Long ~1.500–3.300, Hoa Lư ~15.000–33.000, Phú Xuân ~138.000–311.000 vàng.
+- Mô phỏng 100 người chơi: 96/100 hạ boss cuối, trung vị 14,5 tháng (nạp 5tr: 14,2; 10tr: 12,6) — chậm hơn bản 10.24 (12,8) vì bộ Huyền thoại / Thần chỉ có từ danh tướng.
+- Sheet: chạy `kiemTra` rồi `capNhatV1025()` một lần.
+
 ## Bản 10.24 — lính đánh thuê bền hơn, giá sách, giá thú cưỡi
 
 - **Lính đánh thuê** (trước: không hồi máu ngoài làng, lính thành trì vùng cao chỉ chịu được 1–3 đòn quái): lính có cấp ≥ cấp vùng − 10 được máu tối thiểu = `linh_mau_toi_thieu` (6 · 8 · 10 · 25 · 35) × sát thương quái thường của vùng; giảm sát thương nhận `linh_giam_sat_thuong` (0 · 10 · 20 · 35 · 45%); tự hồi `linh_hoi_mau` (0,5 · 1 · 1,5 · 3 · 4% máu/giây) ngoài vùng an toàn, 5 giây không trúng đòn hồi thêm 6%/giây. Lính Huyền thoại, Thần bị từ 3 quái vây thì đánh quét một vòng (× 0,8 sát thương). Thử ở bãi quái Phú Xuân: lính Huyền thoại, Thần, Thiện chiến giữ 100% máu qua 12 đợt quái.
