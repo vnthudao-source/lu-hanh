@@ -122,7 +122,7 @@ window.startUI=(session)=>{
       const al=(p.alloc&&p.alloc[baseKey])||0,addBtn=p.points>0?`<button class="pt-add" data-pt="${g}">+1</button>${p.points>=5?`<button class="pt-add" data-pt="${g}" data-n="5">+5</button>`:''}`:'';
       return `<div class="attr"><div class="main">${svg(ic)}<span>${name}</span><b>${D.main[g]}</b>${plus?`<em>+${plus}</em>`:''}${al?`<em title="Điểm đã cộng" style="color:#ffd98a">+${al}</em>`:''}${addBtn}</div>${extra}${subs}</div>`;
     }).join('');
-    const sets=D.sets.map(x=>{const S2=Player.SETS[x.id];return chip('quest',`Bộ ${S2.name} ${x.n}/${Math.min(9,S2.pieces.length)}`,(Player.RAR[S2.q||'l']||Player.RAR.l).color);}).join('')+(D.enh&&D.enh.n9?chip('anvil',`Đồ +9: ${D.enh.n9}/8`,'#ffd77a'):'')+(D.enh?D.enh.list.map(([ic,t])=>chip(ic,t,'#ffd77a')).join(''):'');
+    const sets=(D.power?chip('flame',`Uy lực trang bị +${D.power}% sát thương · máu`,'#ffb070'):'')+D.sets.map(x=>{const S2=Player.SETS[x.id];return chip('quest',`Bộ ${S2.name} ${x.n}/${Math.min(9,S2.pieces.length)}`,(Player.RAR[S2.q||'l']||Player.RAR.l).color);}).join('')+(D.enh&&D.enh.n9?chip('anvil',`Đồ +9: ${D.enh.n9}/8`,'#ffd77a'):'')+(D.enh?D.enh.list.map(([ic,t])=>chip(ic,t,'#ffd77a')).join(''):'');
     const fxs=Object.entries(D.fx).map(([k,v])=>chip('spark',Player.FX_NAMES[k]+' '+v,Player.RAR.m.color)).join('');
     const books=Object.keys(D.books).map(b=>chip(EL[b].icon,EL[b].name+': '+elInfo(b),EL[b].color)).join('');
     const need=Player.expNeed(p.level),maxed=p.level>=Player.maxLevel();

@@ -81,22 +81,28 @@ cau_hinh:[
  {khoa:'menh_lenh_sat_thuong',gia_tri:50,ghi_chu:'v10.14 · Mệnh lệnh: mỗi 100 điểm cộng thêm % sát thương cho lính thuê và quái thu phục'},
  {khoa:'linh_nhan_chi_so',gia_tri:2,ghi_chu:'v10.16 · Máu và sát thương mọi lính đánh thuê nhân với số này (nhân thêm với hệ số phẩm cấp linh_he_so)'},
  {khoa:'linh_nhan_menh_lenh',gia_tri:10,ghi_chu:'v10.16 · Mệnh lệnh cần để cho một lính đi theo = cột menh_lenh của lính × số này'},
- {khoa:'quai_nhan_mau',gia_tri:0.25,ghi_chu:'v10.16 · Máu mọi quái và boss nhân với số này (0.25 = còn 1/4). Quái thu phục giữ máu gốc'},
- {khoa:'quai_nhan_sat_thuong',gia_tri:0.25,ghi_chu:'v10.16 · Sát thương mọi quái và boss nhân với số này (0.25 = còn 1/4). Quái thu phục giữ sát thương gốc'},
+ {khoa:'quai_nhan_mau',gia_tri:1,ghi_chu:'v10.19 · Đặt 1: máu, sát thương, kinh nghiệm quái đã tính lại theo cấp vùng (tools/canbang.mjs). Máu mọi quái và boss nhân với số này (0.25 = còn 1/4). Quái thu phục giữ máu gốc'},
+ {khoa:'quai_nhan_sat_thuong',gia_tri:1,ghi_chu:'v10.19 · Đặt 1: máu, sát thương, kinh nghiệm quái đã tính lại theo cấp vùng (tools/canbang.mjs). Sát thương mọi quái và boss nhân với số này (0.25 = còn 1/4). Quái thu phục giữ sát thương gốc'},
  {khoa:'thu_cuoi_nhan_gia',gia_tri:20,ghi_chu:'v10.16 · Giá thú cưỡi ở cửa hàng nhân với số này (giá bán lại cũng theo)'},
  {khoa:'thu_phuc_sat_thuong',gia_tri:0.5,ghi_chu:'v10.17 · Sát thương quái thu phục nhân với số này (0.5 = còn 1/2)'},
  {khoa:'linh_huyen_than_them',gia_tri:0.25,ghi_chu:'v10.17 · Lính huyền thoại, thần thoại: thêm phần này vào máu, sát thương, phòng ngự (0.25 = thêm 25%)'},
- {khoa:'boss_nhan',gia_tri:2,ghi_chu:'v10.17 · Máu và sát thương boss nhân thêm số này (sau quai_nhan_mau, quai_nhan_sat_thuong)'},
+ {khoa:'boss_nhan',gia_tri:1,ghi_chu:'v10.19 · Đặt 1: máu, sát thương, kinh nghiệm quái đã tính lại theo cấp vùng (tools/canbang.mjs). Máu và sát thương boss nhân thêm số này (sau quai_nhan_mau, quai_nhan_sat_thuong)'},
  {khoa:'thu_cuoi_nhan_chi_so',gia_tri:2,ghi_chu:'v10.17 · Công, thủ của mọi thú cưỡi và sát thương đòn thú cưỡi (phím 4) nhân với số này'},
  {khoa:'thu_cuoi_menh_lenh_cap',gia_tri:0.5,ghi_chu:'v10.17 · Thú cưỡi bán ở thành: Mệnh lệnh cần = mức của loài + cấp thành × số này (Cổ Loa 70 → +35, Phú Xuân 290 → +145)'},
  {khoa:'quai_nhan_tien',gia_tri:0.1,ghi_chu:'v10.17 · Tiền nhận khi hạ quái nhân với số này (0.1 = còn 1/10)'},
- {khoa:'quai_nhan_kinh_nghiem',gia_tri:0.1,ghi_chu:'v10.17 · Kinh nghiệm nhận khi hạ quái nhân với số này (0.1 = còn 1/10, tối thiểu 1)'},
+ {khoa:'quai_nhan_kinh_nghiem',gia_tri:1,ghi_chu:'v10.19 · Đặt 1: máu, sát thương, kinh nghiệm quái đã tính lại theo cấp vùng (tools/canbang.mjs). Kinh nghiệm nhận khi hạ quái nhân với số này (0.1 = còn 1/10, tối thiểu 1)'},
  {khoa:'quai_tien_toi_da',gia_tri:9999,ghi_chu:'v10.17 · Tiền tối đa mỗi con quái (đồng). 9999 = 99 bạc 99 đồng, không bao giờ ra vàng. 0 = không giới hạn'},
  {khoa:'quai_roi_do',gia_tri:0,ghi_chu:'v10.17 · 1 = quái rơi hồng ngọc và đồ như cũ; 0 = quái không rơi gì'},
+ {khoa:'uy_luc_pham_chat',gia_tri:'0,1,3,8,8',ghi_chu:'v10.19 · Uy lực trang bị: mỗi món đang mặc cộng % sát thương và % máu theo phẩm chất (Thường, Đẹp, Hoàn hảo, Huyền thoại, Thần)'},
+ {khoa:'uy_luc_moi_cap',gia_tri:'0.3,0.3,0.4,1.2,0.9',ghi_chu:'v10.19 · Uy lực cộng thêm cho mỗi cấp cường hóa, theo phẩm chất (Huyền thoại +15 = 26%/món, Thần +12 ≈ 19%/món — đồ thần chỉ số gốc gấp đôi nên trọn bộ Thần +12 ≈ Huyền thoại +15)'},
+ {khoa:'cap_thien_dinh',gia_tri:400,ghi_chu:'v10.19 · Cấp vào Thiên Đình (boss cuối Hắc Thiên Ma): chỉ người chơi cấp tối đa. Từ cấp 290 luyện ở Phú Xuân'},
+ {khoa:'uy_luc_sat_thuong',gia_tri:100,ghi_chu:'v10.19 · % uy lực tính vào sát thương (100 = đủ)'},
+ {khoa:'uy_luc_mau',gia_tri:100,ghi_chu:'v10.19 · % uy lực tính vào máu tối đa (100 = đủ)'},
  {khoa:'link_cho_phien',gia_tri:'https://ikynagame.blogspot.com/p/cho-phien.html',ghi_chu:'Địa chỉ trang Chợ phiên (mua bán giữa người chơi, nhân vật đi theo)'}
 ],
 // cap = cấp hiện tại; ti_le = % thành công lên cấp kế; thất bại: cấp về ngẫu nhiên từ that_bai_tu đến that_bai_den (để trống = giữ nguyên)
-gia_cuong:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14].map(c=>({cap:c,ti_le:c<6?100:c<10?50:[25,20,15,10,5][c-10],phi_hong_ngoc:c+1,that_bai_tu:c<6?'':c<10?0:6,that_bai_den:c<6?'':6})),
+// v10.19: cường hóa theo mức nạp 5–10 triệu/năm: +0..+5 chắc chắn, từ +6 hỏng chỉ tụt 1 cấp. Kỳ vọng mỗi món: +9 ≈ 55, +12 ≈ 154, +15 ≈ 389 hồng ngọc
+gia_cuong:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14].map(c=>({cap:c,ti_le:[100,100,100,100,100,100,80,75,70,65,60,60,55,55,50][c],phi_hong_ngoc:[2,2,3,3,4,4,6,7,8,9,11,12,13,14,15][c],that_bai_tu:c<6?'':c-1,that_bai_den:c<6?'':c-1})),
 pham_chat:[
  {ma:'n',ten:'Thường',mau:'#e8e6df',he_so:100,so_dong:0,bac:0,giao_dich:'khong',mua_duoc:'co'},
  {ma:'g',ten:'Đẹp',mau:'#ffd54a',he_so:110,so_dong:1,bac:1,giao_dich:'khong',mua_duoc:'co'},
@@ -149,9 +155,9 @@ vu_khi:[
  ['mace','Chùy',145,66,100,640,110,95,15,'v10.14 · Nặng nhất, đẩy lùi mạnh, mỗi đòn có 15% làm quái choáng'],
  ['sword','Kiếm',115,85,115,420,90,110,10,'Đánh nhanh nhất, chém vòng cung trước mặt'],
  ['shield','Khiên',100,60,75,560,130,70,18,'Tầm ngắn nhất, đẩy lùi mạnh. Tốn mana nhiều nhất nhưng hồi chiêu và nội tại nhanh nhất'],
- ['crossbow','Nỏ',90,600,1,760,100,100,12,'Bắn xa, mũi tên xuyên qua quái'],
- ['bow','Cung',80,540,0,660,120,80,16,'Bắn xa, hồi chiêu nhanh'],
- ['staff','Gậy phép',65,680,90,900,80,120,9,'Tầm xa và rộng nhất (cầu phép nổ lan), sát thương thấp nhất, đánh chậm nhất']
+ ['crossbow','Nỏ',135,600,1,760,100,100,12,'Bắn xa, mũi tên xuyên qua quái (v10.19: sát thương 90 → 135)'],
+ ['bow','Cung',120,540,0,660,120,80,16,'Bắn xa, hồi chiêu nhanh (v10.19: sát thương 80 → 120)'],
+ ['staff','Gậy phép',140,680,90,900,80,120,9,'Tầm xa và rộng nhất (cầu phép nổ lan), đánh chậm nhất (v10.19: sát thương 65 → 140)']
 ].map(([loai,ten,sat_thuong,tam_danh,lan_rong,toc_danh_ms,mana,hoi_chieu,noi_tai,ghi_chu])=>({loai,ten,sat_thuong,tam_danh,lan_rong,toc_danh_ms,mana,hoi_chieu,noi_tai,ghi_chu})),
 cua_hang:[
  ...['sword-iron','sword-steel','shield-wood','shield-iron','staff-jade','bow-hunt','spear-iron','crossbow-war','saber-iron','mace-iron','hat-iron','armor-leather','armor-iron','pants-guard','gloves-leather','shoes-leather','shoes-iron'].map((id,i)=>({cua_hang:'smith',id,pham_chat:'n,g',gia:'',thu_tu:i+1,bac:0})),

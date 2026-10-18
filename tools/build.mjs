@@ -11,7 +11,7 @@ const root=path.resolve(path.dirname(new URL(import.meta.url).pathname),'..');
 const rd=f=>fs.readFileSync(path.join(root,f),'utf8'),wr=(f,s)=>{fs.writeFileSync(path.join(root,f),s);console.log(f.padEnd(24),s.length);};
 const V=rd('VERSION').trim();
 const API='https://script.google.com/macros/s/AKfycbwEUXIQSLK1t6FXNDDD18lbJGNomqhMAzcwh55N_uzKbUL19LaxvieMyhLpzrB06VfzgA/exec';
-const GAME=['00-loader.js','01-data.js','01-data-vung.js','02-core.js','03-net.js','03-audio.js','03-img.js','04-art.js','04-boss.js','04-world.js','04-looks.js','05-player.js','06-game.js','07-ui.js','08-portal.js'];
+const GAME=['00-loader.js','01-data.js','01-data-vung.js','01-data-canbang.js','02-core.js','03-net.js','03-audio.js','03-img.js','04-art.js','04-boss.js','04-world.js','04-looks.js','05-player.js','06-game.js','07-ui.js','08-portal.js'];
 const CHO=['cho/cho.js'];
 // CSS: gắn mọi luật vào khung gốc (#lu-hanh, #cho-phien) để giao diện Blogspot không đè được (nút, chữ, ô nhập)
 function scope(src,id){
@@ -75,7 +75,7 @@ const cfg=`<script>${cfgJs(API)}</script>`;
 wr('blogspot/nhung-vao-blogspot.html',`<!-- Lữ Hành ${V} · trang GAME: dán vào bài/trang Blogspot (chế độ HTML). Bản mới: đổi số sau @ban- -->\n${cfg}\n<script charset="utf-8" src="${cdn}lu-hanh-boot.js"></script>\n`);
 wr('blogspot/cho-phien.html',`<!-- Lữ Hành ${V} · trang CHỢ PHIÊN: tạo Trang mới tên "cho-phien" trên Blogspot, dán vào (chế độ HTML). -->\n<link rel="stylesheet" href="${cdn}cho-phien.css">\n${cfg}\n<script charset="utf-8" src="${cdn}cho-phien.js"></script>\n`);
 // ---- Code.gs
-const ctx={};vm.runInNewContext(rd('src/01-data.js')+';'+rd('src/01-data-vung.js')+';'+rd('src/05-player.js')+';this.GD=GAME_DATA;this.P=Player;',ctx);
+const ctx={};vm.runInNewContext(rd('src/01-data.js')+';'+rd('src/01-data-vung.js')+';'+rd('src/01-data-canbang.js')+';'+rd('src/05-player.js')+';this.GD=GAME_DATA;this.P=Player;',ctx);
 const ids=JSON.parse(rd('apps-script/sheet-ids.json'));
 const table=Object.fromEntries(Object.entries(ctx.GD).map(([k,rows])=>{const h=[...new Set(rows.flatMap(r=>Object.keys(r)))];return [k,[h,...rows.map(r=>h.map(c=>r[c]))]];}));
 // ---- Bảng ảnh tĩnh (Sheet "LH · Hình ảnh"): mọi đối tượng dùng được ảnh, cột link_anh để trống = dùng hình mặc định

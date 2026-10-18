@@ -341,6 +341,20 @@ function capNhatV1012(){
   const d=xoa('vat_pham',r=>/^khung-/.test(String(r.id))||(String(r.o)==='cos'&&String(r.loai)==='khung')),e=xoa('cua_hang',r=>/^khung-/.test(String(r.id)));
   xoaBoNhoDem();Logger.log('ban_do: '+a+' ô cấp · cau_hinh cap_toi_da: '+b+' · nhiem_vu Tìm con: '+c+' ô npc · xóa '+d+' khung ở vat_pham, '+e+' ở cua_hang');
 }
+// v10.19: cân bằng lại toàn game (quái theo cấp vùng, uy lực trang bị, cường hóa theo mức nạp, vũ khí đánh xa, Thiên Đình cấp 400).
+// kiemTra chỉ thêm dòng / cột mới nên cần chép số mới lên các dòng đã có. Chạy một lần sau khi dán Code.gs mới:
+//  quai: mau, sat_thuong, kinh_nghiem · gia_cuong: ti_le, phi_hong_ngoc, that_bai_tu, that_bai_den · vu_khi: sat_thuong (gậy, cung, nỏ)
+//  cau_hinh: quai_nhan_mau, quai_nhan_sat_thuong, boss_nhan, quai_nhan_kinh_nghiem về 1 (số đã tính sẵn vào từng quái)
+function capNhatV1019(){
+  lhDuLieuBoSung_();
+  const ghi=(tab,khoa,cols,chon)=>{const file=LH_SHEETS[LH_STATIC[tab]];if(!file)return 0;const sh=SpreadsheetApp.openById(file).getSheetByName(tab);if(!sh||sh.getLastRow()<2)return 0;
+    const v=sh.getDataRange().getValues(),h=v[0].map(String),ck=h.indexOf(khoa);if(ck<0)return 0;const def=new Map((LH_DEFAULT[tab]||[]).filter(r=>!chon||chon(r)).map(r=>[String(r[khoa]),r]));let n=0;
+    for(let i=1;i<v.length;i++){const d=def.get(String(v[i][ck]));if(!d)continue;for(const c of cols){const j=h.indexOf(c);if(j<0)continue;const val=d[c]===undefined||d[c]===null?'':d[c];if(String(v[i][j])!==String(val)){sh.getRange(i+1,j+1).setValue(val);n++;}}}
+    return n;};
+  const a=ghi('quai','id',['mau','sat_thuong','kinh_nghiem']),b=ghi('gia_cuong','cap',['ti_le','phi_hong_ngoc','that_bai_tu','that_bai_den']),c=ghi('vu_khi','loai',['sat_thuong'],r=>['staff','bow','crossbow'].includes(String(r.loai)));
+  const d=ghi('cau_hinh','khoa',['gia_tri'],r=>['quai_nhan_mau','quai_nhan_sat_thuong','boss_nhan','quai_nhan_kinh_nghiem','cap_thien_dinh'].includes(String(r.khoa)));
+  xoaBoNhoDem();Logger.log('Đã cập nhật: quai '+a+' ô · gia_cuong '+b+' ô · vu_khi '+c+' ô · cau_hinh '+d+' ô');
+}
 // v10.13: lò rèn chỉ bán vũ khí (mũ / giáp / quần / găng / hài / áo choàng sang hiệu buôn), bỏ bộ câu hỏi NV* / SKQ*. kiemTra chỉ thêm dòng mới nên cần dọn dòng cũ:
 // xóa dòng cua_hang 'thanh-*' không còn trong bảng mặc định, xóa bo_cau_hoi / cau_hoi mã NV* SKQ*. Chạy một lần sau khi dán Code.gs mới.
 function capNhatV1013(){

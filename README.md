@@ -199,6 +199,17 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
 
+## Bản 10.19 — cân bằng lại toàn game
+
+Mục tiêu: người chơi nạp 5–10 triệu/năm, chơi trung bình 2 giờ/ngày hạ boss cuối Hắc Thiên Ma sau khoảng 1 năm (nhanh nhất khoảng 6 tháng), khi đạt cấp 400 và mặc trọn bộ huyền thoại +15 hoặc thần +12.
+- **Quái**: máu, sát thương, kinh nghiệm của 82 loài tính lại theo cấp vùng (`tools/canbang.mjs` → `src/01-data-canbang.js`). Quái thường ≈ 4 giây hạ với người chơi đúng cấp; boss vùng ≈ 45 giây; Hắc Thiên Ma ≈ 150 giây với cấp 400 + huyền thoại +15. Hệ số `quai_nhan_mau`, `quai_nhan_sat_thuong`, `boss_nhan`, `quai_nhan_kinh_nghiem` về 1.
+- **Thiên Đình cần cấp 400** (`cap_thien_dinh`); từ cấp 290 luyện ở Phú Xuân.
+- **Uy lực trang bị**: mỗi món cộng % sát thương và % máu theo phẩm chất và cấp cường hóa (`uy_luc_pham_chat` = 0,1,3,8,8; `uy_luc_moi_cap` = 0.3,0.3,0.4,1.2,0.9). Trọn bộ huyền thoại +15 ≈ +234%, thần +12 ≈ +169% (đồ thần chỉ số gốc gấp đôi) → hai đích ngang nhau.
+- **Cường hóa** (`gia_cuong`): +0..+5 chắc chắn, +6..+14 tỉ lệ 80% → 50%, hỏng chỉ tụt 1 cấp. Kỳ vọng mỗi món: +9 ≈ 55, +12 ≈ 154, +15 ≈ 389 hồng ngọc (trước: +12 ≈ 8.600, +15 ≈ 12 triệu).
+- **Vũ khí đánh xa**: sát thương gậy 65 → 140, cung 80 → 120, nỏ 90 → 135 (trước chỉ bằng 1/4 – 1/2 kiếm).
+- Mô phỏng 100 người chơi (`tools/mophong.cjs`): 99/100 hạ boss cuối, tất cả ở cấp 400; trung vị 10,6 tháng, 10% nhanh nhất ≤ 7,6 tháng, nhanh nhất 5,6 tháng. Nạp 3tr: trung vị 12,8 tháng; 5tr: 11,5; 10tr: 9,7. Không nạp: chưa có đường lấy bộ huyền thoại (chỉ hồng ngọc sự kiện thành).
+- Sheet: chạy `kiemTra` rồi `capNhatV1019()` một lần.
+
 ## Bản 10.18
 
 Vẽ lại thú cưỡi và boss (module mới `src/04-boss.js`, `LH_BOSS`):

@@ -243,6 +243,8 @@ const Player=(()=>{
       if(d.fx)fx[d.fx]=Math.max(fx[d.fx]||0,d.fxv);
     }
     if(atk){add('dmgMin',Math.round(atk*.8));add('dmgMax',Math.round(atk*1.3));}
+    // v10.19: Uy lực trang bị — mỗi món cộng % sát thương và % máu theo phẩm chất (uy_luc_pham_chat) và cấp cường hóa (uy_luc_moi_cap)
+    let power=0;{const base=cfgList('uy_luc_pham_chat','0,1,3,8,8'),per=cfgList('uy_luc_moi_cap','0.3,0.3,0.4,1.2,0.9'),ord=['n','g','p','l','m'];for(const it of eqs){const i=Math.max(0,ord.indexOf(qOf(it)||'n'));power+=num(base[i])+num(per[i])*(it.lv||0);}power=Math.round(power*10)/10;}
     if(shield)add('block',10);
     const sets=[];
     for(const [id,n] of Object.entries(setCount)){const S=SETS[id];if(!S)continue;sets.push({id,n,name:S.name,hero:S.hero});for(const t of [3,5,7])if(n>=t)for(const [k,v] of Object.entries(S.tiers[t]))add(k,v);if(n>=Math.min(9,S.pieces.length))fx[S.fx]=Math.max(fx[S.fx]||0,S.fxv);} // v10.14: bộ 8 món (vũ khí hai tay) đủ 8 là kích hoạt
@@ -263,11 +265,11 @@ const Player=(()=>{
       // v10.14: Sức khỏe → % hồi đầy máu khi trúng đòn; Trí tuệ → chính xác cung nỏ, hồi mana mỗi giây; Mệnh lệnh → % sát thương lính thuê và quái thu phục (Sheet cau_hinh, mỗi 100 điểm)
       fullHeal:main.vit*num(CFG.suc_khoe_hoi_day,2)/100,aim:main.int*num(CFG.tri_tue_chinh_xac,4)/100,mpReg:main.int*num(CFG.tri_tue_hoi_mana,2)/100,mercDmg:main.cmd*num(CFG.menh_lenh_sat_thuong,50)/100,petDmg:main.cmd*num(CFG.menh_lenh_sat_thuong,50)/100};
     const tot={};for(const k of Object.keys(ADD)){if(GROUPS.some(g=>g[0]===k))continue;let v=(base[k]||0)+(A[k]||0);if(CAPS[k])v=Math.min(CAPS[k],v);tot[k]=ADD[k].unit?Math.round(v*10)/10:Math.round(v);}
-    tot.hp=Math.round(tot.hp);tot.mp=Math.round(tot.mp);tot.dmgMax=Math.max(tot.dmgMax,tot.dmgMin);
+    tot.hp=Math.round(tot.hp*(1+power*num(CFG.uy_luc_mau,100)/1e4));tot.mp=Math.round(tot.mp);tot.dmgMax=Math.max(tot.dmgMax,tot.dmgMin);
     if(fx.defPct)tot.def=Math.round(tot.def*(1+fx.defPct/100)); // v10.13: Kiên cố (thú thần thoại)
     // cung, nỏ: tỉ lệ chính xác khi khóa mục tiêu (tăng theo cấp gia cường) và cộng thêm tỉ lệ x2 sát thương
     const rw=(s.equipment||{}).right;if(isRanged(kind(rw))){tot.aim=Math.min(100,Math.round((aimAcc(rw)+(tot.aim||0))*10)/10);tot.crit2=Math.min(CAPS.crit2,(tot.crit2||0)+num(CFG.cung_no_x2,15));} // v10.14: + chính xác từ Trí tuệ, đồ
-    return {main,add:A,tot,fx,books,bfx,sets,mount,enh,dmgMul:(books.fire?1+num(CFG.hoa_sat_thuong,25)/100:1)*(1+enhDmg/100)*(1+num(fx.dmgPct)/100)};
+    return {main,add:A,tot,fx,books,bfx,sets,mount,enh,power,dmgMul:(1+power*num(CFG.uy_luc_sat_thuong,100)/1e4)*(books.fire?1+num(CFG.hoa_sat_thuong,25)/100:1)*(1+enhDmg/100)*(1+num(fx.dmgPct)/100)};
   }
   const mountCmd=eq=>eq&&eq.mount&&info(eq.mount)?info(eq.mount).cmd||5:0;
   // Mệnh lệnh: thú cưỡi + mỗi lính đang đi theo tốn số điểm riêng của lính đó (lính gục chờ ở làng vẫn giữ chỗ)
