@@ -199,6 +199,11 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
 
+## Bản 10.32 — tải trang nhanh hơn
+- Ảnh Drive xin đúng cỡ (`lh3…/d/<id>=w<rộng>`): nền theo cỡ màn hình (tối đa 1600), biểu tượng 96, vật phẩm 128, quái/NPC 320, logo 480, chân dung 256. Nếu Drive không trả ảnh thu nhỏ (mà ảnh gốc vẫn tải được) thì tự quay về ảnh gốc (`lh-img-nosize`).
+- Chỉ tải ngay ảnh màn hình đầu (logo, nền đăng nhập, căn lều, chân dung, túi rơi); ảnh màn chờ khác tải lúc rảnh (trước: tải hết ~4,7 MB lúc mở trang).
+- File khởi động: mở sẵn kết nối (preconnect) tới script.google.com, script.googleusercontent.com, lh3.googleusercontent.com; gửi ngay lệnh `data` + `chars` song song lúc tải gói trò chơi (`window.LH_PRE`, cổng vào dùng lại); CSS + JS tải song song, chung một thanh tiến trình.
+
 ## Bản 10.31 — vào lều nhanh, xoá nhân vật, sách Phong hoá quái, sách Thổ Trêu ngươi, PK ở Hang động, cỏ may mắn khi chiêu mộ
 - Vào phòng chọn nhân vật nhanh: dữ liệu tĩnh tải song song (không chặn đăng nhập / căn lều, chỉ chờ khi bấm Vào làng nếu chưa xong); máy chủ giữ đệm dữ liệu 6 giờ (`LH_CACHE_GIAY`), hàm `tuDongLamMoi()` tạo trigger tự xoá đệm khi sửa tay Sheet.
 - Xoá nhân vật: nút «Xoá nhân vật» trong căn lều, gõ đúng tên để xác nhận; lệnh `delChar` (đánh dấu `deleted`, tên dùng lại được; còn hàng bày ở chợ thì phải hủy trước).

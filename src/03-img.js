@@ -12,6 +12,18 @@ const LH_IMG=(()=>{
     if(m)return 'https://lh3.googleusercontent.com/d/'+m[1];
     return /^https?:\/\/\S+$/.test(u)||/^data:image\//.test(u)?u:'';
   }
+  // v10.32: ảnh Drive (lh3) xin đúng cỡ cần dùng thay vì file gốc (nền 800 KB → ~100–200 KB): =w<rộng> theo nhóm, nền theo cỡ màn hình
+  const scr=()=>{try{const w=Math.max(screen.width||0,screen.height||0,innerWidth||0,innerHeight||0)*Math.min(1.5,devicePixelRatio||1);return Math.min(1600,Math.max(640,Math.ceil(w/320)*320));}catch(e){return 1280;}};
+  function sized(u,k){
+    if(NOSIZE||!/^https:\/\/lh3\.googleusercontent\.com\/d\/[\w-]+$/.test(u))return u;
+    const g=k.split(':')[0],m=k.split(':')[1]||'',w=g==='bieu_tuong'?96:g==='vat_pham'?128:g==='quai'||g==='npc'?320:g==='giao_dien'?(/^nen/.test(m)?scr():m==='logo'?480:/^chan_dung/.test(m)?256:160):0;
+    return w?u+'=w'+w:u;
+  }
+  // nếu Drive không trả ảnh thu nhỏ (=w…) thì nhớ lại và dùng ảnh gốc như trước
+  let NOSIZE=false;try{NOSIZE=localStorage.getItem('lh-img-nosize')==='1';}catch(e){}
+  function probe(){if(NOSIZE||typeof Image==='undefined')return;const k=Object.keys(MAP).find(k=>/=w\d+/.test(MAP[k]));if(!k)return;const im=new Image();im.referrerPolicy='no-referrer';
+    im.onerror=()=>{const o=new Image();o.referrerPolicy='no-referrer';o.onload=()=>off();o.src=String(MAP[k]).replace(/=w\d+(?=\?|$)/,'');};im.src=MAP[k];
+    function off(){NOSIZE=true;try{localStorage.setItem('lh-img-nosize','1');}catch(e){}const m={};for(const [k,u] of Object.entries(MAP))m[k]=String(u).replace(/=w\d+(?=\?|$)/,'');try{localStorage.setItem(KEY,JSON.stringify(m));}catch(e){}load(m);}}
   const url=key=>MAP[key]||'';
   const attr=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
   // Biểu tượng HTML: ảnh nếu có, lỗi thì quay về biểu tượng mặc định
@@ -40,13 +52,16 @@ const LH_IMG=(()=>{
   function load(map){
     for(const k of Object.keys(MAP))delete MAP[k];Object.assign(MAP,map);
     // ảnh riêng của vật phẩm (cột anh trong tab vat_pham: thẻ avatar, khung, nền, đồ cốt truyện) khi tab hinh_anh chưa có dòng riêng
-    if(typeof Player!=='undefined')for(const [k,d] of Object.entries(Player.items||{}))if(d.img&&!MAP['vat_pham:'+k])MAP['vat_pham:'+k]=d.img;
-    for(const k of Object.keys(MAP))if(/^giao_dien:/.test(k))want(k);
-    applyIcons();
+    if(typeof Player!=='undefined')for(const [k,d] of Object.entries(Player.items||{}))if(d.img&&!MAP['vat_pham:'+k])MAP['vat_pham:'+k]=sized(direct(d.img)||d.img,'vat_pham:'+k);
+    // v10.32: chỉ tải ngay ảnh của màn hình đầu (logo, nền đăng nhập, căn lều, chân dung, túi rơi); ảnh màn chờ khác tải lúc rảnh
+    const now=k=>/^giao_dien:(logo|nen_dang_nhap|nen_leu|chan_dung|tui_do_roi)/.test(k),later=Object.keys(MAP).filter(k=>/^giao_dien:/.test(k)&&!now(k));
+    for(const k of Object.keys(MAP))if(now(k))want(k);
+    if(later.length&&typeof window!=='undefined'){const go=()=>later.forEach(k=>want(k));if(window.requestIdleCallback)requestIdleCallback(()=>setTimeout(go,2500),{timeout:6000});else setTimeout(go,4000);}
+    applyIcons();probe();
   }
   // rows: [{nhom, ma, link_anh}] từ máy chủ
   function set(rows){
-    const map={};for(const r of rows||[]){let u=direct(r.link_anh);const k=String(r.nhom||'').trim()+':'+String(r.ma||'').trim();
+    const map={};for(const r of rows||[]){const k=String(r.nhom||'').trim()+':'+String(r.ma||'').trim();let u=sized(direct(r.link_anh),k);
       // v: phiên bản ảnh (giờ sửa file trên Drive, hàm lamMoiAnh ghi vào cột phien_ban) → thay file cùng link thì trình duyệt vẫn tải ảnh mới
       if(u&&r.v&&!/^data:/.test(u))u+=(u.includes('?')?'&':'?')+'v='+encodeURIComponent(String(r.v));
       if(u&&k.length>2)map[k]=u;}

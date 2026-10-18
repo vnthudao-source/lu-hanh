@@ -225,9 +225,11 @@
     if(cached){try{Player.load(cached.data);LH_IMG.set(cached.data.hinh_anh);paintPortal();}catch(e){}}
     let pChars=null;
     if(Net.online){
-      if(Net.token)pChars=Net.call('chars').catch(e=>({__err:e}));
+      // v10.32: dùng lại lệnh đã gửi sớm từ file khởi động (LH_PRE) nếu cùng phiên đăng nhập / cùng mã dữ liệu
+      const PRE=window.LH_PRE||{},early=(k,ok,fb)=>{const p=PRE[k];PRE[k]=null;return p&&ok?p.then(r=>{if(!r||!r.ok)throw 0;return r;}).catch(()=>fb()):fb();};
+      if(Net.token)pChars=early('chars',PRE.tok===Net.token,()=>Net.call('chars')).catch(e=>({__err:e}));
       // v10.31: dữ liệu tĩnh tải song song, không chặn đăng nhập / căn lều; chỉ chờ lúc bấm Vào làng
-      dataReady=(async()=>{try{const d=await Net.call('data',{h:cached?cached.h:''});
+      dataReady=(async()=>{try{const d=await early('data',PRE.h===(cached?cached.h:''),()=>Net.call('data',{h:cached?cached.h:''}));
         if(!d.same&&d.data&&d.data.vat_pham){Player.load(d.data);LH_IMG.set(d.data.hinh_anh);paintPortal();try{localStorage.setItem('lh-data-cache',JSON.stringify({h:d.h||'',data:d.data}));}catch(e){}}
       }catch(e){if(!cached)note('Không tải được dữ liệu từ máy chủ, dùng dữ liệu mặc định');}})();
       if(!cached)await dataReady; // lần đầu (chưa có dữ liệu trong máy) vẫn chờ
