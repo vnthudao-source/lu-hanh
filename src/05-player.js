@@ -114,7 +114,11 @@ const Player=(()=>{
         if(!d.atk&&!d.def){const B=MOUNT_BASE[d.beast]||MOUNT_BASE.horse,f=town?1:1+L/25;d.atk=Math.round(B[0]*f);d.def=Math.round(B[1]*f);}
         if(d.price)d.price=Math.round(d.price*MK);if(MS!==1){d.atk=Math.round(d.atk*MS);d.def=Math.round(d.def*MS);}
         d.cmd=(BEASTS[d.beast]||BEASTS.horse).cmd+Math.round(L*MC);}
-      if(MK!==1)for(const k in SHOPS)for(const r of SHOPS[k])if(r.price&&items[r.id].slot==='mount')r.price=Math.round(r.price*MK);}
+      if(MK!==1)for(const k in SHOPS)for(const r of SHOPS[k])if(r.price&&items[r.id].slot==='mount')r.price=Math.round(r.price*MK);
+      // v10.24: giá thú cưỡi làng Thanh Mộc × thu_cuoi_gia_lang; mỗi nơi bán kế tiếp (theo cấp thành) giá trung bình gấp thu_cuoi_gia_moi_thanh lần nơi trước, giữ tỉ lệ giữa các con trong cùng nơi
+      {const GV=num(CFG.thu_cuoi_gia_lang,5),GT=num(CFG.thu_cuoi_gia_moi_thanh,2),pr=r=>r.price||num(items[r.id].price),avg=a=>a.reduce((x,r)=>x+pr(r),0)/Math.max(1,a.length);
+        const list=Object.keys(SHOPS).map(k=>{const mm=k.match(/^thanh-(.+?)(?:-ren|-thu|-sach)?$/);return {k,L:mm?mapLevel(mm[1]):1,rows:SHOPS[k].filter(r=>items[r.id]&&items[r.id].slot==='mount'&&!items[r.id].ruby)};}).filter(x=>x.rows.length).sort((a,b)=>a.L-b.L);
+        let prev=0;for(const s of list){const sc=s.L<=1?GV:prev>0?prev*GT/Math.max(1,avg(s.rows)):1;for(const r of s.rows){const v=Math.max(1,Math.round(pr(r)*sc));r.price=v;items[r.id].price=v;}prev=avg(s.rows);}}}
   }
   const info=i=>i&&items[i.type];
   const kind=i=>info(i)?info(i).kind:null;
@@ -124,7 +128,8 @@ const Player=(()=>{
   const pairOk=(a,b)=>PAIRS.has([a,b].sort().join('|'));
   const nameOf=i=>info(i)?info(i).name+(i.lv?' +'+i.lv:'')+(i.t?' · cấp '+i.t:''):'';
   const SELL_MUL={n:1,g:2,p:5,l:10,m:20};
-  const sellPrice=i=>Math.max(1,Math.floor((info(i)?info(i).price:0)*num(CFG.ti_le_ban_lai,40)/100*(SELL_MUL[qOf(i)]||1)));
+  // v10.24: đồ có phẩm chất cố định (hàng hiệu buôn, chuồng thú thành trì) đã tính phẩm chất vào giá → không nhân thêm (trước đây thú Hoàn hảo bán lại được gấp đôi giá mua)
+  const sellPrice=i=>Math.max(1,Math.floor((info(i)?info(i).price:0)*num(CFG.ti_le_ban_lai,40)/100*(info(i)&&info(i).q?1:(SELL_MUL[qOf(i)]||1))));
   const canEnhance=i=>{const d=info(i);return !!d&&!!d.slot;};
   // v10.13: chợ chỉ nhận đồ huyền thoại / thần, cánh, thú cưỡi
   const tradeable=i=>{const d=info(i);if(!d)return false;const q=qOf(i);return q==='l'||q==='m'||d.slot==='wings'||d.slot==='mount';};
@@ -324,6 +329,9 @@ const Player=(()=>{
   const topTier=m=>m&&(m.tier==='l'||m.tier==='m'),topMul=m=>topTier(m)?1+num(CFG.linh_huyen_than_them,0):1; // v10.17: huyền thoại, thần thoại thêm máu, sát thương, phòng ngự
   const tierMul=m=>{const i=Math.max(0,TIERS.indexOf((m&&m.tier)||'n'));return Math.round(Math.max(1,num(cfgList('linh_he_so','1,1.5,2,3,4')[i],1))*topMul(m)*100)/100;};
   const mercDefMul=m=>topMul(m);
+  // v10.24: lính đủ cấp vùng (lv ≥ cấp vùng − 10) có máu tối thiểu = số đòn quái thường chịu được × sát thương quái vùng; giảm sát thương nhận, hồi máu mỗi giây theo phẩm cấp
+  function mercGuard(m,regionLv,mobDmg){const i=Math.max(0,TIERS.indexOf((m&&m.tier)||'n')),pick=(k,d)=>num(cfgList(k,d)[i]);const ok=num(m&&m.lv)>=num(regionLv)-num(CFG.linh_cap_lech,10);
+    return {hpMin:ok?Math.round(pick('linh_mau_toi_thieu','6,8,10,25,35')*num(mobDmg)):0,red:pick('linh_giam_sat_thuong','0,10,20,35,45'),reg:pick('linh_hoi_mau','0.5,1,1.5,3,4')};}
   const petDmgMul=()=>num(CFG.thu_phuc_sat_thuong,1); // v10.17: sát thương quái thu phục
   const mountPow=()=>num(CFG.thu_cuoi_nhan_chi_so,1); // v10.17: công, thủ và đòn của thú cưỡi
   // Đơn chiêu mộ (chieu_mo_hong_ngoc hồng ngọc một lần): rút phẩm cấp theo chieu_mo_ti_le; thường / tinh nhuệ / thiện chiến lấy mẫu lính của thành đang đứng,
@@ -671,7 +679,7 @@ const Player=(()=>{
   }
   load(typeof GAME_DATA!=='undefined'?GAME_DATA:{});
   const API={VERSION,BAG_SIZE,SKILL_SLOTS,MAX_LV,MAX_MERC,TIERS,TIER_NAME,tierMul,killCopper,killExp,mercDefMul,petDmgMul,mountPow,mercCost,mercPow,mercGainExp,TUONG,recruitRoll,MAX_ACTIVE_QUEST,ELEMENTS,BEASTS,GROUPS,FX_NAMES,STAT_KEYS,CFG,RAR,ADD,SHOPS,SETS,MON,QUESTS,MERCS,AVATARS,TOPUPS,QUIZ,NAME_FX,items,slots,skills,shopEnh,shopRow,fuse,mercDaily,mercOffers,dayOf,EVENTS,
-    layout,relayout,load,info,kind,weapon,skillCost,cmdInfo,WEAPONS,PREDICT,seqRng,setFollow,fitFollow,mercCmd,petMax,PET_CAP,mountNeed,tameMin,bookFx,bookBac,demonOf,shopRuby,SHOP_ENH,expNeed,maxLevel,gainExp,spendPoints,mountGain,bookStat,mountCmd,qOf,rar,nameOf,stat,canEnhance,tradeable,gainOf,enhRate,enhCost,enhance,roll,rollDrop,create,derive,targets,equip,unequip,stance,isTwo,pairOk,setSkill,unsetSkill,toggleBook,element,money,shopPrice,buy,sell,sellPrice,addItem,cast,
+    layout,relayout,load,info,kind,weapon,skillCost,cmdInfo,WEAPONS,PREDICT,seqRng,setFollow,fitFollow,mercCmd,mercGuard,petMax,PET_CAP,mountNeed,tameMin,bookFx,bookBac,demonOf,shopRuby,SHOP_ENH,expNeed,maxLevel,gainExp,spendPoints,mountGain,bookStat,mountCmd,qOf,rar,nameOf,stat,canEnhance,tradeable,gainOf,enhRate,enhCost,enhance,roll,rollDrop,create,derive,targets,equip,unequip,stance,isTwo,pairOk,setSkill,unsetSkill,toggleBook,element,money,shopPrice,buy,sell,sellPrice,addItem,cast,
     aimAcc,isRanged,REGIONS,MON_REGION,SKILLS,mapLevel,regionLv,regionOf,questLevel,storyAt,storyNext,quizKey,questAccept,questProgress,questTurnIn,hireNpc,addMerc,mercEquip,mercUnequip,dismissMerc,makeMerc,cleanItem,serialize,restore,restorePlayer,merge,applyOp,allItems};
   return API;
 })();

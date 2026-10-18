@@ -1139,7 +1139,7 @@ window.startGame=(session)=>{
     try{def=await Promise.race([World.load(id),new Promise((_,no)=>setTimeout(()=>no(Error('CHO_LAU')),20000))]);}catch(e){clearTimeout(slow);if(L)L.hide();World.cancel&&World.cancel(id);message(svg('close')+(e.message==='CHO_LAU'?'Tải vùng quá lâu, kiểm tra mạng rồi bấm lại':'Chưa mở được vùng này'));travelling=false;portalArmed=false;window.GameUI?.refresh();return false;}
     clearTimeout(slow);if(L)L.step(70,'Dựng '+nm,96);
     World.use(def);W=World.W;H=World.H;grid=World.grid;
-    EV=null;evSlot=-1;evBannerSet(null);monsters.length=0;monsters.push(...makeMonsters());warmMap();spawnBots();projectiles.length=0;particles.length=0;floaters.length=0;fx.length=0;
+    EV=null;evSlot=-1;evBannerSet(null);monsters.length=0;monsters.push(...makeMonsters());warmMap();spawnBots();syncMerc();projectiles.length=0;particles.length=0;floaters.length=0;fx.length=0;
     Object.assign(hero,tx!=null?{x:(tx+.5)*T,y:(ty+.5)*T}:World.spawn,{map:World.id,attack:null,mountAct:null});
     // điểm đến bị chặn (đá, tường, vật) thì dời sang ô trống gần nhất — không bao giờ kẹt khi vừa qua cổng
     if(!World.canStand(hero.x,hero.y)){const o=World.nearestOpen(Math.floor(hero.x/T),Math.floor(hero.y/T));if(o){hero.x=(o.x+.5)*T;hero.y=(o.y+.5)*T;}}
@@ -1231,7 +1231,7 @@ window.startGame=(session)=>{
         if(!World.canStand(e.x,e.y)){e.x=hero.x;e.y=hero.y;}
         if(w.pet)burst(e.x,e.y-20,EL.demon.color,18,160);}
       e.data=w.data;e.slot=i;
-      if(w.pet){const M=MON[w.data.type];e.type=w.data.type;e.max=M.hpBase||M.hp;e.name=M.name;}else{e.D=Player.derive(w.data);const tm=Player.tierMul(w.data)*Player.mercPow();e.D.tot.hp=Math.round(e.D.tot.hp*tm);e.D.tot.def=Math.round(e.D.tot.def*Player.mercDefMul(w.data));e.D.dmgMul*=tm;e.max=e.D.tot.hp;e.name=w.data.name;e.tier=w.data.tier||'n';} // v10.14: lính phẩm cấp cao máu, sát thương nhân lên
+      if(w.pet){const M=MON[w.data.type];e.type=w.data.type;e.max=M.hpBase||M.hp;e.name=M.name;}else{e.D=Player.derive(w.data);const tm=Player.tierMul(w.data)*Player.mercPow();e.D.tot.hp=Math.round(e.D.tot.hp*tm);e.D.tot.def=Math.round(e.D.tot.def*Player.mercDefMul(w.data));e.D.dmgMul*=tm;e.max=e.D.tot.hp;e.name=w.data.name;e.tier=w.data.tier||'n';const K=Player.mercGuard(w.data,Player.mapLevel(World.id),mobDmg());e.max=Math.max(e.max,K.hpMin);e.red=K.red;e.reg=K.reg;} // v10.24: lính đủ cấp vùng có máu tối thiểu theo sát thương quái vùng, giảm sát thương, hồi máu theo phẩm cấp // v10.14: lính phẩm cấp cao máu, sát thương nhân lên
       if(!e.hp)e.hp=Math.max(1,Math.round(e.max*(w.data.hpFrac||1)));e.hp=Math.min(e.hp,e.max);
       allies.push(e);
     });
@@ -1242,9 +1242,14 @@ window.startGame=(session)=>{
     const dl=!e.pet&&Player.mercDaily(e.data),el=dl?dl.el:null,col=el?EL[el].color:'#dfe8f0';e.hits=(e.hits||0)+1;
     const d=ATK[a.type],atk={D:e.D,mul:d.dmg*(el?1.15:1)*(1+(HD.tot.mercDmg||0)/100),el,owner:'merc',knock:d.knock,stun:d.stun||0},ang=Math.atan2(a.aim.y,a.aim.x),ox=e.x,oy=e.y-18; // v10.14: Mệnh lệnh cộng % sát thương lính
     if(el&&e.hits%4===0){nova(e.x,e.y-12,110,{...atk,mul:atk.mul*1.6},null);fx.push({kind:'ring',x:e.x,y:e.y-12,r0:8,r1:110,color:col,age:0,life:.4,lw:4});burst(e.x,e.y-20,col,16,180);floater(e.x,e.y-70,dl.skill,col,12);return;}
+    // v10.24: lính Huyền thoại, Thần bị vây (từ 3 quái trong tầm) thì quét một vòng trúng mọi quái quanh mình
+    if((e.tier==='l'||e.tier==='m')&&monsters.filter(m=>!m.dead&&Math.hypot(m.x-e.x,m.y-e.y)<130).length>=3){const col2=e.tier==='m'?'#ff9fd0':'#ffcf8a';nova(e.x,e.y-12,130,{...atk,mul:atk.mul*(Number(CFG.linh_quet_vong)||.8)},null);fx.push({kind:'ring',x:e.x,y:e.y-12,r0:8,r1:130,color:col2,age:0,life:.35,lw:4});return;}
     if(d.kind==='melee'){hitArc(ox,oy,ang,d.range,d.arc,atk);fx.push({kind:'arc',x:ox,y:oy,ang,r:d.range*.8,arc:1.5,color:col,age:0,life:.2});}
     else if(d.kind==='thrust')hitLine(ox,oy,ang,d.range,d.width,atk);else spawnProjectile({x:e.x,y:e.y},ang,atk,d);
   }
+  // v10.24: sát thương trung vị của quái thường ở bản đồ đang đứng (để tính máu tối thiểu của lính)
+  let mobDmgCache={id:'',v:0};
+  function mobDmg(){if(mobDmgCache.id===World.id&&mobDmgCache.n===monsters.length)return mobDmgCache.v;const a=[...new Set(monsters.map(m=>m.type))].filter(t=>MON[t]&&!MON[t].boss).map(t=>MON[t].dmg).sort((x,y)=>x-y);mobDmgCache={id:World.id,n:monsters.length,v:a.length?a[Math.floor(a.length/2)]:0};return mobDmgCache.v;}
   function nearestFoe(e,r){let t=null,bd=r;for(const m of monsters){if(m.dead)continue;const dd=Math.hypot(m.x-e.x,m.y-e.y);if(dd<bd&&Math.hypot(m.x-hero.x,m.y-hero.y)<420){bd=dd;t=m;}}return t;}
   function formGoal(e){const f=FORM[e.slot%6],gx=hero.x+f[0]*hero.facing,gy=hero.y+f[1];return Math.hypot(gx-e.x,gy-e.y)>32?{x:gx,y:gy}:null;}
   function updateAllies(dt){
@@ -1252,6 +1257,7 @@ window.startGame=(session)=>{
     for(const e of allies){
       e.moving=false;
       if(safe&&e.hp<e.max)e.hp=Math.min(e.max,e.hp+e.max*.15*dt); // về làng hồi máu
+      else if(!e.pet&&e.hp>0&&e.hp<e.max)e.hp=Math.min(e.max,e.hp+e.max*((e.reg||0)+(time-(e.hitAt||0)>5?(Number(CFG.linh_hoi_ngoai_tran)||6):0))/100*dt); // v10.24: lính hồi máu ngoài vùng an toàn (theo phẩm cấp; 5 giây không trúng đòn thì hồi nhanh)
       if(Math.hypot(hero.x-e.x,hero.y-e.y)>650){e.x=hero.x-30*hero.facing;e.y=hero.y+10;e.path=null;}
       if(e.pet){updatePet(e,dt);continue;}
       if(e.attack){const a=e.attack,p=(time-a.start)/a.dur;if(!a.hitDone&&p>=a.hit){a.hitDone=true;mercHit(e,a);}if(p>=1)e.attack=null;}
@@ -1368,7 +1374,7 @@ window.startGame=(session)=>{
     if(e&&e.bot)return hurtBot(e,dmg);
     if(!e||e.hp<=0)return;let d;
     if(e.pet)d=Math.max(1,Math.round(dmg*.8));
-    else{const S=e.D.tot;if(Math.random()*100<S.dodge){floater(e.x,e.y-60,'Né','#cfe8ff',13);return;}d=dmg*100/(100+S.def*4)*(1-S.dmgRed/100);if(Math.random()*100<S.block)d*=.2;d=Math.max(1,Math.round(d));}
+    else{const S=e.D.tot;if(Math.random()*100<S.dodge){floater(e.x,e.y-60,'Né','#cfe8ff',13);return;}d=dmg*100/(100+S.def*4)*(1-S.dmgRed/100)*(1-(e.red||0)/100);if(Math.random()*100<S.block)d*=.2;e.hitAt=time;d=Math.max(1,Math.round(d));}
     e.hp-=d;e.hurt=time;floater(e.x,e.y-(e.pet?MON[e.type].h+12:62),'-'+d,'#ffb0a0',13);
     if(e.hp<=0){
       e.hp=0;e.data.hpFrac=0;const i=allies.indexOf(e);if(i>=0)allies.splice(i,1);burst(e.x,e.y-20,'#cfcfcf',18,150);

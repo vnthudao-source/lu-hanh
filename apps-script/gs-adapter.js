@@ -341,6 +341,13 @@ function capNhatV1012(){
   const d=xoa('vat_pham',r=>/^khung-/.test(String(r.id))||(String(r.o)==='cos'&&String(r.loai)==='khung')),e=xoa('cua_hang',r=>/^khung-/.test(String(r.id)));
   xoaBoNhoDem();Logger.log('ban_do: '+a+' ô cấp · cau_hinh cap_toi_da: '+b+' · nhiem_vu Tìm con: '+c+' ô npc · xóa '+d+' khung ở vat_pham, '+e+' ở cua_hang');
 }
+// v10.24: giá sách mỗi thành gấp đôi (sach_gia_moi_thanh 5 → 2). kiemTra chỉ thêm dòng mới nên hàm này ghi lại giá trị dòng đã có. Chạy một lần sau khi dán Code.gs mới.
+function capNhatV1024(){
+  lhDuLieuBoSung_();const file=LH_SHEETS[LH_STATIC.cau_hinh];if(!file)return;const sh=SpreadsheetApp.openById(file).getSheetByName('cau_hinh');if(!sh||sh.getLastRow()<2)return;
+  const v=sh.getDataRange().getValues(),h=v[0].map(String),ck=h.indexOf('khoa'),cv=h.indexOf('gia_tri');let n=0;
+  for(let i=1;i<v.length;i++)if(String(v[i][ck])==='sach_gia_moi_thanh'&&String(v[i][cv])!=='2'){sh.getRange(i+1,cv+1).setValue(2);n++;}
+  xoaBoNhoDem();Logger.log('sach_gia_moi_thanh: '+(n?'đã đổi thành 2':'đã là 2'));
+}
 // v10.22: chiến thuật trùm (cột ky_nang tab quai: tron, bay, giap-bang, hoi-mau, phan-giap) và cửa hàng sách chỉ bán tới Hoàn hảo (Huyền thoại, Thần rơi từ trùm).
 // kiemTra thêm các dòng cấu hình mới (sach_gia_nhan, sach_roi_*, boss_nhan_sat_thuong, nguoi_choi_ao_*). Hàm này ghi cột ky_nang của 7 trùm và cột pham_chat của các dòng sách. Chạy một lần sau khi dán Code.gs mới.
 function capNhatV1022(){

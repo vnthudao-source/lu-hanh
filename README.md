@@ -199,6 +199,14 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
 
+## Bản 10.24 — lính đánh thuê bền hơn, giá sách, giá thú cưỡi
+
+- **Lính đánh thuê** (trước: không hồi máu ngoài làng, lính thành trì vùng cao chỉ chịu được 1–3 đòn quái): lính có cấp ≥ cấp vùng − 10 được máu tối thiểu = `linh_mau_toi_thieu` (6 · 8 · 10 · 25 · 35) × sát thương quái thường của vùng; giảm sát thương nhận `linh_giam_sat_thuong` (0 · 10 · 20 · 35 · 45%); tự hồi `linh_hoi_mau` (0,5 · 1 · 1,5 · 3 · 4% máu/giây) ngoài vùng an toàn, 5 giây không trúng đòn hồi thêm 6%/giây. Lính Huyền thoại, Thần bị từ 3 quái vây thì đánh quét một vòng (× 0,8 sát thương). Thử ở bãi quái Phú Xuân: lính Huyền thoại, Thần, Thiện chiến giữ 100% máu qua 12 đợt quái.
+- **Giá sách**: mỗi thành kế tiếp gấp đôi (`sach_gia_moi_thanh` = 2): sách Hỏa Thường 4 · 8 · 16 · 32 · 64 vàng.
+- **Giá thú cưỡi**: làng Thanh Mộc × 5 (`thu_cuoi_gia_lang`; ngựa con 2 vàng … voi 60 vàng); mỗi nơi bán kế tiếp giá trung bình gấp đôi nơi trước (`thu_cuoi_gia_moi_thanh`): Cổ Loa ≈ 30–67, Thăng Long ≈ 59–134, Hoa Lư ≈ 119–268, Phú Xuân ≈ 221–497 vàng.
+- **Sửa lỗi bán lại**: đồ có phẩm chất cố định (thú Hoàn hảo ở thành…) không nhân hệ số phẩm chất khi bán lại nữa (trước đây bán được gấp đôi giá mua).
+- Sheet: chạy `kiemTra` (thêm dòng cấu hình mới) rồi `capNhatV1024()` một lần (đổi `sach_gia_moi_thanh` trên Sheet thành 2).
+
 ## Bản 10.23 — giá sách theo thành
 
 - Giá sách = giá ở làng Thanh Mộc × `sach_gia_nhan` (100) × `sach_gia_moi_thanh` (5) mũ bậc thành × phẩm chất (1 · 5 · 20). Mỗi thành kế tiếp đắt gấp 5: Thanh Mộc ×1, Cổ Loa ×5, Thăng Long ×25, Hoa Lư ×125, Phú Xuân ×625. Ví dụ sách Hỏa Thường: 4 · 20 · 100 · 500 · 2.500 vàng. Cột `gia` của dòng sách ở tab `cua_hang` không còn dùng.
