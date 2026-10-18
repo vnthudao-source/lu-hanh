@@ -748,7 +748,7 @@ window.startGame=(session)=>{
     if(!m.dead&&(m.hp<m.max||m.aggro>time)){const bw=M.boss?84:40,by=m.y-M.h-16;roundRect(ctx,m.x-bw/2,by,bw,5,2,'#0a120ecc');roundRect(ctx,m.x-bw/2,by,bw*Math.max(0,m.hp/m.max),5,2,'#e0625a');}
   }
   // Quái thu phục: vẽ như quái thường + vòng Ma công dưới chân, tên màu tím
-  function drawPet(e){const M=MON[e.type];ctx.save();ctx.globalAlpha=.5+Math.sin(time*3)*.15;ctx.strokeStyle=EL.demon.color;ctx.lineWidth=2.5;ctx.beginPath();ctx.ellipse(e.x,e.y+3,M.r*1.3,M.r*.45,0,0,PI2);ctx.stroke();ctx.restore();drawMonster(e);if(safe)label(M.name,e.x,e.y-M.h-12,EL.demon.glow);}
+  function drawPet(e){const M=MON[e.type];ctx.save();ctx.globalAlpha=.5+Math.sin(time*3)*.15;ctx.strokeStyle=EL.demon.color;ctx.lineWidth=2.5;ctx.beginPath();ctx.ellipse(e.x,e.y+3,M.r*1.3,M.r*.45,0,0,PI2);ctx.stroke();ctx.restore();if(M.boss){ctx.save();ctx.translate(e.x,e.y);ctx.scale(.65,.65);ctx.translate(-e.x,-e.y);drawMonster(e);ctx.restore();}else drawMonster(e);if(safe)label(M.name,e.x,e.y-M.h*(M.boss?.65:1)-12,EL.demon.glow);} // v10.21: trùm thu phục vẽ nhỏ lại
   function center(m){return {x:m.x,y:m.y-MON[m.type].h*.5};}
   function floater(x,y,text,color,size=14,icon){floaters.push({x,y,text,color,size,icon,age:0,life:.9});}
   // v10.13: số bay kèm biểu tượng tiền (đồng / bạc / vàng / hồng ngọc) thay cho chữ
@@ -870,7 +870,7 @@ window.startGame=(session)=>{
     if(r.up)levelUp(r.up);
     if(r.mercUp&&r.mercUp.length)syncMerc(); // lính lên cấp: tính lại máu, sát thương
     (r.mercUp||[]).forEach(u=>message(svg('flag')+String(u.name).replace(/[&<>"]/g,c=>'&#'+c.charCodeAt(0)+';')+' lên cấp '+u.lv));
-    if(r.pet){petSpawn[r.pet.pid]={x:sack.x,y:sack.y};const M=MON[r.pet.type];floater(x,y-dy-10,'Thu phục '+M.name+'!',EL.demon.glow,16);fx.push({kind:'ring',x:sack.x,y:sack.y,r0:8,r1:90,color:EL.demon.color,age:0,life:.7,lw:5});burst(sack.x,sack.y-20,EL.demon.color,30,200);message(svg('check')+`Thu phục ${M.name} · đi theo bạn`);syncMerc();}
+    if(r.pet){petSpawn[r.pet.pid]={x:sack.x,y:sack.y};const M=MON[r.pet.type];floater(x,y-dy-10,'Thu phục '+M.name+'!',EL.demon.glow,16);fx.push({kind:'ring',x:sack.x,y:sack.y,r0:8,r1:90,color:EL.demon.color,age:0,life:.7,lw:5});burst(sack.x,sack.y-20,EL.demon.color,30,200);const mins=r.pet.exp?Math.round((r.pet.exp-Date.now())/60000):0;message(svg('check')+`Thu phục ${M.boss?'trùm ':''}${M.name} · ${r.pet.exp?'đi theo '+(mins>=60?Math.round(mins/60)+' giờ':Math.max(1,mins)+' phút'):'đi theo mãi mãi'}`);syncMerc();}
     r.items.forEach(it=>{const R=Player.rar(it),nm=Player.nameOf(it);floater(x,y-dy,nm,R.color,14);dy+=16;message(svg('bag')+`Nhặt được <b style="color:${R.color}">${nm}</b> \u{00b7} ${R.name}`);});
     (r.lost||[]).forEach(it=>message(svg('close')+'Túi đầy, rơi mất '+Player.nameOf(it)));
     (r.done||[]).forEach(id=>{const Q=Player.QUESTS[id];if(Q)LH_Audio.play('quest');if(Q)message(svg('quest')+`${Q.name}: xong, về gặp ${Q.story?'Lý trưởng (Tìm con)':'Lý trưởng'}`);});
@@ -1313,7 +1313,7 @@ window.startGame=(session)=>{
   // Quái thu phục: đi theo, cắn/húc quái khác. Chết là mất hẳn
   function updatePet(e,dt){
     const M=MON[e.type];
-    if(e.atk){if(time>=e.atk.at&&!e.atk.done){e.atk.done=true;const t=e.atk.tg;if(t&&!t.dead&&Math.hypot(t.x-e.x,t.y-e.y)<M.range+MON[t.type].r+40){const l=Math.hypot(t.x-e.x,t.y-e.y)||1;hitMonster(t,{abs:Math.max(6,M.dmgBase||M.dmg)*Player.petDmgMul()*(1+player.level*.05)*(1+(HD.tot.petDmg||0)/100),owner:'pet',color:EL.demon.glow,knock:40},(t.x-e.x)/l,(t.y-e.y)/l);}}if(e.atk&&time>=e.atk.end)e.atk=null;e.data.hpFrac=e.hp/e.max;return;}
+    if(e.atk){if(time>=e.atk.at&&!e.atk.done){e.atk.done=true;const t=e.atk.tg;if(t&&!t.dead&&Math.hypot(t.x-e.x,t.y-e.y)<M.range+MON[t.type].r+40){const l=Math.hypot(t.x-e.x,t.y-e.y)||1;hitMonster(t,{abs:Math.max(6,M.dmgBase||M.dmg)*Player.petDmgMul()*(M.boss?Number(Player.CFG.ma_boss_sat_thuong)||.3:1)*(1+player.level*.05)*(1+(HD.tot.petDmg||0)/100),owner:'pet',color:EL.demon.glow,knock:40},(t.x-e.x)/l,(t.y-e.y)/l);}}if(e.atk&&time>=e.atk.end)e.atk=null;e.data.hpFrac=e.hp/e.max;return;}
     const target=!safe&&!hero.dead?nearestFoe(e,300):null;let goal=null;
     if(target){const dx=target.x-e.x,dist=Math.hypot(dx,target.y-e.y),reach=M.range*.8+MON[target.type].r+M.r*.5;if(Math.abs(dx)>3)e.facing=dx<0?-1:1;
       if(dist>reach)goal={x:target.x,y:target.y};else if(time>e.cd){const w=Math.max(.25,M.windup);e.atk={at:time+w,end:time+w+.35,done:false,tg:target};e.cd=time+w+Math.max(.8,M.cd);}}
@@ -1528,10 +1528,13 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
   }
   function screenPoint(x,y){return {x:x/scale+camera.x,y:y/scale+camera.y};}
   const save=()=>flush();
+  // v10.21: quái thu phục hết thời gian (theo Trí tuệ lúc thu phục) thì bỏ đi; máy chủ cũng tự bỏ khi lưu
+  function petExpire(){const now=Date.now(),gone=(player.pets||[]).filter(x=>x.exp>0&&x.exp<=now);if(!gone.length)return;
+    player.pets=player.pets.filter(x=>!(x.exp>0&&x.exp<=now));for(const x of gone){const e=allies.find(a=>a.key===x.pid);if(e){burst(e.x,e.y-20,EL.demon.color,16,140);floater(e.x,e.y-MON[x.type].h-14,'Bỏ đi',EL.demon.glow,13);}message(svg('demon')+(MON[x.type]?MON[x.type].name:'Quái')+' hết thời gian thu phục, đã bỏ đi');}syncMerc();window.GameUI?.refresh();}
   function update(dt){
     if((sceneTick=(sceneTick||0)+1)%45===0)musicScene();
     const nowSafe=World.isSafe(hero.x,hero.y);if(nowSafe!==safe){safe=nowSafe;hero.mountAct=null;refreshHD();window.GameUI?.refresh();if(safe){LH_Audio.play('safe');message(svg('shield')+'Vào vùng an toàn');checkpoint();}musicScene();}
-    if(time-hdAt>.25){hdAt=time;refreshHD();const k=allyKey();if(k!==lastAllyKey){lastAllyKey=k;syncMerc();}if(safe)reviveAtVillage();}
+    if(time-hdAt>.25){hdAt=time;refreshHD();petExpire();const k=allyKey();if(k!==lastAllyKey){lastAllyKey=k;syncMerc();}if(safe)reviveAtVillage();}
     const S=HD.tot;
     if(!hero.dead){player.mana=Math.min(S.mp,player.mana+S.mpReg*dt);player.hp=Math.min(S.hp,player.hp+(S.hpReg+(HD.fx.heal?S.hp*HD.fx.heal/100:0))*dt);}
     player.hp=Math.min(player.hp,S.hp);player.mana=Math.min(player.mana,S.mp);

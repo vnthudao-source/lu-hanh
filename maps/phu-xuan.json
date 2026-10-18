@@ -643,6 +643,18 @@
    ]
   },
   {
+   "id": "giu-ruong-phu-xuan",
+   "role": "giu-ruong",
+   "name": "Quan giữ rương",
+   "act": "turn",
+   "x": 24,
+   "y": 12,
+   "panel": "chest",
+   "lines": [
+    "Rương Phú Xuân giữ đồ cho cả tài khoản. Gửi ở đây, lấy ở làng hay thành nào cũng được."
+   ]
+  },
+  {
    "id": "tre-con-phu-xuan-1",
    "role": "tre-con-2",
    "name": "Cu Bin",

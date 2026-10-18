@@ -47,8 +47,34 @@ function LH_Core(A){
   }
   const claimSum=acc=>pendingClaims(acc).reduce((s,r)=>({copper:s.copper+Number(r.tien_nhan||0),ruby:s.ruby+Number(r.hong_ngoc_nhan||0)}),{copper:0,ruby:0});
   function pendingClaims(acc){return where('cho','nguoi_ban',acc).filter(r=>r.trang_thai==='da_ban'&&String(r.da_nhan)!=='1');}
+  // v10.21: rương chung của tài khoản (cột ruong ở bảng tai_khoan): {items:[đồ], copper, rubies}. Mọi nhân vật của tài khoản gửi / lấy ở Người giữ rương
+  const chestOf=a=>{let c=null;try{c=a.ruong?JSON.parse(a.ruong):null;}catch(e){}c=c&&typeof c==='object'?c:{};
+    return {items:(Array.isArray(c.items)?c.items:[]).map(x=>Player.cleanItem(x)).filter(Boolean),copper:Math.max(0,Math.floor(+c.copper||0)),rubies:Math.max(0,Math.floor(+c.rubies||0))};};
+  const chestSize=()=>cfg('ruong_so_o')||60;
+  const chestView=c=>({items:c.items,copper:c.copper,rubies:c.rubies,size:chestSize()});
+  function chestMove(p,dir){
+    const a0=auth(p.token);A.rules&&A.rules();
+    return A.lock(()=>{
+      const a=find('tai_khoan','id',a0.id)||a0,c=ownChar(a,p.charId,'active'),st=stateOf(c),P=st.player,ch=chestOf(a);
+      const copper=Math.max(0,Math.floor(Number(p.copper)||0)),rubies=Math.max(0,Math.floor(Number(p.rubies)||0)),uid=p.uid?String(p.uid):'';
+      if(!uid&&!copper&&!rubies)fail('RUONG_TRONG');let item=null;
+      if(dir==='put'){
+        if(uid){const i=P.bag.findIndex(x=>x&&x.uid===uid),it=P.bag[i],d=it&&Player.info(it);if(!d)fail('VAT_PHAM_SAI');if(d.slot==='quest')fail('KHONG_GUI_DUOC');if(ch.items.length>=chestSize())fail('RUONG_DAY');P.bag[i]=null;ch.items.push(it);item=it;}
+        if(copper>P.copper)fail('KHONG_DU_TIEN');if(rubies>P.rubies)fail('KHONG_DU_HONG_NGOC');P.copper-=copper;P.rubies-=rubies;ch.copper+=copper;ch.rubies+=rubies;
+      }else{
+        if(uid){const i=ch.items.findIndex(x=>x.uid===uid);if(i<0)fail('VAT_PHAM_SAI');item=ch.items[i];Player.addItem(P,item);ch.items.splice(i,1);}
+        if(copper>ch.copper)fail('RUONG_KHONG_DU_TIEN');if(rubies>ch.rubies)fail('RUONG_KHONG_DU_HONG_NGOC');ch.copper-=copper;ch.rubies-=rubies;P.copper+=copper;P.rubies+=rubies;
+      }
+      const j=JSON.stringify(ch);if(j.length>45000)fail('RUONG_DAY');
+      storeState(c,st,P);a.ruong=j;A.update('tai_khoan',a);
+      return {chest:chestView(ch),state:P,item};
+    });
+  }
   const H={
     ping:()=>({msg:'Lữ Hành API'}),
+    chest(p){const a=auth(p.token);A.rules&&A.rules();return {chest:chestView(chestOf(a))};},
+    chestPut(p){return chestMove(p,'put');},
+    chestTake(p){return chestMove(p,'take');},
     // kiểm tra phiên còn giữ (game gọi định kỳ): bị đăng nhập nơi khác thì báo DANG_NHAP_NOI_KHAC
     alive(p){auth(p.token);return {};},
     // Dữ liệu tĩnh: kèm mã h (băm nội dung) để trình duyệt lưu đệm; gửi lại cùng h thì chỉ trả same:true (đỡ tải ~120 KB mỗi lần vào game)

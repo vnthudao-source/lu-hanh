@@ -148,6 +148,9 @@
       else if(S.item==='fan'){c.save();c.translate(16,-30);c.rotate(-.6+sway*.08);poly(c,[0,0,-14,-16,-6,-20,4,-22,12,-18,16,-10],S.trim||'#e8c0a0');c.restore();}
       else if(S.item==='scroll')rr(c,8,-32,16,6,2,'#f0e6c8'),line(c,[8,-29,24,-29],'#8a5a3a',.8);
       else if(S.item==='lantern'){line(c,[16,-26,22,-40],'#8a6a40',1.5);c.save();c.shadowColor='#ffb050';c.shadowBlur=10;ell(c,22,-30,5,7,'#f06030');c.restore();}
+      else if(S.item==='chest'){ // v10.21: rương gỗ nẹp đồng đặt cạnh chân, tay cầm chùm chìa khóa
+        rr(c,16,-18,26,18,3,'#7a4a24');rr(c,16,-22,26,7,3,'#8e5a2c');line(c,[16,-15,42,-15],'#d8a840',2);line(c,[22,-22,22,0],'#d8a840',2);line(c,[36,-22,36,0],'#d8a840',2);rr(c,26,-15,6,6,1,'#f0c850');ell(c,29,-12,1.2,1.2,'#3a2410');
+        ell(c,16,-26,3,3,'#e0b040');line(c,[16,-24,18,-17],'#e0b040',1.5);line(c,[13,-25,11,-19],'#c8a040',1.5);}
       else if(S.item==='sticks'){for(const [x0,y0] of [[-16,armA],[16,-12-(1-beat)*18]])line(c,[x0,y0,x0+6,y0-14],'#d8c8a0',2);}
       head(c,S.skin||'#e1c295',S.hair||(S.hat==='none'?'#2a2622':null),S.beard||null,{fem:!!S.fem,ph:n.phase});
       if(S.hat==='non')nonLa(c,S.hatc);else if(S.hat==='khan')khanXep(c,S.hatc);
@@ -157,6 +160,8 @@
       c.restore();
     };
   }
+  // v10.21: Người giữ rương (làng Thanh Mộc và các thành) — vai dùng chung, không cần gói bản đồ
+  A.npc['giu-ruong']=npc({robe:'#5a3a1e',trim:'#e0b040',hat:'khan',hatc:'#2a1a0e',item:'chest',beard:'#4a3a30'});
   // ---------- trời: hạt rơi / bay + màu phủ ----------
   // spec: {n, col, size, vx, vy, tint, glow, dark} — hạt (tro, lá, hoa, tuyết, đom đóm, sương), tint = màu phủ cả màn hình
   function sky(S){

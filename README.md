@@ -199,6 +199,17 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
 
+## Bản 10.21 — rương chung, thú cưỡi cần Mệnh lệnh, sách theo bậc và phẩm chất, Trí tuệ giữ quái
+
+- **Người giữ rương** ở làng Thanh Mộc và 4 thành (Cổ Loa, Thăng Long, Hoa Lư, Phú Xuân): mỗi tài khoản một rương chung (`ruong_so_o` = 60 ô), nhân vật nào cũng gửi / lấy được đồ, tiền, hồng ngọc. Máy chủ giữ rương ở cột `ruong` của tab `tai_khoan` (tự thêm). Đồ nhiệm vụ không gửi được.
+- **Thú cưỡi**: Mệnh lệnh cần = mức theo loài + cấp thú × 0,5 + phẩm chất (`thu_cuoi_menh_lenh_pham_chat` = 0,5,15,30,60) + 1 mỗi cấp gia cường. Cấp thú: thú bán ở thành = cấp thành; thú làng theo giá (ngựa con 7 … voi 26 Mệnh lệnh, nhân vật mới có 10); thú bộ Huyền thoại tính như cấp 250 (≈160), bộ Thần cấp 330 (≈230). Thú chưa có Công / Thủ lấy chỉ số gốc theo loài, nhân theo cấp thú. Ô thú cưỡi hiện “Cần N Mệnh lệnh” (đỏ khi thiếu).
+- **Sách** có 5 bậc theo nơi bán (Thanh Mộc · Cổ Loa · Thăng Long · Hoa Lư · Phú Xuân) và 5 phẩm chất. Điểm cộng (sách Thường): 3 · 8 · 15 · 25 · 40; sách Ma công cộng Mệnh lệnh 5 · 10 · 15 · 20 · 20; nhân phẩm chất 1 · 1,3 · 1,7 · 2,3 · 3. Hiệu ứng (Hỏa, Thủy, Thổ, Kim, Mộc, tỉ lệ Lôi / Phong / Băng / Ánh sáng / Ma công) nhân 0,4 · 0,6 · 0,8 · 1 · 1,2 theo bậc và 1 · 1,15 · 1,3 · 1,5 · 1,8 theo phẩm chất. Giá nhân 1 · 5 · 20 · 100 · 400; Huyền thoại, Thần thêm hồng ngọc (Thần Phú Xuân 1.000).
+- **Sách Ma công**: tối đa 1 · 2 · 2 · 3 · 3 quái theo bậc (+1 với Huyền thoại, Thần); từ Thăng Long thu phục được trùm vùng với tỉ lệ × 0,05 · 0,1 · 0,2 (trùm thế giới, trùm cuối không). Trùm thu phục vẽ nhỏ lại, sát thương × 0,3.
+- **Trí tuệ giữ quái**: mốc 0 · 60 · 150 · 300 · 600 Trí tuệ → quái ở lại 1 phút · 10 phút · 1 giờ · 10 giờ · vĩnh viễn (trùm giảm một mốc). Hết giờ quái bỏ đi.
+- **Sửa lỗi**: mua sách ở Đạo sĩ làng trước đây ra sách bậc Phú Xuân (+50 điểm) và tính giá Phú Xuân, vì lệnh mua không ghi cửa hàng. Nay lệnh mua luôn ghi cửa hàng.
+- Mô phỏng 100 người chơi (người chơi để dành điểm Mệnh lệnh cho thú bộ): 100/100 hạ boss cuối, trung vị 12,8 tháng; nạp 5tr: 13,4; 10tr: 11,8.
+- Sheet: chạy `kiemTra` rồi `capNhatV1021()` một lần.
+
 ## Bản 10.20 — bảng cường hóa mới
 
 - **Cường hóa** (`gia_cuong`, cột `ti_le`): lên +1…+6 chắc chắn 100%; +7, +8, +9 còn 50%; +10…+15 giảm dần 44 · 38 · 33 · 27 · 21 · 15%. Phí hồng ngọc và mức rớt (hỏng tụt 1 cấp từ +7) giữ nguyên.

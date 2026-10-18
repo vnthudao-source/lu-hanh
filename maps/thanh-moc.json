@@ -1060,6 +1060,19 @@
     "Thẻ đổi ảnh chân dung, khung viền, nền hồ sơ, thuốc đa nhiệm… toàn đồ làm đẹp, chỉ lấy hồng ngọc.",
     "Mua về dùng một lần là giữ mãi, muốn đổi qua lại thì mở bảng Diện mạo."
    ]
+  },
+  {
+   "id": "giu-ruong",
+   "role": "giu-ruong",
+   "name": "Người giữ rương",
+   "x": 13.6,
+   "y": 25.2,
+   "panel": "chest",
+   "facing": 1,
+   "lines": [
+    "Rương của ta khóa ba lớp. Đồ, tiền, hồng ngọc gửi ở đây thì nhân vật nào cùng tài khoản cũng lấy ra được.",
+    "Ở thành nào cũng có người của ta giữ rương, gửi nơi này lấy nơi kia."
+   ]
   }
  ],
  "monsters": [

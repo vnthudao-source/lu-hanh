@@ -26,7 +26,7 @@ const LH_STATIC={cau_hinh:'cau_hinh',gia_cuong:'cau_hinh',pham_chat:'pham_chat',
 const LH_NGOAI={cau_hoi:{id:'10EjfikAuPyc1t_aGDDsUlq0eewo0WUl5qOyXjkVG28M',tab:'CauHoi',cot:{id:'QuestionID',bo:'QuestID',thu_tu:'ThuTu',cau:'CauHoi',a:'A',b:'B',c:'C',d:'D',dap_an:'DapAn'}}};
 // Cột của các bảng người chơi (file "LH · Người chơi")
 const LH_COLS={
-  tai_khoan:['id','username','email','muoi','mat_khau','tao_luc','token','token_het_han','ma_khoi_phuc','ma_het_han','token_cu'],
+  tai_khoan:['id','username','email','muoi','mat_khau','tao_luc','token','token_het_han','ma_khoi_phuc','ma_het_han','token_cu','ruong'],
   nhan_vat:['id','tai_khoan','ten','ten_khoa','gioi_tinh','suc_manh','nhanh_nhen','suc_khoe','tri_tue','trang_thai','gia_danh_thue','nguoi_mua','luu','tao_luc','cap_nhat','cap','kinh_nghiem','gia_hong_ngoc'],
   cho:['id','loai','nguoi_ban','nhan_vat_ban','ten_nguoi_ban','vat_pham','gia','tien_nhan','trang_thai','nguoi_mua','tao_luc','ban_luc','da_nhan','hong_ngoc','hong_ngoc_nhan']
 };
@@ -340,6 +340,16 @@ function capNhatV1012(){
   const a=ghi('ban_do','id',['cap']),b=ghi('cau_hinh','khoa',['gia_tri'],r=>r.khoa==='cap_toi_da'),c=ghi('nhiem_vu','id',['npc','noi','npc_ten'],r=>/^tc-/.test(String(r.id)));
   const d=xoa('vat_pham',r=>/^khung-/.test(String(r.id))||(String(r.o)==='cos'&&String(r.loai)==='khung')),e=xoa('cua_hang',r=>/^khung-/.test(String(r.id)));
   xoaBoNhoDem();Logger.log('ban_do: '+a+' ô cấp · cau_hinh cap_toi_da: '+b+' · nhiem_vu Tìm con: '+c+' ô npc · xóa '+d+' khung ở vat_pham, '+e+' ở cua_hang');
+}
+// v10.21: sách bán đủ 5 phẩm chất (Thường, Đẹp, Hoàn hảo, Huyền thoại, Thần) ở Đạo sĩ làng và Pháp sư các thành; thêm Người giữ rương (rương chung tài khoản, cột ruong ở tab tai_khoan tự thêm).
+// kiemTra thêm các dòng cấu hình mới (sach_*, ma_*, thu_phuc_*, thu_cuoi_*, ruong_so_o). Hàm này ghi cột pham_chat của các dòng sách trong tab cua_hang. Chạy một lần sau khi dán Code.gs mới.
+function capNhatV1021(){
+  lhDuLieuBoSung_();
+  const file=LH_SHEETS[LH_STATIC.cua_hang];if(!file)return;const sh=SpreadsheetApp.openById(file).getSheetByName('cua_hang');if(!sh||sh.getLastRow()<2)return;
+  const v=sh.getDataRange().getValues(),h=v[0].map(String),cs=h.indexOf('cua_hang'),ci=h.indexOf('id'),cq=h.indexOf('pham_chat');if(cs<0||ci<0||cq<0)return;
+  const def=new Map((LH_DEFAULT.cua_hang||[]).filter(r=>/^book-/.test(String(r.id))).map(r=>[r.cua_hang+'|'+r.id,r.pham_chat]));let n=0;
+  for(let i=1;i<v.length;i++){const q=def.get(v[i][cs]+'|'+v[i][ci]);if(q===undefined)continue;if(String(v[i][cq])!==String(q)){sh.getRange(i+1,cq+1).setValue(q);n++;}}
+  xoaBoNhoDem();Logger.log('cua_hang: sách bán đủ 5 phẩm chất ở '+n+' dòng');
 }
 // v10.20: bảng cường hóa mới: lên +1…+6 chắc chắn (100%), +7…+9 còn 50%, +10…+15 giảm dần 44 · 38 · 33 · 27 · 21 · 15%.
 // Chỉ ghi cột ti_le của tab gia_cuong (giữ phí hồng ngọc và mức rớt cấp). Chạy một lần sau khi dán Code.gs mới.

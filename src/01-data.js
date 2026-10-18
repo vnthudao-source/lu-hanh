@@ -98,6 +98,30 @@ cau_hinh:[
  {khoa:'cap_thien_dinh',gia_tri:400,ghi_chu:'v10.19 · Cấp vào Thiên Đình (boss cuối Hắc Thiên Ma): chỉ người chơi cấp tối đa. Từ cấp 290 luyện ở Phú Xuân'},
  {khoa:'uy_luc_sat_thuong',gia_tri:100,ghi_chu:'v10.19 · % uy lực tính vào sát thương (100 = đủ)'},
  {khoa:'uy_luc_mau',gia_tri:100,ghi_chu:'v10.19 · % uy lực tính vào máu tối đa (100 = đủ)'},
+ // v10.21: sách theo bậc thành (Thanh Mộc · Cổ Loa · Thăng Long · Hoa Lư · Phú Xuân) và phẩm chất (Thường · Đẹp · Hoàn hảo · Huyền thoại · Thần)
+ {khoa:'sach_bac_cap',gia_tri:'0,70,170,235,290',ghi_chu:'v10.21 · Cấp thành của 5 bậc sách: sách bán ở thành cấp này trở lên thuộc bậc đó (Thanh Mộc, Cổ Loa, Thăng Long, Hoa Lư, Phú Xuân)'},
+ {khoa:'sach_chi_so_bac',gia_tri:'3,8,15,25,40',ghi_chu:'v10.21 · Điểm cộng vào chỉ số của sách Thường theo bậc (Mộc chia đôi cho Sức khỏe và Trí tuệ)'},
+ {khoa:'sach_menh_lenh_bac',gia_tri:'5,10,15,20,20',ghi_chu:'v10.21 · Sách Ma công: điểm Mệnh lệnh cộng theo bậc (sách Thường)'},
+ {khoa:'sach_moi_cap_bac',gia_tri:'0.5,1,1.5,2,3',ghi_chu:'v10.21 · Mỗi cấp luyện sách cộng thêm chừng này điểm, theo bậc (làm tròn)'},
+ {khoa:'sach_pham_chat_he_so',gia_tri:'1,1.3,1.7,2.3,3',ghi_chu:'v10.21 · Điểm cộng của sách nhân theo phẩm chất (Thường, Đẹp, Hoàn hảo, Huyền thoại, Thần)'},
+ {khoa:'sach_hieu_ung_bac',gia_tri:'0.4,0.6,0.8,1,1.2',ghi_chu:'v10.21 · Độ mạnh hiệu ứng sách theo bậc (nhân với số gốc: Hỏa % sát thương, Thủy mana/giây, Thổ % phản đòn, Kim % giảm sát thương, Mộc máu/giây, tỉ lệ Lôi / Phong / Băng / Ánh sáng / Ma công)'},
+ {khoa:'sach_hieu_ung_pham_chat',gia_tri:'1,1.15,1.3,1.5,1.8',ghi_chu:'v10.21 · Độ mạnh hiệu ứng sách nhân theo phẩm chất'},
+ {khoa:'sach_gia_pham_chat',gia_tri:'1,5,20,100,400',ghi_chu:'v10.21 · Giá sách (tiền) nhân theo phẩm chất'},
+ {khoa:'sach_hong_ngoc_pham_chat',gia_tri:'0,0,0,20,100',ghi_chu:'v10.21 · Sách Huyền thoại, Thần: thêm giá hồng ngọc (nhân với hệ số bậc ở dòng dưới)'},
+ {khoa:'sach_hong_ngoc_bac',gia_tri:'1,2,4,7,10',ghi_chu:'v10.21 · Hệ số giá hồng ngọc theo bậc (Thần Phú Xuân = 100 × 10 = 1.000 hồng ngọc)'},
+ {khoa:'ma_so_quai_bac',gia_tri:'1,2,2,3,3',ghi_chu:'v10.21 · Sách Ma công: số quái thu phục tối đa theo bậc'},
+ {khoa:'ma_so_quai_pham_chat',gia_tri:'0,0,0,1,1',ghi_chu:'v10.21 · Sách Ma công Huyền thoại, Thần: thêm chừng này quái'},
+ {khoa:'ma_boss_bac',gia_tri:'0,0,0.05,0.1,0.2',ghi_chu:'v10.21 · Sách Ma công: tỉ lệ thu phục trùm vùng = tỉ lệ thường × số này theo bậc (0 = không thu phục được trùm). Trùm cuối, trùm thế giới không thu phục được'},
+ {khoa:'ma_boss_sat_thuong',gia_tri:0.3,ghi_chu:'v10.21 · Trùm thu phục: sát thương nhân thêm số này (sau thu_phuc_sat_thuong)'},
+ {khoa:'thu_phuc_tri_tue',gia_tri:'0,60,150,300,600',ghi_chu:'v10.21 · Mốc Trí tuệ quyết định thời gian giữ quái thu phục (ứng với dòng thu_phuc_phut)'},
+ {khoa:'thu_phuc_phut',gia_tri:'1,10,60,600,0',ghi_chu:'v10.21 · Số phút quái thu phục ở lại theo từng mốc Trí tuệ (0 = vĩnh viễn). Trùm thu phục giảm một mốc'},
+ // v10.21: thú cưỡi càng cao cấp càng mạnh và càng cần nhiều Mệnh lệnh
+ {khoa:'thu_cuoi_menh_lenh_pham_chat',gia_tri:'0,5,15,30,60',ghi_chu:'v10.21 · Mệnh lệnh cần thêm theo phẩm chất thú (Thường, Đẹp, Hoàn hảo, Huyền thoại, Thần)'},
+ {khoa:'thu_cuoi_menh_lenh_moi_cap',gia_tri:1,ghi_chu:'v10.21 · Mỗi cấp gia cường thú cưỡi cần thêm chừng này Mệnh lệnh'},
+ {khoa:'thu_cuoi_cap_bo_huyen_thoai',gia_tri:250,ghi_chu:'v10.21 · Thú cưỡi trong bộ Huyền thoại (không bán ở cửa hàng): tính như thú bán ở thành cấp này'},
+ {khoa:'thu_cuoi_cap_bo_than',gia_tri:330,ghi_chu:'v10.21 · Thú cưỡi Thần (bộ Thần, ngựa sắt…): tính như thú bán ở thành cấp này'},
+ // v10.21: rương đồ chung của tài khoản (Người giữ rương ở làng và các thành)
+ {khoa:'ruong_so_o',gia_tri:60,ghi_chu:'v10.21 · Số ô đồ trong rương chung của mỗi tài khoản'},
  {khoa:'link_cho_phien',gia_tri:'https://ikynagame.blogspot.com/p/cho-phien.html',ghi_chu:'Địa chỉ trang Chợ phiên (mua bán giữa người chơi, nhân vật đi theo)'}
 ],
 // cap = cấp hiện tại; ti_le = % thành công lên cấp kế; thất bại: cấp về ngẫu nhiên từ that_bai_tu đến that_bai_den (để trống = giữ nguyên)
@@ -162,7 +186,7 @@ vu_khi:[
 cua_hang:[
  ...['sword-iron','sword-steel','shield-wood','shield-iron','staff-jade','bow-hunt','spear-iron','crossbow-war','saber-iron','mace-iron','hat-iron','armor-leather','armor-iron','pants-guard','gloves-leather','shoes-leather','shoes-iron'].map((id,i)=>({cua_hang:'smith',id,pham_chat:'n,g',gia:'',thu_tu:i+1,bac:0})),
  ...['mount','mount-brown','mount-black','mount-white','mount-tiger','mount-elephant'].map((id,i)=>({cua_hang:'trainer',id,pham_chat:'n',gia:'',thu_tu:i+1,bac:0})),
- ...['book-fire','book-water','book-earth','book-metal','book-wood','book-loi','book-phong','book-bang','book-ma','book-sang'].map((id,i)=>({cua_hang:'wizard',id,pham_chat:'n',gia:'',thu_tu:i+1,bac:0}))
+ ...['book-fire','book-water','book-earth','book-metal','book-wood','book-loi','book-phong','book-bang','book-ma','book-sang'].map((id,i)=>({cua_hang:'wizard',id,pham_chat:'n,g,p,l,m',gia:'',thu_tu:i+1,bac:0}))
 ],
 // Gói nạp (v10.6): NPC Nạp thẻ ở thành trì hiện gói, sinh mã QR chuyển khoản (VietQR). Hồng ngọc cộng tay bằng hàm napHongNgoc trong Apps Script sau khi nhận tiền.
 goi_nap:[

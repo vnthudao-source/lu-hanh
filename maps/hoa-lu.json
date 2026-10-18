@@ -639,6 +639,18 @@
    ]
   },
   {
+   "id": "giu-ruong-hoa-lu",
+   "role": "giu-ruong",
+   "name": "Người giữ rương",
+   "act": "turn",
+   "x": 28,
+   "y": 12,
+   "panel": "chest",
+   "lines": [
+    "Rương cố đô: một tài khoản một rương, nhân vật nào cũng mở được."
+   ]
+  },
+  {
    "id": "tre-con-hoa-lu-1",
    "role": "tre-con",
    "name": "Bé Lau",

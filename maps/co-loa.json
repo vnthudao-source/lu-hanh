@@ -548,6 +548,18 @@
    ]
   },
   {
+   "id": "giu-ruong-co-loa",
+   "role": "giu-ruong",
+   "name": "Người giữ rương",
+   "act": "turn",
+   "x": 28,
+   "y": 21,
+   "panel": "chest",
+   "lines": [
+    "Rương Cổ Loa thông với rương mọi thành: gửi ở đây, nhân vật khác lấy ở đâu cũng được."
+   ]
+  },
+  {
    "id": "tre-con-co-loa-1",
    "role": "tre-con",
    "name": "Cu Tí",

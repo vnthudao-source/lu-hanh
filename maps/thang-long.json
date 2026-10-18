@@ -609,6 +609,18 @@
    "lines": [
     "Ngân khố kinh thành đổi hồng ngọc cho khách. Chọn gói, quét mã là xong."
    ]
+  },
+  {
+   "id": "giu-ruong-thang-long",
+   "role": "giu-ruong",
+   "name": "Người giữ rương",
+   "act": "turn",
+   "x": 24,
+   "y": 12,
+   "panel": "chest",
+   "lines": [
+    "Rương kinh thành khóa đồng, gửi đồ, tiền, hồng ngọc cho nhân vật khác cùng tài khoản."
+   ]
   }
  ],
  "monsters": [
