@@ -131,7 +131,7 @@ const LH_BOSS=(()=>{
     if(!st.fl){for(let i=N;i>=1;i--){const [x,y,r]=pts[i];E(c,x+1,y+r*.5,r*.85,r*.42,B);if(i%2)L(c,[x-r*.6,y+r*.45,x+r*.6,y+r*.45],shade(B,-.25),.9);}
       for(let i=1;i<N;i+=1){const [x,y,r]=pts[i];c.strokeStyle=al(shade(A,.35),.6);c.lineWidth=.8;c.beginPath();c.arc(x,y-r*.25,r*.45,PI*1.1,PI*1.9);c.stroke();}}
     // vây lưng
-    for(let i=2;i<N-2;i+=2){const [x,y,r]=pts[i];P(c,[x+3,y-r*.8,x-2,y-r-7*(1-i/N)-3,x-6,y-r*.7],fc(st,X));}
+    const fk=P0.finK||1;for(let i=2;i<N-2;i+=2){const [x,y,r]=pts[i];P(c,[x+3*fk,y-r*.8,x-2*fk,y-r-(7*(1-i/N)+3)*fk,x-6*fk,y-r*.7],fc(st,P0.fin||X));}
     // đuôi: chùm lông lửa
     {const [x,y,r]=pts[N];for(let k=0;k<5;k++){const a=PI*.75+k*.2+Math.sin(t*3+k)*.12;F(c,[x,y,x+Math.cos(a)*14,y+Math.sin(a)*14-4,x+Math.cos(a)*22,y+Math.sin(a)*22],fc(st,k%2?X:P0.mane||X));}}
     legAt(16,0,false);legAt(3,PI,false);
@@ -156,6 +156,7 @@ const LH_BOSS=(()=>{
     // ngọc
     if(P0.pearl){const [x,y]=pts[3];c.save();glow(c,P0.pearl,16);E(c,x+16,y+16+Math.sin(t*2)*3,5,5,P0.pearl);c.restore();E(c,x+14.5,y+14.5+Math.sin(t*2)*3,1.6,1.6,'#ffffff');}
     if(P0.fire){for(let i=4;i<N-6;i+=5){const [x,y,r]=pts[i];flames(c,t+i*.13,x,y-r,.7,['#ff6020','#ffd060'],2);}}
+    if(P0.drip){c.save();c.fillStyle=P0.drip;for(let i=0;i<7;i++){const ph=(t*.7+hr(i+60))%1,[x,y,r]=pts[3+i*4];c.globalAlpha=1-ph;c.beginPath();c.ellipse(x,y+r+ph*40,1.4,2.4,0,0,PI2);c.fill();}c.restore();}
     if(P0.breath&&open){c.save();for(let k=0;k<9;k++){const u=k/9;c.globalAlpha=.75*(1-u);glow(c,P0.breath,12);E(c,hx+34+u*70,hy+8+Math.sin(t*20+k)*3+u*10,5+u*12,4+u*8,P0.breath);}c.restore();}
   }
   /* ================= CHIM THẦN (lớp lông, cánh lớn, đuôi dài, mào, móng) ================= */
@@ -359,7 +360,7 @@ const LH_BOSS=(()=>{
     'cuu-vi-ho':H(fox,{c:['#fff0e8','#d8b0a0','#ffffff','#ff4080'],eye:'#ff2080',tipGlow:'#ff60a0',fire:'#ff60b0',marks:'#e02060'},1.05),
     'nguyet-than':H(warlord,{c:['#eef0ff','#a8b0d8','#ffffff','#ffe070'],skin:'#fff4ec',eye:'#4060c0',helm:'tiara',weapon:'staff',moon:1,wcol:'#fff0b0',wglow:'#fff4c0',fem:1,robe:1,hair:'#1a1430',cape:'#c8d0ff',aura:'#fff4c0',fx:'moon'}),
     'hac-de':H(warlord,{c:['#1a1a2a','#0a0a14','#5a5a7a','#ffd040'],skin:'#c8b090',eye:'#ff2020',eyeGlow:1,helm:'mian',weapon:'sword',wcol:'#e8e0c0',wglow:'#ffd040',cape:'#6a0a0a',robe:1,beard:'#0a0a0a',emblem:'dragon',aura:'#ffd040',bulk:1.2}),
-    'hac-thien-ma':H(dragon,{c:['#2a1040','#0a0414','#7a4aa0','#ff2060'],eye:'#ff2060',mane:'#ff2060',wing:1,breath:'#c040ff',horn:'#0a0a0a',aura:'#ff2060',thick:13},1.1)
+    'hac-thien-ma-cu':H(dragon,{c:['#2a1040','#0a0414','#7a4aa0','#ff2060'],eye:'#ff2060',mane:'#ff2060',wing:1,breath:'#c040ff',horn:'#0a0a0a',aura:'#ff2060',thick:13},1.1)
   };
   /* ================= THÚ CƯỠI MỚI ================= */
   // Phượng hoàng lửa: chim cam đỏ, đuôi dài, toàn thân bốc lửa
@@ -433,5 +434,7 @@ const LH_BOSS=(()=>{
     roundRectFill(c,-8,-34,18,6,2,'#6b3a24');L(c,[-8,-31,10,-31],G,1);}
   function roundRectFill(c,x,y,w,h,r,col){c.fillStyle=col;c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.fill();}
   B.mount={phuong:phoenix,cuuvi:nineTail,rua:blackTortoise,wings:pegasusWings,rong:dragonMount,kylan:qilin};
+  // v10.36: bộ bút dùng chung cho src/04-boss-cao.js (quái, boss từ Thiên Đình trở lên); top[mã] = chiều cao hình để đặt tên, thanh máu
+  B.kit={E,P,L,S,F,lg,rg,glow,noGlow,al,shade,fc,hr,aura,flames,bolt,swirl,feather,curve,warlord,dragon,serpent,fishKing,helm};B.top={};
   return B;
 })();

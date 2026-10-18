@@ -742,12 +742,13 @@ window.startGame=(session)=>{
       c.strokeStyle='#d8c890';c.lineWidth=2;for(const s of [-1,1]){c.beginPath();c.moveTo(68,-42);c.quadraticCurveTo(92,-42+s*10+sw,106,-32+s*18-sw);c.stroke();}
     }
     c.restore();
+    const MT=Math.max(M.h,(LH_BOSS.top||{})[m.type]||0); // v10.36: tên, thanh máu nằm trên đỉnh hình vẽ
     if(!m.dead&&time<m.frozenUntil){ctx.save();ctx.globalAlpha=.55;roundRect(ctx,m.x-M.r*1.35,m.y-M.h-8,M.r*2.7,M.h+12,8,'#cdeeff');ctx.globalAlpha=.9;ctx.strokeStyle='#f2fbff';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(m.x-M.r,m.y-M.h);ctx.lineTo(m.x-M.r*.4,m.y-M.h*.5);ctx.lineTo(m.x+M.r*.2,m.y-M.h*.7);ctx.moveTo(m.x+M.r*.6,m.y-4);ctx.lineTo(m.x+M.r,m.y-M.h*.4);ctx.stroke();ctx.restore();}
     if(!m.dead&&time<m.slowUntil){ctx.save();ctx.strokeStyle=EL.wind.color;ctx.lineWidth=2;ctx.globalAlpha=.7;for(let i=0;i<2;i++){const a=time*4+i*Math.PI;ctx.beginPath();ctx.ellipse(m.x,m.y-6-i*12,M.r*1.2,M.r*.35,0,a,a+2.2);ctx.stroke();}ctx.restore();}
-    if(!m.dead&&time<m.fearUntil){ctx.save();ctx.font='700 18px system-ui';ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle='#3a2a10';const yy=m.y-M.h-24+Math.sin(time*12)*2;ctx.strokeText('!',m.x,yy);ctx.fillStyle=EL.light.color;ctx.fillText('!',m.x,yy);ctx.restore();}
-    if(!m.dead&&time<m.stunUntil){ctx.fillStyle='#ffe69a';for(let i=0;i<3;i++){const a=time*5+i*2.09;ctx.beginPath();ctx.arc(m.x+Math.cos(a)*14,m.y-M.h-10+Math.sin(a)*4,2.5,0,PI2);ctx.fill();}}
-    if(!m.dead&&M.boss)label(M.name,m.x,m.y-M.h-28,M.boss===2?'#ff9ad0':'#ffc58a');
-    if(!m.dead&&(m.hp<m.max||m.aggro>time)){const bw=M.boss?84:40,by=m.y-M.h-16;roundRect(ctx,m.x-bw/2,by,bw,5,2,'#0a120ecc');roundRect(ctx,m.x-bw/2,by,bw*Math.max(0,m.hp/m.max),5,2,'#e0625a');}
+    if(!m.dead&&time<m.fearUntil){ctx.save();ctx.font='700 18px system-ui';ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle='#3a2a10';const yy=m.y-MT-24+Math.sin(time*12)*2;ctx.strokeText('!',m.x,yy);ctx.fillStyle=EL.light.color;ctx.fillText('!',m.x,yy);ctx.restore();}
+    if(!m.dead&&time<m.stunUntil){ctx.fillStyle='#ffe69a';for(let i=0;i<3;i++){const a=time*5+i*2.09;ctx.beginPath();ctx.arc(m.x+Math.cos(a)*14,m.y-MT-10+Math.sin(a)*4,2.5,0,PI2);ctx.fill();}}
+    if(!m.dead&&M.boss)label(M.name,m.x,m.y-MT-28,M.boss===2?'#ff9ad0':'#ffc58a');
+    if(!m.dead&&(m.hp<m.max||m.aggro>time)){const bw=M.boss?84:40,by=m.y-MT-16;roundRect(ctx,m.x-bw/2,by,bw,5,2,'#0a120ecc');roundRect(ctx,m.x-bw/2,by,bw*Math.max(0,m.hp/m.max),5,2,'#e0625a');}
   }
   // Quái thu phục: vẽ như quái thường + vòng Ma công dưới chân, tên màu tím
   function drawPet(e){const M=MON[e.type];ctx.save();ctx.globalAlpha=.5+Math.sin(time*3)*.15;ctx.strokeStyle=EL.demon.color;ctx.lineWidth=2.5;ctx.beginPath();ctx.ellipse(e.x,e.y+3,M.r*1.3,M.r*.45,0,0,PI2);ctx.stroke();ctx.restore();if(M.boss){ctx.save();ctx.translate(e.x,e.y);ctx.scale(.65,.65);ctx.translate(-e.x,-e.y);drawMonster(e);ctx.restore();}else drawMonster(e);if(safe)label(M.name,e.x,e.y-M.h*(M.boss?.65:1)-12,EL.demon.glow);} // v10.21: trùm thu phục vẽ nhỏ lại
