@@ -199,6 +199,11 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
 
+## Bản 10.23 — giá sách theo thành
+
+- Giá sách = giá ở làng Thanh Mộc × `sach_gia_nhan` (100) × `sach_gia_moi_thanh` (5) mũ bậc thành × phẩm chất (1 · 5 · 20). Mỗi thành kế tiếp đắt gấp 5: Thanh Mộc ×1, Cổ Loa ×5, Thăng Long ×25, Hoa Lư ×125, Phú Xuân ×625. Ví dụ sách Hỏa Thường: 4 · 20 · 100 · 500 · 2.500 vàng. Cột `gia` của dòng sách ở tab `cua_hang` không còn dùng.
+- Sheet: chạy `kiemTra` (thêm dòng `sach_gia_moi_thanh`).
+
 ## Bản 10.22 — che Blogspot, chặn phóng to, người chơi ảo, chiến thuật trùm, sách rơi từ trùm
 
 - **Không còn thấy giao diện Blogspot**: đoạn nhúng mới phủ nền tối + chữ “Lữ Hành” ngay khi trình duyệt đọc tới, màn hình chờ hiện đè lên. Muốn che hoàn toàn từ khung hình đầu tiên: dán `blogspot/dau-trang-blogspot.html` một lần vào Chủ đề → Chỉnh sửa HTML, ngay sau `<head>` (chỉ áp dụng cho trang game).

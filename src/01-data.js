@@ -123,6 +123,7 @@ cau_hinh:[
  // v10.21: rương đồ chung của tài khoản (Người giữ rương ở làng và các thành)
  {khoa:'ruong_so_o',gia_tri:60,ghi_chu:'v10.21 · Số ô đồ trong rương chung của mỗi tài khoản'},
  {khoa:'sach_gia_nhan',gia_tri:100,ghi_chu:'v10.22 · Giá mua sách nhân số này (so với bản 10.21)'},
+ {khoa:'sach_gia_moi_thanh',gia_tri:5,ghi_chu:'v10.23 · Giá sách ở mỗi thành kế tiếp gấp chừng này lần thành trước (Thanh Mộc ×1, Cổ Loa ×5, Thăng Long ×25, Hoa Lư ×125, Phú Xuân ×625). Cột gia của dòng sách ở tab cua_hang không còn dùng'},
  {khoa:'sach_roi_huyen_thoai_phan_van',gia_tri:300,ghi_chu:'v10.22 · Sách Huyền thoại chỉ rơi từ trùm: phần vạn mỗi lần hạ trùm vùng (300 = 3%; trùm thế giới ×3). Cửa hàng chỉ bán tới Hoàn hảo'},
  {khoa:'sach_roi_than_phan_van',gia_tri:50,ghi_chu:'v10.22 · Sách Thần chỉ rơi từ trùm: phần vạn mỗi lần hạ trùm vùng (50 = 0,5%; trùm thế giới ×3)'},
  {khoa:'boss_nhan_sat_thuong',gia_tri:1.2,ghi_chu:'v10.22 · Sát thương trùm vùng nhân thêm số này (1.2 = +20%). Hắc Đế, Hắc Thiên Ma giữ nguyên (đã cân cho mốc 1 năm)'},
