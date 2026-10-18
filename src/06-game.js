@@ -1094,6 +1094,7 @@ window.startGame=(session)=>{
     label(on.map(k=>DBF[k].name+' '+Math.ceil(hero.dbf[k]-time)+'s').join(' · '),hero.x,hero.y-(78+seatH()),'#ffd0c0');
   }
   function hurtHero(dmg,m){
+    if(tut&&tut.oneHit&&tut.oneHit===m&&!hero.dead){tut.oneHit=null;tutKO(m);return;}
     if(hero.dead||time<hero.invuln)return;
     const M=MON[m.type],S=HD.tot;
     if(Math.random()*100<S.dodge){floater(hero.x,hero.y-66-seatH(),'Né','#cfe8ff',15);if(HD.fx.counter)hero.counter=true;hero.invuln=time+.2;return;}
@@ -1123,7 +1124,7 @@ window.startGame=(session)=>{
     if(HD.fx.revive&&time>=hero.reviveAt){player.hp=Math.round(HD.tot.hp*HD.fx.revive/100);hero.reviveAt=time+300;hero.invuln=time+2;LH_Audio.play('heal');message(svg('heart')+'Hồi sinh tại chỗ');burst(hero.x,hero.y-24,'#ffe0f0',30,200);return;}
     player.hp=0;hero.dead=time+2.2;hero.attack=null;hero.mountAct=null;route=[];LH_Audio.play('die');message(svg('heart')+'Bạn đã gục · về làng');
     // mất toàn bộ đồ đang mặc (cau_hinh chet_mat_do): máy chủ xác nhận, cấp / sách / lính / túi giữ nguyên
-    op({t:'die'}).then(r=>{refreshHD();if(r.lost&&r.lost.length){window.GameUI?.refresh();setTimeout(()=>message(svg('close')+`Gục ngã: mất ${r.lost.length} món đang mặc (${r.lost.slice(0,3).map(it=>Player.nameOf(it)).join(', ')}${r.lost.length>3?'…':''})`),2600);}},()=>{});
+    const tk=!!(tut&&tut.koed);op(tk?{t:'die',tut:1}:{t:'die'}).then(r=>{refreshHD();if(r.lost&&r.lost.length){window.GameUI?.refresh();setTimeout(()=>message(svg('close')+`Gục ngã: mất ${r.lost.length} món đang mặc (${r.lost.slice(0,3).map(it=>Player.nameOf(it)).join(', ')}${r.lost.length>3?'…':''})`),2600);}},()=>{});
   }
   /* ---------- Đổi bản đồ: lưu, tải gói dữ liệu bản đồ (lần đầu), dựng lại nền, quái, dân làng ---------- */
   let portalArmed=!World.portalAt(hero.x,hero.y),prefAt=0;
@@ -1575,6 +1576,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     tutSay(crew[1],'Ơ, tân thủ kìa!',2.5);setTimeout(()=>{if(tut)tutSay(crew[3],'Chào người mới!',2.5);},700);
   }
   function tutUpdate(dt){
+    if(tut.part===2)return tut2Update(dt);
     const U=tut,[beo,...rest]=U.crew,X=player.gender==='f'?'Cô':'Chú',x=X.toLowerCase(),age=time-U.t;
     const behind=(e,k)=>({x:beo.x-beo.facing*(50+k*38),y:beo.y+(k%2?-22:22)});
     if(U.ph==='meet'){
@@ -1635,12 +1637,80 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     if(U.ph==='lead'){
       const e=U.vy,sp=U.home||(U.home=safeSpot(World.spawn.x,World.spawn.y,3*T)||World.spawn);
       if(tutWalk(e,sp,120,dt)||age>40){e.tut=false;e.town=true;e.home={x:e.x,y:e.y,r:5*T};e.wander=null;const i=monsters.indexOf(U.lion);if(i>=0&&U.lion.dead)monsters.splice(i,1);
-        for(const b of U.crew)if(b.dead&&b===beo)tutBeoBack(b);else if(b.tut&&!b.dead){b.tut=false;b.town=true;b.home={x:b.x,y:b.y,r:4*T};}tut=null;message(svg('talk')+'Gặp gỡ dân làng Thanh Mộc để nhận việc',4);return;}
+        if(beo.dead)tutBeoBack(beo);beo.tut=false;beo.town=true;tut2Start('village');return;}
       if(!busy()&&!hero.dead&&moveVector().len<.05&&time>(U.routeAt||0)&&Math.hypot(hero.x-e.x,hero.y-e.y)>90){U.routeAt=time+.5;const p=World.findPath(hero,{x:e.x-(e.facing*50),y:e.y});if(p)route=p;}
     }
   }
   function tutBeoBack(beo){Object.assign(beo,{dead:0,hp:Math.round(beo.max*.3),x:World.spawn.x+70,y:World.spawn.y+40,tut:false,town:true,home:{x:World.spawn.x+70,y:World.spawn.y+40,r:3*T},wander:null,tp:null});if(!World.canStand(beo.x,beo.y)){beo.x=World.spawn.x;beo.y=World.spawn.y;beo.home.x=beo.x;beo.home.y=beo.y;}tutSay(beo,'Ui da… sư tử ác quá!',4);}
   function tutDone(){seen.add('tut');checkpoint();if(tut&&tut.vy)tutSay(tut.vy,'Đi thôi, mọi người đang chờ!',3);}
+  /* ---------- v10.28: Hướng dẫn tân thủ phần 2 — vào làng gặp Lý trưởng nhận đồ, dẫn tân binh đi bắt Ngư Tinh, bị hạ một đòn, tỉnh dậy ở làng ---------- */
+  function tut2On(){const v=CFG.huong_dan_tan_thu;return World.id==='thanh-moc'&&!(v===0||v==='0')&&seen.has('tut')&&!seen.has('tut2');}
+  function tut2Crew(){
+    return [['Hiệp khách Vân','f'],['Gầy Đệ','m'],['Tí Còi','m'],['Na Lém','f']].map(([n,g],i)=>{let e=bots.find(b=>b.name===n&&b.key.startsWith('bot3'));
+      if(!e){const p=safeSpot(hero.x,hero.y,3*T)||{x:hero.x+40,y:hero.y};e=tutBot(10+i,n,g,p.x,p.y);bots.push(e);}
+      Object.assign(e,{tut:true,town:false,tp:null,wander:null,dead:0});if(e.hp<=0)e.hp=e.max;return e;});
+  }
+  function tut2Start(ph){
+    const crew=tut2Crew();
+    tut={part:2,ph,t:time,crew,said:{},elder:World.npcs.find(n=>n.id==='elder'),smith:World.npcs.find(n=>n.id==='smith'),fish:monsters.find(m=>m.type==='ngu-tinh'),goal:null};
+    if(ph==='hunt')tut2Hunt();
+  }
+  function tut2Resume(){if(!(player.flags&&player.flags.tutGift))tut2Start('village');else if(!player.flags.tutDied)tut2Start('hunt');else{seen.add('tut2');checkpoint();}}
+  function tut2Hunt(){const U=tut;U.ph='hunt';U.t=time;U.said={};U.goal=U.fish;const v=U.crew[0];v.tut=false;v.town=true;v.home={x:v.x,y:v.y,r:4*T};tutSay(v,'Lên đường bình an nhé!',2.6);
+    message(svg('pin')+'Dẫn ba tân binh ra phía đông nam làng tìm Ngư Tinh',4.5);}
+  function tut2Elder(n){
+    keys.clear();joystick={x:0,y:0};holdAttack=false;route=[];targetNPC=null;hero.attack=null;tut.ph='elderTalk';
+    dialogNPC={id:'tut-elder',name:n.name,btn:'Nhận đồ',tut:true,lines:['Làng tặng đại hiệp bộ quần áo, hãy mở thùng đồ để mặc đồ.','Nhân tiện hãy đưa ae tân binh kia ra ngoài thành bắt «Chung Tình»… à nhầm!!! Ngư Tình… à nhầm. Ngư Tinh giúp làng nhé, nó ở phía đông nam của làng!'],
+      onEnd:()=>{op({t:'tutGift'}).then(r=>{LH_Audio.play('pickup');message(svg('bag')+'Nhận '+(r.items||[]).map(it=>Player.nameOf(it)).join(', ')+' · mở Túi đồ (B) để mặc',5);},()=>{});if(tut&&tut.part===2)tut2Hunt();}};
+    page=0;dialogEl.hidden=false;showLine();
+  }
+  // một đòn của Ngư Tinh: người chơi gục ngay, không né, không đỡ
+  function tutKO(m){tut.koed=true;const d=Math.max(9999,Math.round(HD.tot.hp*40));floater(hero.x,hero.y-70-seatH(),'x2 -'+d,'#ff4a3a',24);burst(hero.x,hero.y-24,'#ff7a6a',44,280);shake(16);LH_Audio.play('hurt');hero.invuln=0;die();window.GameUI?.refresh();}
+  function tut2Update(dt){
+    const U=tut,[van,...three]=U.crew,age=time-U.t;
+    const spot=k=>({x:hero.x-hero.facing*(60+(k%2)*34),y:hero.y+(k-1.5)*30});
+    const follow=(list,spd)=>list.forEach((e,k)=>{if(e.dead||!e.tut)return;const g=spot(k),d=Math.hypot(g.x-e.x,g.y-e.y);if(d>36)tutWalk(e,g,d>320?220:spd,dt);else{e.moving=false;e.facing=hero.x<e.x?-1:1;}});
+    const lines=(L,who,gap)=>{L.forEach((t,k)=>{if(!U.said['l'+k]&&age>.6+k*(gap||1.8)){U.said['l'+k]=1;tutSay(who[k%who.length],t,4);}});};
+    if(U.ph==='village'){
+      U.goal=U.elder;follow(U.crew,150);
+      lines(['Qua gặp Lý trưởng kìa bạn!','Bạn đánh cả sư tử thì kinh rồi!','Nhà tôi cũng có 1 con sư tử','Lão Lý trưởng dâm dê lắm'],U.crew);
+      if(age>12&&time>(U.nag||0)){U.nag=time+14;tutSay(van,'Qua gặp Lý trưởng kìa bạn!',3);}
+      return;
+    }
+    if(U.ph==='elderTalk'){if(!dialogNPC)tut2Hunt();return;}
+    if(U.ph==='hunt'){
+      const f=U.fish;follow(three,150);
+      if(!f||f.dead){seen.add('tut2');checkpoint();for(const e of three){e.tut=false;e.town=true;e.home={x:e.x,y:e.y,r:4*T};}tut=null;return;}
+      if(!U.said.out&&!World.isSafe(hero.x,hero.y)){U.said.out=1;tutSay(three[0],'Ngư Tinh ở đông nam đó!',3);tutSay(three[2],'Có đại hiệp đi cùng, sợ gì!',3);}
+      if(!hero.dead&&Math.hypot(hero.x-f.x,hero.y-f.y)<330&&!World.isSafe(hero.x,hero.y)){
+        U.ph='strike';U.t=time;U.oneHit=f;f.aggro=time+8;f.atk=null;f.cast=null;f.facing=hero.x<f.x?-1:1;f.leap={start:time,dur:.6,tx:hero.x+(f.x>hero.x?38:-38),ty:hero.y};
+        floater(f.x,f.y-MON[f.type].h-24,'Grààào!!','#7fd0ff',22);fx.push({kind:'ring',x:hero.x,y:hero.y,r0:10,r1:70,color:'#7fd0ff',age:0,life:.6,lw:4});
+        const cry=['Chạy đi tụi bay!','Ối zồi ôi! Méo ổn rồi!','Tao đã nghi nghi rồi!'];three.forEach((e,k)=>{tutSay(e,cry[k],3.6);e.runTo=safeSpot(World.spawn.x,World.spawn.y,5*T)||World.spawn;});
+      }
+      return;
+    }
+    if(U.ph==='strike'||U.ph==='dead'){
+      for(const e of three){if(!e.runTo)continue;if(tutWalk(e,e.runTo,185,dt))e.runTo=null;else if(time>(e.cryAt||0)){e.cryAt=time+2.4+Math.random()*1.4;if(time>(e.say?e.say.until:0))tutSay(e,['Cứu với!','Chạy mau!','Mẹ ơi!'][Math.floor(Math.random()*3)],1.5);}}
+      if(U.ph==='strike'){if(hero.dead){U.ph='dead';U.oneHit=null;U.koed=false;}else if(age>1.4&&U.oneHit)tutKO(U.oneHit);return;}
+      if(!hero.dead){U.ph='wake';U.t=time;U.said={};U.goal=null;
+        U.crew.forEach((e,k)=>{const a=-.6+k*.55,x=hero.x+Math.cos(a)*90,y=hero.y+Math.sin(a)*70,p=World.canStand(x,y)?{x,y}:safeSpot(hero.x,hero.y,2*T)||{x:hero.x+40,y:hero.y};Object.assign(e,{x:p.x,y:p.y,tut:true,town:false,dead:0,runTo:null,tp:null,moving:false,say:null,cryAt:time+99,facing:hero.x<p.x?-1:1});});
+        message(svg('close')+'Bạn bị Ngư Tinh hạ một đòn · mất hết đồ đạc',4.5);}
+      return;
+    }
+    if(U.ph==='wake'){
+      lines(['Tỉnh rồi à bạn!','Còn đúng mảnh vải che thân','Thấy tội ghê!','Hãy ra chỗ Thợ rèn ở đó có quần áo!'],[three[0],three[1],three[2],van]);
+      for(const e of U.crew)e.facing=hero.x<e.x?-1:1;
+      if(age>7.8&&!U.goal){U.goal=U.smith;message(svg('bag')+'Tới Thợ rèn mua quần áo mới',4);}
+      if((U.smith&&Math.hypot(hero.x-U.smith.x,hero.y-U.smith.y)<130)||age>150){seen.add('tut2');checkpoint();for(const e of U.crew){e.tut=false;e.town=true;e.home={x:e.x,y:e.y,r:4*T};e.wander=null;}tut=null;}
+    }
+  }
+  // mũi tên chỉ đường quanh nhân vật
+  function drawTutArrow(){
+    const g=tut&&tut.goal;if(!g||hero.dead||(g.dead))return;const dx=g.x-hero.x,dy=g.y-hero.y,d=Math.hypot(dx,dy);if(d<150)return;
+    const a=Math.atan2(dy,dx),r=64+Math.sin(time*5)*6,x=hero.x+Math.cos(a)*r,y=hero.y-22+Math.sin(a)*r*.75;
+    ctx.save();ctx.translate(x,y);ctx.rotate(a);ctx.globalAlpha=.92;ctx.fillStyle='#ffd54a';ctx.strokeStyle='#5a3a0a';ctx.lineWidth=2.5;
+    ctx.beginPath();ctx.moveTo(18,0);ctx.lineTo(-8,-13);ctx.lineTo(-2,0);ctx.lineTo(-8,13);ctx.closePath();ctx.stroke();ctx.fill();ctx.restore();
+  }
   // bóng thoại của người chơi ảo
   function drawSay(){
     const placed=[];
@@ -1655,6 +1725,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
   function nearby(){let best=null,bd=92;for(const n of World.npcs){const d=Math.hypot(n.x-hero.x,n.y-hero.y);if(d<bd){bd=d;best=n;}}return best;}
   function meet(n){
     route=[];targetNPC=null;
+    if(tut&&tut.part===2&&tut.ph==='village'&&n.id==='elder'){tut2Elder(n);return;}
     if(!seen.has(n.id)){keys.clear();joystick={x:0,y:0};holdAttack=false;dialogNPC=n;page=0;dialogEl.hidden=false;showLine();return;}
     window.GameUI?.openPanel(n);
   }
@@ -1710,7 +1781,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     World.bridges.forEach((B,i)=>{const sd=hero.x<B.x0*T?'w':hero.x>(B.x1+1)*T?'e':bridgeSide[i];if(sd!==bridgeSide[i]){const was=bridgeSide[i];bridgeSide[i]=sd;if(was)checkpoint();}});
     if(time-prefAt>1){prefAt=time;for(const P of World.portals)if(Math.hypot((P.x+.5)*T-hero.x,(P.y+.5)*T-hero.y)<T*9)World.prefetch(P.to);}
     {const P=World.portalAt(hero.x,hero.y);if(!P)portalArmed=true;else if(portalArmed&&!travelling&&!hero.dead){portalArmed=false;const need=Player.mapLevel(P.to);if((player.level||1)<need)message(svg('lock')+'Cần cấp '+need+' để vào '+(P.label||(LH_MAPS[P.to]&&LH_MAPS[P.to].name)||''));else{checkpoint();travel(P.to,P.tx,P.ty);}}}
-    updateNPCs(dt);updateProjectiles(dt);updateMonsters(dt);updateAllies(dt);updateBots(dt);botRunEvent();if(tutPending&&time>1.5&&!busy()){tutPending=false;if(tutOn())tutStart();}if(tut)tutUpdate(dt);updateDbf(dt);if(((time*4)|0)!==((time-dt)*4|0))evTick();updateStrikes();updateVillage(dt);updateEffects(dt);
+    updateNPCs(dt);updateProjectiles(dt);updateMonsters(dt);updateAllies(dt);updateBots(dt);botRunEvent();if(tutPending&&time>1.5&&!busy()){tutPending=false;if(tutOn())tutStart();else if(tut2On())tut2Resume();}if(tut)tutUpdate(dt);updateDbf(dt);if(((time*4)|0)!==((time-dt)*4|0))evTick();updateStrikes();updateVillage(dt);updateEffects(dt);
     const a=hero.attack;
     if(a){const p=(time-a.start)/a.dur;while(a.hitIdx<a.cycles&&p>=(a.hitIdx+a.hit)/a.cycles){resolveAttack(a,a.hitIdx);a.hitIdx++;}if(p>=1)hero.attack=null;}
     const ma=hero.mountAct;
@@ -1781,7 +1852,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
       else if(LH_ART.obj[o.kind])LH_ART.obj[o.kind](ctx,o,time);
       else if(o.kind==='tree')tree(o);else if(o.kind==='house')house(o);else if(o.kind==='banyan')banyan(o);else if(o.kind==='well')well(o);else if(o.kind==='fire')campfire(o);else if(o.role)drawNPC(o);else drawMonster(o);
     }
-    drawFX();drawLoot();drawNPCMarks();drawWellMarks();drawPortalMarks();drawSay();
+    drawFX();drawLoot();drawNPCMarks();drawWellMarks();drawPortalMarks();drawSay();drawTutArrow();
     ctx.restore();
     // trời riêng của bản đồ (cát bay, tuyết rơi, bóng tối trong hang có đuốc, pha lê sáng)
     const SK=World.def.sky&&LH_ART.sky[World.def.sky];if(SK)try{SK(ctx,{w:width,h:height,t:time,sc:scale,cam:camera,hx:(hero.x-camera.x)*scale,hy:(hero.y-24-camera.y)*scale,lights:World.lights,fires:World.fires,T})}catch(e){oops(e,'vẽ trời');}

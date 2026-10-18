@@ -199,6 +199,13 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
 
+## Bản 10.28 — hướng dẫn tân thủ phần 2 (Lý trưởng, Ngư Tinh)
+- Vào làng: nhóm người chơi ảo nói «Qua gặp Lý trưởng kìa bạn!», «Bạn đánh cả sư tử thì kinh rồi!», «Nhà tôi cũng có 1 con sư tử», «Lão Lý trưởng dâm dê lắm»; mũi tên vàng chỉ tới Lý trưởng.
+- Gặp Lý trưởng: lời thoại riêng, bấm «Nhận đồ» được Nón lá, Áo vải, Quần vải, Dép cỏ (lệnh máy chủ `tutGift`, chỉ một lần; cờ `flags.tutGift`).
+- Ba tân binh đi cùng, mũi tên chỉ về Ngư Tinh (đông nam). Lần đầu chạm mặt: Ngư Tinh lao tới hạ một đòn, cả nhóm chạy tán loạn («Chạy đi tụi bay!», «Ối zồi ôi! Méo ổn rồi!», «Tao đã nghi nghi rồi!»).
+- Gục lần này (`die` có `tut`): mất đồ đang mặc và mọi quần áo trong túi (chỉ giữ vũ khí tập). Tỉnh dậy ở làng, nhóm đứng cạnh nói «Tỉnh rồi à bạn!», «Còn đúng mảnh vải che thân», «Thấy tội ghê!», «Hãy ra chỗ Thợ rèn ở đó có quần áo!»; mũi tên chỉ Thợ rèn. Tới Thợ rèn là xong (dấu `tut2`).
+- Thoát giữa chừng: lần vào sau tiếp tục đúng chặng (chưa nhận đồ → gặp Lý trưởng; đã nhận đồ → đi tìm Ngư Tinh).
+
 ## Bản 10.27 — hướng dẫn tân thủ
 - Nhân vật mới (cấp 1, chưa gặp ai) vào Thanh Mộc: 4 người chơi ảo (Béo Ca, Gầy Đệ, Tí Còi, Na Lém) tới bắt chuyện; Béo Ca hỏi (Chú/Cô theo giới tính), nút duy nhất «Đi theo».
 - Béo Ca dắt qua cầu ra bìa rừng Đông Ngạn, nhân vật tự đi theo; sư tử lao ra vồ gục Béo Ca, ba người còn lại chạy tán loạn về làng («Chạy đi tụi bay!», «Ối zồi ôi! Méo ổn rồi!»).
