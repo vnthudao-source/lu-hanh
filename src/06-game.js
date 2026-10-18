@@ -788,6 +788,8 @@ window.startGame=(session)=>{
     let dmg=r.dmg;const f=atk.owner==='hero'&&!atk.abs?HD.fx:{};
     // v10.22: sách Hỏa đốt cháy quái (giữ chân trùm bỏ chạy, làm tan giáp băng, chặn tái sinh)
     if(atk.el==='fire'&&!atk.abs&&(atk.owner==='hero'||atk.owner==='merc')){m.scorch=time+3;const k=(HD.bef&&HD.bef.fire)||1;if(!(m.burn&&m.burn.until>time&&m.burn.dps>dmg*.04*k))m.burn={dps:Math.max(1,dmg*.04*k),until:time+3,color:'#ff8a3d'};}
+    // v10.33: sách Băng — Vỡ băng: đòn của nhân vật vào quái đang bị đóng băng thêm % sát thương (bang_vo_bang × bậc × phẩm chất)
+    if(atk.owner==='hero'&&!atk.abs&&HD.bfx&&HD.bfx.shatter&&m.frozenUntil>time){dmg=Math.round(dmg*(1+HD.bfx.shatter/100));r.tag=r.tag||'Vỡ băng';}
     const TAC=M.tac||[],melee=!atk.abs&&!atk.ranged,tip=(t,col)=>{if(time>(m.tipAt||0)){m.tipAt=time+1.2;const cc=center(m);floater(cc.x,cc.y-M.h*.5-26,t,col,12);}};
     if(TAC.length){
       if(TAC.includes('giap-bang')&&atk.owner!=='burn'){if(atk.el==='fire'&&!atk.abs){if(!(m.melt>time))tip('Giáp băng tan!','#ffb070');m.melt=time+5;}else if(!(m.melt>time)){dmg=Math.max(1,Math.round(dmg*.3));tip('Giáp băng','#a0e0ff');}}
@@ -1125,8 +1127,8 @@ window.startGame=(session)=>{
     if(HD.fx.manaShield&&d>0){const part=Math.min(Math.floor(player.mana),Math.round(d*HD.fx.manaShield/100));player.mana-=part;d-=part;}
     player.hp-=d;if(m.tut&&player.hp<1)player.hp=1;hero.lastHurt=time;hero.hurt=time;hero.invuln=time+.35;
     floater(hero.x,hero.y-66-seatH(),tag+'-'+d,'#ff8f86',15);shake(4);
-    // v10.14: Sức khỏe → tỉ lệ hồi đầy máu khi trúng đòn
-    if(player.hp>0&&S.fullHeal&&Math.random()*100<S.fullHeal){player.hp=S.hp;floater(hero.x,hero.y-84-seatH(),'+'+S.hp,'#9fe8a8',16,'heart');burst(hero.x,hero.y-30,'#9fe8a8',16,160);}
+    // v10.14: Sức khỏe → tỉ lệ hồi đầy máu khi trúng đòn · v10.33: mỗi lần hồi đầy phải chờ hoi_day_giay giây (cân bằng PvP)
+    if(player.hp>0&&S.fullHeal&&time>(hero.fullHealAt||-99)&&Math.random()*100<S.fullHeal){hero.fullHealAt=time+(Number(CFG.hoi_day_giay)||10);player.hp=S.hp;floater(hero.x,hero.y-84-seatH(),'+'+S.hp,'#9fe8a8',16,'heart');burst(hero.x,hero.y-30,'#9fe8a8',16,160);}
     if(S.reflect&&!m.dead){const c=center(m);hitMonster(m,{abs:dmg*S.reflect/100,owner:'reflect',color:EL.earth.glow},(m.x-hero.x)/(Math.hypot(m.x-hero.x,m.y-hero.y)||1),0);fx.push({kind:'bolt',x1:hero.x,y1:hero.y-22,x2:c.x,y2:c.y,color:EL.earth.color,age:0,life:.2});}
     const dx=hero.x-m.x,dy=hero.y-m.y,l=Math.hypot(dx,dy)||1;World.move(hero,dx/l*16,dy/l*16);
     if(HD.bfx&&HD.bfx.light&&!m.dead&&Math.random()*100<HD.bfx.light){m.fearUntil=time+(Number(CFG.sang_ms)||2500)/1000*(M.boss?.5:1);m.atk=null;m.leap=null;m.path=null;floater(m.x,m.y-M.h-20,'Hoảng sợ',EL.light.color,13);fx.push({kind:'ring',x:hero.x,y:hero.y-20,r0:10,r1:120,color:EL.light.color,age:0,life:.5,lw:5});burst(hero.x,hero.y-30,EL.light.glow,18,220);}

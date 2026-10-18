@@ -246,18 +246,22 @@ button.busy{opacity:.6;pointer-events:none}
 .mg.pet{color:#ffb8dc}
 .mg.pet svg{width:22px;height:22px}
 /* v8.3: căn lều chọn nhân vật */
-.portal-card.wide{width:min(940px,100%)}
+.portal-card.wide{width:min(720px,100%);padding:14px 16px;gap:8px}
+/* v10.33: phòng chọn nhân vật gọn: logo nhỏ, căn lều thấp, chỉ số 4 cột, nút Vào làng + Xoá cùng một hàng */
+.portal-card.wide .plogo{margin-bottom:2px}.portal-card.wide .plogo-img{max-height:54px;max-width:170px}.portal-card.wide .plogo b{font-size:24px}.portal-card.wide .plogo small{font-size:11px}
+.portal-card.wide #portalMsg{min-height:0}
 .phead .srv{margin-left:auto;margin-right:8px;font-size:11px;color:#9fe8a8;letter-spacing:.5px}
-.tent-wrap canvas{display:block;width:100%;height:300px;border-radius:14px;border:1px solid #ab956a66;background:#15202e;touch-action:manipulation}
-.tent-info{display:flex;flex-direction:column;gap:9px;padding:12px;border:1px solid var(--line);border-radius:14px;background:#0f2019cc}
-.ti-head{display:flex;align-items:baseline;gap:10px}.ti-head b{font:600 20px/1.2 Georgia,"Times New Roman",serif;color:#f6dc9c}.ti-head small{color:#9fe8a8;font-size:13px}.ti-head button{margin-left:auto}
-.ti-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:6px}
-.ti-del{display:flex;justify-content:flex-end;margin-top:6px}.ti-del button{font-size:12px;padding:5px 10px;color:#ffb0a0;border-color:#ff8a7a55;background:transparent}.ti-del button svg{width:14px;height:14px}
+.tent-wrap canvas{display:block;width:100%;height:220px;border-radius:14px;border:1px solid #ab956a66;background:#15202e;touch-action:manipulation}
+.tent-info{display:flex;flex-direction:column;gap:7px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:#0f2019cc}
+.ti-head{display:flex;align-items:baseline;gap:10px}.ti-head b{font:600 18px/1.2 Georgia,"Times New Roman",serif;color:#f6dc9c}.ti-head small{color:#9fe8a8;font-size:13px}.ti-head button{margin-left:auto}
+.ti-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.ti-act{display:flex;gap:8px;align-items:stretch}.ti-act .big-btn{flex:1;padding:9px 12px}.ti-act .hint2{margin:0}
+.ti-del{flex:0 0 auto;font-size:12px;padding:6px 10px;color:#ffb0a0;border-color:#ff8a7a55;background:transparent}
 .ti-del-in{width:100%;margin:6px 0 10px;padding:9px 11px;border-radius:9px;border:1px solid #c9a46a77;background:#0d1712;color:#f6e8c8;font-size:15px}.ti-del-row{display:flex;gap:8px;justify-content:flex-end}.ti-del-row .danger{background:linear-gradient(#b8452c,#7c2c1b);border-color:#ff9a7a}.ti-del-row .danger[disabled]{opacity:.45}
-.ti-c{display:flex;flex-direction:column;gap:1px;padding:6px 8px;border:1px solid #ab956a44;border-radius:9px;background:#ffffff06}.ti-c small{font-size:11px;color:#b9c4b0}.ti-c b{font-size:16px;color:#f0d9a7}
+.ti-c{display:flex;flex-direction:column;gap:0;padding:4px 7px;min-width:0;border:1px solid #ab956a44;border-radius:9px;background:#ffffff06}.ti-c small{font-size:10px;color:#b9c4b0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ti-c b{font-size:14px;color:#f0d9a7}
 .ti-empty{display:flex;flex-direction:column;align-items:center;gap:8px;color:#c9d2c3;font-size:13px}
 .gpick button span{font-size:15px;font-weight:700}
-@media (max-width:640px){.ti-stats{grid-template-columns:repeat(3,1fr)}.ti-c b{font-size:14px}}
+@media (max-width:640px){.ti-stats{grid-template-columns:repeat(4,1fr);gap:4px}.ti-c{padding:3px 6px}.ti-c b{font-size:13px}.portal{padding:8px}.portal-card.wide{padding:10px 10px;border-radius:14px}.portal-card.wide .plogo-img{max-height:44px}.phead b{font-size:17px}}
 .kicked{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:16px;background:#060c09d9}
 .kicked-card{width:min(380px,100%);display:flex;flex-direction:column;align-items:center;gap:10px;padding:22px 18px;text-align:center;border:1px solid #ab956a77;border-radius:16px;background:#1c2e23}
 .kicked-card svg{width:40px;height:40px;color:var(--gold)}.kicked-card b{font:600 19px/1.3 Georgia,serif;color:#f6dc9c}.kicked-card small{color:#c9d2c3;font-size:13px;line-height:1.5}

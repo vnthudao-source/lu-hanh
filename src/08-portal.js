@@ -90,8 +90,7 @@
     const chip=(t,v)=>`<span class="ti-c"><small>${t}</small><b>${v}</b></span>`;
     el.innerHTML=`<div class="ti-head"><b>${esc(c.name)}</b><small>Lv. ${k.level||c.level||1} · ${c.gender==='f'?'Nữ':'Nam'}</small></div>
       <div class="ti-stats">${chip('Sức mạnh',m.str)}${chip('Nhanh nhẹn',m.agi)}${chip('Sức khỏe',m.vit)}${chip('Trí tuệ',m.int)}${chip('Mệnh lệnh',m.cmd)}${k.dmg?chip('Sát thương',k.dmg[0]+'–'+k.dmg[1]):''}${k.hp?chip('Máu',k.hp):''}${chip('Lính',(k.mercs||0)+'/'+Player.MAX_MERC)}${k.pets?chip('Quái thu phục',k.pets):''}</div>
-      ${c.status==='merc'?'':`<div class="ti-del"><button class="ghost" id="tDel">✕ Xoá nhân vật</button></div>`}
-      ${c.status==='merc'?`<p class="hint2">Đang cho thuê ở Chợ phiên · ${c.price?money(c.price):''}${c.price&&c.ruby?' + ':''}${c.ruby?c.ruby+' hồng ngọc':''}</p>`:`<button class="primary big-btn" id="tEnter">Vào làng</button>`}`;
+      <div class="ti-act">${c.status==='merc'?`<p class="hint2">Đang cho thuê ở Chợ phiên · ${c.price?money(c.price):''}${c.price&&c.ruby?' + ':''}${c.ruby?c.ruby+' hồng ngọc':''}</p>`:`<button class="ghost ti-del" id="tDel" title="Xoá nhân vật">✕ Xoá</button><button class="primary big-btn" id="tEnter">Vào làng</button>`}</div>`;
     const b=$('#tEnter');if(b)b.onclick=()=>enter(c.id,r.claim,b);
     const dl=$('#tDel');if(dl)dl.onclick=()=>delForm(c);
   }
@@ -140,7 +139,7 @@
   // Vẽ cảnh: trời chạng vạng, đồi xa, lũy tre, căn lều tranh có đèn lồng, 5 ô chiếu trước lều
   function drawTent(ts){
     T.raf=requestAnimationFrame(drawTent);const cv=T.cv;if(!cv||!document.body.contains(cv)){stopTent();return;}
-    const t=ts/1000,w=cv.clientWidth||600,h=Math.round(Math.max(250,Math.min(400,w*.56))),d=Math.min(2,devicePixelRatio||1);
+    const t=ts/1000,w=cv.clientWidth||600,h=Math.round(Math.max(160,Math.min(280,w*.42,(innerHeight||800)*.3))) /* v10.33: căn lều thấp hơn, vừa một màn hình */,d=Math.min(2,devicePixelRatio||1);
     if(cv.width!==Math.round(w*d)||cv.height!==Math.round(h*d)){cv.width=Math.round(w*d);cv.height=Math.round(h*d);cv.style.height=h+'px';}
     const c=cv.getContext('2d');c.setTransform(d,0,0,d,0,0);
     // ảnh nền căn lều từ Sheet hinh_anh (giao_dien:nen_leu), không có thì vẽ cảnh mặc định

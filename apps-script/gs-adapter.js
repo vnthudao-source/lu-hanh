@@ -348,6 +348,15 @@ function capNhatV1012(){
   xoaBoNhoDem();Logger.log('ban_do: '+a+' ô cấp · cau_hinh cap_toi_da: '+b+' · nhiem_vu Tìm con: '+c+' ô npc · xóa '+d+' khung ở vat_pham, '+e+' ở cua_hang');
 }
 // v10.30: Hang Cướp còn 14 tên cướp (ghi lại dòng hang_cuop_so_cuop). Chạy một lần sau khi dán Code.gs mới.
+// v10.33: cân bằng PvP sách (mô phỏng 9 hệ × 324 build): ghi lại hiệu ứng sách mới; các dòng sach_chi_so_*, thuy_hut_mau, bang_vo_bang, hoi_day_giay do kiemTra thêm. Chạy một lần sau khi dán Code.gs mới.
+function capNhatV1033(){
+  lhDuLieuBoSung_();const file=LH_SHEETS[LH_STATIC.cau_hinh];if(!file)return;const sh=SpreadsheetApp.openById(file).getSheetByName('cau_hinh');if(!sh||sh.getLastRow()<2)return;
+  const v=sh.getDataRange().getValues(),h=v[0].map(String),ck=h.indexOf('khoa'),cv=h.indexOf('gia_tri'),cg=h.indexOf('ghi_chu');let n=0;
+  const keys=['hoa_sat_thuong','tho_phan_don','kim_giam_sat_thuong','moc_hoi_mau','loi_ti_le','phong_ti_le','bang_ti_le','sang_ti_le','tho_suc_khoe_nhan'];
+  const want=new Map((LH_DEFAULT.cau_hinh||[]).filter(r=>keys.includes(String(r.khoa))).map(r=>[String(r.khoa),r]));
+  for(let i=1;i<v.length;i++){const w=want.get(String(v[i][ck]));if(!w)continue;if(String(v[i][cv])!==String(w.gia_tri)){sh.getRange(i+1,cv+1).setValue(w.gia_tri);n++;}if(cg>=0&&w.ghi_chu&&String(v[i][cg])!==String(w.ghi_chu))sh.getRange(i+1,cg+1).setValue(w.ghi_chu);}
+  xoaBoNhoDem();Logger.log('cau_hinh: đã ghi '+n+' dòng (cân bằng sách v10.33)');
+}
 function capNhatV1030(){
   lhDuLieuBoSung_();const file=LH_SHEETS[LH_STATIC.cau_hinh];if(!file)return;const sh=SpreadsheetApp.openById(file).getSheetByName('cau_hinh');if(!sh||sh.getLastRow()<2)return;
   const v=sh.getDataRange().getValues(),h=v[0].map(String),ck=h.indexOf('khoa'),cv=h.indexOf('gia_tri');let n=0;

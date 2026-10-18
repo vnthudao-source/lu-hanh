@@ -4,7 +4,7 @@ const Player=(()=>{
   const slots=['mount','hat','wings','left','armor','right','gloves','pants','shoes'];
   const STAT_KEYS=['strength','agility','vitality','intelligence'];
   const ELEMENTS={
-    fire:{name:'Hỏa',icon:'flame',color:'#ff8a3d',glow:'#ffd27a',st:['str']},water:{name:'Thủy',icon:'water',color:'#5fb6ff',glow:'#dcf1ff',st:['int']},
+    fire:{name:'Hỏa',icon:'flame',color:'#ff8a3d',glow:'#ffd27a',st:['str']},water:{name:'Thủy',icon:'water',color:'#5fb6ff',glow:'#dcf1ff',st:['int','str']},
     earth:{name:'Thổ',icon:'earth',color:'#c99a5b',glow:'#f3dcaa',st:['vit']},metal:{name:'Kim',icon:'metal',color:'#e3cf7a',glow:'#fffbe2',st:['agi']},wood:{name:'Mộc',icon:'wood',color:'#8ed46a',glow:'#e5ffb8',st:['vit','int']},
     thunder:{name:'Lôi',icon:'thunder',color:'#c9a7ff',glow:'#f4ecff',st:['str']},wind:{name:'Phong',icon:'wind',color:'#8fe3c4',glow:'#e6fff5',st:['agi']},
     ice:{name:'Băng',icon:'ice',color:'#8fd3ff',glow:'#effaff',st:['int']},demon:{name:'Ma công',icon:'demon',color:'#c0508a',glow:'#ffb8dc',st:['cmd']},light:{name:'Ánh sáng',icon:'light',color:'#ffe680',glow:'#fffbe0',st:['vit']}
@@ -149,10 +149,13 @@ const Player=(()=>{
   const bookBac=it=>bacOfT(it&&it.t);
   const bookFx=it=>lst('sach_hieu_ung_bac','0.4,0.6,0.8,1,1.2',bookBac(it))*lst('sach_hieu_ung_pham_chat','1,1.15,1.3,1.5,1.8',qIdx(it));
   const bookPerLv=it=>lst('sach_moi_cap_bac','0.5,1,1.5,2,3',bookBac(it));
+  const EL_VN={fire:'hoa',water:'thuy',earth:'tho',metal:'kim',wood:'moc',thunder:'loi',wind:'phong',ice:'bang',light:'sang',demon:'ma'},
+    BOOK_K={hoa:.95,thuy:1.25,tho:.45,kim:1,moc:1.2,loi:.85,phong:1.25,bang:1.2,sang:.55,ma:1};
+  const bookStatK=e=>{const v=EL_VN[e];return Math.max(0,num(CFG['sach_chi_so_'+v],BOOK_K[v]??1));};
   const bookStat=it=>{const d=info(it);if(!d||!d.element)return {};const b=bookBac(it),k=ELEMENTS[d.element].st,
-    // v10.31: sách Thổ cộng Sức khỏe ×tho_suc_khoe_nhan
+    // v10.31: sách Thổ cộng Sức khỏe ×tho_suc_khoe_nhan · v10.33: mỗi hệ có hệ số điểm riêng (cau_hinh sach_chi_so_<hệ>, cân bằng PvP)
     base=d.element==='demon'?lst('sach_menh_lenh_bac','5,10,15,20,20',b):lst('sach_chi_so_bac','3,8,15,25,40',b),
-    v=Math.round((base*lst('sach_pham_chat_he_so','1,1.3,1.7,2.3,3',qIdx(it))+bookPerLv(it)*(it.lv||0))*(d.element==='earth'?num(CFG.tho_suc_khoe_nhan,2):1));return Object.fromEntries(k.map(x=>[x,k.length>1?Math.ceil(v/2):v]));};
+    v=Math.round((base*lst('sach_pham_chat_he_so','1,1.3,1.7,2.3,3',qIdx(it))+bookPerLv(it)*(it.lv||0))*bookStatK(d.element));return Object.fromEntries(k.map(x=>[x,k.length>1?Math.ceil(v/2):v]));};
   // Sách Ma công: số quái tối đa, hệ số thu phục trùm
   const demonOf=it=>{const b=bookBac(it),q=qIdx(it);return {b,q,lv:it.lv||0,ef:bookFx(it),max:lst('ma_so_quai_bac','1,2,2,3,3',b)+lst('ma_so_quai_pham_chat','0,0,0,1,1',q),boss:lst('ma_boss_bac','0,0,0.05,0.1,0.2',b)};};
   // Thú cưỡi: Mệnh lệnh cần = mức theo loài + cấp thú (d.cmd) + phẩm chất + cấp gia cường
@@ -299,13 +302,16 @@ const Player=(()=>{
     const books={},blv={},bef={};let demon=null;for(const it of (s.skillSlots||[])){const d=info(it);if(d&&d.element){const e=d.element,f=bookFx(it);books[e]=true;blv[e]=Math.max(blv[e]??-1,it.lv||0);bef[e]=Math.max(bef[e]||0,f);for(const [k,v] of Object.entries(bookStat(it)))add(k,v);
       if(e==='demon'){const o=demonOf(it);if(!demon||o.ef>demon.ef||(o.ef===demon.ef&&o.lv>demon.lv))demon=o;}}}
     const r1=v=>Math.round(v*10)/10,pc=(k,f,e)=>blv[e]>=0?r1(num(CFG[k],f)*bef[e]+num(CFG.sach_ti_le_cap,1)*blv[e]):0;
-    const bfx={thunder:pc('loi_ti_le',12,'thunder'),wind:pc('phong_ti_le',20,'wind'),ice:pc('bang_ti_le',10,'ice'),light:pc('sang_ti_le',15,'light'),demon:blv.demon>=0?blv.demon:-1,
+    const bfx={thunder:pc('loi_ti_le',4.5,'thunder'),wind:pc('phong_ti_le',25,'wind'),ice:pc('bang_ti_le',22,'ice'),light:pc('sang_ti_le',8,'light'),demon:blv.demon>=0?blv.demon:-1,
       // v10.31: Phong — mỗi đòn trúng có % hoá thành chính quái đó (sát thương ×2), tỉ lệ theo bậc × phẩm chất + cấp luyện; thời gian = max(6, cấp luyện) giây
       morph:blv.wind>=0?r1(num(CFG.phong_hoa_ti_le,3)*bef.wind+num(CFG.phong_hoa_moi_cap,.3)*blv.wind):0,morphSec:blv.wind>=0?Math.max(num(CFG.phong_hoa_giay,6),blv.wind):0,
       // v10.31: Thổ — Trêu ngươi: mỗi đòn trúng có % kéo mọi quái quanh nhân vật quay sang đánh mình
-      taunt:blv.earth>=0?r1(num(CFG.tho_treu_ti_le,20)*bef.earth+num(CFG.sach_ti_le_cap,1)*blv.earth):0};
-    if(books.water)add('mpReg',r1(num(CFG.thuy_hoi_mana,3)*bef.water));if(books.wood)add('hpReg',r1(num(CFG.moc_hoi_mau,2)*bef.wood));if(books.earth)add('reflect',r1(num(CFG.tho_phan_don,30)*bef.earth));if(books.metal)add('dmgRed',r1(num(CFG.kim_giam_sat_thuong,25)*bef.metal));
-    const fireK=books.fire?1+num(CFG.hoa_sat_thuong,25)*bef.fire/100:1;
+      taunt:blv.earth>=0?r1(num(CFG.tho_treu_ti_le,20)*bef.earth+num(CFG.sach_ti_le_cap,1)*blv.earth):0,
+      shatter:blv.ice>=0?r1(num(CFG.bang_vo_bang,120)*bef.ice):0};
+    if(books.water)add('mpReg',r1(num(CFG.thuy_hoi_mana,3)*bef.water));if(books.wood)add('hpReg',r1(num(CFG.moc_hoi_mau,4)*bef.wood));if(books.earth)add('reflect',r1(num(CFG.tho_phan_don,10)*bef.earth));if(books.metal)add('dmgRed',r1(num(CFG.kim_giam_sat_thuong,27)*bef.metal));
+    // v10.33: Thủy — Hồi nguyên: % sát thương gây ra hồi thành máu (cộng vào Hút máu); Băng — Vỡ băng (bfx.shatter, 06-game hitMonster)
+    if(books.water)fx.lifesteal=Math.min(60,num(fx.lifesteal)+r1(num(CFG.thuy_hut_mau,20)*bef.water));
+    const fireK=books.fire?1+num(CFG.hoa_sat_thuong,13)*bef.fire/100:1;
     const st=s.stats||{},al=s.alloc||{};
     const main={str:num(st.strength)+num(al.strength)+(A.str||0),agi:num(st.agility)+num(al.agility)+(A.agi||0),vit:num(st.vitality)+num(al.vitality)+(A.vit||0),int:num(st.intelligence)+num(al.intelligence)+(A.int||0),cmd:num(st.command)+num(al.command)+(A.cmd||0)};
     const base={dmgMin:main.str*.6,dmgMax:main.str,crit2:main.str*.1,atkSpd:main.agi*.6,moveSpd:main.agi*.3,def:main.agi*.3,dodge:main.agi*.2,hp:num(CFG.mau_goc,60)+main.vit*num(CFG.mau_moi_diem,5),mp:num(CFG.mana_goc,40)+main.int*num(CFG.mana_moi_diem,4),cdr:main.int*.3,
