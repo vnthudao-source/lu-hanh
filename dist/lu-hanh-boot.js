@@ -1,4 +1,4 @@
-/*! Lữ Hành v10.19 · khởi động · https://github.com/vnthudao-source/lu-hanh */
+/*! Lữ Hành v10.20 · khởi động · https://github.com/vnthudao-source/lu-hanh */
 /* ================= MÀN HÌNH CHỜ: thanh tải 0\u{2013}100%, cảnh làng + lời dẫn truyện =================
    Dùng chung cho file khởi động (tải tài nguyên trang) và game (kết nối máy chủ, tải nhân vật, dựng bản đồ). */
 window.LH_Loader=window.LH_Loader||(()=>{

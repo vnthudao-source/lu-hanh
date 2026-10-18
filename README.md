@@ -199,6 +199,13 @@ Mua, bán, gia cường, nhiệm vụ, thuê lính, cộng điểm chạy ngay t
 
 - Quay trái: tay phải buông thấp phía trước, kiếm/gậy chĩa chếch lên bên trái thấy trọn; tay trái co lại, khiên đưa ra bên hông phía sau, mặt ngoài nhìn thẳng. Cả hai vẽ trước thân (theo phác thảo của tác giả). Phần còn lại giữ nguyên bản 10.4.
 
+## Bản 10.20 — bảng cường hóa mới
+
+- **Cường hóa** (`gia_cuong`, cột `ti_le`): lên +1…+6 chắc chắn 100%; +7, +8, +9 còn 50%; +10…+15 giảm dần 44 · 38 · 33 · 27 · 21 · 15%. Phí hồng ngọc và mức rớt (hỏng tụt 1 cấp từ +7) giữ nguyên.
+- Kỳ vọng hồng ngọc mỗi món (không dùng may mắn): +9 ≈ 110, +12 ≈ 704, +15 ≈ 27.700. Đích thực tế của người chơi nạp vì thế là **bộ thần +12**; huyền thoại +15 thành mục tiêu rất đắt.
+- Mô phỏng 100 người chơi: 99/100 hạ boss cuối ở cấp 400; trung vị 12,4 tháng, 10% nhanh nhất ≤ 8,2 tháng, nhanh nhất 5,8 tháng. Nạp 3tr: trung vị 19,0 tháng; 5tr: 13,2; 10tr: 10,4.
+- Sheet: chạy `kiemTra` rồi `capNhatV1020()` một lần (chỉ ghi cột `ti_le` của tab `gia_cuong`).
+
 ## Bản 10.19 — cân bằng lại toàn game
 
 Mục tiêu: người chơi nạp 5–10 triệu/năm, chơi trung bình 2 giờ/ngày hạ boss cuối Hắc Thiên Ma sau khoảng 1 năm (nhanh nhất khoảng 6 tháng), khi đạt cấp 400 và mặc trọn bộ huyền thoại +15 hoặc thần +12.

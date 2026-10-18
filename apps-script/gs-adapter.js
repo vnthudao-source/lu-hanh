@@ -341,6 +341,16 @@ function capNhatV1012(){
   const d=xoa('vat_pham',r=>/^khung-/.test(String(r.id))||(String(r.o)==='cos'&&String(r.loai)==='khung')),e=xoa('cua_hang',r=>/^khung-/.test(String(r.id)));
   xoaBoNhoDem();Logger.log('ban_do: '+a+' ô cấp · cau_hinh cap_toi_da: '+b+' · nhiem_vu Tìm con: '+c+' ô npc · xóa '+d+' khung ở vat_pham, '+e+' ở cua_hang');
 }
+// v10.20: bảng cường hóa mới: lên +1…+6 chắc chắn (100%), +7…+9 còn 50%, +10…+15 giảm dần 44 · 38 · 33 · 27 · 21 · 15%.
+// Chỉ ghi cột ti_le của tab gia_cuong (giữ phí hồng ngọc và mức rớt cấp). Chạy một lần sau khi dán Code.gs mới.
+function capNhatV1020(){
+  lhDuLieuBoSung_();
+  const file=LH_SHEETS[LH_STATIC.gia_cuong];if(!file)return;const sh=SpreadsheetApp.openById(file).getSheetByName('gia_cuong');if(!sh||sh.getLastRow()<2)return;
+  const v=sh.getDataRange().getValues(),h=v[0].map(String),ck=h.indexOf('cap'),ct=h.indexOf('ti_le');if(ck<0||ct<0)return;
+  const def=new Map((LH_DEFAULT.gia_cuong||[]).map(r=>[String(r.cap),r.ti_le]));let n=0;
+  for(let i=1;i<v.length;i++){const t=def.get(String(v[i][ck]));if(t===undefined)continue;if(String(v[i][ct])!==String(t)){sh.getRange(i+1,ct+1).setValue(t);n++;}}
+  xoaBoNhoDem();Logger.log('gia_cuong: đã đổi tỉ lệ '+n+' dòng');
+}
 // v10.19: cân bằng lại toàn game (quái theo cấp vùng, uy lực trang bị, cường hóa theo mức nạp, vũ khí đánh xa, Thiên Đình cấp 400).
 // kiemTra chỉ thêm dòng / cột mới nên cần chép số mới lên các dòng đã có. Chạy một lần sau khi dán Code.gs mới:
 //  quai: mau, sat_thuong, kinh_nghiem · gia_cuong: ti_le, phi_hong_ngoc, that_bai_tu, that_bai_den · vu_khi: sat_thuong (gậy, cung, nỏ)

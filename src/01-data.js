@@ -102,7 +102,7 @@ cau_hinh:[
 ],
 // cap = cấp hiện tại; ti_le = % thành công lên cấp kế; thất bại: cấp về ngẫu nhiên từ that_bai_tu đến that_bai_den (để trống = giữ nguyên)
 // v10.19: cường hóa theo mức nạp 5–10 triệu/năm: +0..+5 chắc chắn, từ +6 hỏng chỉ tụt 1 cấp. Kỳ vọng mỗi món: +9 ≈ 55, +12 ≈ 154, +15 ≈ 389 hồng ngọc
-gia_cuong:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14].map(c=>({cap:c,ti_le:[100,100,100,100,100,100,80,75,70,65,60,60,55,55,50][c],phi_hong_ngoc:[2,2,3,3,4,4,6,7,8,9,11,12,13,14,15][c],that_bai_tu:c<6?'':c-1,that_bai_den:c<6?'':c-1})),
+gia_cuong:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14].map(c=>({cap:c,ti_le:[100,100,100,100,100,100,50,50,50,44,38,33,27,21,15][c],phi_hong_ngoc:[2,2,3,3,4,4,6,7,8,9,11,12,13,14,15][c],that_bai_tu:c<6?'':c-1,that_bai_den:c<6?'':c-1})),
 pham_chat:[
  {ma:'n',ten:'Thường',mau:'#e8e6df',he_so:100,so_dong:0,bac:0,giao_dich:'khong',mua_duoc:'co'},
  {ma:'g',ten:'Đẹp',mau:'#ffd54a',he_so:110,so_dong:1,bac:1,giao_dich:'khong',mua_duoc:'co'},
