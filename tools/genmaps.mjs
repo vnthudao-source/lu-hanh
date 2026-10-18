@@ -213,19 +213,23 @@ function monRows(){
   MAPS.forEach((M,i)=>{
     const k=K_HP(i),kd=K_DMG(i),L=OLD_LV[i]; // ngưỡng rơi đồ theo cấp cũ (v10.12 giãn cấp vùng, không đổi bảng rơi)
     const [a,b]=M.mobs;
-    const mob=(id,ten,hp,dmg,spd,run,r,h,aggro,range,cd,wind,copper,knock,exp,ruby,x2)=>({id,ten,mau:R(hp*k),sat_thuong:R(dmg*kd),toc_do:spd,toc_chay:run,ban_kinh:r,cao:h,tam_danh:aggro,tam_gan:range,hoi_chieu_ms:cd,vung_tay_ms:wind,dong:R(copper*K_COIN(i)),day_lui_phan_tram:knock,boss:0,hoi_sinh_giay:20,
+    const mob=(id,ten,hp,dmg,spd,run,r,h,aggro,range,cd,wind,copper,knock,exp,ruby,x2)=>({id,ten,mau:R(hp*k),sat_thuong:R(dmg*kd),toc_do:spd,toc_chay:run,ban_kinh:r,cao:h,tam_danh:aggro,tam_gan:range,hoi_chieu_ms:cd,vung_tay_ms:wind,dong:R(copper*(i<20?K_COIN(i):K_COIN(19)*(1+.15*(i-19)))),day_lui_phan_tram:knock,boss:0,hoi_sinh_giay:20,
       dep_phan_van:1500,hoan_hao_phan_van:L>=105?500:350,huyen_thoai_phan_van:L>=70?Math.min(120,30+Math.max(0,L-100)*2):0,than_phan_van:L>=120?Math.min(30,5+(L-120)):0,hong_ngoc_it:L>=105?1:0,hong_ngoc_nhieu:L>=105?2+Math.floor((L-100)/10):0,loai_sat_thuong:L>=120?'hoan_hao':'thuong',ti_le_x2:x2,kinh_nghiem:R(exp*k/HP_K),ban_do:M.id,ky_nang:L>=125?(['slow','poison','weak','armor','slow','poison'][i%6]):''});
     rows.push(mob(a[0],a[1],2000,90,70,190,24,50,260,56,1200,400,150,40,180,0,10));
     rows.push(mob(b[0],b[1],2800,110,55,160,28,60,240,64,1500,500,200,30,240,0,12));
     const [bid,bten,,sk]=M.boss;
-    rows.push({id:bid,ten:bten,mau:R(18000*k),sat_thuong:R(150*kd),toc_do:50,toc_chay:130,ban_kinh:48,cao:110,tam_danh:300,tam_gan:120,hoi_chieu_ms:2000,vung_tay_ms:700,dong:R(4000*K_COIN(i)),day_lui_phan_tram:5,boss:L>=145?2:1,hoi_sinh_giay:300,
+    rows.push({id:bid,ten:bten,mau:R(18000*k),sat_thuong:R(150*kd),toc_do:50,toc_chay:130,ban_kinh:48,cao:110,tam_danh:300,tam_gan:120,hoi_chieu_ms:2000,vung_tay_ms:700,dong:R(4000*(i<20?K_COIN(i):K_COIN(19)*(1+.15*(i-19)))),day_lui_phan_tram:5,boss:L>=145?2:1,hoi_sinh_giay:300,
       dep_phan_van:7500,hoan_hao_phan_van:4000,huyen_thoai_phan_van:L>=44?Math.min(3500,R(200+(L-44)*25)):0,than_phan_van:L>=60?Math.min(1500,R(50+(L-60)*12)):0,hong_ngoc_it:8+i*2,hong_ngoc_nhieu:20+i*4,loai_sat_thuong:L>=120?'than':L>=70?'huyen_thoai':'hoan_hao',ti_le_x2:15+i,kinh_nghiem:R(2000*k/HP_K),ban_do:M.id,ky_nang:sk});
   });
   return rows;
 }
 function questRows(){
   const rows=[];
-  MAPS.forEach((M,i)=>{const [a]=M.mobs,[bid,bten]=M.boss,k=K_COIN(i),ke=K_HP(i)/HP_K;
+  // v10.34: vùng 400–999 không nhân luỹ thừa nữa: đồng theo hệ số vùng 20 tăng 15% mỗi vùng, kinh nghiệm theo số cần lên cấp (săn ≈ nửa cấp, trùm ≈ 3 cấp)
+  const NEED=L=>Math.round(60*Math.pow(L,1.5));
+  MAPS.forEach((M,i)=>{const [a]=M.mobs,[bid,bten]=M.boss,k=i<20?K_COIN(i):K_COIN(19)*(1+.15*(i-19)),ke=K_HP(i)/HP_K;
+    if(i>=20){rows.push({id:'q-'+a[0],ten:'Săn '+a[1].toLowerCase(),mo_ta:a[1]+' quấy phá vùng '+M.name+', không ai dám qua lại.',muc_tieu:a[0],so_luong:6,thuong_dong:R(4000*k),thuong_hong_ngoc:0,thuong_do:'',pham_chat_do:'',lap_lai:'khong',thuong_kinh_nghiem:R(NEED(M.lv)*.5)});
+      rows.push({id:'q-'+bid,ten:'Hạ '+bten,mo_ta:bten+' ngự trị '+M.name+'. Hạ được nó, đường tìm con thêm một bước.',muc_tieu:bid,so_luong:1,thuong_dong:R(40000*k),thuong_hong_ngoc:5+i*2,thuong_do:'',pham_chat_do:'',lap_lai:'khong',thuong_kinh_nghiem:R(NEED(M.lv)*3)});return;}
     rows.push({id:'q-'+a[0],ten:'Săn '+a[1].toLowerCase(),mo_ta:a[1]+' quấy phá vùng '+M.name+', dân không dám qua lại.',muc_tieu:a[0],so_luong:6,thuong_dong:R(4000*k),thuong_hong_ngoc:0,thuong_do:'',pham_chat_do:'',lap_lai:'khong',thuong_kinh_nghiem:R(400*ke)});
     rows.push({id:'q-'+bid,ten:'Hạ '+bten,mo_ta:bten+' ngự trị '+M.name+'. Hạ được nó, cả vùng yên ổn.',muc_tieu:bid,so_luong:1,thuong_dong:R(40000*k),thuong_hong_ngoc:5+i*2,thuong_do:'',pham_chat_do:'',lap_lai:'khong',thuong_kinh_nghiem:R(4000*ke)});});
   return rows;
