@@ -57,7 +57,7 @@ const gameJs=ids=>GAME.flatMap(f=>f==='04-art.js'?[safe(rd('src/'+f)),safe(rd('s
 const js=gameJs([MAP0]),jsAll=gameJs(mapIds);
 wr('dist/lu-hanh.css',banner('Làng Thanh Mộc')+miniCss(css));
 wr('dist/lu-hanh.js',safe(await mini(banner('Làng Thanh Mộc')+inject(body,'portal')+js.map(s=>';'+s).join('\n'),'lu-hanh.js')));
-wr('dist/lu-hanh.html',page(`Lữ Hành ${V} · Làng Thanh Mộc`,css,body,js,API));
+wr('dist/lu-hanh.html',page(`Lữ Hành - iKyNa`,css,body,js,API));
 wr('dist/lu-hanh-offline.html',page(`Lữ Hành ${V} · thử ngoại tuyến`,css,body,jsAll,''));
 // file khởi động: hiện màn hình chờ, tải CSS + JS có đếm phần trăm
 const B=n=>Buffer.byteLength(rd('dist/'+n),'utf8');

@@ -81,7 +81,7 @@ function lhStatic_(){
   return out;
 }
 // Tab được bổ sung dòng mới (theo cột id) khi game thêm quái, nhiệm vụ, hàng hóa thành trì, diện mạo
-const LH_BO_SUNG=['quai','nhiem_vu','cau_hinh','ban_do','vat_pham','cua_hang','dien_mao','goi_nap','thuoc_tinh','bo_cau_hoi','cau_hoi','linh','vu_khi','tuong']; // v10.14: thêm vu_khi (đao, chùy), tuong (danh tướng)
+const LH_BO_SUNG=['quai','nhiem_vu','cau_hinh','ban_do','vat_pham','cua_hang','dien_mao','thuoc_tinh','bo_cau_hoi','cau_hoi','linh','vu_khi','tuong']; // v10.14: thêm vu_khi (đao, chùy), tuong (danh tướng). v10.27: bỏ goi_nap — gói nạp lấy đúng theo Sheet, không tự thêm gói mặc định đã xoá
 // khóa một dòng: cau_hinh theo khoa; cua_hang theo cửa hàng + mã hàng (một món có thể bán ở nhiều cửa hàng); còn lại theo id
 const lhKhoa_=(tab,r)=>tab==='cau_hinh'?String(r.khoa):tab==='thuoc_tinh'?String(r.ma):tab==='vu_khi'?String(r.loai):tab==='cua_hang'?String(r.cua_hang)+'|'+String(r.id):String(r.id);
 // Chép các dòng mặc định còn thiếu (quái, nhiệm vụ của vùng mới) xuống cuối tab; không sửa dòng đã có
