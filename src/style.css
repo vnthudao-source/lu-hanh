@@ -24,6 +24,7 @@ header{height:94px;display:flex;align-items:center;justify-content:space-between
 .bar small{position:absolute;inset:0;font-size:7px;line-height:8px;text-align:center;color:#fff;text-shadow:0 1px 2px #000}
 .buffs{display:flex;gap:4px;margin-top:5px;min-height:18px}
 .buff{display:grid;place-items:center;width:18px;height:18px;border-radius:50%;border:1px solid currentColor;background:#0009;box-shadow:0 0 6px currentColor}
+.buff.xpb{width:auto;padding:0 5px 0 3px;border-radius:9px;grid-auto-flow:column;gap:2px;color:#9fe08a}.buff.xpb small{font-size:9px;font-weight:700}
 .buff svg{width:12px;height:12px;stroke-width:2.4}
 .top-right{display:flex;gap:13px;align-items:center;position:relative}
 .version{font-size:11px;border:1px solid var(--line);border-radius:7px;padding:5px 8px;color:#c6c5a8}

@@ -430,6 +430,13 @@ linh:[
   const COS_MOTA={avatar:'Mua xong thay ngay ảnh chân dung ở khung trên và lều nhân vật (giữ mãi, đổi qua lại ở bảng Phấn Son)',nen:'Thay nền khung trên của game',thuoc:'Uống vào chọn một hiệu ứng cho tên nhân vật: ánh vàng, cầu vồng, lửa, băng, tím mộng'};
   for(const [id,ten,loai,gia_hong_ngoc,drv] of COS)GAME_DATA.vat_pham.push({id,ten,o:'cos',loai,cam:'',cong:0,thu:0,toc:0,gia:0,mau:'',thu_cuoi:'',menh_lenh:0,he:'',pham_chat:'',hieu_ung:'',gia_tri:0,mo_ta:COS_MOTA[loai],gia_hong_ngoc,anh:DRIVE(drv)});
   GAME_DATA.cua_hang.push(...COS.map(([id],i)=>({cua_hang:'phan-son',id,pham_chat:'n',gia:'',thu_tu:i+1,bac:0})));
+  // v10.41: thuốc đặc biệt ở Phấn Son, mua bằng hồng ngọc, mua xong uống ngay. Thuốc kinh nghiệm: gia_tri = % kinh nghiệm đánh quái cộng thêm
+  // trong thuoc_kn_phut phút (giờ thực); uống chồng thì cộng dồn thời gian. Thuốc tẩy điểm: trả lại toàn bộ điểm cộng đã dùng để cộng lại.
+  const THUOC=[['thuoc-kn-nho','Thuốc kinh nghiệm nhỏ','kn',50,10,'+50% kinh nghiệm đánh quái trong 60 phút, uống thêm thì cộng dồn'],
+   ['thuoc-kn-lon','Thuốc kinh nghiệm lớn','kn',100,20,'+100% kinh nghiệm đánh quái trong 60 phút, uống thêm thì cộng dồn'],
+   ['thuoc-tay-diem','Thuốc tẩy điểm','tay',0,50,'Trả lại toàn bộ điểm cộng đã dùng để cộng lại']];
+  for(const [id,ten,loai,gia_tri,gia_hong_ngoc,mo_ta] of THUOC)GAME_DATA.vat_pham.push({id,ten,o:'cos',loai,cam:'',cong:0,thu:0,toc:0,gia:0,mau:'',thu_cuoi:'',menh_lenh:0,he:'',pham_chat:'',hieu_ung:'',gia_tri,mo_ta,gia_hong_ngoc,anh:''});
+  GAME_DATA.cua_hang.push(...THUOC.map(([id],i)=>({cua_hang:'phan-son',id,pham_chat:'n',gia:'',thu_tu:50+i,bac:0})));
   // Vật phẩm cốt truyện (ô 'quest'): không mặc, không bán, không rơi — manh mối tìm con gái
   const QI=[
    ['but-long','Bút Lông','1hCTzUeg0kJM9bbiho5v-IaBQvfhfoUgA','Cây bút lông nhỏ, cán khắc chữ "An". Con bé vẫn hay cắn cán bút khi tập viết.'],
@@ -530,7 +537,9 @@ linh:[
    {khoa:'linh_thanh_he_so',gia_tri:100,ghi_chu:'Lính thành trì: % chỉ số so với bảng linh (chỉnh độ mạnh chung)'},
    {khoa:'linh_diem_cap',gia_tri:3,ghi_chu:'v10.13 · Lính thành trì chào thuê: điểm chỉ số cộng thêm mỗi cấp (chia ngẫu nhiên vào 4 chỉ số, đổi suất mỗi ngày)'},
    {khoa:'su_kien_phut',gia_tri:5,ghi_chu:'v10.13 · Sự kiện đột xuất ở làng / thành: bao nhiêu phút một lần (theo mốc đồng hồ)'},
-   {khoa:'co_may_man_toi_da',gia_tri:10,ghi_chu:'v10.13 · Cỏ may mắn: số cỏ dùng tối đa một lần gia cường / dung hợp (mỗi cỏ +1% tỉ lệ)'}
+   {khoa:'co_may_man_toi_da',gia_tri:10,ghi_chu:'v10.13 · Cỏ may mắn: số cỏ dùng tối đa một lần gia cường / dung hợp (mỗi cỏ +1% tỉ lệ)'},
+   {khoa:'thuoc_kn_phut',gia_tri:60,ghi_chu:'v10.41 · Thuốc kinh nghiệm: số phút hiệu lực mỗi lọ (giờ thực, tắt game vẫn tính)'},
+   {khoa:'thuoc_kn_toi_da_phut',gia_tri:480,ghi_chu:'v10.41 · Thuốc kinh nghiệm: tổng thời gian tối đa khi uống cộng dồn (phút)'}
   );
   // v10.13: quái sự kiện đột xuất (không có trong bãi quái; hiện theo sự kiện ngoài vùng an toàn gần cổng). Máu / sát thương theo cấp vùng.
   const EVM=[ // [id, tên, máu, sát thương, tốc, chạy, bán kính, cao, tầm đánh, tầm gần, hồi chiêu ms, vung tay ms, đồng, đẩy lùi %, hồi sinh, exp, bản đồ]
