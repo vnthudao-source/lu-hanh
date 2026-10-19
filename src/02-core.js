@@ -72,6 +72,23 @@ function LH_Core(A){
   }
   const H={
     ping:()=>({msg:'Lữ Hành API'}),
+    // v10.37: bảng xếp hạng cho trang chủ (không cần đăng nhập): top 100 cấp độ, top 100 vàng, top 100 hồng ngọc.
+    // Chỉ tính nhân vật đang chơi; tên trong cau_hinh.bxh_an (cách nhau dấu phẩy) bị ẩn, ví dụ nhân vật thử của quản trị. Vàng = đồng / 10 000. Code.gs giữ kết quả 10 phút.
+    rank(){
+      const r=(A.staticData().cau_hinh||[]).find(x=>x.khoa==='bxh_an'),hide=new Set(String(r&&r.gia_tri||'').split(',').map(x=>lower(x)).filter(Boolean));
+      const all=[];
+      for(const c of A.rows('nhan_vat')){
+        if(c.trang_thai!=='active'&&c.trang_thai!=='merc')continue;if(hide.has(lower(c.ten)))continue;
+        let P={};try{P=(JSON.parse(c.luu||'{}').player)||{};}catch(e){}
+        const lv=Math.floor(Number(c.cap)||Number(P.level)||1),copper=Math.max(0,Math.floor(Number(P.copper)||0)),ruby=Math.max(0,Math.floor(Number(P.rubies)||0));
+        all.push({ten:String(c.ten||''),gt:c.gioi_tinh==='f'?'f':'m',cap:lv,kn:Number(c.kinh_nghiem)||0,vang:Math.floor(copper/10000),dong:copper,hn:ruby});
+      }
+      const top=(f)=>all.slice().sort(f).slice(0,100).map(x=>({ten:x.ten,gt:x.gt,cap:x.cap,vang:x.vang,hn:x.hn}));
+      return {at:A.now(),total:all.length,
+        level:top((a,b)=>b.cap-a.cap||b.kn-a.kn||a.ten.localeCompare(b.ten)),
+        gold:top((a,b)=>b.dong-a.dong||b.hn-a.hn),
+        ruby:top((a,b)=>b.hn-a.hn||b.dong-a.dong)};
+    },
     chest(p){const a=auth(p.token);A.rules&&A.rules();return {chest:chestView(chestOf(a))};},
     chestPut(p){return chestMove(p,'put');},
     chestTake(p){return chestMove(p,'take');},

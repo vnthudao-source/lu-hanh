@@ -102,6 +102,7 @@ cau_hinh:[
  {khoa:'gieng_hoi_giay',gia_tri:300,ghi_chu:'Giếng cổ: số giây để nước đầy lại sau khi dùng'},
  {khoa:'exp_goc',gia_tri:60,ghi_chu:'Kinh nghiệm cần để lên cấp 2. Cấp L cần exp_goc × L^(exp_tang/100)'},
  {khoa:'exp_tang',gia_tri:250,ghi_chu:'Độ tăng kinh nghiệm cần mỗi cấp: cấp L cần exp_goc × L^(exp_tang/100). v10.35: 250 (lũy thừa 2,5 — cấp 999 cần ≈ 1,9 tỉ)'},
+ {khoa:'bxh_an',gia_tri:'',ghi_chu:'v10.37: tên nhân vật không đưa lên bảng xếp hạng trang chủ (nhân vật thử, quản trị), cách nhau dấu phẩy'},
  {khoa:'cap_toi_da',gia_tri:999,ghi_chu:'Cấp cao nhất của nhân vật (v10.12: 400 · v10.34: 999, thêm 10 vùng 400–999)'},
  {khoa:'diem_moi_cap',gia_tri:5,ghi_chu:'Điểm cộng chỉ số nhận được mỗi lần lên cấp'},
  {khoa:'sach_chi_so',gia_tri:4,ghi_chu:'Mỗi sách gắn vào ô kỹ năng cộng chừng này điểm vào chỉ số theo hệ (Mộc chia đôi cho Sức khỏe và Trí tuệ)'},

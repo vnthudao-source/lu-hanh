@@ -128,6 +128,8 @@ const LH=LH_Core({
 function lhKhoaBiMat_(){const P=PropertiesService.getScriptProperties();let k=P.getProperty('LH_KEY');if(!k){k=Utilities.getUuid()+Utilities.getUuid();P.setProperty('LH_KEY',k);}return k;}
 // Lệnh ghi có mã rid: gửi lại cùng mã (mạng rớt, đổi đường GET/POST) thì trả lại kết quả cũ, không chạy lần hai
 function lhRun_(p){
+  // v10.37: bảng xếp hạng đọc cả bảng nhân vật, giữ kết quả 10 phút cho trang chủ đỡ chờ
+  if(p.action==='rank'){const c=CacheService.getScriptCache(),h=c.get('lh-rank');if(h)return h;LH_DB.fresh();const out=JSON.stringify(LH.handle('rank',{}));if(out.length<95000)c.put('lh-rank',out,600);return out;}
   LH_DB.fresh();
   const rid=String(p.rid||'').slice(0,40);if(!rid)return JSON.stringify(LH.handle(p.action,p));
   const c=CacheService.getScriptCache(),k='rid:'+rid;let hit=c.get(k);
