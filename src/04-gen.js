@@ -161,6 +161,8 @@
     };
   }
   // v10.21: Người giữ rương (làng Thanh Mộc và các thành) — vai dùng chung, không cần gói bản đồ
+  // v10.38: Thầy đồ (làng Thanh Mộc và các thành) — áo the, khăn xếp, cuộn giấy, râu bạc, đứng yên
+  A.npc['thay-do']=npc({robe:'#1e1b19',trim:'#c0a060',hat:'khan',hatc:'#1e1b19',item:'scroll',beard:'#d8d0c0',skin:'#e8c8a0',act:'stand'});
   A.npc['giu-ruong']=npc({robe:'#5a3a1e',trim:'#e0b040',hat:'khan',hatc:'#2a1a0e',item:'chest',beard:'#4a3a30'});
   // ---------- trời: hạt rơi / bay + màu phủ ----------
   // spec: {n, col, size, vx, vy, tint, glow, dark} — hạt (tro, lá, hoa, tuyết, đom đóm, sương), tint = màu phủ cả màn hình

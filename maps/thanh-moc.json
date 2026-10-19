@@ -1036,7 +1036,8 @@
   },
   {
    "id": "thay-do",
-   "role": "elder",
+   "role": "thay-do",
+   "act": "stand",
    "name": "Thầy đồ",
    "x": 13,
    "y": 17.2,

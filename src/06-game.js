@@ -394,6 +394,7 @@ window.startGame=(session)=>{
       n.moving=false;
       if(dialogNPC===n){n.facing=hero.x<n.x?-1:1;continue;}
       if(n.role==='elder'){
+        if(n.x0==null||n.x1==null)continue; // v10.38: elder không khai báo đoạn đi (x0, x1) thì đứng yên, tránh tọa độ NaN làm NPC biến mất
         if(time<n.pause)continue;const tx=n.dir>0?n.x1:n.x0,d=tx-n.x;
         if(Math.abs(d)<2){n.dir*=-1;n.pause=time+1.6+Math.random()*1.4;}else{const st=Math.sign(d)*38*dt;n.x+=st;n.facing=Math.sign(d);n.moving=true;n.walk+=Math.abs(st)*.09;}
       }else if(n.role==='smith'){
