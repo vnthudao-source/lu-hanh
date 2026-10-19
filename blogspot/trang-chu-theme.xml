@@ -3145,7 +3145,7 @@ html:has(body.lh-home-view){scroll-behavior:smooth;overflow-x:hidden}
 #lh-home [data-tone='counter'] .lh-glow{--glow:rgba(240,190,90,.5)}
 #lh-home .lh-float{position:relative;display:grid;place-items:center;width:100%;animation:lh-float 6s ease-in-out infinite}
 #lh-home .lh-weapon{width:min(380px,72%);height:auto;filter:drop-shadow(0 30px 40px rgba(0,0,0,.65));opacity:0;transform:scale(.82) rotate(-16deg);transition:transform 1.4s cubic-bezier(.2,.7,.2,1),opacity 1.2s}
-#lh-home .lh-shield{width:min(300px,58%)}
+#lh-home .lh-shield{width:min(330px,62%)}
 #lh-home .lh-slide.is-active .lh-weapon{opacity:1;transform:scale(1) rotate(-6deg);transition-delay:.3s}
 #lh-home .lh-slide.is-active .lh-shield{transform:scale(1) rotate(0)}
 #lh-home .lh-stage-ui{position:absolute;z-index:5;left:0;right:0;bottom:7%;padding-bottom:20px}
@@ -3331,13 +3331,17 @@ html:has(body.lh-home-view){scroll-behavior:smooth;overflow-x:hidden}
 #lh-home .lh-item h3{font-size:19px}
 #lh-home .lh-news-foot{flex-direction:column;align-items:flex-start}
 #lh-home .lh-styles{padding-top:74px}
-#lh-home .lh-stage{height:auto;min-height:0;height:min(860px,100svh);min-height:700px}
-#lh-home .lh-slide-inner{grid-template-columns:1fr;grid-template-rows:minmax(0,34%) auto;align-content:start;gap:0;padding:62px 0 150px}
-#lh-home .lh-slide-art{order:-1;max-height:260px}
+#lh-home .lh-stage{display:grid;grid-template-columns:100%;height:auto;min-height:0}
+#lh-home .lh-stage::before,#lh-home .lh-stage::after{height:40px;background:linear-gradient(#070c0a,rgba(7,12,10,0))}
+#lh-home .lh-stage::after{background:linear-gradient(rgba(7,12,10,0),#070c0a)}
+#lh-home .lh-slide{position:relative;grid-area:1/1}
+#lh-home .lh-slide-inner{height:auto;grid-template-columns:1fr;grid-template-rows:auto auto;align-content:start;gap:0;padding:44px 0 28px}
+#lh-home .lh-slide-art{order:-1;height:250px;max-height:none}
+#lh-home .lh-stage-ui{position:relative;grid-area:2/1;bottom:auto;padding:6px 0 44px}
 #lh-home .lh-halo{width:250px;height:250px;max-width:64vw;max-height:64vw}
 #lh-home .lh-glow{width:190px;height:190px;max-width:48vw;max-height:48vw}
 #lh-home .lh-weapon{width:min(210px,52vw)}
-#lh-home .lh-shield{width:min(170px,42vw)}
+#lh-home .lh-shield{width:min(190px,48vw)}
 #lh-home .lh-slide-kicker{margin-top:14px;font-size:11px}
 #lh-home .lh-slide h3{font-size:clamp(46px,13vw,64px);margin:10px 0 14px}
 #lh-home .lh-slide-desc{font-size:14px;line-height:1.75}
@@ -3454,7 +3458,7 @@ html:has(body.lh-home-view){scroll-behavior:smooth;overflow-x:hidden}
           <ul class='lh-chips lh-cine' style='--i:4'><li><svg aria-hidden='true' class='lh-ico'><use href='#lh-i-heart'/></svg>Sức khỏe</li><li><svg aria-hidden='true' class='lh-ico'><use href='#lh-i-shield'/></svg>Phản đòn</li></ul>
           <div class='lh-stats lh-cine' style='--i:5'><div class='lh-stat'><span>Công</span><span aria-label='2 trên 5' class='lh-pips' role='img'><i class='on'></i><i class='on'></i><i></i><i></i><i></i></span></div><div class='lh-stat'><span>Thủ</span><span aria-label='5 trên 5' class='lh-pips' role='img'><i class='on'></i><i class='on'></i><i class='on'></i><i class='on'></i><i class='on'></i></span></div><div class='lh-stat'><span>Tầm</span><span aria-label='1 trên 5' class='lh-pips' role='img'><i class='on'></i><i></i><i></i><i></i><i></i></span></div><div class='lh-stat'><span>Độ khó</span><span aria-label='3 trên 5' class='lh-pips' role='img'><i class='on'></i><i class='on'></i><i class='on'></i><i></i><i></i></span></div></div>
         </div>
-        <figure class='lh-slide-art'><div aria-hidden='true' class='lh-halo'></div><div aria-hidden='true' class='lh-glow'></div><div class='lh-float'><svg aria-hidden='true' class='lh-weapon lh-shield' viewBox='0 0 200 240'><defs><linearGradient id='lh-sg' x1='0' x2='0' y1='0' y2='1'><stop offset='0' stop-color='#f3dca0'/><stop offset='1' stop-color='#8a5a24'/></linearGradient><radialGradient id='lh-sg2'><stop offset='0' stop-color='#5a2716'/><stop offset='1' stop-color='#26100a'/></radialGradient></defs><path d='M100 6L188 37v83c0 53-37 92-88 114C49 212 12 173 12 120V37z' fill='url(#lh-sg)'/><path d='M100 24l72 25v71c0 43-30 76-72 95-42-19-72-52-72-95V49z' fill='url(#lh-sg2)'/><circle cx='100' cy='118' fill='none' r='56' stroke='#e2bd78' stroke-width='3'/><circle cx='100' cy='118' fill='none' r='44' stroke='#e2bd78' stroke-dasharray='5 4' stroke-width='2'/><circle cx='100' cy='118' fill='none' r='32' stroke='#e2bd78' stroke-opacity='.6'/><path d='M100.0 92.0 L103.8 108.8 L118.4 99.6 L109.2 114.2 L126.0 118.0 L109.2 121.8 L118.4 136.4 L103.8 127.2 L100.0 144.0 L96.2 127.2 L81.6 136.4 L90.8 121.8 L74.0 118.0 L90.8 114.2 L81.6 99.6 L96.2 108.8Z' fill='#e9c47e'/><circle cx='100' cy='118' fill='#f3dca0' r='5'/></svg></div></figure>
+        <figure class='lh-slide-art'><div aria-hidden='true' class='lh-halo'></div><div aria-hidden='true' class='lh-glow'></div><div class='lh-float'><img alt='Khiên đồng' class='lh-weapon lh-shield' height='380' loading='lazy' referrerpolicy='no-referrer' src='https://lh3.googleusercontent.com/d/1hGXEeV9bBDqxE-mBLcYD0tp3MDgoBJxC' width='380'/></div></figure>
       </div>
     </article>
     <div class='lh-stage-ui'><div class='lh-shell'>
