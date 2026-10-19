@@ -1793,7 +1793,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
      Hỗn Nguyên Điện (cấp 999): hạ Hỗn Nguyên Ma Tổ, mở lồng cứu An (con gái), đưa con về làng Thanh Mộc; dân làng ra chào tạm biệt hai cha con. */
   const DUEL=[['ha-hau-don','Mắt là tinh huyết cha mẹ, không thể bỏ!'],['hua-chu','Hổ Si ở đây, kẻ nào dám tới!'],['dien-vi','Ác Lai giữ cửa, đừng hòng qua!'],['hoang-trung','Lão tướng này chưa già đâu!'],['ma-sieu','Cẩm Mã Siêu đất Tây Lương đây!'],
     ['truong-phi','Ta là Trương Dực Đức đất Yến!'],['trieu-van','Thường Sơn Triệu Tử Long đây!'],['quan-vu','Thanh Long Đao không chém kẻ vô danh!'],['hang-vu','Sức nhổ núi, khí trùm đời!'],['lu-bo','Nhân trung Lữ Bố, mã trung Xích Thố!']];
-  let BT=null,AN=null,FW=null,hqHint='',SQ=null;
+  let BT=null,AN=null,FW=null,hqHint='',SQ=null,cageWant=false,cageBusy=false,cageAuto=0;
   const hqDone=k=>!!(player.flags.hq&&player.flags.hq[k]);
   try{LH_ART.add('con-gai',K=>LH_ART.gen({npc:{'con-gai-an':{robe:'#e86a9a',trim:'#fff0c0',hat:'none',hair:'#2a2622',s:.6,fem:1,skirt:1,sash:'#fff0c0'}}}));}catch(e){}
   function hqReset(){BT=null;hqHint='';if(AN)AN.map='';SQ=null;}
@@ -1848,12 +1848,16 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
   }
   // Hỗn Nguyên Điện: lồng giam con gái
   const cageAt=()=>{const r=World.def.kind==='final'&&World.def.rescue;return r?{x:(r.x+.5)*T,y:(r.y+.8)*T}:null;};
-  function hqTouch(){
-    const c=cageAt();if(!c||Math.hypot(hero.x-c.x,hero.y-c.y)>110||Number(player.flags.rescue)>=1)return false;
+  // v10.40: bấm / chạm vào lồng (điện thoại không có phím E): đứng xa thì tự đi tới rồi mở; đứng sát lồng sau khi đã hạ trùm thì tự mở
+  function hqTouch(pt){
+    const c=cageAt();if(!c||Number(player.flags.rescue)>=1)return false;
+    if(pt&&!(Math.abs(pt.x-c.x)<52&&pt.y>c.y-120&&pt.y<c.y+30))return false;
+    if(Math.hypot(hero.x-c.x,hero.y-c.y)>110){if(!pt)return false;const p=World.findPath(hero,{x:c.x,y:c.y+44});if(p){route=p;targetNPC=null;cageWant=true;}return true;}
+    if(cageBusy)return true;
     if(!((player.flags.kills||{})['hon-nguyen-ma-to']>0)){talkBox({id:'an-cage',name:'An',lines:['Bố ơi! Bố! Con ở đây!','Con quái to trong điện giữ chìa khóa lồng… Bố cẩn thận nhé, con chờ bố!']});return true;}
-    op({t:'rescue'}).then(()=>{burst(c.x,c.y-40,'#ffe0a0',44,230);LH_Audio.play('levelup');shake(4);
+    cageBusy=true;op({t:'rescue'}).then(()=>{cageBusy=false;burst(c.x,c.y-40,'#ffe0a0',44,230);LH_Audio.play('levelup');shake(4);
       talkBox({id:'an-free',name:'An',lines:['Bố!!! Con biết thế nào bố cũng tới mà!','Con nhớ bố, nhớ nhà, nhớ cả làng Thanh Mộc nữa…','Bố ơi, mình về nhà đi!'],btn:'Về nhà thôi',onEnd:()=>message(svg('heart')+'Đưa An về làng Thanh Mộc · An sẽ đi theo bạn',6)});window.GameUI?.refresh();},
-      err=>message(svg('close')+'Chưa mở được lồng ('+esc(String(err&&err.message||err))+')',3));
+      err=>{cageBusy=false;message(svg('close')+'Chưa mở được lồng ('+esc(String(err&&err.message||err))+')',3);});
     return true;
   }
   function drawCage(o){
@@ -1956,6 +1960,9 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
   }
   function hqTick(dt){
     btTick(dt);anTick(dt);fwTick();sqTick(dt);
+    {const c=cageAt();if(c&&!(Number(player.flags.rescue)>=1)&&!dialogNPC&&!hero.dead&&!tut){const near=Math.hypot(hero.x-c.x,hero.y-c.y)<110;
+      if(cageWant&&!route.length){cageWant=false;if(near)hqTouch();}
+      else if(near&&time>cageAuto&&((player.flags.kills||{})['hon-nguyen-ma-to']>0)){cageAuto=time+6;hqTouch();}}}
     const D=World.def;if(D.kind==='final'&&hqHint!==World.id&&!tut){hqHint=World.id;if(!(Number(player.flags.rescue)>=1))message(svg('heart')+'Có tiếng trẻ con khóc vọng ra từ sâu trong điện…',5);}
   }
   // vẽ nhân vật đang hoá thành quái (sách Phong): hình quái tại chỗ nhân vật, viền gió, thanh thời gian
@@ -2115,7 +2122,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
   function nextLine(){if(!dialogNPC)return;if(dialogNPC.choices&&page===dialogNPC.lines.length-1)return;if(page<dialogNPC.lines.length-1){page++;showLine();}else endDialog();}
   function goTo(pt){
     if(busy()||hero.dead)return;
-    if(caveTouch(pt))return;
+    if(caveTouch(pt)||hqTouch(pt))return;
     const st=Player.stance(player),d=ATK[st.type];
     const m=monsters.find(o=>!o.dead&&Math.hypot(o.x-pt.x,(o.y-MON[o.type].h*.5)-pt.y)<MON[o.type].r+16);
     if(m&&lockOn&&isRanged(st.type)){hero.lockT=m;cast('normal');return;}
