@@ -432,10 +432,10 @@ linh:[
   GAME_DATA.cua_hang.push(...COS.map(([id],i)=>({cua_hang:'phan-son',id,pham_chat:'n',gia:'',thu_tu:i+1,bac:0})));
   // v10.41: thuốc đặc biệt ở Phấn Son, mua bằng hồng ngọc, mua xong uống ngay. Thuốc kinh nghiệm: gia_tri = % kinh nghiệm đánh quái cộng thêm
   // trong thuoc_kn_phut phút (giờ thực); uống chồng thì cộng dồn thời gian. Thuốc tẩy điểm: trả lại toàn bộ điểm cộng đã dùng để cộng lại.
-  const THUOC=[['thuoc-kn-nho','Thuốc kinh nghiệm nhỏ','kn',50,10,'+50% kinh nghiệm đánh quái trong 60 phút, uống thêm thì cộng dồn'],
-   ['thuoc-kn-lon','Thuốc kinh nghiệm lớn','kn',100,20,'+100% kinh nghiệm đánh quái trong 60 phút, uống thêm thì cộng dồn'],
-   ['thuoc-tay-diem','Thuốc tẩy điểm','tay',0,50,'Trả lại toàn bộ điểm cộng đã dùng để cộng lại']];
-  for(const [id,ten,loai,gia_tri,gia_hong_ngoc,mo_ta] of THUOC)GAME_DATA.vat_pham.push({id,ten,o:'cos',loai,cam:'',cong:0,thu:0,toc:0,gia:0,mau:'',thu_cuoi:'',menh_lenh:0,he:'',pham_chat:'',hieu_ung:'',gia_tri,mo_ta,gia_hong_ngoc,anh:''});
+  const THUOC=[['thuoc-kn-nho','Thuốc kinh nghiệm nhỏ','kn',50,10,'+50% kinh nghiệm đánh quái trong 60 phút, uống thêm thì cộng dồn','1_ogyb2bWEitdfmxdB-fkVPGSGzt-DomB'],
+   ['thuoc-kn-lon','Thuốc kinh nghiệm lớn','kn',100,20,'+100% kinh nghiệm đánh quái trong 60 phút, uống thêm thì cộng dồn','1vHGR4W_KahJf5se-JXStc2pFgBE07DLE'],
+   ['thuoc-tay-diem','Thuốc tẩy điểm','tay',0,50,'Trả lại toàn bộ điểm cộng đã dùng để cộng lại','1a8MDAR2UpNP6ixGeVtkUEZmFMqJM55Rn']]; // v10.45: ảnh bình thuốc (link Drive)
+  for(const [id,ten,loai,gia_tri,gia_hong_ngoc,mo_ta,drv] of THUOC)GAME_DATA.vat_pham.push({id,ten,o:'cos',loai,cam:'',cong:0,thu:0,toc:0,gia:0,mau:'',thu_cuoi:'',menh_lenh:0,he:'',pham_chat:'',hieu_ung:'',gia_tri,mo_ta,gia_hong_ngoc,anh:DRIVE(drv)});
   GAME_DATA.cua_hang.push(...THUOC.map(([id],i)=>({cua_hang:'phan-son',id,pham_chat:'n',gia:'',thu_tu:50+i,bac:0})));
   // Vật phẩm cốt truyện (ô 'quest'): không mặc, không bán, không rơi — manh mối tìm con gái
   const QI=[
