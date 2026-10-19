@@ -419,8 +419,8 @@ linh:[
   // Mỹ phẩm (ô 'cos'): thẻ avatar (thay ảnh chân dung), nền hồ sơ (nền khung trên của game), thuốc đa nhiệm (hiệu ứng tên nhân vật). v10.12: bỏ khung avatar; mua xong áp dụng ngay, không qua túi
   // Mua bằng hồng ngọc ở Chủ tiệm Phấn Son. Dùng xong vào bộ sưu tập, đổi qua lại ở bảng Diện mạo. Ảnh: link Drive (cột anh) — thay ảnh thì sửa link trong tab vat_pham.
   const COS=[
-   ['av-tuong-quan','Thẻ avatar Tướng quân','avatar',40,'1LUSY5q3cEGNu4VECWZGa_VOalCcphoUx'],['av-hiep-khach','Thẻ avatar Hiệp khách','avatar',40,'1_9hVbAhxETPwldlFvRDfe9e68-cZu0Yu'],
-   ['av-phi-tan','Thẻ avatar Phi Tần','avatar',40,'1jVlcjR4RDojr-Q9LSx6ywwmElINgtMJd'],['av-my-nu-sen','Thẻ avatar Mỹ nữ bên hoa sen','avatar',40,'1Zjjc7Sqp_J-v0ckeA7UbamopSTXY_BQN'],
+   ['av-tuong-quan','Thẻ avatar Tướng quân','avatar',40,'1oDhs5LhwwKm3wqp7fMZRQRxzZLr4htBJ'],['av-hiep-khach','Thẻ avatar Hiệp khách','avatar',40,'1kKmP8CP_VKCjqOYDs7CKKew6rUIeAfQK'],
+   ['av-phi-tan','Thẻ avatar Phi Tần','avatar',40,'1HwKn-eHo_5Lm9QfUhAvVwZbLUU4dOZtW'],['av-my-nu-sen','Thẻ avatar Mỹ nữ bên hoa sen','avatar',40,'1GBaAZi4HDNg1sXUmo7ShGISwa6c3haPH'],
    ['av-minh-hong','Thẻ avatar Minh Hồng','avatar',80,'1mHxTCbL1vxiveuALFl6cdY-Ajwew2vpJ'],['av-vuong-gia','Thẻ avatar Vương Gia Lãng Tử','avatar',80,'15dbYhpGHNrYIluqQy77_-ZLoNX4IK0Om'],
    ['av-bach-kim','Thẻ avatar Bạch Kim Quang Mỹ Nữ','avatar',80,'11VnNVYq69-5o5MDsH4O4dzdJgUhmdQrL'],['av-mau-don','Thẻ avatar Mẫu Đơn','avatar',80,'18bul53I9se1-05F0SZ8yfmMmtlv5NaOH'],['av-cuu-vi','Thẻ avatar Cửu Vĩ Hồ Ly Tinh','avatar',200,'1DSHau53kj7bF2y7_NvLrUYroAR9RlylB'],
    ['nen-ca','Nền hồ sơ Cá','nen',60,'1vKX-YFQvcFS-6R6L5cxIewU7bN58co4Z'],['nen-lau-dai','Nền hồ sơ Lâu đài','nen',60,'1e0BY_CCZOErhaiAcIIaQmv--gxYgC7R0'],['nen-nui','Nền hồ sơ Núi','nen',60,'1I9axl3vT4v4oooskc6slprQqOAV-Usqi'],['nen-trang','Nền hồ sơ Trăng','nen',60,'1ZVeQIWPwsMS66the145Tye9rlDgmViSJ'],
@@ -439,10 +439,10 @@ linh:[
   GAME_DATA.cua_hang.push(...THUOC.map(([id],i)=>({cua_hang:'phan-son',id,pham_chat:'n',gia:'',thu_tu:50+i,bac:0})));
   // Vật phẩm cốt truyện (ô 'quest'): không mặc, không bán, không rơi — manh mối tìm con gái
   const QI=[
-   ['but-long','Bút Lông','1hCTzUeg0kJM9bbiho5v-IaBQvfhfoUgA','Cây bút lông nhỏ, cán khắc chữ "An". Con bé vẫn hay cắn cán bút khi tập viết.'],
-   ['giay-muc','Giấy và mực','160eR2F_DzmffC3EN8z74NSC7-MC_xg7m','Tờ giấy dó còn vết mực loang, góc giấy có nét chữ con gái viết dở: "Bố ơi…"'],
-   ['gia-treo-but','Giá treo bút','12zNWrsPoBfv25BgP1PMpKI21WLA2eDuG','Giá treo bút bằng gỗ, mặt sau khắc hình con cá — món quà sinh nhật bố tặng con năm ngoái.'],
-   ['nghien-da','Nghiên đá','1AvnoWSoZx-1i00HZOgWOAczwoJ3h8LOU','Nghiên mực còn ẩm. Dưới đáy có vẽ mũi tên chỉ về hướng kinh thành.'],
+   ['but-long','Bút Lông','1PR8Rlz0Zt706E5mWpgqfmhnk3fsz42u7','Cây bút lông nhỏ, cán khắc chữ "An". Con bé vẫn hay cắn cán bút khi tập viết.'],
+   ['giay-muc','Giấy và mực','1T64joo5ELGqstHbBhn13VZLjJxL-4DTQ','Tờ giấy dó còn vết mực loang, góc giấy có nét chữ con gái viết dở: "Bố ơi…"'],
+   ['gia-treo-but','Giá treo bút','1PtNZCwth0Bi7dQsJwJ44-TNsjzAchM27','Giá treo bút bằng gỗ, mặt sau khắc hình con cá — món quà sinh nhật bố tặng con năm ngoái.'],
+   ['nghien-da','Nghiên đá','1x4oyi1f_djhQ3aRtEJ1r2-eDrJVgagZf','Nghiên mực còn ẩm. Dưới đáy có vẽ mũi tên chỉ về hướng kinh thành.'],
    ['an-thanh-dien','Ấn Thanh Điền Thạch','1yHTGPfsbLnGBVy-7GyVp_xhllt85TLOs','Phôi đá Thanh Điền khắc dở chữ "Bình An". Tướng giặc giữ nó trong ngực áo.'],
    ['an-ba-lam','Ấn Ba Lâm Thạch','1xw9kNZjckB4LHseVwtAMjEggvnJ0zFIZ','Ấn đá Ba Lâm hình tròn, mặt khắc tên con bé. Ai đó đã dùng nó đóng lên một bức thư.'],
    ['an-xuong-hoa','Ấn Xương Hoá Thạch','1o1UZagjjarAkLRHv78xOG_1iMfp0y1Gf','Ấn Xương Hoá vân đỏ như máu gà. Khắc trên đó: "Thiên Đình — tầng cao nhất".'],
