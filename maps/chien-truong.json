@@ -370,7 +370,21 @@
   "y": 7
  },
  "kind": "battle",
- "npcs": [],
+ "npcs": [
+  {
+   "id": "lao-binh",
+   "role": "lao-binh",
+   "name": "Lão binh",
+   "act": "stand",
+   "x": 26,
+   "y": 28,
+   "facing": -1,
+   "lines": [
+    "Chiến trường này ta đánh từ thời trai trẻ, giờ chỉ còn ma.",
+    "Cờ soái của địch còn cắm giữa doanh trại kia."
+   ]
+  }
+ ],
  "monsters": [
   {
    "type": "nguyen-soai-ma",

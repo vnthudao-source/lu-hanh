@@ -268,7 +268,20 @@
   }
  ],
  "trees": [],
- "npcs": [],
+ "npcs": [
+  {
+   "id": "nguyet-than",
+   "role": "nguyet-than",
+   "name": "Nguyệt Thần",
+   "act": "stand",
+   "x": 26,
+   "y": 28,
+   "facing": -1,
+   "lines": [
+    "Cung Trăng lạnh lẽo, chỉ có tiếng chày giã thuốc của Thỏ Ngọc."
+   ]
+  }
+ ],
  "monsters": [
   {
    "type": "nguyet-than",

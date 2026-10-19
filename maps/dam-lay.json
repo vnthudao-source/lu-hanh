@@ -455,7 +455,21 @@
   }
  ],
  "trees": [],
- "npcs": [],
+ "npcs": [
+  {
+   "id": "lai-do",
+   "role": "lai-do",
+   "name": "Ông lái đò",
+   "act": "stand",
+   "x": 26,
+   "y": 28,
+   "facing": -1,
+   "lines": [
+    "Đầm này nuốt người như bỡn. Muốn qua thì phải đi đúng phiến đá.",
+    "Ta chèo đò ở đây ba mươi năm, chưa thấy ai lội bùn mà qua được."
+   ]
+  }
+ ],
  "monsters": [
   {
    "type": "xa-tinh",

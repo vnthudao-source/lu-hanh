@@ -403,5 +403,20 @@
    }
   }
  ],
- "trees": []
+ "trees": [],
+ "npcs": [
+  {
+   "id": "tieu-phu",
+   "role": "tieu-phu",
+   "name": "Tiều phu",
+   "act": "stand",
+   "x": 24,
+   "y": 5.3,
+   "facing": -1,
+   "lines": [
+    "Ta vào hang tránh mưa, thấy trên vách có mấy hình vẽ bằng than, nét như trẻ con vẽ.",
+    "Trong hang tối lắm, dơi với nhện nhiều, cẩn thận đấy."
+   ]
+  }
+ ]
 }

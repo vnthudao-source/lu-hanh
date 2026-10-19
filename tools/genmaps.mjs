@@ -374,6 +374,31 @@ function build(M,idx){
     camps,objects,trees:[],...(M.kind==='battle'?{flag:{x:24,y:7},kind:'battle'}:M.kind==='arena'?{arena:{x:24,y:17,r:6},kind:'arena'}:M.kind==='final'?{rescue:{x:28,y:6},kind:'final'}:{}),npcs:(M.npcs||[]).map(n=>({...n,...(n.x==null?{x:(n.x0+n.x1)/2,facing:1}:{})})),monsters,portals,theme:M.id,sky:M.sky?M.id:undefined,level:M.lv};
   return def;
 }
+// v10.39: NPC giao việc chính tuyến Tìm con ở từng vùng (hình vẽ dùng chung trong src/04-gen.js A.npc, không cần khai báo ở gói bản đồ)
+const GIVERS={
+ 'dam-lay':['lai-do','Ông lái đò',['Đầm này nuốt người như bỡn. Muốn qua thì phải đi đúng phiến đá.','Ta chèo đò ở đây ba mươi năm, chưa thấy ai lội bùn mà qua được.']],
+ 'co-loa':['ba-lao-che','Bà lão bán chè',['Chè đậu, chè kê đây! Ăn một bát cho mát lòng.','Mắt bà kém rồi, qua đường đông xe ngựa sợ lắm.']],
+ 'nui-lua':['tho-ren-nui','Thợ rèn núi',['Lửa núi này nóng hơn mọi lò rèn dưới xuôi.','Rèn gì cũng được… miễn trả đủ tiền. Ta đã lỡ rèn một thứ không nên rèn.']],
+ 'bang-nguyen':['su-gia-bang','Sứ giả Băng Hoàng',['Băng Hoàng không tiếp kẻ ngu dốt. Muốn hỏi chuyện thì phải qua câu đố của ta.']],
+ 'thang-long':['linh-bang-tin','Lính gác bảng tin',['Bảng tin kinh thành dán lệnh truy nã mỗi ngày.','Có ai nhận ra kẻ nào thì báo ngay cho lính gác.']],
+ 'cuu-trung':['giu-lau','Lão giữ lầu',['Cửu Trùng Đài chín tầng, mỗi tầng một câu đố. Đáp được thì lên.']],
+ 'thuy-cung':['quy-tuong','Quy thừa tướng',['Ta là thừa tướng của Long Vương, sống đã ngàn năm.','Con trai khổng lồ ngoài kia giữ một viên ngọc biết nói.']],
+ 'thien-son':['chan-de','Người chăn dê',['Gió Thiên Sơn mạnh lắm, thả diều thì bay tới tận mây.']],
+ 'hoa-lu':['lao-gac-cong','Lão gác cổng',['Cổng thành ba người canh, mà chỉ có một người thật thà.']],
+ 'dia-nguc-mon':['phan-quan','Phán quan',['Sổ sinh tử ghi tên mọi kiếp người. Ghi sai một nét là đổi cả một đời.']],
+ 'vuc-yeu-tinh':['dao-co','Đạo cô',['Trong vực có hồ ly thành tinh, giả làm người để dụ khách lạ.','Đứng cạnh đèn mà nhìn bóng, bóng không biết nói dối.']],
+ 'cung-trang':['nguyet-than','Nguyệt Thần',['Cung Trăng lạnh lẽo, chỉ có tiếng chày giã thuốc của Thỏ Ngọc.']],
+ 'phu-xuan':['quan-le-bo','Quan Lễ bộ',['Lễ nghi triều đình phải đúng từng bước, sai một bước là phạm thượng.']],
+ 'hu-khong':['tien-ong','Tiên ông lạc lối',['Ta lạc ở Hư Không này đã trăm năm, chỉ thấy khe nứt với khe nứt.']],
+ 'huyet-hai':['lao-thuyen','Lão lái thuyền',['Biển máu không có cá, chỉ có thuyền giấy trôi dạt.']],
+ 'chien-truong':['lao-binh','Lão binh',['Chiến trường này ta đánh từ thời trai trẻ, giờ chỉ còn ma.','Cờ soái của địch còn cắm giữa doanh trại kia.']],
+ 'luu-sa':['lao-lai-be','Lão lái bè',['Sông cát chảy ngược, không có Sa Hà Quái gật đầu thì chẳng ai qua được.']],
+ 'vo-dai':['lao-vo-su','Lão võ sư',['Mười danh tướng trên đài kia, mỗi người một tuyệt kỹ.']],
+ 'van-kiem':['kiem-lao','Kiếm lão',['Vạn thanh kiếm cắm trên núi, mỗi thanh chờ một chủ nhân.']],
+ 'bang-hoa':['dao-si-bang-hoa','Đạo sĩ băng hỏa',['Băng với lửa phải cân nhau thì cổng mới mở.']],
+ 'cuu-u':['manh-ba','Mạnh Bà',['Uống bát canh này thì quên hết… Ngươi chưa muốn quên ai à?']],
+ 'hon-don-hai':['long-nu','Long nữ',['Biển Hỗn Độn không có đường, chỉ có la bàn đá của tổ tiên.']]};
+for(const M of MAPS){const g=GIVERS[M.id];if(!g)continue;const [id,name,lines]=g;M.npcs=[...(M.npcs||[]).filter(n=>n.id!==id),{id,role:id,name,act:'stand',...(M.citadel?{x:15,y:14}:{x:26,y:28}),facing:-1,lines}];}
 const defs=MAPS.map((M,i)=>build(M,i));
 // tx,ty cho từng cổng (ô đứng cạnh cổng về trong bản đồ đích)
 const spawnNear=(d,P)=>P.y<=1?{tx:P.x+1,ty:P.y+2}:P.y>=H-2?{tx:P.x+1,ty:P.y-2}:P.x<=1?{tx:P.x+3,ty:P.y+1}:{tx:P.x-3,ty:P.y+1};
@@ -397,7 +422,7 @@ for(const [i,d] of defs.entries()){
   if(M.kind==='arena')Object.assign(obj,{'cot-vo-dai':{base:'pillar',c:['#b0a080','#6a2a1a']},'co-vo-dai':{base:'flag',c:['#4a3220','#e0b040','#c02020']}});
   if(M.citadel)Object.assign(obj,{tuong:{base:'wall',c:['#8a7a66','#5a4e44','#b0a088']},'cong-thanh':{base:'gate',c:['#8a7a66','#e0b040','#6b2d1e']},nha:{base:'roof',c:['#c8b088','#6b2d1e','#e0b040']},den:{base:'lantern',c:['#5a2a1a','#ff7040']},co:{base:'flag',c:['#6a4a2a','#c03030','#e0b040']},trong:{base:'drum',c:['#8a2a1a','#e8d0a0','#e0b040']}});
   const mon={};for(const [id,,sp] of M.mobs)mon[id]=sp;mon[M.boss[0]]=M.boss[2];
-  const npc={};for(const n of M.npcs||[])if(!npc[n.role])npc[n.role]=NPC_LOOK[n.role];
+  const npc={};for(const n of M.npcs||[])if(!npc[n.role]&&NPC_LOOK[n.role])npc[n.role]=NPC_LOOK[n.role];
   const spec={theme:{[M.id]:M.theme},obj,mon,ring:{[M.boss[0]]:M.ring},...(M.sky?{sky:{[M.id]:M.sky}}:{}),...(Object.keys(npc).length?{npc}:{})};
   fs.writeFileSync(path.join(root,'maps',d.id+'.art.js'),`/* ${M.name} (cấp ${M.lv}) · sinh bởi tools/genmaps.mjs: nền, vật, quái, NPC vẽ bằng LH_ART.gen */\nK=>LH_ART.gen(${JSON.stringify(spec)})\n`);
 }

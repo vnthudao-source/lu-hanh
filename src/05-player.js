@@ -25,6 +25,7 @@ const Player=(()=>{
   const ALIAS={'book-ice':'book-water','book-wind':'book-metal','book-thunder':'book-earth'};
   const skills={normal:{cost:0,cooldown:450},basic:{cost:10,cooldown:3000},intermediate:{cost:18,cooldown:6000},advanced:{cost:28,cooldown:10000},mount:{cost:12,cooldown:6000}};
   // Bảng sinh từ dữ liệu (Sheet)
+  let STORY_L=null; // v10.39: bộ đệm thứ tự chuỗi Tìm con
   const CFG={},RAR={},ADD={},items={},SHOPS={},SETS={},MON={},QUESTS={},MERCS={},ENH=[],WEAPONS={},REGIONS=[],AVATARS={},TOPUPS=[],QUIZ={},TUONG={};
   // Hiệu ứng tên nhân vật (Thuốc đa nhiệm)
   const NAME_FX={vang:'Ánh vàng','cau-vong':'Cầu vồng',lua:'Lửa',bang:'Băng',tim:'Tím mộng'};
@@ -92,6 +93,7 @@ const Player=(()=>{
     }
     const QM=num(CFG.quai_nhan_mau,1),QD=num(CFG.quai_nhan_sat_thuong,1),BN=num(CFG.boss_nhan,1),BD=num(CFG.boss_nhan_sat_thuong,1),qx=(v,k)=>v>0?Math.max(1,Math.round(v*k)):v; // v10.16: hệ số máu / sát thương mọi quái (cau_hinh)
     for(const r of data.quai||[])MON[r.id]={def:num(r.thu),name:r.ten,hp:qx(num(r.mau),QM*(num(r.boss)?BN:1)),dmg:qx(num(r.sat_thuong),QD*(num(r.boss)?BN*(num(r.boss)===1?BD:1):1)),hpBase:num(r.mau),dmgBase:num(r.sat_thuong),speed:num(r.toc_do),run:num(r.toc_chay),r:num(r.ban_kinh),h:num(r.cao),aggro:num(r.tam_danh),range:num(r.tam_gan),cd:num(r.hoi_chieu_ms)/1000,windup:num(r.vung_tay_ms)/1000,copper:num(r.dong),knock:num(r.day_lui_phan_tram)/100,boss:num(r.boss),respawn:num(r.hoi_sinh_giay,15),drops:{g:num(r.dep_phan_van)/1e4,p:num(r.hoan_hao_phan_van)/1e4,l:num(r.huyen_thoai_phan_van)/1e4,m:num(r.than_phan_van)/1e4},rubies:[num(r.hong_ngoc_it),num(r.hong_ngoc_nhieu)],dtype:r.loai_sat_thuong||'thuong',crit:num(r.ti_le_x2),exp:num(r.kinh_nghiem,Math.max(1,Math.round(num(r.mau)/8))),map:String(r.ban_do||'').trim()||undefined,skills:String(r.ky_nang||'').split(/[,\s]+/).filter(k=>SKILLS[k]),tac:String(r.ky_nang||'').split(/[,\s]+/).filter(k=>SKILLS[k]&&SKILLS[k].passive)};
+    STORY_L=null;
     for(const r of data.nhiem_vu||[])QUESTS[r.id]={id:r.id,name:r.ten,desc:r.mo_ta,target:r.muc_tieu,count:num(r.so_luong,1),copper:num(r.thuong_dong),rubies:num(r.thuong_hong_ngoc),item:r.thuong_do||'',itemQ:r.pham_chat_do||'n',repeat:r.lap_lai!=='khong',lv:num(r.cap_toi_thieu),exp:num(r.thuong_kinh_nghiem,Math.round(num(r.thuong_dong)/10)),req:r.yeu_cau||'',end:r.loi_ket||'',story:!!num(r.truyen),npc:r.npc||'',at:r.noi||'',npcName:r.npc_ten||''};
     // Thầy đồ: bộ câu hỏi (bo_cau_hoi) + câu hỏi (cau_hoi; máy chủ đọc tab CauHoi của bảng OCD_Quest, cột dap_an không gửi xuống trình duyệt)
     // v10.13: bỏ các bộ mã NV* và SKQ* (chỉ giữ bộ DX_*)
@@ -483,9 +485,9 @@ const Player=(()=>{
       if(k==='hq'&&!(f.hq&&f.hq[v]))return {msg:HQ_MSG[v]||'Cần xong nhiệm vụ ẩn của vùng trước'};}
     return null;};
   const regionLv=id=>{const R=REGIONS.find(r=>r.id===id);return R?R.lv:1;};
-  const regionOf=monId=>(MON[monId]&&MON[monId].map)||MON_REGION[monId]||'thanh-moc';
+  const regionOf=monId=>(MON[monId]&&MON[monId].map)||MON_REGION[monId]||(/^(game|hq|rescue):/.test(String(monId))?String(monId).split(':')[1]:'')||'thanh-moc'; // v10.39: mục tiêu 'game:<vùng>' (trò nhỏ), 'hq:<vùng>' / 'rescue:<vùng>' (điều kiện)
   const questLevel=Q=>Q?(Q.lv||mapLevel(regionOf(Q.target))):1;
-  function questAccept(s,id){const Q=QUESTS[id];if(!Q)throw Error('QUEST');if((s.level||1)<questLevel(Q))throw Error('LEVEL');if(s.quests.active[id]!=null)throw Error('QUEST_HAVE');if(Object.keys(s.quests.active).length>=MAX_ACTIVE_QUEST)throw Error('QUEST_FULL');if(!Q.repeat&&s.quests.done[id])throw Error('QUEST_DONE');if(Q.req&&!s.quests.done[Q.req])throw Error('QUEST_TRUOC');s.quests.active[id]=0;}
+  function questAccept(s,id){const Q=QUESTS[id];if(!Q)throw Error('QUEST');if((s.level||1)<questLevel(Q))throw Error('LEVEL');if(s.quests.active[id]!=null)throw Error('QUEST_HAVE');if(Object.keys(s.quests.active).length>=MAX_ACTIVE_QUEST)throw Error('QUEST_FULL');if(!Q.repeat&&s.quests.done[id])throw Error('QUEST_DONE');if(Q.req&&!(Q.story?storyDone(s,Q.req):s.quests.done[Q.req]))throw Error('QUEST_TRUOC');if(Q.story&&storyDone(s,id))throw Error('QUEST_DONE');s.quests.active[id]=0;}
   // v10.13: sự kiện đột xuất ở làng / thành (mỗi su_kien_phut phút một lần, theo mốc đồng hồ): quái sự kiện hiện ngoài vùng an toàn gần cổng;
   // thắng (đuổi kẻ trộm / hạ hết) → op eventWin: cỏ may mắn + tiền + hồng ngọc; máy chủ chỉ nhận mỗi sự kiện một lần trong một khoảng (srv.evAt)
   const EVENTS={
@@ -496,11 +498,18 @@ const Player=(()=>{
     'gian-te':{map:'phu-xuan',name:'Gian tế ám sát trong đêm',hint:'Hạ hết gian tế ngoài cổng thành',mobs:[['gian-te',5]],dur:600,luck:[5,8],copper:4000000,rubies:12}
   };
   // Cốt truyện (v10.12): mỗi việc gắn với một NPC (cột npc, noi). storyAt: việc NPC này đang có cho nhân vật → {Q,state:'new'|'active'|'ready'}; storyNext: việc kế tiếp chưa nhận (để bảng nhiệm vụ chỉ chỗ)
-  function storyAt(s,npcId){for(const Q of Object.values(QUESTS)){if(!Q.story||Q.npc!==npcId)continue;const n=s.quests.active[Q.id];if(n!=null)return {Q,state:n>=Q.count?'ready':'active'};if(!s.quests.done[Q.id]&&(!Q.req||s.quests.done[Q.req]))return {Q,state:'new'};}return null;}
-  function storyNext(s){return Object.values(QUESTS).filter(Q=>Q.story&&!s.quests.done[Q.id]&&s.quests.active[Q.id]==null&&(!Q.req||s.quests.done[Q.req])).sort((a,b)=>questLevel(a)-questLevel(b))[0]||null;}
+  // v10.39: tuyến Tìm con 34 việc (một việc mỗi vùng). Mục tiêu ngoài quái: 'game:<vùng>' (trò nhỏ, xong gửi op sg), 'hq:<vùng>' (đã xong nhiệm vụ ẩn vùng), 'rescue:<vùng>' (đã đưa An về làng).
+  // storyDone: việc coi như xong khi đã trả, hoặc đã trả một việc đứng sau trong chuỗi (người chơi cũ đã xong tc-k không bị kẹt ở các việc mới chèn vào trước tc-k)
+  const storyList=()=>{if(STORY_L)return STORY_L;const L=Object.values(QUESTS).filter(Q=>Q.story),by={},out=[],seen=new Set();for(const Q of L)(by[Q.req||'']=by[Q.req||'']||[]).push(Q); // thứ tự chuỗi theo yeu_cau (không theo thứ tự dòng trên Sheet)
+    const walk=k=>{for(const Q of by[k]||[]){if(seen.has(Q.id))continue;seen.add(Q.id);out.push(Q);walk(Q.id);}};walk('');for(const Q of L)if(!seen.has(Q.id)){seen.add(Q.id);out.push(Q);}return STORY_L=out;};
+  function storyDone(s,id){if(s.quests.done[id])return true;const L=storyList(),i=L.findIndex(Q=>Q.id===id);if(i<0)return false;for(let j=i+1;j<L.length;j++)if(s.quests.done[L[j].id])return true;return false;}
+  const condOk=(s,Q)=>{const t=String(Q.target||''),[k,v]=t.split(':');if(k==='hq')return !!(s.flags.hq&&s.flags.hq[v]);if(k==='rescue')return num(s.flags.rescue)>=2;return null;};
+  const questReady=(s,Q)=>{const c=condOk(s,Q);return c===null?(s.quests.active[Q.id]||0)>=Q.count:c;};
+  function storyAt(s,npcId){for(const Q of storyList()){if(Q.npc!==npcId)continue;const n=s.quests.active[Q.id];if(n!=null)return {Q,state:questReady(s,Q)?'ready':'active'};if(!storyDone(s,Q.id)&&(!Q.req||storyDone(s,Q.req))&&(s.level||1)>=questLevel(Q))return {Q,state:'new'};}return null;}
+  function storyNext(s){return storyList().filter(Q=>!storyDone(s,Q.id)&&s.quests.active[Q.id]==null&&(!Q.req||storyDone(s,Q.req))).sort((a,b)=>questLevel(a)-questLevel(b))[0]||null;}
   function questProgress(s,monId){const out=[];for(const id of Object.keys(s.quests.active)){const Q=QUESTS[id];if(Q&&Q.target===monId&&s.quests.active[id]<Q.count){s.quests.active[id]++;out.push(id);}}return out;}
   function questTurnIn(s,id,rng=Math.random){
-    const Q=QUESTS[id];if(!Q||s.quests.active[id]==null)throw Error('QUEST');if(s.quests.active[id]<Q.count)throw Error('QUEST_NOT_DONE');
+    const Q=QUESTS[id];if(!Q||s.quests.active[id]==null)throw Error('QUEST');if(!questReady(s,Q))throw Error('QUEST_NOT_DONE');
     let it=null;if(Q.item&&items[Q.item]){if(s.bag.indexOf(null)<0)throw Error('BAG_FULL');let q=Q.itemQ||'n';if(RAR[q]&&RAR[q].tier>dropCap())q='p';it=roll(Q.item,q,rng);addItem(s,it);}
     s.copper+=Q.copper;s.rubies+=Q.rubies;delete s.quests.active[id];s.quests.done[id]=(s.quests.done[id]||0)+1;const up=gainExp(s,Q.exp);return {copper:Q.copper,rubies:Q.rubies,item:it,exp:Q.exp,up};
   }
@@ -647,7 +656,7 @@ const Player=(()=>{
   // Các lệnh làm thay đổi tiền/đồ, chạy trên máy chủ (và trên trình duyệt ở chế độ ngoại tuyến)
   // số lần hạ một loài quái trong một lượt hồi sinh: bãi quái lớn có nhiều con cùng loài (Sheet cau_hinh gioi_han_ha_quai)
   const KILL_LIMIT=id=>MON[id].boss?1:num(CFG.gioi_han_ha_quai,16);
-  const PREDICT=new Set(['kill','buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff','av','fuse','use','cos','die','quiz','quizHunt','eventWin','recruit','recruitHire','tutGift','cavePass','caveChest','pkWin','hqFlag','duelWin','rescue','rescueHome']);
+  const PREDICT=new Set(['kill','buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff','av','fuse','use','cos','die','quiz','quizHunt','eventWin','recruit','recruitHire','tutGift','cavePass','caveChest','pkWin','hqFlag','duelWin','rescue','rescueHome','sg']);
   // v10.13: khóa chữ ký kết quả Thầy đồ (máy chủ ký bằng khóa bí mật; trình duyệt chỉ áp dụng trước, máy chủ kiểm khi nhận gói lưu)
   const quizKey=(cid,bo,wrong)=>'quiz|'+cid+'|'+bo+'|'+(wrong||[]).join(',');
   function applyOp(s,op,srv,now=Date.now(),rng=Math.random){
@@ -716,6 +725,8 @@ const Player=(()=>{
     if(t==='enhSk'){const key=Math.floor(op.key);if(!(key>=0&&key<SKILL_SLOTS))throw Error('SLOT');const r=enhance(s,{where:'skill',key},rng,op.shop||'wizard',op.luck);return {...r,item:s.skillSlots[key]};}
     if(t==='qa'){questAccept(s,String(op.id));return {};}
     if(t==='qt'){return questTurnIn(s,String(op.id),rng);}
+    // v10.39: xong trò nhỏ của việc Tìm con (đố, lật thẻ, tìm vật…) — trò chạy ở máy người chơi, thua chơi lại không giới hạn
+    if(t==='sg'){const id=String(op.id),Q=QUESTS[id];if(!Q||!Q.story||s.quests.active[id]==null||!/^game:/.test(String(Q.target)))throw Error('QUEST');s.quests.active[id]=Q.count;return {id};}
     if(t==='hire'){const m=hireNpc(s,String(op.id),rng,{k:op.k,day:op.day},now);return {mid:m.mid,name:m.name,lv:m.lv};}
     if(t==='petOff'){const i=(s.pets||[]).findIndex(x=>x.pid===op.pid);if(i<0)throw Error('PET');const x=s.pets.splice(i,1)[0];return {type:x.type};}
     if(t==='pt'){spendPoints(s,String(op.k),op.n);return {k:op.k,points:s.points};}
@@ -737,6 +748,6 @@ const Player=(()=>{
   load(typeof GAME_DATA!=='undefined'?GAME_DATA:{});
   const API={VERSION,BAG_SIZE,SKILL_SLOTS,MAX_LV,MAX_MERC,TIERS,TIER_NAME,tierMul,killCopper,killExp,mercDefMul,petDmgMul,mountPow,mercCost,mercPow,mercGainExp,TUONG,recruitRoll,MAX_ACTIVE_QUEST,ELEMENTS,BEASTS,GROUPS,FX_NAMES,STAT_KEYS,CFG,RAR,ADD,SHOPS,SETS,MON,QUESTS,MERCS,AVATARS,TOPUPS,QUIZ,NAME_FX,items,slots,skills,shopEnh,shopRow,fuse,mercDaily,mercOffers,dayOf,EVENTS,
     layout,relayout,load,info,kind,weapon,skillCost,cmdInfo,WEAPONS,PREDICT,seqRng,setFollow,fitFollow,mercCmd,mercGuard,isGen,petMax,PET_CAP,mountNeed,tameMin,bookFx,bookBac,demonOf,shopRuby,SHOP_ENH,expNeed,maxLevel,gainExp,spendPoints,mountGain,bookStat,mountCmd,qOf,rar,nameOf,stat,canEnhance,tradeable,gainOf,enhRate,enhCost,enhance,roll,rollDrop,create,derive,targets,equip,unequip,stance,isTwo,pairOk,setSkill,unsetSkill,toggleBook,element,money,shopPrice,buy,sell,sellPrice,addItem,cast,
-    aimAcc,isRanged,REGIONS,MON_REGION,SKILLS,mapLevel,mapLock,monLv,expLvK,armorMul,tierBase,tierAdd,regionLv,regionOf,questLevel,storyAt,storyNext,quizKey,questAccept,questProgress,questTurnIn,hireNpc,addMerc,mercEquip,mercUnequip,dismissMerc,makeMerc,cleanItem,serialize,restore,restorePlayer,merge,applyOp,allItems};
+    aimAcc,isRanged,REGIONS,MON_REGION,SKILLS,mapLevel,mapLock,monLv,expLvK,armorMul,tierBase,tierAdd,regionLv,regionOf,questLevel,storyAt,storyNext,storyDone,questReady,quizKey,questAccept,questProgress,questTurnIn,hireNpc,addMerc,mercEquip,mercUnequip,dismissMerc,makeMerc,cleanItem,serialize,restore,restorePlayer,merge,applyOp,allItems};
   return API;
 })();

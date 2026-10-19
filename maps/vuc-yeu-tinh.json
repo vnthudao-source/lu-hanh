@@ -408,7 +408,21 @@
   }
  ],
  "trees": [],
- "npcs": [],
+ "npcs": [
+  {
+   "id": "dao-co",
+   "role": "dao-co",
+   "name": "Đạo cô",
+   "act": "stand",
+   "x": 26,
+   "y": 28,
+   "facing": -1,
+   "lines": [
+    "Trong vực có hồ ly thành tinh, giả làm người để dụ khách lạ.",
+    "Đứng cạnh đèn mà nhìn bóng, bóng không biết nói dối."
+   ]
+  }
+ ],
  "monsters": [
   {
    "type": "cuu-vi-ho",

@@ -14,7 +14,7 @@
 import fs from 'node:fs';import path from 'node:path';import vm from 'node:vm';import {fileURLToPath} from 'node:url';
 const root=path.join(path.dirname(fileURLToPath(import.meta.url)),'..');
 export const T={ttk:5,live:40,bossTtk:50,bossLive:55,boss2Ttk:80,boss2Live:75,finalTtk:180,finalLive:150,hours:3000,curve:2,kph:360,clip:[.6,1.8],
-  thuThuong:.5,thuTrum:.8,expBoss:15,expBoss2:30,expFinal:80,questHunt:.35,questBoss:1.5};
+  thuThuong:.5,thuTrum:.8,expBoss:15,expBoss2:30,expFinal:80,questHunt:.35,questBoss:1.5,questStory:240,questStoryCu:120}; // v10.39: việc Tìm con ≈ 40 phút săn ở vùng đó (240 con), tiền ≈ 120 con
 const ctx={console,Math};vm.createContext(ctx);
 vm.runInContext(['src/01-data.js','src/01-data-vung.js','src/05-player.js'].map(f=>fs.readFileSync(path.join(root,f),'utf8')).join(';\n')+';this.G=GAME_DATA;this.PL=Player;',ctx);
 const G=ctx.G,P=ctx.PL;
@@ -51,9 +51,10 @@ for(const [reg,list] of Object.entries(byReg)){const Lv=P.mapLevel(reg),Ln=nextL
     else{const R=ref(Lv),fh=normals.length>1?clip(num(r.mau)/mh):1,fd=normals.length>1?clip(num(r.sat_thuong)/md):1;thu=T.thuThuong*K*Lv;hp=R.dps*P.armorMul(thu,Lv)*T.ttk*fh;dmg=rawDmg(R.D,M,T.live/fd,Lv);exp=expFor(Lv,Ln)*Math.sqrt(fh*fd);}
     out[r.id]=[Math.max(1,Math.round(hp)),Math.max(1,Math.round(dmg)),Math.max(1,Math.round(exp)),Math.round(thu)];}}
 // nhiệm vụ: săn quái ≈ T.questHunt cấp, hạ trùm ≈ T.questBoss cấp (theo cấp vùng của quái mục tiêu); cốt truyện Tìm con ≈ 2 cấp
-const nv={};for(const q of G.nhiem_vu||[]){const M=P.MON[q.muc_tieu];if(!M)continue;const L=P.mapLevel(P.regionOf(q.muc_tieu));const k=q.truyen?2:num(M.boss)?T.questBoss:T.questHunt*Math.max(1,num(q.so_luong))/6;nv[q.id]=Math.max(1,Math.round(expNeed(L)*k));}
+const nv={},tc={};for(const q of G.nhiem_vu||[]){if(num(q.truyen)){const reg=P.regionOf(q.muc_tieu),Lv=P.mapLevel(reg),ns=(byReg[reg]||[]).filter(r=>!num(r.boss));nv[q.id]=Math.max(1,Math.round(expFor(Lv,nextLv(reg))*T.questStory));const cu=(ns.length?med(ns.map(r=>num(r.dong))):Lv*10)*(num(CFG.quai_nhan_tien)||1),cap=num(CFG.quai_tien_toi_da);tc[q.id]=Math.max(100,Math.round((cap>0?Math.min(cap,cu):cu)*T.questStoryCu/100)*100);continue;}
+  const M=P.MON[q.muc_tieu];if(!M)continue;const L=P.mapLevel(P.regionOf(q.muc_tieu));const k=q.truyen?2:num(M.boss)?T.questBoss:T.questHunt*Math.max(1,num(q.so_luong))/6;nv[q.id]=Math.max(1,Math.round(expNeed(L)*k));}
 const head='/* Sinh bởi tools/canbang.mjs (v10.35): máu, sát thương, kinh nghiệm, thủ mọi quái theo cấp vùng 1–999; kinh nghiệm thưởng nhiệm vụ. Đừng sửa tay — sửa bảng T trong tools/canbang.mjs rồi chạy lại.\n   Trên Sheet: chạy capNhatV1035() một lần để chép các số này vào tab quai (mau, sat_thuong, kinh_nghiem, thu) và nhiem_vu (thuong_kinh_nghiem). */\n';
-fs.writeFileSync(path.join(root,'src/01-data-canbang.js'),head+'const LH_CAN_BANG='+JSON.stringify(out)+',LH_CAN_BANG_NV='+JSON.stringify(nv)+';\nfor(const r of GAME_DATA.quai){const v=LH_CAN_BANG[r.id];if(v){r.mau=v[0];r.sat_thuong=v[1];r.kinh_nghiem=v[2];r.thu=v[3];}}\nfor(const r of GAME_DATA.nhiem_vu||[]){const v=LH_CAN_BANG_NV[r.id];if(v)r.thuong_kinh_nghiem=v;}\n');
+fs.writeFileSync(path.join(root,'src/01-data-canbang.js'),head+'const LH_CAN_BANG='+JSON.stringify(out)+',LH_CAN_BANG_NV='+JSON.stringify(nv)+',LH_CAN_BANG_TC='+JSON.stringify(tc)+';\nfor(const r of GAME_DATA.quai){const v=LH_CAN_BANG[r.id];if(v){r.mau=v[0];r.sat_thuong=v[1];r.kinh_nghiem=v[2];r.thu=v[3];}}\nfor(const r of GAME_DATA.nhiem_vu||[]){const v=LH_CAN_BANG_NV[r.id];if(v)r.thuong_kinh_nghiem=v;const c=LH_CAN_BANG_TC[r.id];if(c)r.thuong_dong=c;}\n');
 if(process.argv.includes('--bang')){
   for(const R0 of REG){const L=R0.lv,Rf=ref(L),list=byReg[R0.id]||[];const n=list.filter(r=>!num(r.boss)).map(r=>r.id),b=list.filter(r=>num(r.boss)).map(r=>r.id);
     console.log(R0.id.padEnd(16),'lv',String(L).padStart(3),'| người chơi máu',String(Rf.hp).padStart(6),'dps',String(Math.round(Rf.dps)).padStart(7),'| quái',n.slice(0,2).map(id=>id+' '+out[id].slice(0,4).join('/')).join(' · '),'| trùm',b.map(id=>id+' '+out[id].slice(0,3).join('/')).join(' · '));}

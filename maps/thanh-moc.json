@@ -1074,6 +1074,21 @@
     "Rương của ta khóa ba lớp. Đồ, tiền, hồng ngọc gửi ở đây thì nhân vật nào cùng tài khoản cũng lấy ra được.",
     "Ở thành nào cũng có người của ta giữ rương, gửi nơi này lấy nơi kia."
    ]
+  },
+  {
+   "id": "be-na",
+   "role": "be-na",
+   "name": "Bé Na",
+   "act": "patrol",
+   "x": 21,
+   "x0": 19,
+   "x1": 23,
+   "y": 15.3,
+   "spd": 40,
+   "lines": [
+    "Anh ơi chơi với em đi!",
+    "Mẹ em bảo không được ra khỏi làng một mình."
+   ]
   }
  ],
  "monsters": [

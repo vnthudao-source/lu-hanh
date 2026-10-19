@@ -365,6 +365,18 @@
     "Võ đài Thập Tướng: mười danh tướng thiên hạ chờ người dám thượng đài.",
     "Thắng đủ mười trận, cổng phía bắc tự mở. Thua thì về nghỉ, lần sau đánh tiếp trận dang dở."
    ]
+  },
+  {
+   "id": "lao-vo-su",
+   "role": "lao-vo-su",
+   "name": "Lão võ sư",
+   "act": "stand",
+   "x": 26,
+   "y": 28,
+   "facing": -1,
+   "lines": [
+    "Mười danh tướng trên đài kia, mỗi người một tuyệt kỹ."
+   ]
   }
  ],
  "monsters": [

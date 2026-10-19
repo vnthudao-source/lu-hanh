@@ -419,7 +419,20 @@
   }
  ],
  "trees": [],
- "npcs": [],
+ "npcs": [
+  {
+   "id": "tien-ong",
+   "role": "tien-ong",
+   "name": "Tiên ông lạc lối",
+   "act": "stand",
+   "x": 26,
+   "y": 28,
+   "facing": -1,
+   "lines": [
+    "Ta lạc ở Hư Không này đã trăm năm, chỉ thấy khe nứt với khe nứt."
+   ]
+  }
+ ],
  "monsters": [
   {
    "type": "hu-khong-vuong",

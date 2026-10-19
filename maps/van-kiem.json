@@ -418,7 +418,20 @@
   }
  ],
  "trees": [],
- "npcs": [],
+ "npcs": [
+  {
+   "id": "kiem-lao",
+   "role": "kiem-lao",
+   "name": "Kiếm lão",
+   "act": "stand",
+   "x": 26,
+   "y": 28,
+   "facing": -1,
+   "lines": [
+    "Vạn thanh kiếm cắm trên núi, mỗi thanh chờ một chủ nhân."
+   ]
+  }
+ ],
  "monsters": [
   {
    "type": "kiem-ma",

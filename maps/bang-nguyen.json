@@ -251,7 +251,20 @@
   }
  ],
  "trees": [],
- "npcs": [],
+ "npcs": [
+  {
+   "id": "su-gia-bang",
+   "role": "su-gia-bang",
+   "name": "Sứ giả Băng Hoàng",
+   "act": "stand",
+   "x": 26,
+   "y": 28,
+   "facing": -1,
+   "lines": [
+    "Băng Hoàng không tiếp kẻ ngu dốt. Muốn hỏi chuyện thì phải qua câu đố của ta."
+   ]
+  }
+ ],
  "monsters": [
   {
    "type": "bang-hoang",

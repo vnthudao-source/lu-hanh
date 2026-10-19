@@ -263,7 +263,20 @@
   }
  ],
  "trees": [],
- "npcs": [],
+ "npcs": [
+  {
+   "id": "lao-lai-be",
+   "role": "lao-lai-be",
+   "name": "Lão lái bè",
+   "act": "stand",
+   "x": 26,
+   "y": 28,
+   "facing": -1,
+   "lines": [
+    "Sông cát chảy ngược, không có Sa Hà Quái gật đầu thì chẳng ai qua được."
+   ]
+  }
+ ],
  "monsters": [
   {
    "type": "sa-ha-quai",

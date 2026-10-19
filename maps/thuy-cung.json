@@ -456,7 +456,21 @@
   }
  ],
  "trees": [],
- "npcs": [],
+ "npcs": [
+  {
+   "id": "quy-tuong",
+   "role": "quy-tuong",
+   "name": "Quy thừa tướng",
+   "act": "stand",
+   "x": 26,
+   "y": 28,
+   "facing": -1,
+   "lines": [
+    "Ta là thừa tướng của Long Vương, sống đã ngàn năm.",
+    "Con trai khổng lồ ngoài kia giữ một viên ngọc biết nói."
+   ]
+  }
+ ],
  "monsters": [
   {
    "type": "long-vuong",

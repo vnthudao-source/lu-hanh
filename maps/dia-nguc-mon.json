@@ -249,7 +249,20 @@
   }
  ],
  "trees": [],
- "npcs": [],
+ "npcs": [
+  {
+   "id": "phan-quan",
+   "role": "phan-quan",
+   "name": "Phán quan",
+   "act": "stand",
+   "x": 26,
+   "y": 28,
+   "facing": -1,
+   "lines": [
+    "Sổ sinh tử ghi tên mọi kiếp người. Ghi sai một nét là đổi cả một đời."
+   ]
+  }
+ ],
  "monsters": [
   {
    "type": "diem-la-tuong",

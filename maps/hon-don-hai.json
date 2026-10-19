@@ -220,7 +220,20 @@
   }
  ],
  "trees": [],
- "npcs": [],
+ "npcs": [
+  {
+   "id": "long-nu",
+   "role": "long-nu",
+   "name": "Long nữ",
+   "act": "stand",
+   "x": 26,
+   "y": 28,
+   "facing": -1,
+   "lines": [
+    "Biển Hỗn Độn không có đường, chỉ có la bàn đá của tổ tiên."
+   ]
+  }
+ ],
  "monsters": [
   {
    "type": "cuu-dau-xa",

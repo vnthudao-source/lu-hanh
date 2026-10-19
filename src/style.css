@@ -360,3 +360,38 @@ button.fx-vang{color:#ffe08a}button.fx-cau-vong{color:#ffb0ff}button.fx-lua{colo
 .rc-box{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:6px 0 10px}
 .rc-box .chips{flex:1}
 .mrow.rc{border-width:2px;background:#1a1410aa}
+/* v10.39: trò nhỏ tuyến Tìm con */
+.tc-box{display:flex;flex-direction:column;gap:10px}
+.tc-step{font-size:13px;color:var(--gold);min-height:16px}
+.tc-q{margin:0;line-height:1.55;font-size:15px;padding:10px 12px;border-radius:10px;background:#1a2a2280;border:1px solid var(--line)}
+.tc-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.tc-opts button{text-align:left;line-height:1.35}
+.tc-opts button:disabled{opacity:.35}
+.tc-msg{min-height:20px;font-size:14px;display:flex;align-items:center;gap:6px}
+.tc-msg .icon{width:18px;height:18px}
+.tc-msg.ok{color:#9fe8a8}.tc-msg.bad{color:#ff9a8a}
+.tc-stones{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:300px;margin:0 auto;width:100%}
+.tc-stones button{aspect-ratio:1.4;border-radius:40%;background:#4a5a40;border:2px solid #2a3424;transition:background .12s,transform .12s}
+.tc-stones button.on{background:#e8e0a0;transform:scale(1.08);box-shadow:0 0 14px #fff6b0}
+.tc-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:340px;margin:0 auto;width:100%}
+.tc-cards button{aspect-ratio:.8;padding:0;border-radius:10px;background:#3a5a6a;display:flex;align-items:center;justify-content:center}
+.tc-cards button span{visibility:hidden}.tc-cards button.up{background:#f0e6c8;color:#3a2a1a}.tc-cards button.up span{visibility:visible}
+.tc-cards button.ok{background:#9fe8a8;color:#1a3a22}
+.tc-cards .icon{width:30px;height:30px}
+.tc-bar{position:relative;height:34px;border-radius:17px;background:#0f1a16;border:1px solid var(--line);overflow:hidden}
+.tc-bar .z{position:absolute;top:3px;bottom:3px;width:16%;border-radius:12px;background:#ffd27a55;border:1px solid #ffd27a;transition:background .1s}
+.tc-bar .z.hit{background:#9fe8a8}
+.tc-bar .c{position:absolute;top:0;bottom:0;width:4px;margin-left:-2px;background:#fff;box-shadow:0 0 8px #fff}
+.tc-cups{position:relative;height:110px;max-width:360px;width:100%;margin:0 auto}
+.tc-cups button{position:absolute;top:22px;width:calc(100% / var(--n) - 10px);margin-left:5px;height:80px;padding:0;border-radius:40% 40% 14px 14px;background:#d8d0b8;border:2px solid #8a7a5a}
+.tc-cups button.lamp{border-radius:50%;background:#2a4a3a;border-color:#80ffb0;box-shadow:0 0 12px #80ffb055}
+.tc-cups button b{position:absolute;left:50%;bottom:-16px;width:18px;height:18px;margin-left:-9px;border-radius:50%;background:#e0c080;box-shadow:0 0 10px #ffd27a;opacity:0;transition:opacity .2s}
+.tc-cups button.lamp b{background:#ff5a5a;box-shadow:0 0 12px #ff5a5a}
+.tc-cups button.show{transform:translateY(-18px)}.tc-cups button.show b{opacity:1}
+.tc-lights{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:240px;margin:0 auto;width:100%}
+.tc-lights button{aspect-ratio:1;padding:0;display:flex;align-items:center;justify-content:center;border-radius:12px}
+.tc-lights button .icon{width:30px;height:30px}
+.tc-lights button.ice{background:#3a6a9a;color:#dff6ff}.tc-lights button.fire{background:#a03a20;color:#ffd27a}
+.tc-slots{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.tc-slots i{font-style:normal;min-width:70px;min-height:34px;padding:6px 10px;border-radius:8px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center}
+.tc-slots i.on{border-style:solid;border-color:#ffd27a;color:#ffd27a}

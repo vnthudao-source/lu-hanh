@@ -387,7 +387,20 @@
   }
  ],
  "trees": [],
- "npcs": [],
+ "npcs": [
+  {
+   "id": "dao-si-bang-hoa",
+   "role": "dao-si-bang-hoa",
+   "name": "Đạo sĩ băng hỏa",
+   "act": "stand",
+   "x": 26,
+   "y": 28,
+   "facing": -1,
+   "lines": [
+    "Băng với lửa phải cân nhau thì cổng mới mở."
+   ]
+  }
+ ],
  "monsters": [
   {
    "type": "song-dau-long",

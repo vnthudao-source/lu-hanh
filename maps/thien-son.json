@@ -377,7 +377,20 @@
   }
  ],
  "trees": [],
- "npcs": [],
+ "npcs": [
+  {
+   "id": "chan-de",
+   "role": "chan-de",
+   "name": "Người chăn dê",
+   "act": "stand",
+   "x": 26,
+   "y": 28,
+   "facing": -1,
+   "lines": [
+    "Gió Thiên Sơn mạnh lắm, thả diều thì bay tới tận mây."
+   ]
+  }
+ ],
  "monsters": [
   {
    "type": "phong-vuong",

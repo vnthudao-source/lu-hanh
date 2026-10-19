@@ -604,6 +604,19 @@
    ],
    "x": 25,
    "facing": 1
+  },
+  {
+   "id": "ba-lao-che",
+   "role": "ba-lao-che",
+   "name": "Bà lão bán chè",
+   "act": "stand",
+   "x": 15,
+   "y": 14,
+   "facing": -1,
+   "lines": [
+    "Chè đậu, chè kê đây! Ăn một bát cho mát lòng.",
+    "Mắt bà kém rồi, qua đường đông xe ngựa sợ lắm."
+   ]
   }
  ],
  "monsters": [

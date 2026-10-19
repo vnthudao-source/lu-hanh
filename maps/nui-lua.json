@@ -252,7 +252,21 @@
   }
  ],
  "trees": [],
- "npcs": [],
+ "npcs": [
+  {
+   "id": "tho-ren-nui",
+   "role": "tho-ren-nui",
+   "name": "Thợ rèn núi",
+   "act": "stand",
+   "x": 26,
+   "y": 28,
+   "facing": -1,
+   "lines": [
+    "Lửa núi này nóng hơn mọi lò rèn dưới xuôi.",
+    "Rèn gì cũng được… miễn trả đủ tiền. Ta đã lỡ rèn một thứ không nên rèn."
+   ]
+  }
+ ],
  "monsters": [
   {
    "type": "hoa-long",

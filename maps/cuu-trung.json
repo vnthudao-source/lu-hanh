@@ -270,7 +270,20 @@
   }
  ],
  "trees": [],
- "npcs": [],
+ "npcs": [
+  {
+   "id": "giu-lau",
+   "role": "giu-lau",
+   "name": "Lão giữ lầu",
+   "act": "stand",
+   "x": 26,
+   "y": 28,
+   "facing": -1,
+   "lines": [
+    "Cửu Trùng Đài chín tầng, mỗi tầng một câu đố. Đáp được thì lên."
+   ]
+  }
+ ],
  "monsters": [
   {
    "type": "ma-vuong",

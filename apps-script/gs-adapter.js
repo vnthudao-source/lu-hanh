@@ -350,6 +350,19 @@ function capNhatV1012(){
   xoaBoNhoDem();Logger.log('ban_do: '+a+' ô cấp · cau_hinh cap_toi_da: '+b+' · nhiem_vu Tìm con: '+c+' ô npc · xóa '+d+' khung ở vat_pham, '+e+' ở cua_hang');
 }
 // v10.30: Hang Cướp còn 14 tên cướp (ghi lại dòng hang_cuop_so_cuop). Chạy một lần sau khi dán Code.gs mới.
+// v10.39: tuyến Tìm con 35 việc (34 vùng) — thêm cột còn thiếu (cap_toi_thieu, yeu_cau, loi_ket, truyen, npc, noi, npc_ten…) vào tab nhiem_vu,
+// ghi đè các dòng tc-* đã có (8 việc cũ đổi lời kết, thưởng, thứ tự chuỗi) và thêm các dòng tc-q* mới. Chạy một lần sau khi dán Code.gs mới.
+function capNhatV1039(){
+  const file=LH_SHEETS[LH_STATIC.nhiem_vu];if(!file){Logger.log('Chưa có Sheet nhiem_vu');return;}const sh=SpreadsheetApp.openById(file).getSheetByName('nhiem_vu');if(!sh){lhDuLieuBoSung_();xoaBoNhoDem();return;}
+  const rows=(LH_DEFAULT.nhiem_vu||[]).filter(r=>/^tc-/.test(String(r.id)));if(!rows.length)return;
+  const v=sh.getDataRange().getValues(),h=v[0].map(String);let cols=0;
+  for(const r of rows)for(const k of Object.keys(r))if(h.indexOf(k)<0){h.push(k);cols++;}
+  const out=v.map(r=>{const x=r.slice();while(x.length<h.length)x.push('');return x;});out[0]=h.slice();
+  const ci=h.indexOf('id'),at=new Map();for(let i=1;i<out.length;i++)at.set(String(out[i][ci]),i);let upd=0,add=0;
+  for(const r of rows){const line=h.map(k=>r[k]===undefined||r[k]===null?'':r[k]);const i=at.get(String(r.id));if(i!=null){out[i]=line;upd++;}else{out.push(line);add++;}}
+  sh.getRange(1,1,out.length,h.length).setValues(out);sh.getRange(1,1,1,h.length).setFontWeight('bold');
+  xoaBoNhoDem();Logger.log('nhiem_vu Tìm con: thêm '+cols+' cột, ghi lại '+upd+' dòng, thêm '+add+' dòng (v10.39)');
+}
 // v10.35: cân bằng toàn bộ — chép máu, sát thương, kinh nghiệm, thủ (cột mới thu) của mọi quái (tools/canbang.mjs), kinh nghiệm thưởng nhiệm vụ,
 // đường kinh nghiệm mới (exp_tang 250) và bậc sách 6–7 lên Sheet. Các dòng cấu hình mới (tốc đánh, tốc chạy, thủ, phạt chênh cấp, bậc đồ cao) do kiemTra thêm. Chạy kiemTra trước rồi chạy hàm này một lần.
 function capNhatV1035(){

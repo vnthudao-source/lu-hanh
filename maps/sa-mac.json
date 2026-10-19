@@ -528,5 +528,20 @@
   }
  ],
  "trees": [],
- "hazard": "burn"
+ "hazard": "burn",
+ "npcs": [
+  {
+   "id": "truong-doan-buon",
+   "role": "truong-doan-buon",
+   "name": "Trưởng đoàn buôn",
+   "act": "stand",
+   "x": 29,
+   "y": 30.3,
+   "facing": -1,
+   "lines": [
+    "Đoàn buôn ta đi qua sa mạc này đã hai mươi năm.",
+    "Bão cát đêm qua làm lạc mất mấy con lạc đà, khổ thân ta."
+   ]
+  }
+ ]
 }

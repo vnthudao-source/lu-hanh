@@ -613,6 +613,19 @@
    "lines": [
     "Rương kinh thành khóa đồng, gửi đồ, tiền, hồng ngọc cho nhân vật khác cùng tài khoản."
    ]
+  },
+  {
+   "id": "linh-bang-tin",
+   "role": "linh-bang-tin",
+   "name": "Lính gác bảng tin",
+   "act": "stand",
+   "x": 15,
+   "y": 14,
+   "facing": -1,
+   "lines": [
+    "Bảng tin kinh thành dán lệnh truy nã mỗi ngày.",
+    "Có ai nhận ra kẻ nào thì báo ngay cho lính gác."
+   ]
   }
  ],
  "monsters": [

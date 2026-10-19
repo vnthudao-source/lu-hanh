@@ -1793,10 +1793,10 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
      Hỗn Nguyên Điện (cấp 999): hạ Hỗn Nguyên Ma Tổ, mở lồng cứu An (con gái), đưa con về làng Thanh Mộc; dân làng ra chào tạm biệt hai cha con. */
   const DUEL=[['ha-hau-don','Mắt là tinh huyết cha mẹ, không thể bỏ!'],['hua-chu','Hổ Si ở đây, kẻ nào dám tới!'],['dien-vi','Ác Lai giữ cửa, đừng hòng qua!'],['hoang-trung','Lão tướng này chưa già đâu!'],['ma-sieu','Cẩm Mã Siêu đất Tây Lương đây!'],
     ['truong-phi','Ta là Trương Dực Đức đất Yến!'],['trieu-van','Thường Sơn Triệu Tử Long đây!'],['quan-vu','Thanh Long Đao không chém kẻ vô danh!'],['hang-vu','Sức nhổ núi, khí trùm đời!'],['lu-bo','Nhân trung Lữ Bố, mã trung Xích Thố!']];
-  let BT=null,AN=null,FW=null,hqHint='';
+  let BT=null,AN=null,FW=null,hqHint='',SQ=null;
   const hqDone=k=>!!(player.flags.hq&&player.flags.hq[k]);
   try{LH_ART.add('con-gai',K=>LH_ART.gen({npc:{'con-gai-an':{robe:'#e86a9a',trim:'#fff0c0',hat:'none',hair:'#2a2622',s:.6,fem:1,skirt:1,sash:'#fff0c0'}}}));}catch(e){}
-  function hqReset(){BT=null;hqHint='';if(AN)AN.map='';}
+  function hqReset(){BT=null;hqHint='';if(AN)AN.map='';SQ=null;}
   function talkBox(o){keys.clear();joystick={x:0,y:0};holdAttack=false;route=[];targetNPC=null;hero.attack=null;dialogNPC={tut:true,...o};page=0;dialogEl.hidden=false;showLine();}
   // Cổ Chiến Trường: đợt quân
   function btWave(n){
@@ -1888,8 +1888,74 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     if(d>650){AN.x=tx;AN.y=ty;AN.moving=false;}else if(d>10){const sp=Math.min(d,(d>140?360:210)*dt);AN.x+=dx/d*sp;AN.y+=dy/d*sp;AN.moving=true;AN.walk+=sp*.1;AN.facing=dx<0?-1:1;}else{AN.moving=false;AN.facing=hero.facing;}
     if(time>(AN.chatAt||0)){AN.chatAt=time+40+Math.random()*40;if(Math.random()<.5)tutSay(AN,['Bố ơi, đợi con với!','Bố giỏi quá!','Con không sợ nữa đâu!','Mình về nhà ăn cơm mẹ nấu nhé bố!'][Math.floor(Math.random()*4)],3);}
   }
+  /* ---------- v10.39: việc Tìm con làm ngay trên bản đồ (LH_TC trong 07-tro-choi.js) ----------
+     talk: hỏi chuyện vài NPC · find: điểm sáng (seq hiện lần lượt, back mang về NPC giao việc, t giây trước khi tan) · escort: NPC giao việc đi theo tới chỗ cắm cờ.
+     Điểm được chọn tự động trên ô đi được (tìm từ chỗ đứng đầu bản đồ), cố định theo mã việc nên vào lại vẫn ở chỗ cũ. Xong → op sg. */
+  const sqSpec=()=>{if(typeof LH_TC==='undefined')return null;for(const id of Object.keys(player.quests.active)){const Q=Player.QUESTS[id],S=LH_TC[id];if(Q&&Q.story&&S&&S.map===World.id&&/^game:/.test(Q.target)&&!Player.questReady(player,Q))return {Q,S};}return null;};
+  const sqHash=(s,k)=>{let h=2166136261;for(const ch of s+'#'+k)h=Math.imul(h^ch.charCodeAt(0),16777619);return (h>>>0)/4294967296;};
+  function sqReach(sx,sy){const W=World.def.w,H=World.def.h,dist=new Map(),q=[[sx,sy]];dist.set(sy*W+sx,0);
+    for(let i=0;i<q.length;i++){const [x,y]=q[i],d=dist.get(y*W+x);for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,k=ny*W+nx;if(nx<1||ny<1||nx>=W-1||ny>=H-1||dist.has(k)||World.blocked(nx,ny))continue;dist.set(k,d+1);q.push([nx,ny]);}}return dist;}
+  function sqPoints(Q,S){
+    const W=World.def.w,sx=Math.floor(World.spawn.x/T),sy=Math.floor(World.spawn.y/T),dist=sqReach(sx,sy),cand=[];
+    for(const [k,d] of dist){const x=k%W,y=Math.floor(k/W);if(d<5||World.isSafe((x+.5)*T,(y+.5)*T)||World.blocked(x,y))continue;cand.push({x,y,d});}
+    const pts=[];let prev={x:sx,y:sy};
+    for(let i=0;i<S.n;i++){
+      let best=null,bs=-1;for(const c of cand){if(pts.some(p=>Math.abs(p.tx-c.x)+Math.abs(p.ty-c.y)<6))continue;
+        const dp=Math.abs(c.x-prev.x)+Math.abs(c.y-prev.y),ok=S.seq?(dp>=5&&dp<=10):(c.d>=8&&c.d<=30);if(!ok)continue;const v=sqHash(Q.id,i+':'+c.x+','+c.y);if(v>bs){bs=v;best=c;}}
+      if(!best)best=cand.filter(c=>!pts.some(p=>p.tx===c.x&&p.ty===c.y))[Math.floor(sqHash(Q.id,i)*cand.length)]||cand[0];if(!best)break;
+      pts.push({tx:best.x,ty:best.y,x:(best.x+.5)*T,y:(best.y+.6)*T,got:false});prev=best;}
+    return pts;
+  }
+  function sqStart(Q,S){
+    const giver=World.npcs.find(n=>n.id===Q.npc);SQ={id:Q.id,map:World.id,Q,S,i:0,carry:null,busy:false,done:false,giver,talked:new Set()};
+    if(S.k==='find')SQ.pts=sqPoints(Q,S);
+    if(S.k==='escort'&&giver){const gx=Math.floor(giver.x/T),gy=Math.floor(giver.y/T),dist=sqReach(gx,gy);let best=null,bs=-1;
+      const inS=World.isSafe(giver.x,giver.y); // NPC đứng trong thành thì chỗ cắm cờ cũng trong thành (ngoài cổng hay có quân sự kiện)
+      for(const [k,d] of dist){if(d<S.dist||d>S.dist+5)continue;const x=k%World.def.w,y=Math.floor(k/World.def.w);if(inS&&!World.isSafe((x+.5)*T,(y+.5)*T))continue;const v=sqHash(Q.id,x+','+y);if(v>bs){bs=v;best={x,y};}}
+      SQ.flag=best?{x:(best.x+.5)*T,y:(best.y+.6)*T}:{x:giver.x+6*T,y:giver.y};}
+    if(S.k!=='talk')message(svg('heart')+esc(S.hint),4);
+  }
+  function sqFinish(){if(SQ.busy||SQ.done)return;SQ.busy=true;const Q=SQ.Q;
+    op({t:'sg',id:Q.id}).then(()=>{SQ.done=true;LH_Audio.play('quest');message(svg('check')+`Xong: ${esc(Q.name)} · về gặp ${esc(Q.npcName||Q.npc)} để trả việc`,6);window.GameUI?.refresh();},
+      e=>{SQ.busy=false;message(svg('close')+'Chưa ghi được ('+esc(String(e&&e.message||e))+')',3);});}
+  // hỏi chuyện: gặp NPC trong danh sách thì nghe lời kể của việc thay cho lời thường
+  function sqTalk(n){
+    if(!SQ||SQ.done||SQ.S.k!=='talk')return false;const L=SQ.S.who[n.id];if(!L||SQ.talked.has(n.id))return false;n.facing=hero.x<n.x?-1:1;
+    talkBox({id:'sq-'+n.id,name:n.name,lines:L,onEnd:()=>{SQ.talked.add(n.id);const k=SQ.talked.size,N=Object.keys(SQ.S.who).length;if(k>=N)sqFinish();else message(svg('talk')+`Đã hỏi ${k}/${N} người`,3);}});return true;
+  }
+  function sqTick(dt){
+    if(SQ&&(SQ.map!==World.id||player.quests.active[SQ.id]==null))SQ=null;
+    if(!SQ){if(tut||((time*2)|0)===(((time-dt)*2)|0))return;const f=sqSpec();if(f)sqStart(f.Q,f.S);return;}
+    if(SQ.done||hero.dead)return;const S=SQ.S;
+    if(S.k==='find'){
+      if(SQ.carry){const g=SQ.giver;if(S.t){const left=SQ.carry.until-time;if(left<=0){SQ.carry.got=false;SQ.carry=null;LH_Audio.play('enhanceFail');message(svg('close')+`${esc(S.label)} đã tan mất · lấy khối khác`,3);return;}
+          if(((time*2)|0)!==(((time-dt)*2)|0))floater(hero.x,hero.y-96,Math.ceil(left)+' giây','#9fe0ff',13);}
+        if(g&&Math.hypot(hero.x-g.x,hero.y-g.y)<80){SQ.carry.done=true;SQ.carry=null;burst(g.x,g.y-30,S.col,18,160);LH_Audio.play('pickup');const k=SQ.pts.filter(p=>p.done).length;
+          if(k>=SQ.pts.length)sqFinish();else message(svg('check')+`Đã mang về ${k}/${SQ.pts.length}`,3);}
+        return;}
+      for(let i=0;i<SQ.pts.length;i++){const p=SQ.pts[i];if(p.got)continue;if(S.seq&&i!==SQ.i)continue;
+        if(Math.hypot(hero.x-p.x,hero.y-p.y)<46){p.got=true;SQ.i=i+1;burst(p.x,p.y-10,S.col,20,170);LH_Audio.play('pickup');const say=(S.say||[])[i];
+          if(S.back){SQ.carry=p;if(S.t)p.until=time+S.t;message(svg('heart')+(say?esc(say):esc(S.label))+(S.t?` · còn ${S.t} giây`:''),4);}
+          else{const k=SQ.pts.filter(q=>q.got).length;if(k>=SQ.pts.length)sqFinish();else message(svg('pin')+`${esc(S.label)} ${k}/${SQ.pts.length}`+(say?' · '+esc(say):''),4);}
+          break;}}
+    }else if(S.k==='escort'&&SQ.giver){
+      const n=SQ.giver,F=SQ.flag;if(dialogNPC===n)return;
+      const tx=hero.x-hero.facing*46,ty=hero.y+8,dx=tx-n.x,dy=ty-n.y,d=Math.hypot(dx,dy);
+      if(d>24&&d<9*T){const sp=Math.min(d,(S.spd||95)*dt);n.x+=dx/d*sp;n.y+=dy/d*sp;n.moving=true;n.walk+=sp*.09;n.facing=dx<0?-1:1;}
+      else if(d>=9*T&&time>(SQ.warn||0)){SQ.warn=time+4;tutSay(n,'Con ơi, đợi bà với!',2.5);}
+      if(Math.hypot(n.x-F.x,n.y-F.y)<60){n.moving=false;tutSay(n,S.say||'Cảm ơn con!',4);burst(F.x,F.y-30,'#ffd27a',22,180);sqFinish();}
+    }
+  }
+  function drawSQ(){
+    if(!SQ||SQ.done)return;const S=SQ.S,c=ctx;
+    const glow=(x,y,col,lab)=>{const r=14+Math.sin(time*4)*3;c.save();c.globalAlpha=.35;c.fillStyle=col;c.beginPath();c.ellipse(x,y,r*1.8,r*.7,0,0,PI2);c.fill();c.globalAlpha=.9;c.shadowColor=col;c.shadowBlur=14;c.beginPath();c.arc(x,y-14+Math.sin(time*3)*3,6,0,PI2);c.fill();c.restore();
+      if(lab&&Math.hypot(hero.x-x,hero.y-y)<320){c.font='600 12px system-ui';c.textAlign='center';c.lineWidth=3;c.strokeStyle='#0a120ecc';c.strokeText(lab,x,y-30);c.fillStyle=col;c.fillText(lab,x,y-30);}};
+    if(S.k==='find'){if(SQ.carry){const g=SQ.giver;if(g)glow(g.x,g.y+4,S.col,'Mang về đây');return;}
+      SQ.pts.forEach((p,i)=>{if(p.got||(S.seq&&i!==SQ.i))return;glow(p.x,p.y,S.col,S.label);});}
+    else if(S.k==='escort'&&SQ.flag){const F=SQ.flag;glow(F.x,F.y,'#ffd27a','Bên kia đường');line(c,[F.x,F.y,F.x,F.y-60],'#6a4a2a',3);c.fillStyle='#d03030';c.beginPath();c.moveTo(F.x,F.y-60);c.lineTo(F.x+26,F.y-52);c.lineTo(F.x,F.y-44);c.fill();}
+  }
   function hqTick(dt){
-    btTick(dt);anTick(dt);fwTick();
+    btTick(dt);anTick(dt);fwTick();sqTick(dt);
     const D=World.def;if(D.kind==='final'&&hqHint!==World.id&&!tut){hqHint=World.id;if(!(Number(player.flags.rescue)>=1))message(svg('heart')+'Có tiếng trẻ con khóc vọng ra từ sâu trong điện…',5);}
   }
   // vẽ nhân vật đang hoá thành quái (sách Phong): hình quái tại chỗ nhân vật, viền gió, thanh thời gian
@@ -2020,6 +2086,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     if(tut&&tut.part===2&&tut.ph==='village'&&n.id==='elder'){tut2Elder(n);return;}
     if(tut&&tut.part===2&&tut.ph==='wake'&&n.id==='smith'&&tut.said.l3){tut2Smith();return;}
     if(n.id==='trong-tai-vo-dai'){duelAsk(n);return;}
+    if(sqTalk(n))return;
     if(!seen.has(n.id)){keys.clear();joystick={x:0,y:0};holdAttack=false;dialogNPC=n;page=0;dialogEl.hidden=false;showLine();return;}
     window.GameUI?.openPanel(n);
   }
@@ -2151,7 +2218,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
       else if(LH_ART.obj[o.kind])LH_ART.obj[o.kind](ctx,o,time);
       else if(o.kind==='tree')tree(o);else if(o.kind==='house')house(o);else if(o.kind==='banyan')banyan(o);else if(o.kind==='well')well(o);else if(o.kind==='fire')campfire(o);else if(o.role)drawNPC(o);else drawMonster(o);
     }
-    drawFX();drawLoot();drawNPCMarks();drawWellMarks();drawPortalMarks();drawCave();drawHQ();drawSay();drawTutArrow();
+    drawFX();drawLoot();drawNPCMarks();drawWellMarks();drawPortalMarks();drawCave();drawHQ();drawSQ();drawSay();drawTutArrow();
     ctx.restore();
     // trời riêng của bản đồ (cát bay, tuyết rơi, bóng tối trong hang có đuốc, pha lê sáng)
     const SK=World.def.sky&&LH_ART.sky[World.def.sky];if(SK)try{SK(ctx,{w:width,h:height,t:time,sc:scale,cam:camera,hx:(hero.x-camera.x)*scale,hy:(hero.y-24-camera.y)*scale,lights:World.lights,fires:World.fires,T})}catch(e){oops(e,'vẽ trời');}
@@ -2269,7 +2336,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
       checkpoint();return travel(id);
     },
     get mapId(){return World.id;},
-    toggleLock,get lockOn(){return lockOn;},get bots(){return bots;},get tut(){return tut;},get cave(){return cave;},get pk(){return pk;},pkSpawn,get hq(){return {BT,AN,FW};},duelStart,taunt,botRun(){botRunAt=0;botRunEvent();},
+    toggleLock,get lockOn(){return lockOn;},get bots(){return bots;},get tut(){return tut;},get cave(){return cave;},get pk(){return pk;},pkSpawn,get hq(){return {BT,AN,FW,SQ};},duelStart,taunt,botRun(){botRunAt=0;botRunEvent();},
     stop(){route=[];targetNPC=null;keys.clear();joystick={x:0,y:0};holdAttack=false;},
     closeDialog(){dialogNPC=null;dialogEl.hidden=true;}};
 };

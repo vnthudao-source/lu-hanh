@@ -491,5 +491,20 @@
   }
  ],
  "trees": [],
- "hazard": "freeze"
+ "hazard": "freeze",
+ "npcs": [
+  {
+   "id": "tho-san",
+   "role": "tho-san",
+   "name": "Thợ săn",
+   "act": "stand",
+   "x": 40,
+   "y": 16.3,
+   "facing": 1,
+   "lines": [
+    "Trên núi tuyết, dấu chân là thứ không biết nói dối.",
+    "Sói tuyết đi thành đàn, đừng đi một mình lúc trời tối."
+   ]
+  }
+ ]
 }

@@ -677,6 +677,18 @@
    ],
    "x": 24,
    "facing": 1
+  },
+  {
+   "id": "lao-gac-cong",
+   "role": "lao-gac-cong",
+   "name": "Lão gác cổng",
+   "act": "stand",
+   "x": 15,
+   "y": 14,
+   "facing": -1,
+   "lines": [
+    "Cổng thành ba người canh, mà chỉ có một người thật thà."
+   ]
   }
  ],
  "monsters": [

@@ -223,7 +223,20 @@
   }
  ],
  "trees": [],
- "npcs": [],
+ "npcs": [
+  {
+   "id": "lao-thuyen",
+   "role": "lao-thuyen",
+   "name": "Lão lái thuyền",
+   "act": "stand",
+   "x": 26,
+   "y": 28,
+   "facing": -1,
+   "lines": [
+    "Biển máu không có cá, chỉ có thuyền giấy trôi dạt."
+   ]
+  }
+ ],
  "monsters": [
   {
    "type": "huyet-ma-long",

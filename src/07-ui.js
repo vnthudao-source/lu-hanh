@@ -256,25 +256,31 @@ window.startUI=(session)=>{
   // Bảng nhiệm vụ chỉ báo NPC nào đang giữ việc Tìm con (đang làm: nơi trả việc)
   function storyHint(){
     const act=Object.keys(p.quests.active).map(id=>Player.QUESTS[id]).find(Q=>Q&&Q.story);
-    if(act){const n=p.quests.active[act.id],M=Player.MON[act.target];return `<div class="qgroup story">${svg('heart')}<b>Tìm con</b><span>${esc(act.name)} · ${M?esc(M.name):''} ${Math.min(n,act.count)}/${act.count}</span></div><div class="qnpc">${svg(n>=act.count?'check':'talk')}<div><b>${n>=act.count?'Về gặp':'Xong việc về gặp'} ${esc(act.npcName||act.npc)}</b><small>${esc(regName(act.at))}</small></div></div>`;}
+    if(act){const ok=Player.questReady(p,act);return `<div class="qgroup story">${svg('heart')}<b>Tìm con</b><span>${esc(act.name)} · ${storyGoal(act,1)}</span></div><div class="qnpc">${svg(ok?'check':'talk')}<div><b>${ok?'Về gặp':'Xong việc về gặp'} ${esc(act.npcName||act.npc)}</b><small>${esc(regName(act.at))}</small></div></div>`;}
     const nx=Player.storyNext(p);if(!nx)return Object.values(Player.QUESTS).some(Q=>Q.story)?`<div class="qgroup story">${svg('heart')}<b>Tìm con</b><span>${Number(p.flags.rescue)>=2?'Đã đưa con gái về nhà · hành trình trọn vẹn':Number(p.flags.rescue)===1?'Đã cứu được An · đưa con về làng Thanh Mộc':'Manh mối cuối: An bị đưa qua Hư Không Giới tới Hỗn Nguyên Điện (cấp 999)'}</span></div>`:'';
     const need=Player.questLevel(nx),lock=(p.level||1)<need;
     return `<div class="qgroup story">${svg('heart')}<b>Tìm con</b><span>Lần theo manh mối qua từng vùng để cứu con gái</span></div><div class="qnpc">${svg(lock?'lock':'talk')}<div><b>${esc(nx.npcName||nx.npc)} đang có việc muốn nhờ bạn</b><small>${esc(regName(nx.at))}${lock?' · cần cấp '+need:' · tới gặp để biết việc gì'}</small></div></div>`;
   }
   // Gặp NPC đang giữ việc cốt truyện: kể chuyện, nhận / trả việc tại chỗ; xong mới mở bảng thường của NPC (nếu có)
+  // v10.39: mục tiêu của việc Tìm con — quái ×số, trò nhỏ (LH_TC) hoặc điều kiện có sẵn
+  const TC=typeof LH_TC!=='undefined'?LH_TC:{},tcPlay=typeof LH_TroChoi==='function'?LH_TroChoi({openModal,closeModal,svg,esc,ttl}):null;
+  function storyGoal(Q,withCount){const M=Player.MON[Q.target],S=TC[Q.id],n=p.quests.active[Q.id];
+    if(M)return esc(M.name)+(withCount&&n!=null?` ${Math.min(n,Q.count)}/${Q.count}`:` ×${Q.count}`);return esc(S&&S.hint||Q.name);}
   function showStoryTalk(n,st){
-    const Q=st.Q,M=Player.MON[Q.target],cnt=p.quests.active[Q.id],need=Player.questLevel(Q),lock=(p.level||1)<need;
+    const Q=st.Q,need=Player.questLevel(Q),lock=(p.level||1)<need,S=TC[Q.id],mini=!!(S&&tcPlay&&!['talk','find','escort','cond'].includes(S.k));
     const next=n.panel?`<button id="stNext">${svg('next')}${({shop:'Mua bán',quests:'Sổ việc',mercs:'Thuê lính',market:'Chợ',avatar:'Đổi diện mạo',fuse:'Dung hợp',nap:'Nạp thẻ',chest:'Mở rương',quiz:'Hỏi bài'})[n.panel]||'Mở'}</button>`:'';
-    const body=st.state==='new'?`<div class="story-talk"><span class="who">${svg('talk')}</span><div><p>${esc(Q.desc)}</p><small class="sel-desc">${M?esc(M.name):''} ×${Q.count} · ${esc(regName(Player.regionOf(Q.target)))}${lock?' · cần cấp '+need:''}</small><span class="chips">${rewardChips(Q)}</span></div></div><div class="story-bar">${next}<button class="primary" id="stGo"${lock?' disabled':''}>${svg('check')}Nhận việc</button></div>`
-      :st.state==='ready'?`<div class="story-talk"><span class="who">${svg('check')}</span><div><p>Việc đã xong: ${esc(Q.name)} (${Q.count}/${Q.count}).</p><span class="chips">${rewardChips(Q)}</span></div></div><div class="story-bar">${next}<button class="primary" id="stGo">${svg('check')}Trả việc</button></div>`
-      :`<div class="story-talk"><span class="who">${svg('quest')}</span><div><p>${esc(Q.desc)}</p><small class="sel-desc">${M?esc(M.name):''} ${Math.min(cnt,Q.count)}/${Q.count} · xong về gặp ta</small></div></div><div class="story-bar">${next}</div>`;
+    const where=esc(regName(Player.regionOf(Q.target)));
+    const body=st.state==='new'?`<div class="story-talk"><span class="who">${svg('talk')}</span><div><p>${esc(Q.desc)}</p><small class="sel-desc">${storyGoal(Q)} · ${where}${lock?' · cần cấp '+need:''}</small><span class="chips">${rewardChips(Q)}</span></div></div><div class="story-bar">${next}<button class="primary" id="stGo"${lock?' disabled':''}>${svg('check')}Nhận việc</button></div>`
+      :st.state==='ready'?`<div class="story-talk"><span class="who">${svg('check')}</span><div><p>Việc đã xong: ${esc(Q.name)}.</p><span class="chips">${rewardChips(Q)}</span></div></div><div class="story-bar">${next}<button class="primary" id="stGo">${svg('check')}Trả việc</button></div>`
+      :`<div class="story-talk"><span class="who">${svg('quest')}</span><div><p>${esc(Q.desc)}</p><small class="sel-desc">${storyGoal(Q,1)} · ${mini?'thua thì chơi lại ngay':'làm ở '+where+' · xong về gặp ta'}</small></div></div><div class="story-bar">${next}${mini?`<button class="primary" id="stPlay">${svg('next')}Bắt đầu</button>`:''}</div>`;
     openModal(ttl('heart',esc(n.name)+' · Tìm con'),body);
     const nb=$('#stNext');if(nb)nb.onclick=()=>openPanel(n,true);
+    const pl=$('#stPlay');if(pl)pl.onclick=()=>tcPlay(Q,S,()=>game.op({t:'sg',id:Q.id}).then(()=>{refresh();showStoryTalk(n,{Q,state:'ready'});},e=>{fail(e);}));
     const go=$('#stGo');if(go)go.onclick=()=>run(go,game.op(st.state==='new'?{t:'qa',id:Q.id}:{t:'qt',id:Q.id}).then(r=>{
-      if(st.state==='new'){game.message(svg('quest')+'Đã nhận: '+esc(Q.name));LH_Audio.play('quest');closeModal();return;}
+      if(st.state==='new'){game.message(svg('quest')+'Đã nhận: '+esc(Q.name));LH_Audio.play('quest');if(mini)showStoryTalk(n,{Q,state:'active'});else closeModal();return;}
       rewardMsg(r);LH_Audio.play('quest');
       openModal(ttl('heart','Tìm con · '+Q.name),`<div class="story-end">${svg('quest')}<p>${esc(Q.end||'Cảm ơn, hành trình còn dài.')}</p></div><button class="primary big-btn" id="storyOk">${svg('next')}Tiếp tục</button>`);
-      $('#storyOk').onclick=()=>{const nx=Player.storyNext(p);if(nx)game.message(svg('talk')+`Manh mối tiếp: gặp ${nx.npcName||nx.npc} ở ${regName(nx.at)}`);closeModal();};
+      $('#storyOk').onclick=()=>{const nx=Player.storyNext(p);if(nx)game.message(svg('talk')+`Manh mối tiếp: gặp ${nx.npcName||nx.npc} ở ${regName(nx.at)}${(p.level||1)<Player.questLevel(nx)?' (cần cấp '+Player.questLevel(nx)+')':''}`);closeModal();};
     }));
   }
   /* ---------- Người dẫn đường: lính đánh thuê ---------- */

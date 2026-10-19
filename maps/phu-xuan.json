@@ -681,6 +681,18 @@
    ],
    "x": 25,
    "facing": 1
+  },
+  {
+   "id": "quan-le-bo",
+   "role": "quan-le-bo",
+   "name": "Quan Lễ bộ",
+   "act": "stand",
+   "x": 15,
+   "y": 14,
+   "facing": -1,
+   "lines": [
+    "Lễ nghi triều đình phải đúng từng bước, sai một bước là phạm thượng."
+   ]
   }
  ],
  "monsters": [

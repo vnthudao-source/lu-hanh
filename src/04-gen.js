@@ -164,6 +164,35 @@
   // v10.38: Thầy đồ (làng Thanh Mộc và các thành) — áo the, khăn xếp, cuộn giấy, râu bạc, đứng yên
   A.npc['thay-do']=npc({robe:'#1e1b19',trim:'#c0a060',hat:'khan',hatc:'#1e1b19',item:'scroll',beard:'#d8d0c0',skin:'#e8c8a0',act:'stand'});
   A.npc['giu-ruong']=npc({robe:'#5a3a1e',trim:'#e0b040',hat:'khan',hatc:'#2a1a0e',item:'chest',beard:'#4a3a30'});
+  // v10.39: NPC giao việc Tìm con ở từng vùng (vai dùng chung cho mọi bản đồ)
+  for(const [k,S] of Object.entries({
+   'be-na':{robe:'#5a8a3a',trim:'#ffe080',hat:'non',s:.6,fem:1,skirt:1},
+   'tieu-phu':{robe:'#6a5034',trim:'#c8a870',hat:'khan',hatc:'#3a2a1a',item:'sticks',beard:'#3a3028'},
+   'truong-doan-buon':{robe:'#b0682a',trim:'#f0d090',hat:'khan',hatc:'#f0e0c0',item:'staff',beard:'#5a4030',skin:'#c89a70'},
+   'tho-san':{robe:'#5a6a74',trim:'#e8e8e8',hat:'non',hatc:'#c8c0a8',item:'spear',beard:'#4a3a30'},
+   'lai-do':{robe:'#4a5a3a',trim:'#c8b880',hat:'non',item:'staff',beard:'#d8d0c0',skin:'#c8a080'},
+   'ba-lao-che':{robe:'#6a4a3a',trim:'#d8c0a0',hat:'khan',hatc:'#3a2a20',fem:1,skirt:1,hair:'#d8d0c8',skin:'#d8b898'},
+   'tho-ren-nui':{robe:'#3a2a24',trim:'#ff8a3d',hat:'khan',hatc:'#5a1a10',item:'sticks',beard:'#2a2420',skin:'#b8805a'},
+   'su-gia-bang':{robe:'#9ac8e8',trim:'#ffffff',hat:'quan',hatc:'#4a7aa0',item:'scroll',skin:'#e8e4f0'},
+   'linh-bang-tin':{robe:'#7a2a2a',trim:'#e0b040',hat:'tru',hatc:'#6b6e74',item:'spear'},
+   'giu-lau':{robe:'#4a2a5a',trim:'#e0b040',hat:'quan',hatc:'#2a1a3a',item:'lantern',beard:'#d8d0c0'},
+   'quy-tuong':{robe:'#2a6a6a',trim:'#e0d070',hat:'quan',hatc:'#1a4a4a',item:'scroll',beard:'#e8e8e0',skin:'#a8b890'},
+   'chan-de':{robe:'#8a7a5a',trim:'#e8e0c8',hat:'non',item:'staff',hair:'#2a2622'},
+   'lao-gac-cong':{robe:'#5a3a2a',trim:'#c0a060',hat:'tru',hatc:'#8a6a40',item:'spear',beard:'#d8d0c0'},
+   'phan-quan':{robe:'#1a1a2a',trim:'#c03030',hat:'quan',hatc:'#0a0a14',item:'scroll',beard:'#1a1a1a',skin:'#9aa0a0'},
+   'dao-co':{robe:'#e8e0d0',trim:'#8a5a9a',hat:'none',hair:'#2a2622',fem:1,skirt:1,item:'fan'},
+   'nguyet-than':{robe:'#f0f0ff',trim:'#c0c8ff',hat:'hoa',fem:1,skirt:1,sash:'#c0c8ff',item:'lantern',skin:'#f4ece8'},
+   'quan-le-bo':{robe:'#a02a2a',trim:'#e0b040',hat:'quan',hatc:'#1e1b19',item:'scroll',beard:'#3a3028'},
+   'tien-ong':{robe:'#e8e8f0',trim:'#a090ff',hat:'none',hair:'#f0f0f0',beard:'#f8f8f8',item:'staff'},
+   'lao-thuyen':{robe:'#4a2a2a',trim:'#ff8080',hat:'non',hatc:'#6a4a3a',item:'staff',beard:'#d8d0c0',skin:'#c8a090'},
+   'lao-binh':{robe:'#5a5048',trim:'#c0a060',hat:'tru',hatc:'#6b6e74',item:'spear',beard:'#e0e0d8'},
+   'lao-lai-be':{robe:'#a08050',trim:'#f0e0b0',hat:'non',item:'staff',beard:'#e8e0d0',skin:'#c09870'},
+   'lao-vo-su':{robe:'#6a3a2a',trim:'#e0b040',hat:'khan',hatc:'#2a1a10',item:'staff',beard:'#f0f0f0'},
+   'kiem-lao':{robe:'#3a4a5a',trim:'#c0e8ff',hat:'khan',hatc:'#1a2430',item:'staff',beard:'#f0f0f0',skin:'#e0d0c0'},
+   'dao-si-bang-hoa':{robe:'#4a6a9a',trim:'#ff9a50',hat:'quan',hatc:'#a03a20',item:'fan',beard:'#d8d0c0'},
+   'manh-ba':{robe:'#2a3a30',trim:'#80ffb0',hat:'khan',hatc:'#1a2420',fem:1,skirt:1,hair:'#d8d8d0',item:'lantern',skin:'#c8d0c8'},
+   'long-nu':{robe:'#2a5a8a',trim:'#ffe060',hat:'hoa',fem:1,skirt:1,sash:'#a0d0ff',item:'fan',skin:'#e8e0f0'}
+  }))if(!A.npc[k])A.npc[k]=npc(S);
   // ---------- trời: hạt rơi / bay + màu phủ ----------
   // spec: {n, col, size, vx, vy, tint, glow, dark} — hạt (tro, lá, hoa, tuyết, đom đóm, sương), tint = màu phủ cả màn hình
   function sky(S){

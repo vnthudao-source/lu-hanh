@@ -513,7 +513,20 @@
   }
  ],
  "trees": [],
- "npcs": [],
+ "npcs": [
+  {
+   "id": "manh-ba",
+   "role": "manh-ba",
+   "name": "Mạnh Bà",
+   "act": "stand",
+   "x": 26,
+   "y": 28,
+   "facing": -1,
+   "lines": [
+    "Uống bát canh này thì quên hết… Ngươi chưa muốn quên ai à?"
+   ]
+  }
+ ],
  "monsters": [
   {
    "type": "minh-vuong",
