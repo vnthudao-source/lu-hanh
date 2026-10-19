@@ -254,11 +254,15 @@ window.startUI=(session)=>{
   }
   const rewardMsg=r=>game.message(svg('check')+'Nhận thưởng'+(r.copper?' '+coins(r.copper):'')+(r.rubies?' '+ruby(r.rubies):'')+(r.exp?' · +'+r.exp+' kinh nghiệm':'')+(r.item?` \u{00b7} <b style="color:${qColor(r.item)}">${esc(Player.nameOf(r.item))}</b>`:''))||(r.up&&game.levelUp(r.up));
   const regName=id=>(Player.REGIONS.find(r=>r.id===id)||{}).name||id;
+  // v10.43: Kỷ vật — đồ cốt truyện cất lại sau khi đưa An về làng (không chiếm ô túi), bấm vào để đọc lời kể
+  function keepsakeHtml(){const kv=Array.isArray(p.flags.kyvat)?p.flags.kyvat:[];if(!kv.length)return '';
+    return `<div class="kyvat"><b>${svg('heart')}Kỷ vật</b><div class="kv-grid">${kv.map(id=>{const d=Player.items[id];if(!d)return '';return `<button class="kv" data-kv="${esc(id)}" title="${esc(d.name)}">${d.img?`<img src="${esc(d.img)}" alt="" loading="lazy" referrerpolicy="no-referrer">`:svg('quest')}<small>${esc(d.name)}</small></button>`;}).join('')}</div><p class="kv-desc" id="kvDesc">Bấm vào một kỷ vật để đọc lại câu chuyện.</p></div>`;}
+  document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-kv]');if(!b)return;const d=Player.items[b.dataset.kv],el=document.getElementById('kvDesc');if(d&&el)el.textContent=d.name+': '+(d.desc||'');});
   // Bảng nhiệm vụ chỉ báo NPC nào đang giữ việc Tìm con (đang làm: nơi trả việc)
   function storyHint(){
     const act=Object.keys(p.quests.active).map(id=>Player.QUESTS[id]).find(Q=>Q&&Q.story);
     if(act){const ok=Player.questReady(p,act);return `<div class="qgroup story">${svg('heart')}<b>Tìm con</b><span>${esc(act.name)} · ${storyGoal(act,1)}</span></div><div class="qnpc">${svg(ok?'check':'talk')}<div><b>${ok?'Về gặp':'Xong việc về gặp'} ${esc(act.npcName||act.npc)}</b><small>${esc(regName(act.at))}</small></div></div>`;}
-    const nx=Player.storyNext(p);if(!nx)return Object.values(Player.QUESTS).some(Q=>Q.story)?`<div class="qgroup story">${svg('heart')}<b>Tìm con</b><span>${Number(p.flags.rescue)>=2?'Đã đưa con gái về nhà · hành trình trọn vẹn':Number(p.flags.rescue)===1?'Đã cứu được An · đưa con về làng Thanh Mộc':'Manh mối cuối: An bị đưa qua Hư Không Giới tới Hỗn Nguyên Điện (cấp 999)'}</span></div>`:'';
+    const nx=Player.storyNext(p);if(!nx)return Object.values(Player.QUESTS).some(Q=>Q.story)?`<div class="qgroup story">${svg('heart')}<b>Tìm con</b><span>${Number(p.flags.rescue)>=2?'Đã đưa con gái về nhà · hành trình trọn vẹn':Number(p.flags.rescue)===1?'Đã cứu được An · đưa con về làng Thanh Mộc':'Manh mối cuối: An bị đưa qua Hư Không Giới tới Hỗn Nguyên Điện (cấp 999)'}</span></div>${keepsakeHtml()}`:'';
     const need=Player.questLevel(nx),lock=(p.level||1)<need;
     return `<div class="qgroup story">${svg('heart')}<b>Tìm con</b><span>Lần theo manh mối qua từng vùng để cứu con gái</span></div><div class="qnpc">${svg(lock?'lock':'talk')}<div><b>${esc(nx.npcName||nx.npc)} đang có việc muốn nhờ bạn</b><small>${esc(regName(nx.at))}${lock?' · cần cấp '+need:' · tới gặp để biết việc gì'}</small></div></div>`;
   }

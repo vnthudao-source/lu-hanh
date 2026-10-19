@@ -86,11 +86,8 @@
     if(T.mode==='create')return createForm(el);
     if(!c){el.innerHTML=r.chars.length<r.max?`<div class="ti-empty"><span>Ô trống trước căn lều</span><button class="primary big-btn" id="tNew">Tạo nhân vật (${r.chars.length}/${r.max})</button></div>`:`<p class="hint2">Đã đủ ${r.max} nhân vật.</p>`;
       const b=$('#tNew');if(b)b.onclick=()=>{T.mode='create';T.st=null;info();};return;}
-    const k=c.look||{},m=k.main||{str:c.stats.strength,agi:c.stats.agility,vit:c.stats.vitality,int:c.stats.intelligence,cmd:10};
-    const chip=(t,v)=>`<span class="ti-c"><small>${t}</small><b>${v}</b></span>`;
-    el.innerHTML=`<div class="ti-head"><b>${esc(c.name)}</b><small>Lv. ${k.level||c.level||1} · ${c.gender==='f'?'Nữ':'Nam'}</small></div>
-      <div class="ti-stats">${chip('Sức mạnh',m.str)}${chip('Nhanh nhẹn',m.agi)}${chip('Sức khỏe',m.vit)}${chip('Trí tuệ',m.int)}${chip('Mệnh lệnh',m.cmd)}${k.dmg?chip('Sát thương',k.dmg[0]+'–'+k.dmg[1]):''}${k.hp?chip('Máu',k.hp):''}${chip('Lính',(k.mercs||0)+'/'+Player.MAX_MERC)}${k.pets?chip('Quái thu phục',k.pets):''}</div>
-      <div class="ti-act">${c.status==='merc'?`<p class="hint2">Đang cho thuê ở Chợ phiên · ${c.price?money(c.price):''}${c.price&&c.ruby?' + ':''}${c.ruby?c.ruby+' hồng ngọc':''}</p>`:`<button class="ghost ti-del" id="tDel" title="Xoá nhân vật">✕ Xoá</button><button class="primary big-btn" id="tEnter">Vào làng</button>`}</div>`;
+    // v10.43: bỏ bảng chỉ số — tên, cấp và hình nhân vật đã hiện trên căn lều; dưới lều chỉ còn nút Xoá và Vào làng
+    el.innerHTML=`<div class="ti-act">${c.status==='merc'?`<p class="hint2">Đang cho thuê ở Chợ phiên · ${c.price?money(c.price):''}${c.price&&c.ruby?' + ':''}${c.ruby?c.ruby+' hồng ngọc':''}</p>`:`<button class="ghost ti-del" id="tDel" title="Xoá nhân vật">✕ Xoá</button><button class="primary big-btn" id="tEnter">Vào làng</button>`}</div>`;
     const b=$('#tEnter');if(b)b.onclick=()=>enter(c.id,r.claim,b);
     const dl=$('#tDel');if(dl)dl.onclick=()=>delForm(c);
   }

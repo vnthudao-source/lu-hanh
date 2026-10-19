@@ -397,3 +397,7 @@ button.fx-vang{color:#ffe08a}button.fx-cau-vong{color:#ffb0ff}button.fx-lua{colo
 .tc-slots{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
 .tc-slots i{font-style:normal;min-width:70px;min-height:34px;padding:6px 10px;border-radius:8px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center}
 .tc-slots i.on{border-style:solid;border-color:#ffd27a;color:#ffd27a}
+/* v10.43: Kỷ vật (đồ cốt truyện đã cất sau khi đưa An về làng) */
+.kyvat{margin:8px 0 4px;padding:10px;border:1px solid #e8c07055;border-radius:12px;background:#2a221433}.kyvat>b{display:flex;align-items:center;gap:6px;font:600 14px Georgia,serif;color:#ecd29a}.kyvat>b svg{width:16px;height:16px}
+.kv-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}.kv{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;border:1px solid #ab956a44;border-radius:9px;background:#0d1712;color:#e9dcbc}.kv img,.kv svg{width:40px;height:40px;object-fit:contain}.kv small{font-size:10px;line-height:1.2;text-align:center}
+.kv-desc{margin:8px 0 0;font-size:12px;color:#c9d2c3;line-height:1.5}

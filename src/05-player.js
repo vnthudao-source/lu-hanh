@@ -672,8 +672,11 @@ const Player=(()=>{
   const PREDICT=new Set(['kill','buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff','av','fuse','use','cos','die','quiz','quizHunt','eventWin','recruit','recruitHire','tutGift','cavePass','caveChest','pkWin','hqFlag','duelWin','rescue','rescueHome','sg']);
   // v10.13: khóa chữ ký kết quả Thầy đồ (máy chủ ký bằng khóa bí mật; trình duyệt chỉ áp dụng trước, máy chủ kiểm khi nhận gói lưu)
   const quizKey=(cid,bo,wrong)=>'quiz|'+cid+'|'+bo+'|'+(wrong||[]).join(',');
+  // v10.43: xong Tìm con (đã đưa An về làng) → đồ cốt truyện rời túi, cất vào Kỷ vật (flags.kyvat, không chiếm ô túi). Người chơi cũ đã xong được dọn ở lệnh kế tiếp.
+  function keepsake(s){if(num(s.flags&&s.flags.rescue)<2||!Array.isArray(s.bag))return;const kv=Array.isArray(s.flags.kyvat)?s.flags.kyvat:[];let n=0;
+    s.bag.forEach((it,i)=>{const d=it&&info(it);if(d&&d.slot==='quest'){if(!kv.includes(it.type))kv.push(it.type);s.bag[i]=null;n++;}});if(n||!s.flags.kyvat)s.flags.kyvat=kv;}
   function applyOp(s,op,srv,now=Date.now(),rng=Math.random){
-    const t=op&&op.t;if(PREDICT.has(t))rng=seqRng(s);
+    const t=op&&op.t;if(PREDICT.has(t))rng=seqRng(s);keepsake(s);
     if(t==='kill'){
       const M=MON[op.mon];if(!M)throw Error('MON');
       srv.kills=srv.kills||{};const win=Math.max(5,M.respawn)*1000,log=(srv.kills[op.mon]||[]).filter(x=>now-x<win);
@@ -752,7 +755,7 @@ const Player=(()=>{
     if(t==='duelWin'){if((s.level||1)<mapLevel('vo-dai'))throw Error('LEVEL');const cur=Math.min(10,Math.floor(num(s.flags.duel))),k=Math.floor(num(op.n));if(k!==cur+1||k>10)throw Error('SAI_TRAN');srv.duelAt=num(srv.duelAt);if(now-srv.duelAt<8000)throw Error('NHANH_QUA');srv.duelAt=now;
       s.flags.duel=k;const ru=Math.max(0,Math.floor(num(CFG.vo_dai_hong_ngoc,5)))*k;s.rubies+=ru;if(k===10){s.flags.hq=s.flags.hq||{};s.flags.hq['vo-dai']=1;}return {duel:k,rubies:ru};}
     if(t==='rescue'){if(!(num(s.flags.kills&&s.flags.kills['hon-nguyen-ma-to'])>0))throw Error('CHUA_HA_TRUM');if(num(s.flags.rescue)>=1)throw Error('DA_CUU');s.flags.rescue=1;return {rescue:1};}
-    if(t==='rescueHome'){if(num(s.flags.rescue)!==1)throw Error('CHUA_CUU');s.flags.rescue=2;const ru=Math.max(0,Math.floor(num(CFG.cuu_con_hong_ngoc,999)));s.rubies+=ru;return {rescue:2,rubies:ru};}
+    if(t==='rescueHome'){if(num(s.flags.rescue)!==1)throw Error('CHUA_CUU');s.flags.rescue=2;keepsake(s);const ru=Math.max(0,Math.floor(num(CFG.cuu_con_hong_ngoc,999)));s.rubies+=ru;return {rescue:2,rubies:ru};}
     if(t==='pkWin'){srv.pkAt=num(srv.pkAt);if(now-srv.pkAt<60000)throw Error('NHANH_QUA');srv.pkAt=now;s.flags.freeRecruit=Math.min(5,num(s.flags.freeRecruit)+1);return {free:s.flags.freeRecruit};}
     if(t==='recruitHire'){const m=recruitHire(s,rng);return {mid:m.mid,name:m.name,lv:m.lv,tier:m.tier};}
     if(t==='recruitDrop'){s.recruit=null;return {};}
