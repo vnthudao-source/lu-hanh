@@ -72,7 +72,7 @@
     if(selId){const i=r.chars.findIndex(c=>c.id===selId);if(i>=0)T.sel=i;}
     if(T.sel>=Math.max(r.max,1))T.sel=0;
     card.classList.add('wide');
-    box.innerHTML=`<div class="phead"><b>${esc(r.account.username)}</b><span class="srv">Máy chủ Việt Nam</span><button id="pOut">Đăng xuất</button></div>
+    box.innerHTML=`<div class="phead"><button id="pOut" title="Đăng xuất">Đăng xuất</button></div>
       <div class="tent-wrap"><canvas id="tentCv" aria-label="Căn lều nhân vật"></canvas></div>
       <div id="tentInfo" class="tent-info"></div>
       ${r.claim||r.claimRuby?`<p class="hint2 ok">Có ${r.claim?money(r.claim):''}${r.claim&&r.claimRuby?' và ':''}${r.claimRuby?r.claimRuby+' hồng ngọc':''} tiền bán hàng đang chờ, nhận ở Chợ phiên.</p>`:''}`;

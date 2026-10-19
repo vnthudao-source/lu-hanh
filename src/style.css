@@ -251,7 +251,8 @@ button.busy{opacity:.6;pointer-events:none}
 /* v10.33: phòng chọn nhân vật gọn: logo nhỏ, căn lều thấp, chỉ số 4 cột, nút Vào làng + Xoá cùng một hàng */
 .portal-card.wide .plogo{margin-bottom:2px}.portal-card.wide .plogo-img{max-height:54px;max-width:170px}.portal-card.wide .plogo b{font-size:24px}.portal-card.wide .plogo small{font-size:11px}
 .portal-card.wide #portalMsg{min-height:0}
-.phead .srv{margin-left:auto;margin-right:8px;font-size:11px;color:#9fe8a8;letter-spacing:.5px}
+/* v10.42: phòng chọn nhân vật không hiện tên tài khoản, máy chủ; nút Đăng xuất nằm góc trên phải */
+.portal-card.wide{position:relative}.portal-card.wide .phead{position:absolute;top:10px;right:12px;z-index:2}
 .tent-wrap canvas{display:block;width:100%;height:220px;border-radius:14px;border:1px solid #ab956a66;background:#15202e;touch-action:manipulation}
 .tent-info{display:flex;flex-direction:column;gap:7px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:#0f2019cc}
 .ti-head{display:flex;align-items:baseline;gap:10px}.ti-head b{font:600 18px/1.2 Georgia,"Times New Roman",serif;color:#f6dc9c}.ti-head small{color:#9fe8a8;font-size:13px}.ti-head button{margin-left:auto}
