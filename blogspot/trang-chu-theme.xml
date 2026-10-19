@@ -24,17 +24,17 @@
 
 <!-- Variable definitions -->
 
-<Variable name="keycolor" description="Main Color" type="color" default="#2196f3"  value="#2196f3"/>
+<Variable name="keycolor" description="Main Color" type="color" default="#2196f3"  value="#d8b46c"/>
 <Variable name="startSide" description="Start side in blog language" type="automatic" default="left" hideEditor="true" />
 <Variable name="endSide" description="End side in blog language" type="automatic" default="right" hideEditor="true" />
 
 <Group description="Page Text">
   <Variable name="body.text.font" description="Font"
       type="font"
-      default="$(robotoNormal15)"  value="15px Roboto, sans-serif"/>
+      default="$(robotoNormal15)"  value="15px 'Be Vietnam Pro', sans-serif"/>
   <Variable name="body.text.color" description="Color"
       type="color"
-      default="#757575"  value="#757575"/>
+      default="#757575"  value="#cfd3c5"/>
 </Group>
 
 <Group description="Backgrounds">
@@ -46,13 +46,13 @@
   <Variable name="body.background" description="Background"
       color="$(body.background.color)"
       type="background"
-      default="$(color) none repeat scroll top left"  value="$(color) url(https://themes.googleusercontent.com/image?id=L1lcAxxz0CLgsDzixEprHJ2F38TyEjCyE3RSAjynQDks0lT1BDc1OxXKaTEdLc89HPvdB11X9FDw) no-repeat scroll top center /* Credit: Michael Elkan (http://www.offset.com/photos/394244) */;"/>
+      default="$(color) none repeat scroll top left"  value="$(color) url(https://lh3.googleusercontent.com/d/1WL5mtyCDQA3NN498XU5BNCmOuOAWVgKi) no-repeat scroll top center"/>
   <Variable name="body.background.color" description="Body background color"
       type="color"
-      default="#eee"  value="#eeeeee"/>
+      default="#eee"  value="#0b1410"/>
   <Variable name="posts.background.color" description="Post background color"
       type="color"
-      default="#fff"  value="#ffffff"/>
+      default="#fff"  value="#111d17"/>
   <Variable name="body.background.blur" description="Background blur"
       type="length"
       min="0px"
@@ -63,26 +63,26 @@
 <Group description="Links">
   <Variable name="body.link.color" description="Link color"
       type="color"
-      default="#2196f3"  value="#2196f3"/>
+      default="#2196f3"  value="#d8b46c"/>
   <Variable name="body.link.visited.color" description="Visited link color"
       type="color"
-      default="$(body.link.color)"  value="#2196f3"/>
+      default="$(body.link.color)"  value="#d8b46c"/>
   <Variable name="body.link.hover.color" description="Link Hover Color"
       type="color"
-      default="$(body.link.color)"  value="#2196f3"/>
+      default="$(body.link.color)"  value="#f2dca6"/>
 </Group>
 
 <Group description="Blog title" selector="div.widget.Header">
   <Variable name="blog.title.font" description="Font"
       type="font"
-      default="$(robotoBold45)"  value="bold 45px Roboto, sans-serif"/>
+      default="$(robotoBold45)"  value="600 54px 'Cormorant Garamond', serif"/>
   <Variable name="blog.title.color" description="Color"
       type="color"
-      default="#fff"  value="#ffffff"/>
+      default="#fff"  value="#f2dca6"/>
   <Variable name="header.icons.color"
       description="Background icons color"
       type="color"
-      default="#fff"  value="#ffffff"/>
+      default="#fff"  value="#f2dca6"/>
 </Group>
 
 <Group description="Tabs text" selector="div.widget.PageList">
@@ -93,180 +93,180 @@
       default="700 normal $(size) $(family)"  value="700 normal $(size) $(family)"/>
   <Variable name="tabs.color" description="Text color"
       type="color"
-      default="#ccc"  value="#cccccc"/>
+      default="#ccc"  value="#d9dccf"/>
   <Variable name="tabs.selected.color" description="Selected color"
       type="color"
-      default="#fff"  value="#ffffff"/>
+      default="#fff"  value="#f2dca6"/>
   <Variable name="tabs.overflow.background.color" description="Popup background color"
       type="color"
-      default="$(posts.background.color)"  value="#ffffff"/>
+      default="$(posts.background.color)"  value="#111d17"/>
   <Variable name="tabs.overflow.color" description="Popup text color"
       type="color"
-      default="$(posts.text.color)"  value="#757575"/>
+      default="$(posts.text.color)"  value="#cfd3c5"/>
   <Variable name="tabs.overflow.selected.color" description="Popup selected color"
       type="color"
-      default="$(posts.title.color)"  value="#212121"/>
+      default="$(posts.title.color)"  value="#f2dca6"/>
 </Group>
 
 <Group description="Posts" selector="div.widget.Blog">
   <Variable name="posts.title.color" description="Post title color"
       type="color"
-      default="#212121"  value="#212121"/>
+      default="#212121"  value="#f3ead2"/>
   <Variable name="posts.title.font" description="Post title font"
       type="font"
-      default="$(robotoBold22)"  value="bold 22px Roboto, sans-serif"/>
+      default="$(robotoBold22)"  value="600 34px 'Cormorant Garamond', serif"/>
   <Variable name="posts.stream.title.font" description="Post title stream font"
       type="font"
-      default="$(robotoBold30)"  value="bold 30px Roboto, sans-serif"/>
+      default="$(robotoBold30)"  value="600 32px 'Cormorant Garamond', serif"/>
   <Variable name="posts.text.font" description="Post text font"
       type="font"
-      default="$(body.text.font)"  value="15px Roboto, sans-serif"/>
+      default="$(body.text.font)"  value="16px 'Be Vietnam Pro', sans-serif"/>
   <Variable name="posts.text.color" description="Post text color"
       type="color"
-      default="$(body.text.color)"  value="#757575"/>
+      default="$(body.text.color)"  value="#cfd3c5"/>
   <Variable name="posts.byline.color" description="Post byline color"
       type="color"
-      default="rgba(0, 0, 0, 0.54)"  value="rgba(0, 0, 0, 0.54)"/>
+      default="rgba(0, 0, 0, 0.54)"  value="rgba(236, 229, 211, 0.55)"/>
   <Variable name="blockquote.font" description="Blockquote font"
       type="font"
-      default="$(robotoLightItalic15)"  value="italic 300 15px Roboto, sans-serif"/>
+      default="$(robotoLightItalic15)"  value="italic 500 19px 'Cormorant Garamond', serif"/>
   <Variable name="blockquote.color" description="Blockquote color"
       type="color"
-      default="#444"  value="#444444"/>
+      default="#444"  value="#e6d8b2"/>
   <Variable name="posts.icons.color"
       description="Post icons color"
       type="color"
-      default="#707070"  value="#707070"/>
+      default="#707070"  value="#d8b46c"/>
 </Group>
 
 <Group description="Search">
   <Variable name="search.input.color" description="Input color"
       type="color"
-      default="$(blog.title.color)"  value="#ffffff"/>
+      default="$(blog.title.color)"  value="#f2dca6"/>
   <Variable name="search.input.font" description="Input font"
       type="font"
-      default="$(robotoNormal16)"  value="16px Roboto, sans-serif"/>
+      default="$(robotoNormal16)"  value="16px 'Be Vietnam Pro', sans-serif"/>
   <Variable name="search.placeholder.color" description="Placeholder text color"
       type="color"
-      default="$(blog.title.color)"  value="#ffffff"/>
+      default="$(blog.title.color)"  value="#c9c2ab"/>
 </Group>
 
 <Group description="Sharing">
   <Variable name="sharing.background.color"
       description="Sharing background color"
       type="color"
-      default="$(posts.background.color)"  value="#ffffff"/>
+      default="$(posts.background.color)"  value="#111d17"/>
   <Variable name="sharing.text.color" description="Sharing text color"
       type="color"
-      default="$(posts.title.color)"  value="#212121"/>
+      default="$(posts.title.color)"  value="#ece5d3"/>
   <Variable name="sharing.icons.color"
       description="Sharing icons color"
       type="color"
-      default="$(sharing.text.color)"  value="#212121"/>
+      default="$(sharing.text.color)"  value="#d8b46c"/>
 </Group>
 
 <Group description="Popular posts" selector="div.widget.PopularPosts">
   <Variable name="popularposts.background.color"
       description="Popular post background color"
       type="color"
-      default="$(body.background.color)"  value="#eeeeee"/>
+      default="$(body.background.color)"  value="#0b1410"/>
   <Variable name="popularposts.byline.color"
       description="Popular post byline color"
       type="color"
-      default="$(posts.byline.color)"  value="rgba(0, 0, 0, 0.54)"/>
+      default="$(posts.byline.color)"  value="rgba(236, 229, 211, 0.55)"/>
   <Variable name="popularposts.title.color"
       description="Popular post title color"
       type="color"
-      default="$(posts.title.color)"  value="#212121"/>
+      default="$(posts.title.color)"  value="#f3ead2"/>
   <Variable name="popularposts.text.color"
       description="Popular post text color"
       type="color"
-      default="$(posts.text.color)"  value="#757575"/>
+      default="$(posts.text.color)"  value="#cfd3c5"/>
   <Variable name="popularposts.link.color"
       description="Popular post link color"
       type="color"
-      default="$(body.link.color)"  value="#2196f3"/>
+      default="$(body.link.color)"  value="#d8b46c"/>
 </Group>
 
 <Group description="Post navigation" selector='div.blog-pager'>
   <Variable name="posts.navigation.link.color"
       description="Post navigation links color"
       type="color"
-      default="$(body.link.color)"  value="#2196f3"/>
+      default="$(body.link.color)"  value="#d8b46c"/>
   <Variable name="posts.navigation.link.visited.color"
       description="Post navigation links visited color"
       type="color"
-      default="$(body.link.visited.color)"  value="#2196f3"/>
+      default="$(body.link.visited.color)"  value="#d8b46c"/>
   <Variable name="posts.navigation.link.hover.color"
       description="Post navigations links hover color"
       type="color"
-      default="$(body.link.hover.color)"  value="#2196f3"/>
+      default="$(body.link.hover.color)"  value="#f2dca6"/>
 </Group>
 
 <Group description="Sidebar" selector="div.sidebar-container">
   <Variable name="sidebar.backgroundColorTop"
       description="Background color (Top)"
       type="color"
-      default="#f7f7f7"  value="#ffffff"/>
+      default="#f7f7f7"  value="#0f1a14"/>
   <Variable name="sidebar.backgroundColorTopHD"
       description="Background color (Top) - HD"
       type="color"
-      default="rgba(255, 255, 255, 1)"  value="#f7f7f7"/>
+      default="rgba(255, 255, 255, 1)"  value="#0f1a14"/>
   <Variable name="sidebar.backgroundColorBottom"
       description="Background color (Bottom)"
       type="color"
-      default="#fff"  value="#ffffff"/>
+      default="#fff"  value="#0b1410"/>
   <Variable name="sidebar.separator.color"
       description="Separator color"
       type="color"
-      default="#ccc"  value="#cccccc"/>
+      default="#ccc"  value="rgba(216, 180, 108, 0.22)"/>
   <Variable name="widget.title.color"
       description="Gadget title color"
       type="color"
-      default="#212121"  value="#212121"/>
+      default="#212121"  value="#f2dca6"/>
   <Variable name="sidebar.icons.color"
       description="Sidebar icons color"
       type="color"
-      default="#707070"  value="#707070"/>
+      default="#707070"  value="#d8b46c"/>
 </Group>
 
 <Group description="Author profile" selector='.widget.Profile'>
   <Variable name="profile.title.color" description="Profile title color"
       type="color"
-      default="rgba(0,0,0,0.52)"  value="rgba(0,0,0,0.52)"/>
+      default="rgba(0,0,0,0.52)"  value="#f2dca6"/>
   <Variable name="profile.text.color" description="Profile text color"
       type="color"
-      default="rgba(0, 0, 0, 0.54)"  value="rgba(0, 0, 0, 0.54)"/>
+      default="rgba(0, 0, 0, 0.54)"  value="#a3ad9f"/>
   <Variable name="profile.link.color" description="Profile link color"
       type="color"
-      default="$(posts.title.color)"  value="#212121"/>
+      default="$(posts.title.color)"  value="#d8b46c"/>
 </Group>
 
 <Group description="Labels" selector=".widget.Label">
   <Variable name="labels.text.color"
       description="Label text color"
       type="color"
-      default="$(body.link.color)"  value="rgba(0,0,0,0.54)"/>
+      default="$(body.link.color)"  value="#d8b46c"/>
   <Variable name="labels.background.color"
       description="Label background color"
       type="color"
       red="$(labels.text.color.red)"
       green="$(labels.text.color.green)"
       blue="$(labels.text.color.blue)"
-      default="rgba($red, $green, $blue, 0.05)"  value="#f7f7f7"/>
+      default="rgba($red, $green, $blue, 0.05)"  value="rgba(216, 180, 108, 0.1)"/>
 </Group>
 
 <Group description="Attribution" selector=".widget.Attribution">
   <Variable name="attribution.text.color" description="Attribution text color"
       type="color"
-      default="$(body.text.color)"  value="#757575"/>
+      default="$(body.text.color)"  value="#a3ad9f"/>
   <Variable name="attribution.link.color" description="Attribution link color"
       type="color"
-      default="$(body.link.color)"  value="#2196f3"/>
+      default="$(body.link.color)"  value="#d8b46c"/>
   <Variable name="attribution.icon.color" description="Attribution icon color"
       type="color"
       default="#707070"
-      hideEditor="true"  value="#707070"/>
+      hideEditor="true"  value="#a3ad9f"/>
 </Group>
 
 <Group description="Widths">
@@ -2969,6 +2969,7 @@ margin-left:40px
 
   <body>
     <b:class cond='data:view.isHomepage' name='lh-home-view'/>
+    <b:class cond='not data:view.isHomepage' name='lh-sub-view'/>
     <b:if cond='data:view.isHomepage'>
 <!-- ===== TRANG CHỦ LỮ HÀNH - iKyNa · Liên hệ: điền link vào href của các thẻ class='lh-channel' ===== -->
 <link href='https://fonts.googleapis.com' rel='preconnect'/>
@@ -3666,6 +3667,98 @@ html:has(body.lh-home-view){scroll-behavior:smooth;overflow-x:hidden}
  $('#lh-channels-empty').hidden=shown>0;
  $('#lh-year').textContent=new Date().getFullYear(); }
 })();
+//]]></script>
+    </b:if>
+
+    <b:if cond='not data:view.isHomepage'>
+<!-- ===== TRANG CON (nhãn, lưu trữ, tìm kiếm, bài viết, trang): cùng màu sắc, phông chữ, thanh menu với trang chủ ===== -->
+<link href='https://fonts.googleapis.com' rel='preconnect'/>
+<link crossorigin='anonymous' href='https://fonts.gstatic.com' rel='preconnect'/>
+<link href='https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&amp;display=swap' rel='stylesheet'/>
+<style type='text/css'>/*<![CDATA[*/
+body.lh-sub-view{--lh-ink:#0b1410;--lh-ink2:#111d17;--lh-lac:#8f2b1e;--lh-gold:#d8b46c;--lh-gold2:#f2dca6;--lh-paper:#efe6d1;--lh-text:#cfd3c5;--lh-muted:#a3ad9f;--lh-line:rgba(216,180,108,.22);--lh-serif:'Cormorant Garamond',Georgia,serif;--lh-sans:'Be Vietnam Pro',system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--lh-ink)!important;color:var(--lh-text);font-family:var(--lh-sans)}
+body.lh-sub-view ::selection{background:rgba(216,180,108,.35);color:#fff}
+/* Ảnh đầu trang: tranh của game, phủ tối dần xuống nền mực */
+body.lh-sub-view .bg-photo{filter:saturate(.85)}
+body.lh-sub-view .bg-photo-overlay{background:linear-gradient(180deg,rgba(7,13,10,.55) 0%,rgba(7,13,10,.35) 35%,rgba(11,20,16,.9) 78%,#0b1410 100%)!important;z-index:1}
+body.lh-sub-view .bg-photo-container{z-index:0}
+body.lh-sub-view .page_body{position:relative;z-index:2}
+/* Tên blog trên ảnh */
+body.lh-sub-view .Header h1,body.lh-sub-view .Header h1 a,body.lh-sub-view .Header h2,body.lh-sub-view .Header h2 a{font-family:var(--lh-serif);font-weight:600;color:var(--lh-gold2);letter-spacing:-.01em;text-shadow:0 6px 30px rgba(0,0,0,.6)}
+body.lh-sub-view .Header p{color:#d5d9cb}
+/* Thanh trên khi cuộn (Indie thu gọn đầu trang) */
+body.lh-sub-view.collapsed-header .centered-top-container{background:rgba(9,16,12,.94)!important;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--lh-line);box-shadow:0 10px 30px -20px #000}
+body.lh-sub-view .search-input input{color:var(--lh-gold2)}
+body.lh-sub-view .centered-top .search.focused,body.lh-sub-view .search.focused{background:#111d17!important}
+/* Dòng thông báo nhãn / lưu trữ / tìm kiếm */
+body.lh-sub-view .post-filter-message{background:linear-gradient(180deg,rgba(216,180,108,.12),rgba(216,180,108,.03))!important;border:1px solid var(--lh-line);border-radius:14px;color:var(--lh-text)!important;font-family:var(--lh-sans);padding:16px 20px!important;margin-bottom:22px;box-sizing:border-box;max-width:100%;line-height:2}
+body.lh-sub-view .post-filter-message div,body.lh-sub-view .post-filter-message span{color:var(--lh-text)}
+body.lh-sub-view .post-filter-message .search-label,body.lh-sub-view .post-filter-message .search-query{color:var(--lh-gold2)!important;font-weight:600}
+body.lh-sub-view .post-filter-message a,body.lh-sub-view .post-filter-message .flat-button{color:var(--lh-gold)!important;border:1px solid var(--lh-gold);border-radius:999px;padding:6px 14px!important;text-transform:none;font-weight:600;white-space:nowrap}
+/* Thẻ bài viết */
+body.lh-sub-view .Blog .blog-posts .post-outer-container,body.lh-sub-view #page_body .FeaturedPost{background:var(--lh-ink2)!important;border:1px solid var(--lh-line);border-radius:16px;box-shadow:0 22px 50px -30px #000!important;overflow:hidden}
+body.lh-sub-view .post-title,body.lh-sub-view .post-title a,body.lh-sub-view .FeaturedPost h3 a{font-family:var(--lh-serif)!important;font-weight:600;color:#f3ead2!important;letter-spacing:-.01em;line-height:1.15}
+body.lh-sub-view .post-title a:hover,body.lh-sub-view .FeaturedPost h3 a:hover{color:var(--lh-gold2)!important}
+body.lh-sub-view .byline,body.lh-sub-view .byline a,body.lh-sub-view .post-header{color:rgba(236,229,211,.55)!important;font-family:var(--lh-sans)}
+body.lh-sub-view .snippet-thumbnail img,body.lh-sub-view .snippet-thumbnail-img{border-radius:10px}
+body.lh-sub-view .post-snippet,body.lh-sub-view .snippet-item,body.lh-sub-view .post-body{color:var(--lh-text);font-family:var(--lh-sans);line-height:1.8}
+body.lh-sub-view .snippet-fade{background:linear-gradient(to left,var(--lh-ink2),rgba(17,29,23,0))!important}
+body.lh-sub-view .post-body h1,body.lh-sub-view .post-body h2,body.lh-sub-view .post-body h3,body.lh-sub-view .post-body h4{font-family:var(--lh-serif);color:var(--lh-gold2)}
+body.lh-sub-view .post-body a{color:var(--lh-gold)}
+body.lh-sub-view .post-body blockquote{border-left:3px solid var(--lh-gold);padding-left:16px}
+body.lh-sub-view .post-body table td,body.lh-sub-view .post-body table th{border-color:var(--lh-line)}
+/* Nút "Đọc thêm", phân trang */
+body.lh-sub-view .jump-link{float:none;display:inline-block;margin-top:14px}
+body.lh-sub-view .jump-link a,body.lh-sub-view .blog-pager a,body.lh-sub-view .blog-pager .flat-button{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:10px 22px!important;border-radius:999px;background:linear-gradient(180deg,#ebcb82,#c6964a)!important;color:#1e150a!important;font:600 13px/1 var(--lh-sans)!important;letter-spacing:.06em;text-transform:none!important;text-decoration:none;box-shadow:0 10px 26px -14px rgba(235,203,130,.7)}
+body.lh-sub-view .jump-link a:hover,body.lh-sub-view .blog-pager a:hover{filter:brightness(1.06)}
+body.lh-sub-view .blog-pager{background:none!important;box-shadow:none!important;text-align:center}
+/* Nhãn, chia sẻ, bình luận */
+body.lh-sub-view .byline.post-labels a,body.lh-sub-view .Label a{border:1px solid var(--lh-line);border-radius:999px;color:var(--lh-gold)!important;background:rgba(216,180,108,.08)!important}
+body.lh-sub-view .share-buttons{background:var(--lh-ink2)!important;border:1px solid var(--lh-line)}
+body.lh-sub-view #comments,body.lh-sub-view .comments{color:var(--lh-text)}
+body.lh-sub-view #comments .comment-header .user a,body.lh-sub-view #comments h3.title,body.lh-sub-view .comments h3.title{color:var(--lh-gold2);font-family:var(--lh-serif)}
+body.lh-sub-view .comment-thread,body.lh-sub-view .comments .comment-content{color:var(--lh-text)}
+/* Thanh bên (menu ba gạch) và bài phổ biến */
+body.lh-sub-view .sidebar-container{border-right:1px solid var(--lh-line)}
+body.lh-sub-view .sidebar-container .widget .title,body.lh-sub-view .sidebar-container h3.title{font-family:var(--lh-serif);font-size:22px;color:var(--lh-gold2)}
+body.lh-sub-view .sidebar-container,body.lh-sub-view .sidebar-container a{font-family:var(--lh-sans)}
+body.lh-sub-view .PopularPosts .post-title a{color:#f3ead2!important}
+body.lh-sub-view .dim-overlay{background-color:rgba(4,8,6,.7)}
+/* Chân trang mặc định của Blogger */
+body.lh-sub-view .footer,body.lh-sub-view .Attribution{color:var(--lh-muted)}
+/* ----- Thanh menu Lữ Hành (giống trang chủ) ----- */
+#lh-subnav{position:relative;z-index:30;background:rgba(9,16,12,.94);border-bottom:1px solid var(--lh-line);box-shadow:0 10px 30px -22px #000;font-family:var(--lh-sans)}
+#lh-subnav *{box-sizing:border-box}
+#lh-subnav .lh-s-in{width:min(1200px,calc(100% - 40px));margin:0 auto;height:64px;display:flex;align-items:center;gap:18px}
+#lh-subnav a{color:inherit;text-decoration:none}
+#lh-subnav .lh-s-brand{display:flex;align-items:center;gap:10px;margin-right:auto;min-width:0}
+#lh-subnav .lh-s-brand img{height:42px;width:auto;max-width:90px;object-fit:contain;display:block}
+#lh-subnav .lh-s-tag{font:600 10px/1 var(--lh-sans);letter-spacing:.26em;text-transform:uppercase;color:var(--lh-gold);padding:5px 8px;border:1px solid var(--lh-line)}
+#lh-subnav .lh-s-menu{display:flex;align-items:center;gap:2px}
+#lh-subnav .lh-s-menu a{display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;font-size:13px;font-weight:500;color:#d9dccf;transition:background .2s,color .2s}
+#lh-subnav .lh-s-menu a:hover,#lh-subnav .lh-s-menu a.is-on{background:rgba(216,180,108,.14);color:var(--lh-gold2)}
+#lh-subnav svg{width:17px;height:17px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;display:block}
+#lh-subnav .lh-s-play{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:9px 18px;border:1px solid #ebcb82;background:linear-gradient(180deg,#ebcb82,#c6964a);color:#1e150a;font:600 13px/1 var(--lh-sans);letter-spacing:.05em;white-space:nowrap;box-shadow:0 10px 26px -14px rgba(235,203,130,.7)}
+#lh-subnav .lh-s-play svg{fill:currentColor;stroke:none;width:14px;height:14px}
+#lh-subfoot{position:relative;z-index:2;margin-top:40px;padding:26px 20px 34px;border-top:1px solid var(--lh-line);background:#060b09;color:#7a8377;font:13px/1.6 var(--lh-sans);text-align:center}
+#lh-subfoot b{font:600 20px var(--lh-serif);color:var(--lh-gold2);margin-right:10px}
+#lh-subfoot a{color:var(--lh-gold);text-decoration:none;margin:0 8px}
+@media(max-width:860px){#lh-subnav .lh-s-menu a span{display:none}#lh-subnav .lh-s-menu a{padding:9px 10px}}
+@media(max-width:560px){#lh-subnav .lh-s-in{width:calc(100% - 24px);gap:8px;height:58px}#lh-subnav .lh-s-tag{display:none}#lh-subnav .lh-s-brand img{height:36px}#lh-subnav .lh-s-menu{gap:0}#lh-subnav .lh-s-menu a{padding:8px}#lh-subnav .lh-s-play{padding:8px 12px;font-size:12px}}
+/*]]>*/</style>
+<header id='lh-subnav'><div class='lh-s-in'>
+  <a aria-label='Lữ Hành - iKyNa, trang chủ' class='lh-s-brand' href='/'><img alt='Lữ Hành' height='42' referrerpolicy='no-referrer' src='https://lh3.googleusercontent.com/d/1wUK3vUepfwLawSc-UuyZ4f6zcrUu4a2j' width='90'/><span class='lh-s-tag'>iKyNa</span></a>
+  <nav aria-label='Điều hướng chính' class='lh-s-menu'>
+    <a href='/' title='Trang chủ'><svg aria-hidden='true' viewBox='0 0 24 24'><path d='M3 11l9-7 9 7'/><path d='M5 10v10h14V10'/><path d='M10 20v-6h4v6'/></svg><span>Trang chủ</span></a>
+    <a href='/search' title='Tin tức'><svg aria-hidden='true' viewBox='0 0 24 24'><path d='M4 5h13v14a2 2 0 002 2H6a2 2 0 01-2-2z'/><path d='M17 9h3v10a2 2 0 01-2 2'/><path d='M8 9h5M8 13h5M8 17h3'/></svg><span>Tin tức</span></a>
+    <a href='/search/label/H%C6%B0%E1%BB%9Bng%20d%E1%BA%ABn' title='Hướng dẫn'><svg aria-hidden='true' viewBox='0 0 24 24'><path d='M12 6.5C10 5 7 4.5 3.5 5v14c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z'/><path d='M12 6.5v14'/></svg><span>Hướng dẫn</span></a>
+    <a href='/#lh-rank' title='Xếp hạng'><svg aria-hidden='true' viewBox='0 0 24 24'><path d='M8 4h8v5a4 4 0 0 1-8 0z'/><path d='M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4'/><path d='M12 13v4M9 20h6M10 17h4'/></svg><span>Xếp hạng</span></a>
+  </nav>
+  <a class='lh-s-play' href='https://ikynagame.blogspot.com/p/lu-hanh.html'><svg aria-hidden='true' viewBox='0 0 24 24'><path d='M7 4.5l12.5 7.5L7 19.5z'/></svg>Vào game</a>
+</div></header>
+<script>//<![CDATA[
+(function(){var p=location.pathname,a=document.querySelectorAll('#lh-subnav .lh-s-menu a');for(var i=0;i<a.length;i++){var h=a[i].getAttribute('href');if(h!=='/'&&h.indexOf('#')<0&&(p===h||decodeURIComponent(p)===decodeURIComponent(h)))a[i].className='is-on';}
+if(p==='/search'&&!location.search)a[1].className='is-on';})();
 //]]></script>
     </b:if>
 
@@ -4813,5 +4906,9 @@ html:has(body.lh-home-view){scroll-behavior:smooth;overflow-x:hidden}
     </aside>
 
     <b:template-script async='true' name='indie' version='1.0.0'/>
-  </body>
+      <b:if cond='not data:view.isHomepage'>
+<footer id='lh-subfoot'><b>Lữ Hành - iKyNa</b><span>&#169; 2026 &#183; ikyna.com</span><br/><a href='/'>Trang chủ</a><a href='/search'>Tất cả bài viết</a><a href='https://ikynagame.blogspot.com/p/lu-hanh.html'>Vào game</a></footer>
+    </b:if>
+  
+</body>
 </html>
