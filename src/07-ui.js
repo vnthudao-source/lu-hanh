@@ -533,9 +533,43 @@ window.startUI=(session)=>{
     openModal(ttl('orb','Nạp thẻ')+`<div class="purse">${coins(p.copper)}${ruby(p.rubies)}</div>`,`<div class="shop-grid nap-grid">${tiles}</div>${qr}`,true);
     document.querySelectorAll('[data-nap]').forEach(b=>b.onclick=()=>{napSel=b.dataset.nap;showTopup();});
   }
+  /* ---------- v10.46: Tướng quân — lịch sự kiện thế giới, vào sân chờ; bảng kết quả trận ---------- */
+  const hhmm=ms=>{const d=new Date(ms+7*3600000);return d.getUTCHours()+'h'+String(d.getUTCMinutes()).padStart(2,'0');};
+  const left=ms=>{const s=Math.max(0,Math.ceil(ms/1000)),h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h?h+' giờ '+m+' phút':m?m+' phút '+String(s%60).padStart(2,'0')+' giây':s+' giây';};
+  let tgTimer=null;
+  function showTG(){
+    const now=Date.now(),L=Number(Player.CFG.tg_luot_ngay)||4,reg=Number(Player.CFG.tg_dang_ky_phut)||5;let rows='';
+    for(const E of Object.values(Player.TG)){
+      const st=Player.tgState(E.id,now),ts=Player.tgTimes(E.id).map(m=>Math.floor(m/60)+'h'+String(m%60).padStart(2,'0')).join(' · ')||'chưa đặt giờ',lt=Player.tgLeft(p,E.id,now);
+      let btn,note;
+      if(!E.on){btn=`<span class="qprog">${svg('lock')}Sắp mở</span>`;note='Mở ở bản cập nhật sau';}
+      else if(st.phase==='reg'){btn=lt>0?`<button class="primary" data-tg-go="${E.id}">${svg('flag')}Vào sân chờ</button>`:`<span class="qprog">Hết lượt</span>`;note=`<b class="tg-hot">Đang ghi danh</b> · khai đài lúc ${hhmm(st.start)} (còn ${left(st.start-now)})`;}
+      else if(st.phase==='run'){btn=`<span class="qprog">Đang đánh</span>`;note=`Trận ${hhmm(st.start)} đang diễn ra · kết thúc sau ${left(st.end-now)}`;}
+      else{btn=`<span class="qprog">${hhmm(st.start)}</span>`;note=st.start?`Suất tới ${hhmm(st.start)} · ghi danh sau ${left(st.start-reg*60000-now)}`:'';}
+      rows+=`<div class="qrow${st.phase==='reg'&&E.on?' act':''}${E.on?'':' dim'}">${svg(E.id==='loi'?'sword':'flag')}<div><b>${esc(E.name)}</b><small>${esc(E.desc)}</small><small>Giờ mở: <b>${ts}</b> · ${E.on?`còn <b>${lt}</b>/${L} lượt hôm nay`:'—'}</small><small>${note}</small></div>${btn}</div>`;
+    }
+    const intro=`<p class="tg-intro">Trước giờ mở ${reg} phút, cờ của ta có dấu chấm than: vào sân chờ, đúng giờ khai đài. Đối thủ là bản sao các cao thủ chênh không quá ${Number(Player.CFG.tg_chenh_cap)||5} cấp; gục trong trận không mất đồ. Hạ đối thủ được gấp ${Number(Player.CFG.tg_kinh_nghiem_nhan)||3} kinh nghiệm quái cùng vùng, có thể rơi đồ, sách; hết trận nhận vàng theo cấp.</p>`;
+    const fresh=$('#overlay').hidden||$('#modalCard').dataset.mk!=='tg';
+    if(fresh)openModal(`${svg('flag')}Tướng quân · Sự kiện thế giới`,intro+rows);else $('#overlayBody').innerHTML=intro+rows;
+    $('#modalCard').dataset.mk='tg';
+    clearInterval(tgTimer);tgTimer=setInterval(()=>{if($('#overlay').hidden||$('#modalCard').dataset.mk!=='tg'){clearInterval(tgTimer);return;}showTG();},1000);
+  }
+  document.addEventListener('click',async ev=>{const b=ev.target.closest('[data-tg-go]');if(!b)return;b.disabled=true;clearInterval(tgTimer);closeModal();await game.tgEnter(b.dataset.tgGo);});
+  function tgResult(r,M0){
+    if(!r)return;const E=M0.E,title=r.win?`${svg('check')}${esc(E.name)} · Thắng!`:`${svg('flag')}${esc(E.name)} · Hạng ${r.rank}/${r.n}`;
+    const it=r.item,row=(ic,t,v)=>`<div class="qrow">${ic}<div><b>${t}</b></div><span class="qprog">${v}</span></div>`;
+    let body=`<p class="tg-intro">${r.win?'Bạn là người cuối cùng còn đứng trên võ đài.':'Bạn đã bị loại. Có thể ở lại xem các cao thủ khác so tài.'}</p>`;
+    body+=row(svg('sword'),'Hạ đối thủ',r.kills)+row(svg('spark'),'Kinh nghiệm','+'+(r.exp||0))+row(svg('coin'),'Vàng thưởng',coins(r.copper||0));
+    if(it)body+=`<div class="qrow act">${icon(it.type,Player.rar(it).color)}<div><b style="color:${Player.rar(it).color}">${esc(Player.nameOf(it))}</b><small>Phần thưởng người thắng · đã cất vào túi</small></div></div>`;
+    if(r.lost)body+=`<p class="tg-intro">Túi đầy, không nhận được phần thưởng đồ.</p>`;
+    body+=`<div class="tg-act"><button type="button" class="primary" id="tgHome">${svg('home')}Về làng</button><button type="button" id="tgStay">${svg('eye')}Ở lại xem</button></div>`;
+    openModal(title,body);$('#modalCard').dataset.mk='tgr';
+    $('#tgHome').onclick=()=>{closeModal();game.tgLeave();};$('#tgStay').onclick=()=>closeModal();
+  }
   function openPanel(n,skipStory){
     npcPanel=true;
     const st=skipStory?null:Player.storyAt(p,n.id);if(st)return showStoryTalk(n,st);
+    if(n.panel==='tg')return showTG();
     if(n.panel==='fuse'){fuseSel={m:null,x:null};return showFuse();}
     if(n.panel==='nap'){napSel=null;return showTopup();}
     if(n.panel==='chest'){CH.chest=null;return showChest('chest');}
@@ -595,7 +629,7 @@ window.startUI=(session)=>{
   });
   const alive=()=>{if(!window.LH_KICKED&&Net.token&&document.visibilityState==='visible')Net.call('alive').catch(()=>{});};
   setInterval(alive,20000);document.addEventListener('visibilitychange',alive);
-  window.GameUI={refresh,showAttributes,openPanel,prefetchMarket,showShop:(id,tab)=>{shopSel=null;showShop(id,tab);},showQuestBoard,showMaps,showMercBoard,showMarket,showQuests,save,previewElem,previewWho:()=>previewWho,previewBurst:()=>burstAt,
+  window.GameUI={refresh,showAttributes,openPanel,showTG,tgResult,prefetchMarket,showShop:(id,tab)=>{shopSel=null;showShop(id,tab);},showQuestBoard,showMaps,showMercBoard,showMarket,showQuests,save,previewElem,previewWho:()=>previewWho,previewBurst:()=>burstAt,
     showBag:()=>{if($('#overlay').hidden){selected=null;skillFocus=null;renderBag();}else closeModal();},
     frame(time,st){
       if(time-lastFrame<.1)return;lastFrame=time;refresh();$('#settingsBtn').classList.toggle('dirty',game.unsaved());$('#saveBtn').classList.toggle('dirty',game.unsaved());const now=Date.now();

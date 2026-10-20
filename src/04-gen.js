@@ -151,6 +151,7 @@
       else if(S.item==='chest'){ // v10.21: rương gỗ nẹp đồng đặt cạnh chân, tay cầm chùm chìa khóa
         rr(c,16,-18,26,18,3,'#7a4a24');rr(c,16,-22,26,7,3,'#8e5a2c');line(c,[16,-15,42,-15],'#d8a840',2);line(c,[22,-22,22,0],'#d8a840',2);line(c,[36,-22,36,0],'#d8a840',2);rr(c,26,-15,6,6,1,'#f0c850');ell(c,29,-12,1.2,1.2,'#3a2410');
         ell(c,16,-26,3,3,'#e0b040');line(c,[16,-24,18,-17],'#e0b040',1.5);line(c,[13,-25,11,-19],'#c8a040',1.5);}
+      else if(S.item==='flag'){const w=Math.sin(t*3+n.phase)*3;line(c,[17,-4,17,-92],'#6a4a2a',2.6);poly(c,[17,-92,44,-86+w,40,-78+w*.6,46,-70+w,17,-64],S.flagc||'#c02020');line(c,[17,-92,44,-86+w,40,-78+w*.6,46,-70+w,17,-64],S.trim||'#ffd040',1.4);ell(c,17,-94,3,3,'#ffd040');ell(c,29,-78+w*.5,4.5,4.5,S.trim||'#ffd040');} // v10.46: cờ lệnh Tướng quân
       else if(S.item==='sticks'){for(const [x0,y0] of [[-16,armA],[16,-12-(1-beat)*18]])line(c,[x0,y0,x0+6,y0-14],'#d8c8a0',2);}
       head(c,S.skin||'#e1c295',S.hair||(S.hat==='none'?'#2a2622':null),S.beard||null,{fem:!!S.fem,ph:n.phase});
       if(S.hat==='non')nonLa(c,S.hatc);else if(S.hat==='khan')khanXep(c,S.hatc);
@@ -163,6 +164,8 @@
   // v10.21: Người giữ rương (làng Thanh Mộc và các thành) — vai dùng chung, không cần gói bản đồ
   // v10.38: Thầy đồ (làng Thanh Mộc và các thành) — áo the, khăn xếp, cuộn giấy, râu bạc, đứng yên
   A.npc['thay-do']=npc({robe:'#1e1b19',trim:'#c0a060',hat:'khan',hatc:'#1e1b19',item:'scroll',beard:'#d8d0c0',skin:'#e8c8a0',act:'stand'});
+  // v10.46: Tướng quân giao sự kiện thế giới (làng Thanh Mộc và các thành) — giáp đỏ, mũ trụ vàng, cờ lệnh
+  A.npc['tuong-quan-tg']=npc({robe:'#8a1e1a',trim:'#ffd040',hat:'tru',hatc:'#d8a830',item:'flag',flagc:'#c02020',beard:'#2a2020',pants:'#3a2a20',act:'stand'});
   A.npc['giu-ruong']=npc({robe:'#5a3a1e',trim:'#e0b040',hat:'khan',hatc:'#2a1a0e',item:'chest',beard:'#4a3a30'});
   // v10.39: NPC giao việc Tìm con ở từng vùng (vai dùng chung cho mọi bản đồ)
   for(const [k,S] of Object.entries({

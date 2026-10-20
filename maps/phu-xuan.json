@@ -454,6 +454,20 @@
  "trees": [],
  "npcs": [
   {
+   "id": "tuong-quan-tg-phu-xuan",
+   "role": "tuong-quan-tg",
+   "name": "Tướng quân",
+   "act": "stand",
+   "x": 20,
+   "y": 24,
+   "facing": 1,
+   "panel": "tg",
+   "lines": [
+    "Ta giữ cờ lệnh của triều đình. Lôi đài, chiến trường mở theo giờ, đến giờ ta phất cờ gọi người.",
+    "Trước giờ mở năm phút, thấy cờ ta có dấu chấm than thì tới ghi danh."
+   ]
+  },
+  {
    "id": "ngu-lam-1",
    "role": "ngu-lam",
    "name": "Ngự lâm quân",

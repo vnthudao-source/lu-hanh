@@ -487,6 +487,20 @@
  "trees": [],
  "npcs": [
   {
+   "id": "tuong-quan-tg-hoa-lu",
+   "role": "tuong-quan-tg",
+   "name": "Tướng quân",
+   "act": "stand",
+   "x": 20,
+   "y": 24,
+   "facing": 1,
+   "panel": "tg",
+   "lines": [
+    "Ta giữ cờ lệnh của triều đình. Lôi đài, chiến trường mở theo giờ, đến giờ ta phất cờ gọi người.",
+    "Trước giờ mở năm phút, thấy cờ ta có dấu chấm than thì tới ghi danh."
+   ]
+  },
+  {
    "id": "vo-si-hoa-lu-1",
    "role": "vo-si",
    "name": "Võ sĩ Hoa Lư",

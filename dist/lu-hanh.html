@@ -1,4 +1,4 @@
-<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="game-version" content="v10.45"><title>Lữ Hành - iKyNa</title><style>
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="game-version" content="v10.46"><title>Lữ Hành - iKyNa</title><style>
 #lu-hanh{position:fixed;inset:0;z-index:2147483000;overflow:hidden;text-align:left;line-height:normal}
 body:has(#lu-hanh){overflow:hidden!important}
 #lu-hanh{color-scheme:dark;--paper:#eee9da;--gold:#d8b678;--muted:#a8b4a7;--line:#ffffff20}
@@ -634,6 +634,16 @@ body:has(#lu-hanh){overflow:hidden!important}
 #lu-hanh .kv img,#lu-hanh .kv svg{width:40px;height:40px;object-fit:contain}
 #lu-hanh .kv small{font-size:10px;line-height:1.2;text-align:center}
 #lu-hanh .kv-desc{margin:8px 0 0;font-size:12px;color:#c9d2c3;line-height:1.5}
+#lu-hanh .tg-banner{pointer-events:auto;background:#2a1a0ee0;border-color:#e0b040;color:#fff0d0;white-space:nowrap;max-width:calc(100vw - 16px);gap:4px;padding:5px 10px}
+@media(max-width:560px){#lu-hanh .tg-banner{font-size:12px;top:58px}
+#lu-hanh .tg-banner .tg-x{display:none}
+#lu-hanh .tg-banner svg{display:none}
+}
+#lu-hanh .tg-banner b{color:#ffd870}
+#lu-hanh .tg-banner button{font:inherit;font-size:12px;padding:3px 10px;border-radius:9px;border:1px solid #e0b040;background:#5a3a14;color:#fff0d0;cursor:pointer}
+#lu-hanh .tg-hot{color:#ff8a3a}
+#lu-hanh .tg-intro{margin:4px 2px 10px;font-size:13px;line-height:1.5;opacity:.92}
+#lu-hanh .tg-act{display:flex;gap:10px;justify-content:center;margin-top:12px}
 </style></head><body>
 <div id="lu-hanh">
 <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true"><defs>
@@ -693,8 +703,8 @@ body:has(#lu-hanh){overflow:hidden!important}
 <symbol id="i-menu" viewBox="0 0 32 32"><path d="M5 8h22M5 16h22M5 24h22"/></symbol>
 <symbol id="i-map" viewBox="0 0 32 32"><path d="m3 7 8-3 10 3 8-3v21l-8 3-10-3-8 3Z"/><path d="M11 4v21m10-18v21"/></symbol>
 </defs></svg>
-<header><div class="profile"><button id="avatarBtn" class="avatar" aria-label="Thuộc tính nhân vật"><svg viewBox="0 0 64 64" class="portrait" aria-hidden="true"><path id="pfBody" fill="#d9ad80" d="M10 64v-8c0-21 44-21 44 0v8Z"/><path id="pfNeck" fill="#dfbf91" d="M25 32h14v17H25z"/><ellipse id="pfHair" fill="#2a2622" cx="20" cy="34" rx="7" ry="13" style="display:none"/><path id="pfYem" fill="#c0392b" d="M32 44l10 10-10 10-10-10Z" style="display:none"/><ellipse id="pfFace" fill="#e4c69b" cx="32" cy="25" rx="15" ry="18"/><path id="pfBeard" fill="#2a2622" d="M22 33c3 9 17 9 20 0c-4 3-16 3-20 0Z" style="display:none"/><path id="pfTop" fill="#2a2622" d="M16 26V14C16-2 52-3 48 19L33 13l-17 13Z"/></svg><svg class="exp-ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="exp-bg" cx="50" cy="50" r="46" pathLength="100"/><circle id="expArc" class="exp-fg" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="0 100"/></svg><b id="levelBadge" class="level">Lv. 1</b><i id="ptDot" class="pt-dot" hidden>+</i></button><div class="player-info"><strong id="playerName" class="player-name">Lữ khách</strong><div class="bars"><div class="bar" aria-label="Máu"><div id="hpFill" class="bar-fill hp"></div><small id="hpText">100 / 100</small></div><div class="bar" aria-label="Mana"><div id="manaFill" class="bar-fill mana"></div><small id="manaText">80 / 80</small></div><div class="bar" aria-label="Nội tại"><div id="passiveFill" class="bar-fill passive" style="width:0"></div><small id="passiveText">0%</small></div></div><div id="buffs" class="buffs"></div></div></div><div class="top-right"><div id="bossBar" class="boss-mini" hidden><span id="bossIc" class="bi"></span><span class="bm"><span class="bm-bar"><span id="bossFill" class="bm-fill"></span></span><small id="bossHp"></small></span></div><span class="version">v10.45</span><button id="settingsBtn" aria-label="Menu" aria-expanded="false"><svg class="icon"><use href="#i-menu"/></svg></button><nav id="gameMenu" class="menu" hidden><button id="bagBtn"><svg class="icon"><use href="#i-bag"/></svg>Túi đồ</button><button id="questBtn"><svg class="icon"><use href="#i-quest"/></svg>Nhiệm vụ</button><button id="saveBtn"><svg class="icon"><use href="#i-save"/></svg>Lưu</button><button id="amBtn"><svg class="icon"><use href="#i-sound"/></svg><span>Âm thanh</span></button><button id="mapBtn"><svg class="icon"><use href="#i-map"/></svg>Bản đồ</button><button id="diagBtn"><svg class="icon"><use href="#i-eye"/></svg>Tình trạng</button></nav></div></header>
-<div id="portal" class="portal"><div class="portal-card"><div class="plogo"><b>Lữ Hành</b><small>Làng Thanh Mộc · v10.45</small></div><div id="portalBody"></div><p id="portalMsg"></p><small id="netMode" class="netmode"></small></div></div>
+<header><div class="profile"><button id="avatarBtn" class="avatar" aria-label="Thuộc tính nhân vật"><svg viewBox="0 0 64 64" class="portrait" aria-hidden="true"><path id="pfBody" fill="#d9ad80" d="M10 64v-8c0-21 44-21 44 0v8Z"/><path id="pfNeck" fill="#dfbf91" d="M25 32h14v17H25z"/><ellipse id="pfHair" fill="#2a2622" cx="20" cy="34" rx="7" ry="13" style="display:none"/><path id="pfYem" fill="#c0392b" d="M32 44l10 10-10 10-10-10Z" style="display:none"/><ellipse id="pfFace" fill="#e4c69b" cx="32" cy="25" rx="15" ry="18"/><path id="pfBeard" fill="#2a2622" d="M22 33c3 9 17 9 20 0c-4 3-16 3-20 0Z" style="display:none"/><path id="pfTop" fill="#2a2622" d="M16 26V14C16-2 52-3 48 19L33 13l-17 13Z"/></svg><svg class="exp-ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="exp-bg" cx="50" cy="50" r="46" pathLength="100"/><circle id="expArc" class="exp-fg" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="0 100"/></svg><b id="levelBadge" class="level">Lv. 1</b><i id="ptDot" class="pt-dot" hidden>+</i></button><div class="player-info"><strong id="playerName" class="player-name">Lữ khách</strong><div class="bars"><div class="bar" aria-label="Máu"><div id="hpFill" class="bar-fill hp"></div><small id="hpText">100 / 100</small></div><div class="bar" aria-label="Mana"><div id="manaFill" class="bar-fill mana"></div><small id="manaText">80 / 80</small></div><div class="bar" aria-label="Nội tại"><div id="passiveFill" class="bar-fill passive" style="width:0"></div><small id="passiveText">0%</small></div></div><div id="buffs" class="buffs"></div></div></div><div class="top-right"><div id="bossBar" class="boss-mini" hidden><span id="bossIc" class="bi"></span><span class="bm"><span class="bm-bar"><span id="bossFill" class="bm-fill"></span></span><small id="bossHp"></small></span></div><span class="version">v10.46</span><button id="settingsBtn" aria-label="Menu" aria-expanded="false"><svg class="icon"><use href="#i-menu"/></svg></button><nav id="gameMenu" class="menu" hidden><button id="bagBtn"><svg class="icon"><use href="#i-bag"/></svg>Túi đồ</button><button id="questBtn"><svg class="icon"><use href="#i-quest"/></svg>Nhiệm vụ</button><button id="saveBtn"><svg class="icon"><use href="#i-save"/></svg>Lưu</button><button id="amBtn"><svg class="icon"><use href="#i-sound"/></svg><span>Âm thanh</span></button><button id="mapBtn"><svg class="icon"><use href="#i-map"/></svg>Bản đồ</button><button id="diagBtn"><svg class="icon"><use href="#i-eye"/></svg>Tình trạng</button></nav></div></header>
+<div id="portal" class="portal"><div class="portal-card"><div class="plogo"><b>Lữ Hành</b><small>Làng Thanh Mộc · v10.46</small></div><div id="portalBody"></div><p id="portalMsg"></p><small id="netMode" class="netmode"></small></div></div>
 <main class="layout"><canvas id="scene" tabindex="0" aria-label="Bản đồ"></canvas><div id="questTrack" class="quest-track floating"></div><div class="map-box"><canvas id="minimap" width="240" height="128" aria-label="Bản đồ thu nhỏ"></canvas><div class="map-meta"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span id="placeName">Thanh Mộc</span><span id="placeCoord" class="coord"></span><span id="safeTag" class="safe" hidden>An toàn</span></div></div><div class="hint"><b>WASD</b>di chuyển <b>Space</b>đánh <b>1</b>combo <b>2</b>diện rộng <b>3</b>liên hoàn <b>4</b>thú cưỡi <b>E</b>nói chuyện <b>B</b>túi đồ</div><div class="skill-wheel"><button id="skill-normal" data-skill="normal" class="skill normal" title="Space"><svg id="normalIcon" class="icon"><use href="#i-sword"/></svg><small class="key">Đánh</small><span class="cooldown"></span></button><button id="skill-basic" data-skill="basic" class="skill basic" title="1 · Combo · 10 mana"><svg class="icon"><use href="#i-spark"/></svg><small class="key">Combo</small><span class="cooldown"></span></button><button id="skill-intermediate" data-skill="intermediate" class="skill intermediate" title="2 · Diện rộng · 18 mana"><svg class="icon"><use href="#i-whirl"/></svg><small class="key">Diện rộng</small><span class="cooldown"></span></button><button id="skill-advanced" data-skill="advanced" class="skill advanced" title="3 · Liên hoàn · 28 mana"><svg class="icon"><use href="#i-flame"/></svg><small class="key">Liên hoàn</small><span class="cooldown"></span></button><button id="lockBtn" class="skill lockon" type="button" title="T · Khóa mục tiêu (cung, nỏ)" aria-pressed="false" hidden><svg class="icon"><use href="#i-aim"/></svg><small class="key">Khóa</small></button><button id="skill-mount" data-skill="mount" class="skill mount" title="4 · Thú cưỡi" hidden><svg id="mountIcon" class="icon"><use href="#i-mount"/></svg><small id="mountName" class="key">Thú cưỡi</small><span class="cooldown"></span></button></div><div class="touch-controls"><div id="pad" class="pad" aria-label="Cần điều khiển"><div class="knob"></div></div></div><section id="dialog" hidden aria-live="polite"><h2 id="speaker"></h2><p id="line"></p><div class="actions"><span id="page" class="dots"></span><span><button id="shopBtn" hidden><svg class="icon"><use href="#i-bag"/></svg><span id="shopLabel">Mua bán</span></button><button id="next"><svg class="icon"><use href="#i-next"/></svg>Tiếp</button></span></div></section><div id="toast" role="status"></div></main><div id="overlay" class="overlay" hidden><section id="modalCard" class="card"><div class="card-head"><div id="overlayTitle" class="ttl"></div><button id="closeOverlay" class="close-modal" aria-label="Đóng"><svg class="icon"><use href="#i-close"/></svg></button></div><div id="overlayBody"></div></section></div>
 </div>
 <script>window.LH_API='https://script.google.com/macros/s/AKfycbwEUXIQSLK1t6FXNDDD18lbJGNomqhMAzcwh55N_uzKbUL19LaxvieMyhLpzrB06VfzgA/exec';window.LH_CHO='https://ikynagame.blogspot.com/p/cho-phien.html';window.LH_GAME='https://ikynagame.blogspot.com/';</script>
@@ -1341,6 +1351,28 @@ linh:[
    {khoa:'co_may_man_toi_da',gia_tri:10,ghi_chu:'v10.13 \u{b7} Cỏ may mắn: số cỏ dùng tối đa một lần gia cường / dung hợp (mỗi cỏ +1% tỉ lệ)'},
    {khoa:'thuoc_kn_phut',gia_tri:60,ghi_chu:'v10.41 \u{b7} Thuốc kinh nghiệm: số phút hiệu lực mỗi lọ (giờ thực, tắt game vẫn tính)'},
    {khoa:'thuoc_kn_toi_da_phut',gia_tri:480,ghi_chu:'v10.41 \u{b7} Thuốc kinh nghiệm: tổng thời gian tối đa khi uống cộng dồn (phút)'}
+,
+   {khoa:'tg_loi_dai_gio',gia_tri:'12h00, 20h00',ghi_chu:'v10.46 \u{b7} Sự kiện thế giới (Tướng quân) \u{b7} Lôi đài thế giới: giờ mở trong ngày theo giờ Việt Nam, nhiều giờ cách nhau dấu phẩy. Ghi dạng 12h00 (không gõ 12:00 vì Sheet tự đổi thành giờ)'},
+   {khoa:'tg_loi_dai_phut',gia_tri:5,ghi_chu:'v10.46 \u{b7} Lôi đài thế giới: số phút một trận (vòng đài thu hẹp dần trong thời gian này)'},
+   {khoa:'tg_loi_dai_so_nguoi',gia_tri:10,ghi_chu:'v10.46 \u{b7} Lôi đài thế giới: số người một trận, tính cả người chơi (máy yếu thì giảm)'},
+   {khoa:'tg_bac_gio',gia_tri:'13h00, 21h00',ghi_chu:'v10.46 \u{b7} Chiến trường phương Bắc: giờ mở (dạng 13h00, cách nhau dấu phẩy) \u{b7} mở ở bản sau'},
+   {khoa:'tg_bac_phut',gia_tri:10,ghi_chu:'v10.46 \u{b7} Chiến trường phương Bắc: số phút một trận'},
+   {khoa:'tg_the_gioi_gio',gia_tri:'19h00, 22h00',ghi_chu:'v10.46 \u{b7} Chiến trường thế giới: giờ mở (dạng 19h00, cách nhau dấu phẩy) \u{b7} mở ở bản sau'},
+   {khoa:'tg_the_gioi_phut',gia_tri:15,ghi_chu:'v10.46 \u{b7} Chiến trường thế giới: số phút một trận'},
+   {khoa:'tg_dang_ky_phut',gia_tri:5,ghi_chu:'v10.46 \u{b7} Sự kiện thế giới: trước giờ mở bao nhiêu phút thì Tướng quân hiện dấu chấm than và cho vào bản đồ chờ'},
+   {khoa:'tg_luot_ngay',gia_tri:4,ghi_chu:'v10.46 \u{b7} Sự kiện thế giới: số lượt tối đa mỗi sự kiện mỗi ngày (giờ Việt Nam)'},
+   {khoa:'tg_chenh_cap',gia_tri:5,ghi_chu:'v10.46 \u{b7} Sự kiện thế giới: đối thủ / đồng đội là bản sao người chơi chênh không quá bấy nhiêu cấp'},
+   {khoa:'tg_npc_phan_tram',gia_tri:75,ghi_chu:'v10.46 \u{b7} Sự kiện thế giới: không đủ bản sao thì tạo NPC giả lập theo chỉ số người chơi, mạnh bằng bấy nhiêu %'},
+   {khoa:'tg_mau_nhan',gia_tri:3,ghi_chu:'v10.46 \u{b7} Sự kiện thế giới: máu của bản sao, NPC giả lập = máu nhân vật \u{d7} hệ số này (trận đánh kéo dài hơn)'},
+   {khoa:'tg_kinh_nghiem_nhan',gia_tri:3,ghi_chu:'v10.46 \u{b7} Sự kiện thế giới: hạ một đối thủ được bấy nhiêu lần kinh nghiệm quái thường vùng hợp cấp (lính thuê của đối thủ: một nửa)'},
+   {khoa:'tg_ha_toi_da',gia_tri:60,ghi_chu:'v10.46 \u{b7} Sự kiện thế giới: số lần hạ được tính thưởng tối đa mỗi trận'},
+   {khoa:'tg_roi_do_nhan',gia_tri:1,ghi_chu:'v10.46 \u{b7} Sự kiện thế giới: hệ số tỉ lệ rơi đồ khi hạ đối thủ (so với quái thường vùng hợp cấp)'},
+   {khoa:'tg_sach_phan_van',gia_tri:80,ghi_chu:'v10.46 \u{b7} Sự kiện thế giới: tỉ lệ rơi sách mỗi lần hạ đối thủ (phần vạn; 80 = 0,8%)'},
+   {khoa:'tg_dong_moi_cap',gia_tri:2000,ghi_chu:'v10.46 \u{b7} Sự kiện thế giới: vàng thưởng cuối trận = cấp nhân vật \u{d7} bấy nhiêu đồng (10 000 đồng = 1 vàng)'},
+   {khoa:'tg_loai_phan_tram',gia_tri:60,ghi_chu:'v10.46 \u{b7} Lôi đài thế giới: người bị loại nhận tối đa bấy nhiêu % vàng, theo thứ hạng'},
+   {khoa:'tg_thua_phan_tram',gia_tri:30,ghi_chu:'v10.46 \u{b7} Chiến trường: phe thua mà còn sống tới cuối trận nhận bấy nhiêu % vàng; gục giữa trận thì về làng, không có vàng'},
+   {khoa:'tg_than_phan_tram',gia_tri:20,ghi_chu:'v10.46 \u{b7} Thắng Lôi đài từ cấp 250: % cơ hội phần thưởng là đồ Thần (còn lại Huyền thoại)'},
+   {khoa:'tg_gieng_giay',gia_tri:60,ghi_chu:'v10.46 \u{b7} Giếng cổ trong bản đồ sự kiện: số giây để nước đầy lại'}
   );
   // v10.13: quái sự kiện đột xuất (không có trong bãi quái; hiện theo sự kiện ngoài vùng an toàn gần cổng). Máu / sát thương theo cấp vùng.
   const EVM=[ // [id, tên, máu, sát thương, tốc, chạy, bán kính, cao, tầm đánh, tầm gần, hồi chiêu ms, vung tay ms, đồng, đẩy lùi %, hồi sinh, exp, bản đồ]
@@ -1440,6 +1472,12 @@ function LH_Core(A){
       return {chest:chestView(ch),state:P,item};
     });
   }
+  // bản sao gọn của một nhân vật (đủ để tính chỉ số và vẽ: trang bị, sách, lính đang theo, thú cưỡi, diện mạo)
+  function dtSnap(c,P,lv){
+    const eq={};for(const [k,v] of Object.entries(P.equipment||{}))if(v)eq[k]=v;
+    const mercs=(Array.isArray(P.mercs)?P.mercs:[]).filter(m=>m&&m.on).slice(0,3).map(m=>({mid:m.mid,name:m.name,gender:m.gender,lv:m.lv,tier:m.tier,gen:m.gen,cmd:m.cmd,stats:m.stats,equipment:Object.fromEntries(Object.entries(m.equipment||{}).filter(([,v])=>v)),skillSlots:m.skillSlots,on:true,hpFrac:1}));
+    return {name:String(c.ten||P.name||''),gender:c.gioi_tinh==='f'?'f':'m',level:lv,stats:P.stats,alloc:P.alloc,equipment:eq,skillSlots:P.skillSlots,passive:P.passive||0,avatar:P.avatar||'',cos:P.cos&&P.cos.use?{use:P.cos.use}:undefined,mercs};
+  }
   const H={
     ping:()=>({msg:'Lữ Hành API'}),
     // v10.37: bảng xếp hạng cho trang chủ (không cần đăng nhập): top 100 cấp độ, top 100 vàng, top 100 hồng ngọc.
@@ -1458,6 +1496,26 @@ function LH_Core(A){
         level:top((a,b)=>b.cap-a.cap||b.kn-a.kn||a.ten.localeCompare(b.ten)),
         gold:top((a,b)=>b.dong-a.dong||b.hn-a.hn),
         ruby:top((a,b)=>b.hn-a.hn||b.dong-a.dong)};
+    },
+    // v10.46: bản sao người chơi cho sự kiện thế giới (Lôi đài, chiến trường). dtIndex đọc cả bảng nhân vật một lần, gom theo nhóm 5 cấp
+    // (mỗi nhóm tối đa 20 bản sao chọn ngẫu nhiên); Code.gs giữ từng nhóm trong bộ nhớ đệm và làm mới định kỳ nên doiThu không phải đọc Sheet.
+    dtIndex(){
+      const r=(A.staticData().cau_hinh||[]).find(x=>x.khoa==='bxh_an'),hide=new Set(String(r&&r.gia_tri||'').split(',').map(x=>lower(x)).filter(Boolean)),b={};
+      for(const c of A.rows('nhan_vat')){
+        if(c.trang_thai!=='active')continue;if(hide.has(lower(c.ten)))continue;
+        let P=null;try{P=(JSON.parse(c.luu||'{}').player)||null;}catch(e){}if(!P||!P.equipment)continue;
+        const lv=Math.max(1,Math.floor(Number(P.level)||Number(c.cap)||1)),k=Math.floor(lv/5),sn=dtSnap(c,P,lv);if(!sn)continue;
+        const L=b[k]=b[k]||[];L.push(sn);if(L.length>40)L.splice(Math.floor(Math.random()*L.length),1);
+      }
+      for(const k of Object.keys(b))b[k]=b[k].sort(()=>Math.random()-.5).slice(0,20);
+      return {at:A.now(),b};
+    },
+    doiThu(p){
+      const lv=Math.max(1,Math.floor(Number(p.lv)||1)),n=Math.max(1,Math.min(30,Math.floor(Number(p.n)||9))),gap=Math.max(1,cfg('tg_chenh_cap')||5),me=lower(p.ten);
+      const ks=[];for(let k=Math.floor((lv-gap)/5);k<=Math.floor((lv+gap)/5);k++)ks.push(k);
+      const B=A.dtBuckets?A.dtBuckets(ks):(()=>{const x=H.dtIndex().b;return Object.fromEntries(ks.map(k=>[k,x[k]||[]]));})();
+      const all=[];for(const k of ks)for(const sn of B[k]||[])if(Math.abs(sn.level-lv)<=gap&&lower(sn.name)!==me)all.push(sn);
+      return {list:all.sort(()=>Math.random()-.5).slice(0,n)};
     },
     chest(p){const a=auth(p.token);A.rules&&A.rules();return {chest:chestView(chestOf(a))};},
     chestPut(p){return chestMove(p,'put');},
@@ -1730,7 +1788,7 @@ async function netDiag(e){
   try{const r=await fetch(LH_API+(LH_API.includes('?')?'&':'?')+'t='+Date.now());const j=JSON.parse(await r.text());return Error(j&&j.ok?'POST_LOI':'KHONG_TRUY_CAP');}
   catch(x){return Error('KHONG_TRUY_CAP');}
 }
-const NET_SAFE=new Set(['ping','data','login','chars','load','alive','marketList','quizCheck','quizShow']);
+const NET_SAFE=new Set(['ping','data','login','chars','load','alive','marketList','quizCheck','quizShow','doiThu']);
 // lỗi mạng mỗi trình duyệt báo một kiểu: Chrome "Failed to fetch", Safari "Load failed", Firefox "NetworkError\u{2026}"
 const netErr=e=>/failed to fetch|load failed|networkerror|network request failed|the internet connection/i.test(String(e&&e.message))?Error('Failed to fetch'):e;
 const netMsg=e=>NET_ERR[e&&e.message]||(e&&e.message==='Failed to fetch'?'Không kết nối được máy chủ Việt Nam, kiểm tra mạng rồi thử lại':'Lỗi: '+(e&&e.message||e));
@@ -2132,6 +2190,7 @@ window.LH_PACK=(id,def,art)=>{window.LH_MAPS[id]=def;LH_ART.add(id,art);};
       else if(S.item==='chest'){ // v10.21: rương gỗ nẹp đồng đặt cạnh chân, tay cầm chùm chìa khóa
         rr(c,16,-18,26,18,3,'#7a4a24');rr(c,16,-22,26,7,3,'#8e5a2c');line(c,[16,-15,42,-15],'#d8a840',2);line(c,[22,-22,22,0],'#d8a840',2);line(c,[36,-22,36,0],'#d8a840',2);rr(c,26,-15,6,6,1,'#f0c850');ell(c,29,-12,1.2,1.2,'#3a2410');
         ell(c,16,-26,3,3,'#e0b040');line(c,[16,-24,18,-17],'#e0b040',1.5);line(c,[13,-25,11,-19],'#c8a040',1.5);}
+      else if(S.item==='flag'){const w=Math.sin(t*3+n.phase)*3;line(c,[17,-4,17,-92],'#6a4a2a',2.6);poly(c,[17,-92,44,-86+w,40,-78+w*.6,46,-70+w,17,-64],S.flagc||'#c02020');line(c,[17,-92,44,-86+w,40,-78+w*.6,46,-70+w,17,-64],S.trim||'#ffd040',1.4);ell(c,17,-94,3,3,'#ffd040');ell(c,29,-78+w*.5,4.5,4.5,S.trim||'#ffd040');} // v10.46: cờ lệnh Tướng quân
       else if(S.item==='sticks'){for(const [x0,y0] of [[-16,armA],[16,-12-(1-beat)*18]])line(c,[x0,y0,x0+6,y0-14],'#d8c8a0',2);}
       head(c,S.skin||'#e1c295',S.hair||(S.hat==='none'?'#2a2622':null),S.beard||null,{fem:!!S.fem,ph:n.phase});
       if(S.hat==='non')nonLa(c,S.hatc);else if(S.hat==='khan')khanXep(c,S.hatc);
@@ -2144,6 +2203,8 @@ window.LH_PACK=(id,def,art)=>{window.LH_MAPS[id]=def;LH_ART.add(id,art);};
   // v10.21: Người giữ rương (làng Thanh Mộc và các thành) \u{2014} vai dùng chung, không cần gói bản đồ
   // v10.38: Thầy đồ (làng Thanh Mộc và các thành) \u{2014} áo the, khăn xếp, cuộn giấy, râu bạc, đứng yên
   A.npc['thay-do']=npc({robe:'#1e1b19',trim:'#c0a060',hat:'khan',hatc:'#1e1b19',item:'scroll',beard:'#d8d0c0',skin:'#e8c8a0',act:'stand'});
+  // v10.46: Tướng quân giao sự kiện thế giới (làng Thanh Mộc và các thành) \u{2014} giáp đỏ, mũ trụ vàng, cờ lệnh
+  A.npc['tuong-quan-tg']=npc({robe:'#8a1e1a',trim:'#ffd040',hat:'tru',hatc:'#d8a830',item:'flag',flagc:'#c02020',beard:'#2a2020',pants:'#3a2a20',act:'stand'});
   A.npc['giu-ruong']=npc({robe:'#5a3a1e',trim:'#e0b040',hat:'khan',hatc:'#2a1a0e',item:'chest',beard:'#4a3a30'});
   // v10.39: NPC giao việc Tìm con ở từng vùng (vai dùng chung cho mọi bản đồ)
   for(const [k,S] of Object.entries({
@@ -2208,7 +2269,7 @@ window.LH_PACK=(id,def,art)=>{window.LH_MAPS[id]=def;LH_ART.add(id,art);};
 })();
 </script>
 <script>
-window.LH_MAP_CDN='https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@ban-10.45/dist/maps/';window.LH_MON_PACK={"song-dau-long":"bang-hoa","bang-phach":"bang-hoa","hoa-diem-thu":"bang-hoa","bang-hoang":"bang-nguyen","voi-ma-mut":"bang-nguyen","yeu-tuyet":"bang-nguyen","thuong-luong":"bien-dong","cua-khong-lo":"bien-dong","muc-ma":"bien-dong","nguyen-soai-ma":"chien-truong","tu-binh":"chien-truong","chien-ma-ma":"chien-truong","tuong-am-binh":"co-loa","am-binh":"co-loa","quy-doi":"co-loa","nguyet-than":"cung-trang","tho-ngoc":"cung-trang","nguyet-binh":"cung-trang","ma-vuong":"cuu-trung","thien-binh":"cuu-trung","ky-lan":"cuu-trung","minh-vuong":"cuu-u","u-hon":"cuu-u","quy-sai":"cuu-u","xa-tinh":"dam-lay","dia-khong-lo":"dam-lay","ech-doc":"dam-lay","hai-long-vuong":"dao-rong","giao-long":"dao-rong","hai-quy":"dao-rong","diem-la-tuong":"dia-nguc-mon","nguu-dau":"dia-nguc-mon","ma-dien":"dia-nguc-mon","loi-dieu":"dinh-may","ung-tuyet":"dinh-may","de-nui":"dinh-may","doi-quy":"hang-dong","nhen-doc":"hang-dong","dai-bang":"hang-dong","su-quan":"hoa-lu","tho-phi":"hoa-lu","ngao-den":"hoa-lu","hac-mo-vuong":"hoang-mac-xuong","xuong-kho":"hoang-mac-xuong","bo-cap-den":"hoang-mac-xuong","cuu-dau-xa":"hon-don-hai","hai-yeu":"hon-don-hai","thon-hai-thu":"hon-don-hai","hon-nguyen-ma-to":"hon-nguyen","hon-nguyen-ve":"hon-nguyen","ma-than-thu":"hon-nguyen","hu-khong-vuong":"hu-khong","hu-anh":"hu-khong","tinh-thu":"hu-khong","huyet-ma-long":"huyet-hai","huyet-ngu":"huyet-hai","xich-giao":"huyet-hai","sa-ha-quai":"luu-sa","sa-yeu":"luu-sa","bo-cap-vang":"luu-sa","hoa-long":"nui-lua","nham-thach-thu":"nui-lua","quy-lua":"nui-lua","soi-tuyet":"nui-tuyet","gau-nui":"nui-tuyet","ho-tinh":"nui-tuyet","hac-de":"phu-xuan","ngu-lam-phan":"phu-xuan","chien-tuong":"phu-xuan","chua-quy":"rung-ma","ma-troi":"rung-ma","quy-cay":"rung-ma","moc-tinh":"rung-truc","khi-rung":"rung-truc","ran-ho":"rung-truc","bo-cap":"sa-mac","ken-ken":"sa-mac","chan-tinh":"sa-mac","thach-tinh":"sa-mac","hac-long-tuong":"thang-long","phan-quan":"thang-long","hac-ky":"thang-long","hac-thien-ma":"thien-dinh","thien-tuong":"thien-dinh","than-thu":"thien-dinh","phong-vuong":"thien-son","tien-hac":"thien-son","tuyet-vien":"thien-son","long-vuong":"thuy-cung","tom-tuong":"thuy-cung","ca-kiem":"thuy-cung","kiem-ma":"van-kiem","kiem-linh":"van-kiem","thach-ho":"van-kiem","thiet-giap-tuong":"vo-dai","vo-si-ma":"vo-dai","su-tu-da":"vo-dai","cuu-vi-ho":"vuc-yeu-tinh","ho-ly":"vuc-yeu-tinh","yeu-tang":"vuc-yeu-tinh"};window.LH_MAPS=window.LH_MAPS||{};window.LH_MAPS["thanh-moc"]={"id":"thanh-moc","name":"Thanh Mộc","w":60,"h":32,"note":"Ô: . cỏ \u{b7} # chắn \u{b7} ~ nước \u{b7} = cầu \u{b7} : đường đất \u{b7} , cỏ khô \u{b7} \" ruộng lúa. Tọa độ theo ô (48 điểm ảnh).","tiles":["############################################################","#.............................~~~,,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,:::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,::,,,,,,,,,,,#","#.~~~....::....:...............~~~,,,,,,,,,,,:::,,,,,,,,,,,#","#.~~~....::....:.....::.......~~~,,,,,,,,,,,,::,,,,,,,,,,,,#","#.~~~....::....:.....::.......~~~,,,,,,,,,,,:::,,,,,,,,,,,,#","#.~~~....::....:.....::.......~~~,,,,,,,,,,,::,,,,,,,,,,,,,#","#........::....:.....::......~~~,,,,,,,,,,,:::,,,,,,,,,,,,,#","#........::....:.....::......~~~,,,,,,,,,,,::,,,,,,,,,,,,,,#","#::::::::::::::::::::::::::::===:::::::::::,,,,,,,,,,,,,,,,#","#::::::::::::::::::::::::::::===:::::::::::,,,,,,,,,,,,,,,,#","#........::....::....::......~~~,,,,,,,,,,::,,,,,,,,,,,,,,,#","#........::....::....::......~~~,,,,,,,,,,,::,,,,,,,,,,,,,,#","#..............::....::......~~~,,,,,,,,,,,,::,,,,,,,,,,,,,#","#............................~~~,,,,,,,,,,,,,::,,,,,,,,,,,,#","#............................~~~,,,,,,,,,,,,,,::,,,,,,,,,,,#","#.............................~~~,,,,,,,,,,,,,,::,,,,,,,,,,#","#.............................~~~,,,,,,,,,,,,,,,::,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,,,::,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,,,,::,,,,,,,#","#..............................~~~,,,,,,,,,,,,,,,,,::,,,,,,#","#.\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"...~~~,,,,,,,,,,,,,,,,,::,,,,,,#","#.\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"...~~~,,,,,,,,,,,,,,,,,,::,,,,,#","#.\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"...~~~,,,,,,,,,,,,,,,,,,::,,,,,#","#.\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"...~~~,,,,,,,,,,,,,,,,,,,::,,,,#","############################################################"],"spawn":{"x":16,"y":16},"safe":{"x0":0,"y0":0,"x1":27,"y1":31,"cfg":"vung_an_toan_x"},"zones":[{"name":"Đông Ngạn","x0":36,"y0":0,"x1":59,"y1":31}],"bridges":[{"x0":28,"x1":35,"y0":15,"y1":16,"flag":"river","msg":"Đã qua cầu \u{b7} Đông Ngạn"}],"decor":[{"kind":"pond","x":2,"y":9,"w":3,"h":4},{"kind":"plaza","x":13.2,"y":17.1,"w":4.6,"h":2.8}],"objects":[{"kind":"house","x":7,"y":5,"w":6,"h":4,"style":"hall"},{"kind":"house","x":14,"y":5,"w":3,"h":4,"style":"shrine"},{"kind":"house","x":19,"y":6,"w":5,"h":4,"style":"forge"},{"kind":"house","x":7,"y":19,"w":5,"h":4,"style":"inn"},{"kind":"house","x":13,"y":20,"w":5,"h":3,"style":"stable"},{"kind":"house","x":20,"y":20,"w":4,"h":4,"style":"barn"},{"kind":"banyan","x":25,"y":11},{"kind":"well","x":12,"y":18},{"kind":"fire","x":14,"y":13},{"kind":"fire","x":25,"y":21},{"kind":"well","ancient":true,"id":"gieng-1","x":39,"y":9},{"kind":"well","ancient":true,"id":"gieng-2","x":48,"y":18},{"kind":"well","ancient":true,"id":"gieng-3","x":54,"y":26}],"trees":[[2,1,0],[4,1,0],[6,1,0],[8,1,0],[13,1,0],[15,1,0],[17,1,0],[19,1,0],[21,1,0],[26,1,0],[28,1,0],[52,1,1],[56,1,1],[57,1,1],[58,1,1],[1,2,0],[3,2,0],[8,2,0],[10,2,0],[12,2,0],[14,2,0],[16,2,0],[21,2,0],[23,2,0],[25,2,0],[27,2,0],[29,2,0],[42,2,1],[56,2,1],[58,2,1],[3,3,0],[29,3,0],[57,3,1],[2,4,0],[4,4,0],[28,4,0],[30,4,0],[53,4,1],[56,4,1],[57,4,1],[58,4,1],[1,5,0],[27,5,0],[43,5,1],[56,5,1],[58,5,1],[1,6,0],[3,6,0],[27,6,0],[29,6,0],[57,6,1],[58,6,1],[2,7,0],[4,7,0],[28,7,0],[30,7,0],[54,7,1],[56,7,1],[57,7,1],[4,8,0],[30,8,0],[56,8,1],[58,8,1],[1,9,0],[27,9,0],[29,9,0],[56,9,1],[57,9,1],[58,9,1],[28,10,0],[55,10,1],[57,10,1],[28,11,0],[56,11,1],[58,11,1],[1,12,0],[27,12,0],[29,12,0],[56,12,1],[57,12,1],[58,12,1],[57,13,1],[46,14,1],[56,14,1],[57,14,1],[58,14,1],[56,15,1],[58,15,1],[57,16,1],[56,17,1],[57,17,1],[58,17,1],[56,18,1],[58,18,1],[1,19,0],[3,19,0],[27,19,0],[57,19,1],[58,19,1],[2,20,0],[4,20,0],[28,20,0],[48,20,1],[56,20,1],[57,20,1],[4,21,0],[38,21,1],[56,21,1],[58,21,1],[1,22,0],[3,22,0],[27,22,0],[29,22,0],[56,22,1],[57,22,1],[58,22,1],[2,23,0],[28,23,0],[57,23,1],[2,24,0],[4,24,0],[28,24,0],[30,24,0],[39,24,1],[56,24,1],[58,24,1],[1,25,0],[3,25,0],[27,25,0],[29,25,0],[56,25,1],[57,25,1],[58,25,1],[50,26,1],[57,26,1],[28,27,0],[30,27,0],[40,27,1],[56,27,1],[57,27,1],[58,27,1],[1,28,0],[29,28,0],[56,28,1],[58,28,1],[29,29,0],[51,29,1],[57,29,1],[28,30,0],[30,30,0],[41,30,1],[56,30,1],[57,30,1],[58,30,1]],"npcs":[{"id":"elder","role":"elder","name":"Lý trưởng","x":9,"y":11.4,"panel":"quests","x0":8.4,"x1":13.2,"facing":-1,"lines":["Chào lữ khách. Thanh Mộc là nơi bắt đầu hành trình của bạn.","Trong làng là vùng an toàn: không cưỡi thú, không dùng kỹ năng.","Làng có việc gì ta sẽ giao, xong việc có thưởng tiền và đồ."]},{"id":"smith","role":"smith","name":"Thợ rèn","x":20.4,"y":11.7,"panel":"shop","shop":"smith","facing":1,"lines":["Dao, kiếm, khiên, nỏ\u{2026} lò rèn này có đủ.","Có hồng ngọc thì ta gia cường đồ cho, càng lên cao càng dễ vỡ."]},{"id":"guide","role":"guide","name":"Người dẫn đường","x":27.3,"y":14.4,"panel":"mercs","facing":1,"lines":["Qua sông chỉ có cây cầu này.","Sư tử, cá sấu dữ. Voi chỉ nổi giận khi bị đánh.","Đi một mình nguy hiểm, ta có lính đánh thuê cho thuê."]},{"id":"trainer","role":"trainer","name":"Người nuôi thú cưỡi","x":18.8,"y":21.7,"panel":"shop","shop":"trainer","facing":-1,"lines":["Ngựa, hổ, voi\u{2026} con nào ở đây cũng đã thuần.","Mỗi loài có một ngón nghề riêng: ngựa đá hậu, hổ vồ mồi, voi dày xéo."]},{"id":"wizard","role":"wizard","name":"Đạo sĩ","x":17.4,"y":10.3,"panel":"shop","shop":"wizard","facing":-1,"lines":["Ngũ hành: Hỏa, Thủy, Thổ, Kim, Mộc. Bí truyền: Lôi, Phong, Băng, Ánh sáng, Ma công.","Gắn nhiều sách cùng lúc, chỉ số cộng dồn. Ta luyện sách cho mạnh thêm."]},{"id":"merchant","role":"merchant","name":"Thương nhân","x":9.6,"y":24.4,"panel":"market","facing":-1,"lines":["Ta buôn bán khắp các làng.","Đồ Hoàn hảo, Huyền thoại và đồ Thần, ta bán hộ cho người chơi khác.","Bán được ta giữ một ít tiền công."]},{"id":"thay-do","role":"thay-do","act":"stand","name":"Thầy đồ","x":13,"y":17.2,"panel":"quiz","facing":1,"lines":["Ta là thầy đồ, dạy chữ dạy người. Muốn thử sức với sách \"Thư pháp Việt\" thì ngồi xuống.","Trả lời đúng ta thưởng hồng ngọc. Không biết thì đi săn quái lấy manh mối, ta sẽ chỉ cho."]},{"id":"phan-son","role":"merchant","name":"Cô hàng Phấn Son","x":24.5,"y":18.2,"panel":"shop","shop":"phan-son","facing":-1,"lines":["Thẻ đổi ảnh chân dung, khung viền, nền hồ sơ, thuốc đa nhiệm\u{2026} toàn đồ làm đẹp, chỉ lấy hồng ngọc.","Mua về dùng một lần là giữ mãi, muốn đổi qua lại thì mở bảng Diện mạo."]},{"id":"giu-ruong","role":"giu-ruong","name":"Người giữ rương","x":13.6,"y":25.2,"panel":"chest","facing":1,"lines":["Rương của ta khóa ba lớp. Đồ, tiền, hồng ngọc gửi ở đây thì nhân vật nào cùng tài khoản cũng lấy ra được.","Ở thành nào cũng có người của ta giữ rương, gửi nơi này lấy nơi kia."]},{"id":"be-na","role":"be-na","name":"Bé Na","act":"patrol","x":21,"x0":19,"x1":23,"y":15.3,"spd":40,"lines":["Anh ơi chơi với em đi!","Mẹ em bảo không được ra khỏi làng một mình."]}],"monsters":[{"type":"chua-son-lam","x":51,"y":5},{"type":"ngu-tinh","x":44,"y":28},{"type":"deer","x":43,"y":8},{"type":"deer","x":47,"y":24},{"type":"lion","x":50,"y":12},{"type":"elephant","x":52,"y":21},{"type":"croc","x":35,"y":7},{"type":"croc","x":35,"y":25}],"portals":[{"x":46,"y":1,"w":3,"h":1,"to":"sa-mac","tx":24,"ty":30,"label":"Sa mạc"},{"x":1,"y":15,"w":1,"h":2,"to":"nui-tuyet","tx":43,"ty":16,"label":"Núi tuyết"},{"x":52,"y":30,"w":3,"h":1,"to":"hang-dong","tx":23,"ty":3,"label":"Hang động"}],"ambient":"village","camps":[{"name":"Bãi hươu nai","x":40,"y":22,"r":3,"mon":{"deer":6,"lion":2}},{"name":"Bãi thú dữ","x":55,"y":18,"r":3,"mon":{"lion":3,"elephant":2}}]};</script>
+window.LH_MAP_CDN='https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@ban-10.46/dist/maps/';window.LH_MON_PACK={"song-dau-long":"bang-hoa","bang-phach":"bang-hoa","hoa-diem-thu":"bang-hoa","bang-hoang":"bang-nguyen","voi-ma-mut":"bang-nguyen","yeu-tuyet":"bang-nguyen","thuong-luong":"bien-dong","cua-khong-lo":"bien-dong","muc-ma":"bien-dong","nguyen-soai-ma":"chien-truong","tu-binh":"chien-truong","chien-ma-ma":"chien-truong","tuong-am-binh":"co-loa","am-binh":"co-loa","quy-doi":"co-loa","nguyet-than":"cung-trang","tho-ngoc":"cung-trang","nguyet-binh":"cung-trang","ma-vuong":"cuu-trung","thien-binh":"cuu-trung","ky-lan":"cuu-trung","minh-vuong":"cuu-u","u-hon":"cuu-u","quy-sai":"cuu-u","xa-tinh":"dam-lay","dia-khong-lo":"dam-lay","ech-doc":"dam-lay","hai-long-vuong":"dao-rong","giao-long":"dao-rong","hai-quy":"dao-rong","diem-la-tuong":"dia-nguc-mon","nguu-dau":"dia-nguc-mon","ma-dien":"dia-nguc-mon","loi-dieu":"dinh-may","ung-tuyet":"dinh-may","de-nui":"dinh-may","doi-quy":"hang-dong","nhen-doc":"hang-dong","dai-bang":"hang-dong","su-quan":"hoa-lu","tho-phi":"hoa-lu","ngao-den":"hoa-lu","hac-mo-vuong":"hoang-mac-xuong","xuong-kho":"hoang-mac-xuong","bo-cap-den":"hoang-mac-xuong","cuu-dau-xa":"hon-don-hai","hai-yeu":"hon-don-hai","thon-hai-thu":"hon-don-hai","hon-nguyen-ma-to":"hon-nguyen","hon-nguyen-ve":"hon-nguyen","ma-than-thu":"hon-nguyen","hu-khong-vuong":"hu-khong","hu-anh":"hu-khong","tinh-thu":"hu-khong","huyet-ma-long":"huyet-hai","huyet-ngu":"huyet-hai","xich-giao":"huyet-hai","sa-ha-quai":"luu-sa","sa-yeu":"luu-sa","bo-cap-vang":"luu-sa","hoa-long":"nui-lua","nham-thach-thu":"nui-lua","quy-lua":"nui-lua","soi-tuyet":"nui-tuyet","gau-nui":"nui-tuyet","ho-tinh":"nui-tuyet","hac-de":"phu-xuan","ngu-lam-phan":"phu-xuan","chien-tuong":"phu-xuan","chua-quy":"rung-ma","ma-troi":"rung-ma","quy-cay":"rung-ma","moc-tinh":"rung-truc","khi-rung":"rung-truc","ran-ho":"rung-truc","bo-cap":"sa-mac","ken-ken":"sa-mac","chan-tinh":"sa-mac","thach-tinh":"sa-mac","hac-long-tuong":"thang-long","phan-quan":"thang-long","hac-ky":"thang-long","hac-thien-ma":"thien-dinh","thien-tuong":"thien-dinh","than-thu":"thien-dinh","phong-vuong":"thien-son","tien-hac":"thien-son","tuyet-vien":"thien-son","long-vuong":"thuy-cung","tom-tuong":"thuy-cung","ca-kiem":"thuy-cung","kiem-ma":"van-kiem","kiem-linh":"van-kiem","thach-ho":"van-kiem","thiet-giap-tuong":"vo-dai","vo-si-ma":"vo-dai","su-tu-da":"vo-dai","cuu-vi-ho":"vuc-yeu-tinh","ho-ly":"vuc-yeu-tinh","yeu-tang":"vuc-yeu-tinh"};window.LH_MAPS=window.LH_MAPS||{};window.LH_MAPS["thanh-moc"]={"id":"thanh-moc","name":"Thanh Mộc","w":60,"h":32,"note":"Ô: . cỏ \u{b7} # chắn \u{b7} ~ nước \u{b7} = cầu \u{b7} : đường đất \u{b7} , cỏ khô \u{b7} \" ruộng lúa. Tọa độ theo ô (48 điểm ảnh).","tiles":["############################################################","#.............................~~~,,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,:::,,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,::,,,,,,,,,,,#","#.~~~....::....:...............~~~,,,,,,,,,,,:::,,,,,,,,,,,#","#.~~~....::....:.....::.......~~~,,,,,,,,,,,,::,,,,,,,,,,,,#","#.~~~....::....:.....::.......~~~,,,,,,,,,,,:::,,,,,,,,,,,,#","#.~~~....::....:.....::.......~~~,,,,,,,,,,,::,,,,,,,,,,,,,#","#........::....:.....::......~~~,,,,,,,,,,,:::,,,,,,,,,,,,,#","#........::....:.....::......~~~,,,,,,,,,,,::,,,,,,,,,,,,,,#","#::::::::::::::::::::::::::::===:::::::::::,,,,,,,,,,,,,,,,#","#::::::::::::::::::::::::::::===:::::::::::,,,,,,,,,,,,,,,,#","#........::....::....::......~~~,,,,,,,,,,::,,,,,,,,,,,,,,,#","#........::....::....::......~~~,,,,,,,,,,,::,,,,,,,,,,,,,,#","#..............::....::......~~~,,,,,,,,,,,,::,,,,,,,,,,,,,#","#............................~~~,,,,,,,,,,,,,::,,,,,,,,,,,,#","#............................~~~,,,,,,,,,,,,,,::,,,,,,,,,,,#","#.............................~~~,,,,,,,,,,,,,,::,,,,,,,,,,#","#.............................~~~,,,,,,,,,,,,,,,::,,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,,,::,,,,,,,,#","#..............................~~~,,,,,,,,,,,,,,,,::,,,,,,,#","#..............................~~~,,,,,,,,,,,,,,,,,::,,,,,,#","#.\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"...~~~,,,,,,,,,,,,,,,,,::,,,,,,#","#.\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"...~~~,,,,,,,,,,,,,,,,,,::,,,,,#","#.\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"...~~~,,,,,,,,,,,,,,,,,,::,,,,,#","#.\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"...~~~,,,,,,,,,,,,,,,,,,,::,,,,#","############################################################"],"spawn":{"x":16,"y":16},"safe":{"x0":0,"y0":0,"x1":27,"y1":31,"cfg":"vung_an_toan_x"},"zones":[{"name":"Đông Ngạn","x0":36,"y0":0,"x1":59,"y1":31}],"bridges":[{"x0":28,"x1":35,"y0":15,"y1":16,"flag":"river","msg":"Đã qua cầu \u{b7} Đông Ngạn"}],"decor":[{"kind":"pond","x":2,"y":9,"w":3,"h":4},{"kind":"plaza","x":13.2,"y":17.1,"w":4.6,"h":2.8}],"objects":[{"kind":"house","x":7,"y":5,"w":6,"h":4,"style":"hall"},{"kind":"house","x":14,"y":5,"w":3,"h":4,"style":"shrine"},{"kind":"house","x":19,"y":6,"w":5,"h":4,"style":"forge"},{"kind":"house","x":7,"y":19,"w":5,"h":4,"style":"inn"},{"kind":"house","x":13,"y":20,"w":5,"h":3,"style":"stable"},{"kind":"house","x":20,"y":20,"w":4,"h":4,"style":"barn"},{"kind":"banyan","x":25,"y":11},{"kind":"well","x":12,"y":18},{"kind":"fire","x":14,"y":13},{"kind":"fire","x":25,"y":21},{"kind":"well","ancient":true,"id":"gieng-1","x":39,"y":9},{"kind":"well","ancient":true,"id":"gieng-2","x":48,"y":18},{"kind":"well","ancient":true,"id":"gieng-3","x":54,"y":26}],"trees":[[2,1,0],[4,1,0],[6,1,0],[8,1,0],[13,1,0],[15,1,0],[17,1,0],[19,1,0],[21,1,0],[26,1,0],[28,1,0],[52,1,1],[56,1,1],[57,1,1],[58,1,1],[1,2,0],[3,2,0],[8,2,0],[10,2,0],[12,2,0],[14,2,0],[16,2,0],[21,2,0],[23,2,0],[25,2,0],[27,2,0],[29,2,0],[42,2,1],[56,2,1],[58,2,1],[3,3,0],[29,3,0],[57,3,1],[2,4,0],[4,4,0],[28,4,0],[30,4,0],[53,4,1],[56,4,1],[57,4,1],[58,4,1],[1,5,0],[27,5,0],[43,5,1],[56,5,1],[58,5,1],[1,6,0],[3,6,0],[27,6,0],[29,6,0],[57,6,1],[58,6,1],[2,7,0],[4,7,0],[28,7,0],[30,7,0],[54,7,1],[56,7,1],[57,7,1],[4,8,0],[30,8,0],[56,8,1],[58,8,1],[1,9,0],[27,9,0],[29,9,0],[56,9,1],[57,9,1],[58,9,1],[28,10,0],[55,10,1],[57,10,1],[28,11,0],[56,11,1],[58,11,1],[1,12,0],[27,12,0],[29,12,0],[56,12,1],[57,12,1],[58,12,1],[57,13,1],[46,14,1],[56,14,1],[57,14,1],[58,14,1],[56,15,1],[58,15,1],[57,16,1],[56,17,1],[57,17,1],[58,17,1],[56,18,1],[58,18,1],[1,19,0],[3,19,0],[27,19,0],[57,19,1],[58,19,1],[2,20,0],[4,20,0],[28,20,0],[48,20,1],[56,20,1],[57,20,1],[4,21,0],[38,21,1],[56,21,1],[58,21,1],[1,22,0],[3,22,0],[27,22,0],[29,22,0],[56,22,1],[57,22,1],[58,22,1],[2,23,0],[28,23,0],[57,23,1],[2,24,0],[4,24,0],[28,24,0],[30,24,0],[39,24,1],[56,24,1],[58,24,1],[1,25,0],[3,25,0],[27,25,0],[29,25,0],[56,25,1],[57,25,1],[58,25,1],[50,26,1],[57,26,1],[28,27,0],[30,27,0],[40,27,1],[56,27,1],[57,27,1],[58,27,1],[1,28,0],[29,28,0],[56,28,1],[58,28,1],[29,29,0],[51,29,1],[57,29,1],[28,30,0],[30,30,0],[41,30,1],[56,30,1],[57,30,1],[58,30,1]],"npcs":[{"id":"elder","role":"elder","name":"Lý trưởng","x":9,"y":11.4,"panel":"quests","x0":8.4,"x1":13.2,"facing":-1,"lines":["Chào lữ khách. Thanh Mộc là nơi bắt đầu hành trình của bạn.","Trong làng là vùng an toàn: không cưỡi thú, không dùng kỹ năng.","Làng có việc gì ta sẽ giao, xong việc có thưởng tiền và đồ."]},{"id":"smith","role":"smith","name":"Thợ rèn","x":20.4,"y":11.7,"panel":"shop","shop":"smith","facing":1,"lines":["Dao, kiếm, khiên, nỏ\u{2026} lò rèn này có đủ.","Có hồng ngọc thì ta gia cường đồ cho, càng lên cao càng dễ vỡ."]},{"id":"guide","role":"guide","name":"Người dẫn đường","x":27.3,"y":14.4,"panel":"mercs","facing":1,"lines":["Qua sông chỉ có cây cầu này.","Sư tử, cá sấu dữ. Voi chỉ nổi giận khi bị đánh.","Đi một mình nguy hiểm, ta có lính đánh thuê cho thuê."]},{"id":"trainer","role":"trainer","name":"Người nuôi thú cưỡi","x":18.8,"y":21.7,"panel":"shop","shop":"trainer","facing":-1,"lines":["Ngựa, hổ, voi\u{2026} con nào ở đây cũng đã thuần.","Mỗi loài có một ngón nghề riêng: ngựa đá hậu, hổ vồ mồi, voi dày xéo."]},{"id":"wizard","role":"wizard","name":"Đạo sĩ","x":17.4,"y":10.3,"panel":"shop","shop":"wizard","facing":-1,"lines":["Ngũ hành: Hỏa, Thủy, Thổ, Kim, Mộc. Bí truyền: Lôi, Phong, Băng, Ánh sáng, Ma công.","Gắn nhiều sách cùng lúc, chỉ số cộng dồn. Ta luyện sách cho mạnh thêm."]},{"id":"merchant","role":"merchant","name":"Thương nhân","x":9.6,"y":24.4,"panel":"market","facing":-1,"lines":["Ta buôn bán khắp các làng.","Đồ Hoàn hảo, Huyền thoại và đồ Thần, ta bán hộ cho người chơi khác.","Bán được ta giữ một ít tiền công."]},{"id":"thay-do","role":"thay-do","act":"stand","name":"Thầy đồ","x":13,"y":17.2,"panel":"quiz","facing":1,"lines":["Ta là thầy đồ, dạy chữ dạy người. Muốn thử sức với sách \"Thư pháp Việt\" thì ngồi xuống.","Trả lời đúng ta thưởng hồng ngọc. Không biết thì đi săn quái lấy manh mối, ta sẽ chỉ cho."]},{"id":"phan-son","role":"merchant","name":"Cô hàng Phấn Son","x":24.5,"y":18.2,"panel":"shop","shop":"phan-son","facing":-1,"lines":["Thẻ đổi ảnh chân dung, khung viền, nền hồ sơ, thuốc đa nhiệm\u{2026} toàn đồ làm đẹp, chỉ lấy hồng ngọc.","Mua về dùng một lần là giữ mãi, muốn đổi qua lại thì mở bảng Diện mạo."]},{"id":"giu-ruong","role":"giu-ruong","name":"Người giữ rương","x":13.6,"y":25.2,"panel":"chest","facing":1,"lines":["Rương của ta khóa ba lớp. Đồ, tiền, hồng ngọc gửi ở đây thì nhân vật nào cùng tài khoản cũng lấy ra được.","Ở thành nào cũng có người của ta giữ rương, gửi nơi này lấy nơi kia."]},{"id":"be-na","role":"be-na","name":"Bé Na","act":"patrol","x":21,"x0":19,"x1":23,"y":15.3,"spd":40,"lines":["Anh ơi chơi với em đi!","Mẹ em bảo không được ra khỏi làng một mình."]},{"id":"tuong-quan-tg-thanh-moc","role":"tuong-quan-tg","name":"Tướng quân","x":6.5,"y":13.4,"facing":1,"panel":"tg","lines":["Ta giữ cờ lệnh của triều đình. Lôi đài, chiến trường mở theo giờ, đến giờ ta phất cờ gọi người.","Trước giờ mở năm phút, thấy cờ ta có dấu chấm than thì tới ghi danh."]}],"monsters":[{"type":"chua-son-lam","x":51,"y":5},{"type":"ngu-tinh","x":44,"y":28},{"type":"deer","x":43,"y":8},{"type":"deer","x":47,"y":24},{"type":"lion","x":50,"y":12},{"type":"elephant","x":52,"y":21},{"type":"croc","x":35,"y":7},{"type":"croc","x":35,"y":25}],"portals":[{"x":46,"y":1,"w":3,"h":1,"to":"sa-mac","tx":24,"ty":30,"label":"Sa mạc"},{"x":1,"y":15,"w":1,"h":2,"to":"nui-tuyet","tx":43,"ty":16,"label":"Núi tuyết"},{"x":52,"y":30,"w":3,"h":1,"to":"hang-dong","tx":23,"ty":3,"label":"Hang động"}],"ambient":"village","camps":[{"name":"Bãi hươu nai","x":40,"y":22,"r":3,"mon":{"deer":6,"lion":2}},{"name":"Bãi thú dữ","x":55,"y":18,"r":3,"mon":{"lion":3,"elephant":2}}]};</script>
 <script>
 /* ================= HÌNH VẼ CHI TIẾT: BOSS VÀ THÚ CƯỠI THẦN THOẠI (v10.18) =================
    LH_BOSS[mã_quái](c,m,M,s) vẽ boss quay mặt sang phải, chân chạm y=0; thiết kế trong khung cao 100 đơn vị rồi phóng theo M.h.
@@ -4032,7 +4093,7 @@ const Player=(()=>{
     if(Number.isFinite(+p.rs))s.rs=(+p.rs)|0;
     s.copper=Math.floor(n(p.copper,0,Number.MAX_SAFE_INTEGER,0));s.rubies=Math.floor(n(p.rubies,0,Number.MAX_SAFE_INTEGER,0));s.luck=Math.floor(n(p.luck,0,9999,0));
     s.stats.command=Math.floor(n(p.stats&&p.stats.command,0,999,s.stats.command));
-    if(p.flags){s.flags.river=!!p.flags.river;s.flags.hunted=!!p.flags.hunted;if(Array.isArray(p.flags.tutGift))s.flags.tutGift=p.flags.tutGift.slice(0,6).map(String);if(p.flags.tutDied)s.flags.tutDied=true;if(p.flags.caveOk)s.flags.caveOk=true;if(num(p.flags.freeRecruit)>0)s.flags.freeRecruit=Math.min(5,Math.floor(num(p.flags.freeRecruit)));if(Number.isFinite(+p.flags.caveDay)&&p.flags.caveDay!=null)s.flags.caveDay=Math.floor(+p.flags.caveDay);if(p.flags.wells&&typeof p.flags.wells==='object')for(const [k,v] of Object.entries(p.flags.wells))if(/^gieng-\d+$/.test(k)&&Number.isFinite(+v))s.flags.wells[k]=+v;for(const [k,v] of Object.entries(p.flags.kills||{}))if(MON[k])s.flags.kills[k]=Math.floor(n(v,0,1e9,0));
+    if(p.flags){s.flags.river=!!p.flags.river;s.flags.hunted=!!p.flags.hunted;if(Array.isArray(p.flags.tutGift))s.flags.tutGift=p.flags.tutGift.slice(0,6).map(String);if(p.flags.tutDied)s.flags.tutDied=true;if(p.flags.caveOk)s.flags.caveOk=true;if(num(p.flags.freeRecruit)>0)s.flags.freeRecruit=Math.min(5,Math.floor(num(p.flags.freeRecruit)));if(Number.isFinite(+p.flags.caveDay)&&p.flags.caveDay!=null)s.flags.caveDay=Math.floor(+p.flags.caveDay);if(p.flags.tg&&typeof p.flags.tg==='object'){const g=p.flags.tg,o={d:Math.floor(+g.d||0),n:{}};for(const k of Object.keys(TG))if(g.n&&+g.n[k]>0)o.n[k]=Math.min(99,Math.floor(+g.n[k]));if(g.cur&&TG[g.cur.ev])o.cur={ev:String(g.cur.ev),at:+g.cur.at||0,k:Math.max(0,Math.floor(+g.cur.k||0))};s.flags.tg=o;} // v10.46: lượt sự kiện thế giới trong ngày, trận đang đánhif(p.flags.wells&&typeof p.flags.wells==='object')for(const [k,v] of Object.entries(p.flags.wells))if(/^gieng-\d+$/.test(k)&&Number.isFinite(+v))s.flags.wells[k]=+v;for(const [k,v] of Object.entries(p.flags.kills||{}))if(MON[k])s.flags.kills[k]=Math.floor(n(v,0,1e9,0));
       if(p.flags.hq&&typeof p.flags.hq==='object'){const hq={};for(const k of Object.keys(HQ_MSG))if(p.flags.hq[k])hq[k]=1;if(Object.keys(hq).length)s.flags.hq=hq;}if(num(p.flags.duel)>0)s.flags.duel=Math.min(10,Math.floor(num(p.flags.duel)));if(num(p.flags.rescue)>0)s.flags.rescue=Math.min(2,Math.floor(num(p.flags.rescue)));if(p.flags.xp&&num(p.flags.xp.p)>0&&num(p.flags.xp.u)>0)s.flags.xp={p:Math.min(1000,num(p.flags.xp.p)),u:Math.floor(num(p.flags.xp.u))};}
     const extra=[],eq=Object.fromEntries(slots.map(k=>[k,null]));
     for(const k of slots){const it=valid(p.equipment&&p.equipment[k]);if(!it)continue;const d=items[it.type];const ok=(d.slot==='hand'?(k==='left'||k==='right'):d.slot===k)&&(!d.gender||d.gender===s.gender);if(ok)eq[k]=it;else extra.push(it);}
@@ -4101,14 +4162,69 @@ const Player=(()=>{
   // Các lệnh làm thay đổi tiền/đồ, chạy trên máy chủ (và trên trình duyệt ở chế độ ngoại tuyến)
   // số lần hạ một loài quái trong một lượt hồi sinh: bãi quái lớn có nhiều con cùng loài (Sheet cau_hinh gioi_han_ha_quai)
   const KILL_LIMIT=id=>MON[id].boss?1:num(CFG.gioi_han_ha_quai,16);
-  const PREDICT=new Set(['kill','buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff','av','fuse','use','cos','die','quiz','quizHunt','eventWin','recruit','recruitHire','tutGift','cavePass','caveChest','pkWin','hqFlag','duelWin','rescue','rescueHome','sg']);
+  const PREDICT=new Set(['kill','buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff','av','fuse','use','cos','die','quiz','quizHunt','eventWin','recruit','recruitHire','tutGift','cavePass','caveChest','pkWin','hqFlag','duelWin','rescue','rescueHome','sg','tgStart','tgKill','tgEnd']);
   // v10.13: khóa chữ ký kết quả Thầy đồ (máy chủ ký bằng khóa bí mật; trình duyệt chỉ áp dụng trước, máy chủ kiểm khi nhận gói lưu)
   const quizKey=(cid,bo,wrong)=>'quiz|'+cid+'|'+bo+'|'+(wrong||[]).join(',');
   // v10.43: xong Tìm con (đã đưa An về làng) \u{2192} đồ cốt truyện rời túi, cất vào Kỷ vật (flags.kyvat, không chiếm ô túi). Người chơi cũ đã xong được dọn ở lệnh kế tiếp.
   function keepsake(s){if(num(s.flags&&s.flags.rescue)<2||!Array.isArray(s.bag))return;const kv=Array.isArray(s.flags.kyvat)?s.flags.kyvat:[];let n=0;
     s.bag.forEach((it,i)=>{const d=it&&info(it);if(d&&d.slot==='quest'){if(!kv.includes(it.type))kv.push(it.type);s.bag[i]=null;n++;}});if(n||!s.flags.kyvat)s.flags.kyvat=kv;}
+  /* ---------- v10.46: Sự kiện thế giới (Tướng quân) \u{2014} Lôi đài thế giới, Chiến trường phương Bắc, Chiến trường thế giới ----------
+     Giờ mở theo giờ Việt Nam, sửa trong Sheet cau_hinh (tg_<sự kiện>_gio, ví dụ "12h00, 20h00"); trước giờ mở tg_dang_ky_phut phút thì vào bản đồ chờ được.
+     Mỗi sự kiện tối đa tg_luot_ngay lượt mỗi ngày. Hạ đối thủ: kinh nghiệm = tg_kinh_nghiem_nhan \u{d7} kinh nghiệm quái thường vùng hợp cấp, có thể rơi đồ, sách.
+     Hết trận: vàng theo cấp nhân vật (tg_dong_moi_cap đồng mỗi cấp) \u{d7} hệ số thứ hạng; thắng Lôi đài nhận thêm một món đồ (phẩm chất theo cấp). */
+  const TG={
+    loi:{id:'loi',name:'Lôi đài thế giới',short:'Lôi đài',map:'loi-dai-tg',gio:'tg_loi_dai_gio',phut:'tg_loi_dai_phut',gio0:'12h00, 20h00',phut0:5,on:1,
+      desc:'Hỗn chiến tự do với các cao thủ cùng cấp. Vòng đài thu hẹp dần, người cuối cùng còn trụ lại (hoặc còn sống khi hết giờ) là người thắng.'},
+    bac:{id:'bac',name:'Chiến trường phương Bắc',short:'Phương Bắc',map:'bac-chien-tg',gio:'tg_bac_gio',phut:'tg_bac_phut',gio0:'13h00, 21h00',phut0:10,on:0,
+      desc:'Đội 5 người giữ một đường chéo, chặn các đợt lính mạnh dần và phá nhà chính phe địch.'},
+    the:{id:'the',name:'Chiến trường thế giới',short:'Thế giới',map:'the-gioi-tg',gio:'tg_the_gioi_gio',phut:'tg_the_gioi_phut',gio0:'19h00, 22h00',phut0:15,on:0,
+      desc:'10 đấu 10 trên bản đồ ba đường, có lính hai phe. Phá nhà chính đối phương trước là thắng.'}};
+  const VN_OFF=7*3600000,tgDay=now=>Math.floor((now+VN_OFF)/86400000);
+  // "12h00, 20h00" \u{b7} "12:00;20:30" \u{b7} "20" \u{2192} phút trong ngày
+  function tgTimes(id){const E=TG[id];if(!E)return [];const raw=String(CFG[E.gio]!=null&&CFG[E.gio]!==''?CFG[E.gio]:E.gio0),out=[];
+    for(const m of raw.matchAll(/(\d{1,2})\s*(?:[:hH.giờ]+\s*(\d{1,2}))?/g)){const h=+m[1],mi=+(m[2]||0);if(h<24&&mi<60)out.push(h*60+mi);}return [...new Set(out)].sort((a,b)=>a-b);}
+  const tgDur=id=>Math.max(1,num(CFG[TG[id].phut],TG[id].phut0))*60000,tgReg=()=>Math.max(1,num(CFG.tg_dang_ky_phut,5))*60000;
+  // trạng thái một sự kiện lúc now: phase 'reg' (đang cho vào chờ), 'run' (đang đánh), 'wait' (chưa tới giờ); start = giờ mở của suất gần nhất
+  function tgState(id,now=Date.now()){
+    const E=TG[id],ts=tgTimes(id);if(!E||!ts.length)return {phase:'off'};const d0=tgDay(now)*86400000-VN_OFF,dur=tgDur(id),reg=tgReg();
+    const all=[];for(const k of [-1,0,1])for(const m of ts)all.push(d0+k*86400000+m*60000);
+    for(const st of all){if(now>=st-reg&&now<st)return {phase:'reg',start:st,end:st+dur};if(now>=st&&now<st+dur)return {phase:'run',start:st,end:st+dur};}
+    const next=all.find(st=>st-reg>now);return {phase:'wait',start:next,end:next+dur};
+  }
+  function tgFlags(s,now){const f=s.flags.tg=s.flags.tg&&typeof s.flags.tg==='object'?s.flags.tg:{};const d=tgDay(now);if(f.d!==d){f.d=d;f.n={};}f.n=f.n||{};return f;}
+  const tgLeft=(s,id,now=Date.now())=>{const f=tgFlags(s,now);return Math.max(0,num(CFG.tg_luot_ngay,4)-num(f.n[id]));};
+  // quái thường của vùng hợp cấp nhân vật (vùng cao nhất có cấp \u{2264} cấp nhân vật): dùng tính kinh nghiệm, đồ rơi khi hạ đối thủ
+  function tgMon(lv){const R=REGIONS.slice().sort((a,b)=>mapLevel(b.id)-mapLevel(a.id)).find(r=>mapLevel(r.id)<=lv)||REGIONS[0];
+    const ids=Object.keys(MON).filter(k=>!MON[k].boss&&!/^_/.test(k)&&MON[k].exp>0&&regionOf(k)===(R?R.id:'thanh-moc'));return ids.sort((a,b)=>num(MON[b].exp)-num(MON[a].exp))[0]||Object.keys(MON).find(k=>!MON[k].boss&&MON[k].exp>0);}
+  // phẩm chất phần thưởng theo cấp (thắng Lôi đài, sách rơi): <50 Đẹp \u{b7} 50\u{2013}149 Hoàn hảo \u{b7} 150\u{2013}249 Huyền thoại \u{b7} từ 250 có cơ hội Thần
+  function tgQuality(lv,rng){const x=rng();if(lv>=250)return x<num(CFG.tg_than_phan_tram,20)/100?'m':'l';if(lv>=150)return x<.05?'m':'l';if(lv>=50)return x<.1?'l':'p';return x<.2?'p':'g';}
+  function tgTier(lv){const ls=REGIONS.map(r=>mapLevel(r.id)).filter(x=>x<=lv);const t=ls.length?Math.max(...ls):0;return t>=20?t:0;}
+  function tgItem(lv,q,rng,book){
+    let pool;if(book)pool=BOOK_IDS();else if(q==='m')pool=Object.keys(items).filter(k=>items[k].myth);else if(q==='l')pool=Object.keys(items).filter(k=>items[k].set);else pool=BASE_DROP();
+    if(!pool.length)pool=BASE_DROP();return roll(pool[Math.floor(rng()*pool.length)],q,rng,tgTier(lv));}
+  function tgCur(s,id,now){const f=tgFlags(s,now),c=f.cur;if(!c||c.ev!==id||now>c.at+tgDur(id)+180000)throw Error('TG_CHUA_VAO');return c;}
+  function tgOp(s,op,srv,now,rng){
+    const t=op.t,id=String(op.ev||''),E=TG[id];if(!E||!E.on)throw Error('TG_SU_KIEN');
+    if(t==='tgStart'){const st=tgState(id,now+90000),f=tgFlags(s,now);if(!(st.phase==='run'&&Math.abs(now-st.start)<=150000))throw Error('TG_SAI_GIO');
+      if(f.cur&&f.cur.ev===id&&f.cur.at===st.start)throw Error('TG_DA_VAO');if(tgLeft(s,id,now)<=0)throw Error('TG_HET_LUOT');
+      f.n[id]=num(f.n[id])+1;f.cur={ev:id,at:st.start,k:0};return {ev:id,left:tgLeft(s,id,now)};}
+    if(t==='tgKill'){const c=tgCur(s,id,now);if(c.k>=num(CFG.tg_ha_toi_da,60))throw Error('TG_DU_LUOT_HA');c.k++;
+      const M=MON[tgMon(s.level||1)],D=derive(s),F=D.fx||{},exp=Math.min(expNeed(s.level||1),Math.round(killExp(M,num(F.expUp)+xpBuff(s,now))*num(CFG.tg_kinh_nghiem_nhan,3)*(op.m?.5:1))); // như hạ quái: mỗi lần hạ tối đa 1 cấp
+      const items_=[],lost=[];const drop=rollDrop(tgMon(s.level||1),rng,(1+num(F.luck)/100)*num(CFG.tg_roi_do_nhan,1));
+      if(rng()*1e4<num(CFG.tg_sach_phan_van,80))drop.items.push(tgItem(s.level||1,tgQuality(s.level||1,rng),rng,true));
+      for(const it of drop.items){try{addItem(s,it);items_.push(it);}catch(e){lost.push(it);}}
+      const up=gainExp(s,exp),mercUp=[];for(const m of s.mercs||[])if(m.on&&m.hpFrac>0){const u=mercGainExp(m,exp);if(u)mercUp.push({name:m.name,lv:m.lv});}
+      return {copper:0,rubies:0,items:items_,lost,exp,up,level:s.level,mercUp};}
+    if(t==='tgEnd'){const c=tgCur(s,id,now),n=Math.max(1,Math.min(50,Math.floor(num(op.n,1)))),rank=Math.max(1,Math.min(n,Math.floor(num(op.rank,n)))),win=rank===1&&!op.lose,f=tgFlags(s,now);f.cur=null;
+      // vàng theo cấp: thắng nhận đủ; Lôi đài bị loại nhận theo thứ hạng; chiến trường thua mà còn sống nhận tg_thua_phan_tram %, gục giữa trận không có vàng
+      const base=Math.round((s.level||1)*num(CFG.tg_dong_moi_cap,2000)),k=win?1:op.dead?0:id==='loi'?Math.max(.1,(n-rank)/Math.max(1,n-1))*num(CFG.tg_loai_phan_tram,60)/100:num(CFG.tg_thua_phan_tram,30)/100,copper=Math.round(base*k);s.copper+=copper;
+      let item=null,lost=null;if(win&&id==='loi'){try{item=tgItem(s.level||1,tgQuality(s.level||1,rng),rng,false);addItem(s,item);}catch(e){lost=item;item=null;}}
+      return {ev:id,rank,n,win,copper,item,lost};}
+    throw Error('LENH');
+  }
   function applyOp(s,op,srv,now=Date.now(),rng=Math.random){
     const t=op&&op.t;if(PREDICT.has(t))rng=seqRng(s);keepsake(s);
+    if(t==='tgStart'||t==='tgKill'||t==='tgEnd')return tgOp(s,op,srv,now,rng);
     if(t==='kill'){
       const M=MON[op.mon];if(!M)throw Error('MON');
       srv.kills=srv.kills||{};const win=Math.max(5,M.respawn)*1000,log=(srv.kills[op.mon]||[]).filter(x=>now-x<win);
@@ -4194,7 +4310,7 @@ const Player=(()=>{
     throw Error('LENH');
   }
   load(typeof GAME_DATA!=='undefined'?GAME_DATA:{});
-  const API={VERSION,BAG_SIZE,SKILL_SLOTS,MAX_LV,MAX_MERC,TIERS,TIER_NAME,tierMul,killCopper,killExp,mercDefMul,petDmgMul,mountPow,mercCost,mercPow,mercGainExp,TUONG,recruitRoll,MAX_ACTIVE_QUEST,ELEMENTS,BEASTS,GROUPS,FX_NAMES,STAT_KEYS,CFG,RAR,ADD,SHOPS,SETS,MON,QUESTS,MERCS,AVATARS,TOPUPS,QUIZ,NAME_FX,items,slots,skills,shopEnh,shopRow,fuse,mercDaily,mercOffers,dayOf,EVENTS,
+  const API={VERSION,BAG_SIZE,SKILL_SLOTS,MAX_LV,MAX_MERC,TIERS,TIER_NAME,tierMul,killCopper,killExp,mercDefMul,petDmgMul,mountPow,mercCost,mercPow,mercGainExp,TUONG,recruitRoll,MAX_ACTIVE_QUEST,ELEMENTS,BEASTS,GROUPS,FX_NAMES,STAT_KEYS,CFG,RAR,ADD,SHOPS,SETS,MON,QUESTS,MERCS,AVATARS,TOPUPS,QUIZ,NAME_FX,items,slots,skills,shopEnh,shopRow,fuse,mercDaily,mercOffers,dayOf,EVENTS,TG,tgState,tgTimes,tgLeft,tgDur,tgReg,tgMon,
     layout,relayout,load,info,kind,weapon,skillCost,cmdInfo,WEAPONS,PREDICT,seqRng,setFollow,fitFollow,mercCmd,mercGuard,isGen,petMax,PET_CAP,mountNeed,tameMin,bookFx,bookBac,demonOf,shopRuby,SHOP_ENH,expNeed,maxLevel,gainExp,xpBuff,spendPoints,mountGain,bookStat,mountCmd,qOf,rar,nameOf,stat,canEnhance,tradeable,gainOf,enhRate,enhCost,enhance,roll,rollDrop,create,derive,targets,equip,unequip,stance,isTwo,pairOk,setSkill,unsetSkill,toggleBook,element,money,shopPrice,buy,sell,sellPrice,addItem,cast,
     aimAcc,isRanged,REGIONS,MON_REGION,SKILLS,mapLevel,mapLock,monLv,expLvK,armorMul,tierBase,tierAdd,regionLv,regionOf,questLevel,storyAt,storyNext,storyDone,questReady,quizKey,questAccept,questProgress,questTurnIn,hireNpc,addMerc,mercEquip,mercUnequip,dismissMerc,makeMerc,cleanItem,serialize,restore,restorePlayer,merge,applyOp,allItems};
   return API;
@@ -4556,11 +4672,14 @@ window.startGame=(session)=>{
       ctx.shadowColor=glow;ctx.shadowBlur=8+Math.sin(tm*4)*3;ctx.fillStyle=col;ctx.fillText(t,x,y);ctx.restore();return;}
     ctx.fillStyle=color;ctx.fillText(t,x,y);}
   // Biểu tượng trên đầu NPC: "!" khi còn nhiệm vụ, túi hàng khi đã xong và có bán đồ
-  function npcMarkY(n){return n.y-(n.role==='wizard'?98:88);}
+  function npcMarkY(n){return n.y-(n.role==='tuong-quan-tg'?112:n.role==='wizard'?98:88);}
+  // v10.46: có sự kiện thế giới đang cho ghi danh (trước giờ mở tg_dang_ky_phut phút)
+  let tgRegAt=-9,tgRegOn=null;const tgReg=()=>{if(time-tgRegAt>1){tgRegAt=time;tgRegOn=Object.values(Player.TG).find(E=>E.on&&Player.tgState(E.id).phase==='reg')||null;}return tgRegOn;};
   function drawNPCMarks(){
     for(const n of World.npcs){
       const bx=n.x,by=npcMarkY(n)+Math.sin(time*3)*2,near=Math.hypot(n.x-hero.x,n.y-hero.y)<92;
       // v10.12: NPC đang giữ việc cốt truyện Tìm con: dấu hồng (! có việc \u{b7} ? trả việc)
+      if(n.panel==='tg'&&tgReg()&&!TGM){const k=1+Math.sin(time*7)*.12;ctx.save();ctx.translate(bx,by);ctx.scale(k,k);ctx.font='800 30px system-ui';ctx.textAlign='center';ctx.lineWidth=4;ctx.strokeStyle='#3a1206ee';ctx.strokeText('!',0,10);ctx.fillStyle='#ff7a2a';ctx.fillText('!',0,10);ctx.restore();continue;}
       const st=Player.storyAt(player,n.id);
       if(st){const ch=st.state==='ready'?'?':'!';ctx.font='700 24px system-ui';ctx.textAlign='center';ctx.lineWidth=3.5;ctx.strokeStyle='#3a102aee';ctx.strokeText(ch,bx,by+7);ctx.fillStyle=st.state==='active'?'#ffb0c8':'#ff5a8a';ctx.fillText(ch,bx,by+7);if(st.state!=='active')continue;}
       if(!seen.has(n.id)){
@@ -4574,11 +4693,12 @@ window.startGame=(session)=>{
         else if(n.panel==='quests'){ctx.strokeRect(bx-6,by-7,12,14);line(ctx,[bx-3,by-2,bx+3,by-2],'#e8f6d8',1.4);line(ctx,[bx-3,by+2,bx+3,by+2],'#e8f6d8',1.4);}
         else if(n.panel==='mercs'){line(ctx,[bx-7,by+7,bx+7,by-7],'#e8f6d8',1.8);line(ctx,[bx-7,by-7,bx+7,by+7],'#e8f6d8',1.8);}
         else if(n.panel==='market'){ctx.beginPath();ctx.arc(bx,by,7,0,PI2);ctx.stroke();ctx.strokeRect(bx-2.5,by-2.5,5,5);}
+        else if(n.panel==='tg'){line(ctx,[bx-5,by+8,bx-5,by-8],'#e8f6d8',1.8);ctx.fillStyle='#e8f6d8';ctx.beginPath();ctx.moveTo(bx-4,by-8);ctx.lineTo(bx+7,by-4);ctx.lineTo(bx-4,by);ctx.closePath();ctx.fill();}
       }
     }
   }
   function drawWellMarks(){
-    const cd=(Number(Player.CFG.gieng_hoi_giay)||300)*1000;
+    const cd=wellCd();
     for(const o of World.wells){
       const left=(player.flags.wells[o.id]||0)-Date.now(),bx=o.x,by=o.y-92+Math.sin(time*3)*2;
       if(left<=0){
@@ -5077,6 +5197,7 @@ window.startGame=(session)=>{
     if(a.skill==='normal'&&HD.fx.wave&&++hero.waveCount%4===0){nova(hero.x,hero.y-12,150,{...atk,mul:atk.mul*HD.fx.wave/100},null);burst(hero.x,hero.y-20,'#ffb070',20,200);}
   }
   function kill(m,owner){
+    if(m.fighter){tgDown(m,owner);return;} // v10.46: bản sao / NPC sự kiện thế giới
     if(m.chase&&m.chase.ent!==hero&&!m.chase.ent.dead){const e=m.chase.ent;floater(e.x,e.y-84,'Đa tạ đại hiệp!','#ffe6a8',14);m.chase=null;}
     const M=MON[m.type];m.dead=true;m.deadAt=time;m.respawn=m.ev?1e18:time+M.respawn;m.atk=null;m.burn=null;m.leap=null;
     if(owner==='bot'&&(m.heroDmg||0)<m.max*.3){burst(m.x,m.y-M.h*.4,'#e9dcb4',12);return;}
@@ -5135,8 +5256,10 @@ window.startGame=(session)=>{
        rồi xếp hàng và ghi vào bộ nhớ trình duyệt (localStorage) cùng trạng thái nhân vật. Tắt trang giữa chừng vẫn còn, lần vào sau gửi tiếp.
      - Chỉ gửi lên máy chủ và tải lại túi đồ, tiền, nhân vật khi: về làng, qua cầu, gặp Thương nhân, bấm Lưu, ra lều. Không tự làm mới.
      - Máy chủ tính lại y hệt (theo thời điểm và cách xếp đồ lúc ra lệnh) rồi lưu; trạng thái máy chủ là chuẩn. */
+  // v10.46: đang ở bản đồ sự kiện thế giới thì lưu chỗ đứng trước khi vào (lần sau vào game không kẹt trong bản đồ sự kiện)
+  const heroPos=()=>TGM&&TGM.back?{...hero,x:(TGM.back.x+.5)*T,y:(TGM.back.y+.5)*T,map:TGM.back.map}:(World.def&&World.def.event?{...hero,...World.spawn,map:World.DEFAULT}:hero);
   const CHUNK=500,sync={queue:[],busy:null,sig:'',lastLay:null,at:-99,keptAt:0},pending=[];let inflight=null,sent=[];
-  const record=()=>({save:Player.serialize(player,hero,seen),inflight,ops:sync.queue.map(b=>b.op),t:Date.now()});
+  const record=()=>({save:Player.serialize(player,heroPos(),seen),inflight,ops:sync.queue.map(b=>b.op),t:Date.now()});
   // Ghi phần chơi xuống máy: ngay khi cần (force) hoặc theo nhịp ~1,5 giây (không ghi mỗi đòn đánh để máy yếu không khựng)
   let localDirty=false;
   function keepLocal(force){if(!force&&time-sync.keptAt<1.5){localDirty=true;return;}localDirty=false;sync.keptAt=time;try{LH_Local.set(session.charId,record());}catch(e){LH_DIAG.error(e,'lưu máy');}}
@@ -5168,7 +5291,7 @@ window.startGame=(session)=>{
           }
           keepLocal(true);
           const sentSig=JSON.stringify(Player.layout(player));
-          const r=await Net.call('play',{charId:session.charId,bid:inflight.bid,sentAt:Date.now(),save:Player.serialize(player,hero,seen),ops:inflight.ops});
+          const r=await Net.call('play',{charId:session.charId,bid:inflight.bid,sentAt:Date.now(),save:Player.serialize(player,heroPos(),seen),ops:inflight.ops});
           sync.flushedSig=sentSig;
           inflight=null;sent.forEach((b,i)=>{b.res=(r.results||[])[i];});
           for(const b of sent)if(b.ent){const i=pending.indexOf(b.ent);if(i>=0)pending.splice(i,1);}
@@ -5195,7 +5318,7 @@ window.startGame=(session)=>{
       let pre=null;
       if(unsaved()||JSON.stringify(Player.layout(player))!==sync.flushedSig){
         if(!inflight){sent=sync.queue.splice(0,CHUNK);const ops=sent.map(b=>b.op);if(ops.length&&!ops[0].lay&&sync.lastLay)ops[0]={...ops[0],lay:sync.lastLay};for(const o of ops)if(o.lay)sync.lastLay=o.lay;inflight={bid:Date.now().toString(36)+Math.random().toString(36).slice(2,8),ops};}
-        keepLocal(true);pre={bid:inflight.bid,sentAt:Date.now(),save:Player.serialize(player,hero,seen),ops:inflight.ops};
+        keepLocal(true);pre={bid:inflight.bid,sentAt:Date.now(),save:Player.serialize(player,heroPos(),seen),ops:inflight.ops};
       }
       const sentSig=JSON.stringify(Player.layout(player));
       let r;
@@ -5342,10 +5465,165 @@ window.startGame=(session)=>{
     window.GameUI?.refresh();
   }
   function die(){
+    if(TGM&&TGM.phase!=='lobby'){if(!(HD.fx.revive&&time>=hero.reviveAt)){tgHeroDown();return;}}
     if(HD.fx.revive&&time>=hero.reviveAt){player.hp=Math.round(HD.tot.hp*HD.fx.revive/100);hero.reviveAt=time+300;hero.invuln=time+2;LH_Audio.play('heal');message(svg('heart')+'Hồi sinh tại chỗ');burst(hero.x,hero.y-24,'#ffe0f0',30,200);return;}
     player.hp=0;hero.dead=time+2.2;hero.attack=null;hero.mountAct=null;route=[];LH_Audio.play('die');message(svg('heart')+'Bạn đã gục \u{b7} về làng');
     // mất toàn bộ đồ đang mặc (cau_hinh chet_mat_do): máy chủ xác nhận, cấp / sách / lính / túi giữ nguyên
     const tk=!!(tut&&tut.koed);op(tk?{t:'die',tut:1}:{t:'die'}).then(r=>{refreshHD();if(r.lost&&r.lost.length){window.GameUI?.refresh();setTimeout(()=>message(svg('close')+`Gục ngã: mất ${r.lost.length} món đang mặc (${r.lost.slice(0,3).map(it=>Player.nameOf(it)).join(', ')}${r.lost.length>3?'\u{2026}':''})`),2600);}},()=>{});
+  }
+  /* ---------- v10.46: Sự kiện thế giới (Tướng quân) \u{2014} Lôi đài thế giới ----------
+     Trước giờ mở tg_dang_ky_phut phút: gặp Tướng quân \u{2192} vào sân chờ (vùng an toàn). Trong lúc chờ, máy hỏi máy chủ bản sao người chơi chênh không quá tg_chenh_cap cấp
+     (hỏi vào một giây ngẫu nhiên, chờ tối đa 3 giây; lỗi thì dùng NPC giả lập theo chỉ số của mình, trận vẫn mở đúng giờ).
+     Đúng giờ: mọi người hiện quanh võ đài, hỗn chiến tự do. Bản sao, NPC là "quái" đặc biệt (m.fighter) nên mọi đòn, kỹ năng, lính, thú của người chơi đánh trúng như quái;
+     chúng tự chọn kẻ gần nhất (người chơi, lính của người chơi hoặc nhau) để đánh. Vòng đài thu hẹp sau 1 phút; ngoài vòng mất máu dần.
+     Gục: bị loại, ở lại xem, nhận vàng theo hạng (không mất đồ, không gửi lệnh die). Còn sống khi hết giờ hoặc là người cuối cùng: thắng. */
+  let TGM=null,tgBanner=null;
+  const TG_NAMES=['Kiếm khách Hắc Y','Lãng khách Vô Danh','Hồng Y nữ hiệp','Cuồng đao Tứ Hải','Thiết quyền Bắc Sơn','Bạch Y thư sinh','Độc cô Kiếm Khách','Thanh Phong hiệp nữ','Phi đao Lạc Việt','Hắc Hổ đại hán','Ngọc Diện công tử','Lục Lâm hảo hán','Tiêu Dao lãng tử','Băng Tâm tiên tử','Hỏa Long võ sĩ'];
+  const tgMine=e=>e==='hero'||e===hero||(e&&!e.fighter&&allies.includes(e));
+  function tgBannerSet(html){if(!tgBanner){tgBanner=document.createElement('div');tgBanner.className='ev-banner tg-banner';document.getElementById('lu-hanh').appendChild(tgBanner);tgBanner.addEventListener('click',ev=>{const b=ev.target.closest('[data-tg]');if(!b)return;if(b.dataset.tg==='leave')tgLeave();else if(b.dataset.tg==='result'&&TGM&&TGM.result)window.GameUI?.tgResult(TGM.result,TGM);});}
+    if(html==null){tgBanner.remove();tgBanner=null;return;}if(tgBanner.innerHTML!==html)tgBanner.innerHTML=html;}
+  const mmss=ms=>{const s=Math.max(0,Math.ceil(ms/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
+  // Vào sân chờ (gọi từ bảng Tướng quân)
+  async function tgEnter(ev){
+    const E=Player.TG[ev];if(!E)return false;if(!E.on){message(svg('lock')+E.name+' sẽ mở ở bản cập nhật sau',3);return false;}
+    const st=Player.tgState(ev);if(st.phase!=='reg'){message(svg('flag')+(st.phase==='run'?'Trận đã bắt đầu, chờ suất sau':'Chưa tới giờ ghi danh'),3);return false;}
+    if(Player.tgLeft(player,ev)<=0){message(svg('close')+'Hôm nay đã hết lượt '+E.name,3);return false;}
+    if(hero.dead||travelling)return false;
+    const back={map:World.id,x:Math.floor(hero.x/T),y:Math.floor(hero.y/T)};checkpoint();
+    const ok=await travel(E.map);if(!ok)return false;
+    TGM={ev,E,start:st.start,end:st.end,back,phase:'lobby',snaps:null,askAt:Date.now()+Math.random()*Math.max(0,st.start-Date.now()-25000),teams:[],kills:0,exp:0,out:false,result:null};
+    message(svg('flag')+`<b>${E.name}</b> \u{b7} chờ tới giờ mở trong sân chờ`,4);LH_Audio.play('portal');return true;
+  }
+  function tgLeave(){
+    if(!TGM)return;const b=TGM.back,ev=TGM;tgClear();hero.dead=0;refreshHD();player.hp=HD.tot.hp;player.mana=HD.tot.mp;
+    travel(b.map,b.x,b.y).then(ok=>{if(!ok)travel(World.DEFAULT);});if(ev.phase==='fight'&&!ev.result)message(svg('close')+'Rời trận giữa chừng',3);
+  }
+  function tgClear(){for(const k of Object.keys(MON))if(/^_tg/.test(k))delete MON[k];for(let i=monsters.length-1;i>=0;i--)if(monsters[i].fighter)monsters.splice(i,1);TGM=null;tgBannerSet(null);}
+  // hỏi máy chủ bản sao người chơi (một lần, vào giây ngẫu nhiên trong lúc chờ để hàng nghìn người không gọi cùng lúc)
+  function tgAsk(){
+    if(!TGM||TGM.asked)return;TGM.asked=true;const n=Math.max(1,(Number(CFG.tg_loi_dai_so_nguoi)||10)-1),me=TGM;
+    Promise.race([Net.call('doiThu',{lv:player.level||1,n,ten:player.name}),new Promise((_,no)=>setTimeout(()=>no(Error('CHAM')),3000))])
+      .then(r=>{if(TGM===me)me.snaps=(r.list||[]).filter(x=>x&&x.equipment);}).catch(()=>{if(TGM===me)me.snaps=[];});
+  }
+  // NPC giả lập: chép chỉ số, đồ của chính người chơi, yếu hơn (tg_npc_phan_tram %)
+  function tgFake(i){
+    const used=TGM.used=TGM.used||new Set((TGM.snaps||[]).map(x=>x.name)),pool=TG_NAMES.filter(x=>!used.has(x)),name=pool[Math.floor(Math.random()*pool.length)]||('Cao thủ '+(i+1));used.add(name);
+    const d=JSON.parse(JSON.stringify({name,gender:Math.random()<.35?'f':'m',level:player.level||1,stats:player.stats,alloc:player.alloc,equipment:player.equipment,skillSlots:player.skillSlots,passive:player.passive||0,mercs:[]}));
+    return {snap:d,fake:true};
+  }
+  function tgData(sn){const base=Player.create({name:sn.name,gender:sn.gender,stats:sn.stats});const d=Object.assign(base,JSON.parse(JSON.stringify(sn)));d.hp=1e9;d.mana=1e9;d.bag=base.bag.map(()=>null);return d;}
+  let tgSeq=0;
+  function tgFighter(data,team,o){
+    let D;try{D=Player.derive(data);}catch(e){return null;}
+    const st=Player.stance(data),A=ATK[st.type]||ATK.punch,merc=!!o.merc,k=(o.fake?(Number(CFG.tg_npc_phan_tram)||75)/100:1)*(merc?1:1);
+    if(merc){const tm=Player.tierMul(data)*Player.mercPow();D.tot.hp=Math.round(D.tot.hp*tm);D.tot.def=Math.round(D.tot.def*Player.mercDefMul(data));D.dmgMul*=tm;}
+    const id='_tg'+(++tgSeq),max=Math.max(50,Math.round(D.tot.hp*(Number(CFG.tg_mau_nhan)||3)*k)),ranged=A.kind==='arrow'||A.kind==='bolt'||A.kind==='orb';
+    const dur=(A.dur||.5)/(1+(D.tot.atkSpd||0)/100),spd=140*(1+(D.tot.moveSpd||0)/100);
+    MON[id]={name:data.name,hp:max,hpBase:max,dmg:1,def:Math.round((D.tot.def||0)*k),r:16,h:62,knock:.25,crit:0,dtype:'',lv:data.level||player.level||1,band:10,speed:spd,run:spd,range:ranged?300:A.range*.8+18,windup:dur*(A.hit||.5),cd:dur+.35,aggro:900,respawn:1e9,
+      drops:{m:0,l:0,p:0,g:0},rubies:[0,0],copper:0,exp:0,tac:[],skills:[],tg:1};
+    return {type:id,key:id,data,D,name:data.name,fighter:true,bot:true,team,main:!merc,fake:!!o.fake,k,ranged,akind:A.kind,stance:st,x:0,y:0,hx:0,hy:0,facing:1,moving:false,walk:0,aim:{x:1,y:0},attack:null,atk:null,hurt:-9,dead:false,deadAt:0,
+      max,hp:max,cd:time+1+Math.random(),heroDmg:0,stunUntil:0,frozenUntil:0,slowUntil:0,fearUntil:0,path:null,stuck:0,blockUntil:0,barrierUntil:0,burnAcc:0,swing:0,tgt:null,tgtAt:0};
+  }
+  // Đúng giờ: dựng trận
+  function tgFight(){
+    const M0=TGM,N=Math.max(2,Math.min(30,Number(CFG.tg_loi_dai_so_nguoi)||10)),R=World.def.ring,cx=(R.x+.5)*T,cy=(R.y+.5)*T;
+    M0.phase='fight';M0.fightAt=Date.now();
+    op({t:'tgStart',ev:M0.ev}).then(r=>{if(TGM===M0)M0.left=r.left;},e=>{if(TGM!==M0)return;message(svg('close')+(e.message==='TG_HET_LUOT'?'Hôm nay đã hết lượt':'Máy chủ không nhận trận này ('+e.message+')'),4);M0.noReward=true;});
+    const list=(M0.snaps||[]).slice(0,N-1).map(sn=>({snap:sn,fake:false}));while(list.length<N-1)list.push(tgFake(list.length));
+    const ents=[];
+    list.forEach((x,i)=>{const team='t'+i,d=tgData(x.snap),f=tgFighter(d,team,{fake:x.fake});if(!f)return;M0.teams.push({team,name:d.name,fake:x.fake,alive:true,rank:0,main:f});ents.push(f);
+      for(const m of (x.snap.mercs||[]).slice(0,3)){const md=Player.makeMerc({...m});Object.assign(md,JSON.parse(JSON.stringify(m)));const g=tgFighter(md,team,{fake:x.fake,merc:true});if(g){g.owner=f;ents.push(g);}}});
+    // xếp mọi người quanh võ đài, người chơi ở phía nam (gần sân chờ)
+    const tot=M0.teams.length+1,r0=R.r*T*.72;
+    const place=(e,a,j)=>{const rr=r0-(j?28+j*14:0);let x=cx+Math.cos(a)*rr,y=cy+Math.sin(a)*rr*.92;if(!World.canStand(x,y)){const o=World.nearestOpen(Math.floor(x/T),Math.floor(y/T));if(o){x=(o.x+.5)*T;y=(o.y+.5)*T;}}e.x=e.hx=x;e.y=e.hy=y;e.facing=x<cx?1:-1;};
+    place(hero,Math.PI/2,0);hero.attack=null;route=[];allies.forEach((e,i)=>{e.x=hero.x+FORM[i%6][0];e.y=hero.y+FORM[i%6][1];if(!World.canStand(e.x,e.y)){e.x=hero.x;e.y=hero.y;}e.path=null;});
+    M0.teams.forEach((t,i)=>{const a=Math.PI/2+(i+1)/tot*PI2;let j=0;for(const e of ents)if(e.team===t.team)place(e,a,j++);});
+    for(const e of ents){monsters.push(e);burst(e.x,e.y-24,'#ffd9a8',14,140);}
+    M0.total=tot;LH_Audio.play('boss');shake(6);message(svg('sword')+`<b>${M0.E.name}</b> \u{b7} khai đài! ${tot} người, ai trụ lại cuối cùng là người thắng`,4);
+  }
+  const tgRingR=()=>{const R=World.def.ring,M0=TGM,full=R.r*T;if(!M0||M0.phase!=='fight')return full;const t=(Date.now()-M0.fightAt)/1000,dur=(M0.end-M0.fightAt)/1000;if(t<60)return full;return lerp(full,full*.22,clamp((t-60)/Math.max(30,dur-80),0,1));};
+  function tgAliveTeams(){return TGM.teams.filter(t=>t.alive);}
+  // một đối thủ gục (owner: ai ra đòn cuối)
+  function tgDown(m,owner){
+    const M=MON[m.type];m.dead=true;m.deadAt=time;m.respawn=1e18;m.atk=null;m.attack=null;m.burn=null;burst(m.x,m.y-24,'#cfc6b8',18,150);
+    const mine=owner!=='ffa'&&owner!=='ring';
+    if(m.main){const t=TGM&&TGM.teams.find(x=>x.team===m.team);if(t&&t.alive){t.alive=false;t.rank=tgAliveTeams().length+(TGM.out?0:1)+1;
+      for(const o of monsters)if(o.fighter&&o.team===m.team&&!o.dead&&o!==m){o.dead=true;o.deadAt=time;o.respawn=1e18;burst(o.x,o.y-24,'#cfc6b8',10,120);}
+      floater(m.x,m.y-90,'Bị loại','#ffb0a0',15);if(Math.hypot(m.x-hero.x,m.y-hero.y)<700)message(svg('close')+esc(m.name)+' bị loại \u{b7} còn '+(tgAliveTeams().length+(TGM.out?0:1))+' người',2.6);}}
+    if(!mine||!TGM||TGM.out||TGM.noReward)return;
+    TGM.kills++;
+    const sack={x:m.x+(Math.random()-.5)*10,y:m.y+4,born:time,boss:false};loot.push(sack);
+    op({t:'tgKill',ev:TGM.ev,...(m.main?{}:{m:1})}).then(r=>{if(TGM)TGM.exp+=r.exp||0;sack.r=r;sack.openAt=time+.22;},e=>{sack.gone=time;if(e&&e.message==='TG_DU_LUOT_HA'&&TGM&&!TGM.capSaid){TGM.capSaid=1;message(svg('close')+'Đã đủ số lần hạ được thưởng trong trận',3);}});
+    window.GameUI?.refresh();
+  }
+  // người chơi gục trong trận: bị loại, ở lại xem, không mất đồ
+  function tgHeroDown(){
+    player.hp=0;hero.dead=1e12;hero.attack=null;hero.mountAct=null;route=[];LH_Audio.play('die');
+    const M0=TGM;M0.out=true;const rank=tgAliveTeams().length+1;tgEnd(rank,false);message(svg('close')+`Bạn bị loại \u{b7} hạng ${rank}/${M0.total} \u{b7} ở lại xem hoặc bấm Về làng`,5);
+  }
+  function tgEnd(rank,win){
+    const M0=TGM;if(!M0||M0.ended)return;M0.ended=true;M0.rank=rank;M0.win=win;
+    const done=r=>{if(TGM!==M0)return;M0.result={rank,n:M0.total,win,kills:M0.kills,exp:M0.exp,copper:r?r.copper:0,item:r?r.item:null,lost:r?r.lost:null};if(r&&r.copper)moneyFloat(hero.x,hero.y-96,r.copper);LH_Audio.play(win?'rare':'coin');window.GameUI?.tgResult(M0.result,M0);};
+    if(M0.noReward){done(null);return;}
+    op({t:'tgEnd',ev:M0.ev,rank,n:M0.total}).then(done,()=>done(null));
+  }
+  // trí khôn của bản sao: kẻ gần nhất khác phe (người chơi, lính của người chơi, bản sao khác); ở ngoài vòng thì chạy vào giữa
+  function tgTargets(m){
+    const out=[];if(!hero.dead)out.push(hero);for(const e of allies)if(e.hp>0)out.push(e);for(const o of monsters)if(o.fighter&&!o.dead&&o.team!==m.team)out.push(o);return out;
+  }
+  function updateFighter(m,dt){
+    if(!TGM||TGM.phase!=='fight'){m.moving=false;return;}
+    const R=World.def.ring,cx=(R.x+.5)*T,cy=(R.y+.5)*T,rr=tgRingR(),slowK=time<m.slowUntil?m.slowK:1,M=MON[m.type];
+    if(m.attack&&time>=m.attack.start+m.attack.dur)m.attack=null;
+    if(m.atk){if(time>=m.atk.at&&!m.atk.done){m.atk.done=true;tgStrike(m);}if(m.dead)return;if(time>=m.atk.end)m.atk=null;m.moving=false;return;}
+    if(Math.hypot(m.x-cx,m.y-cy)>rr-24){steer(m,{x:cx,y:cy},M.run*slowK,dt,14,false);m.moving=m.stepMoved>.05;m.walk+=m.stepMoved*.09;if(Math.abs(cx-m.x)>3)m.facing=cx<m.x?-1:1;return;}
+    let tg=m.tgt;if(!tg||time>m.tgtAt||(tg===hero?hero.dead:tg.dead||tg.hp<=0)){tg=null;let bd=1e9;for(const o of tgTargets(m)){const d=Math.hypot(o.x-m.x,o.y-m.y)*(o===hero?.9:1);if(d<bd){bd=d;tg=o;}}m.tgt=tg;m.tgtAt=time+2+Math.random()*2;}
+    if(!tg){m.moving=false;return;}
+    const dx=tg.x-m.x,dy=tg.y-m.y,dist=Math.hypot(dx,dy);if(Math.abs(dx)>3)m.facing=dx<0?-1:1;const l=dist||1;m.aim={x:dx/l,y:(dy-10)/l};
+    if(dist>M.range){steer(m,{x:tg.x,y:tg.y},M.run*slowK,dt,14,false);m.moving=m.stepMoved>.05;m.walk+=m.stepMoved*.09;return;}
+    m.moving=false;
+    if(time>m.cd){const dur=M.cd-.35;m.atk={at:time+M.windup,end:time+dur,done:false,tg};m.cd=time+M.cd*(.9+Math.random()*.3);
+      const st=m.stance;if(st.dual)m.swing^=1;m.attack={type:st.type,skill:'normal',start:time,dur,hit:.5,hitDone:false,aim:{...m.aim},stance:st,hand:st.dual&&m.swing?'left':'right'};}
+  }
+  function tgStrike(m){
+    const t=m.atk.tg,M=MON[m.type];if(!t)return;const dead=t===hero?hero.dead:(t.dead||t.hp<=0);if(dead)return;
+    const dist=Math.hypot(t.x-m.x,t.y-m.y);if(dist>M.range+40)return;
+    const S=m.D.tot,lo=S.dmgMin||1,hi=Math.max(lo,S.dmgMax||lo),A=ATK[m.stance.type]||ATK.punch;let d=(lo+Math.random()*(hi-lo))*m.D.dmgMul*(A.dmg||1)*m.k;
+    let crit=false;if(Math.random()*100<(S.crit2||0)+(S.crit3||0)){d*=2;crit=true;}
+    if(m.ranged){const c2={x:t.x,y:t.y-30};fx.push({kind:'bolt',x1:m.x+m.facing*20,y1:m.y-34,x2:c2.x,y2:c2.y,color:m.akind==='orb'?'#c8a0ff':'#f0e2c8',age:0,life:.18});}
+    else fx.push({kind:'arc',x:m.x,y:m.y-18,ang:Math.atan2(m.aim.y,m.aim.x),r:M.range*.7,arc:1.5,color:'#f0e2c8',age:0,life:.2});
+    if(t===hero)hurtHero(d,m);else if(t.fighter){const l=dist||1;hitMonster(t,{abs:d,owner:'ffa',color:crit?'#ffd070':'#e8dcc8'},(t.x-m.x)/l,(t.y-m.y)/l);}else hurtAlly(t,d);
+  }
+  function tgTick(dt){
+    if(!TGM)return;const M0=TGM,now=Date.now();
+    if(World.id!==M0.E.map){tgClear();return;}
+    if(M0.phase==='lobby'){
+      if(!M0.asked&&now>=M0.askAt)tgAsk();
+      if(!World.isSafe(hero.x,hero.y)&&!hero.dead){const sp=World.spawn;hero.x=sp.x;hero.y=sp.y;route=[];message(svg('flag')+'Chưa tới giờ khai đài \u{b7} chờ trong sân',2.4);}
+      tgBannerSet(`${svg('flag')}<b>${esc(M0.E.short)}</b> \u{b7} khai đài sau <b>${mmss(M0.start-now)}</b>${M0.snaps&&M0.snaps.length?`<span class="tg-x"> \u{b7} ${Math.min(M0.snaps.length,(Number(CFG.tg_loi_dai_so_nguoi)||10)-1)} cao thủ cùng cấp</span>`:''} <button type="button" data-tg="leave">Rời</button>`);
+      if(now>=M0.start){if(!M0.asked)tgAsk();if(M0.snaps||now>=M0.start+3500)tgFight();}
+      return;
+    }
+    if(M0.phase==='fight'){
+      const R=World.def.ring,cx=(R.x+.5)*T,cy=(R.y+.5)*T,rr=tgRingR(),burn=Number(CFG.tg_vong_mat_mau)||4;
+      if(!hero.dead&&Math.hypot(hero.x-cx,hero.y-cy)>rr){M0.hzAcc=(M0.hzAcc||0)+HD.tot.hp*burn/100*dt;if(M0.hzAcc>=1){const v=Math.floor(M0.hzAcc);M0.hzAcc-=v;player.hp-=v;floater(hero.x,hero.y-70,'-'+v,'#ff7060',12);if(time>(M0.hzSaid||0)){M0.hzSaid=time+4;message(svg('flame')+'Ngoài vòng đài \u{b7} mất máu dần, chạy vào giữa!',2.4);}if(player.hp<=0)die();}}
+      for(const m of monsters)if(m.fighter&&!m.dead&&Math.hypot(m.x-cx,m.y-cy)>rr){m.rzAcc=(m.rzAcc||0)+m.max*burn/100*dt;if(m.rzAcc>=1){const v=Math.floor(m.rzAcc);m.rzAcc-=v;hitMonster(m,{abs:v,owner:'ring',color:'#ff7060'},0,0);}}
+      for(let i=monsters.length-1;i>=0;i--){const m=monsters[i];if(m.fighter&&m.dead&&time-m.deadAt>1.4){delete MON[m.type];monsters.splice(i,1);}}
+      const alive=tgAliveTeams().length+(M0.out?0:1);
+      if(!M0.out&&!M0.ended&&alive<=1)tgEnd(1,true);
+      if(!M0.ended&&now>=M0.end){if(!M0.out)tgEnd(1,true);}
+      if(now>=M0.end+1000||(M0.ended&&alive<=1))M0.phase='over';
+      tgBannerSet(`${svg('sword')}<b>${esc(M0.E.short)}</b> \u{b7} còn <b>${alive}</b>/${M0.total} \u{b7} ${mmss(M0.end-now)}${M0.ended?` \u{b7} <button type="button" data-tg="result">Kết quả</button>`:''} <button type="button" data-tg="leave">${M0.out||M0.ended?'Về làng':'Rời'}</button>`);
+      return;
+    }
+    if(M0.phase==='over')tgBannerSet(`${svg('flag')}<b>${esc(M0.E.short)}</b> \u{b7} đã kết thúc ${M0.result?`\u{b7} hạng <b>${M0.result.rank}</b>/${M0.result.n} <button type="button" data-tg="result">Kết quả</button>`:''} <button type="button" data-tg="leave">Về làng</button>`);
+  }
+  // vòng đài (vẽ dưới chân mọi người): nền đá, vạch vòng an toàn, vùng ngoài vòng tô đỏ khi đang thu hẹp
+  function tgDrawGround(){
+    const R=World.def&&World.def.ring;if(!R)return;const cx=(R.x+.5)*T,cy=(R.y+.5)*T,full=R.r*T,rr=tgRingR();
+    ctx.save();ctx.strokeStyle='#e0b04088';ctx.lineWidth=4;ctx.beginPath();ctx.arc(cx,cy,full,0,PI2);ctx.stroke();ctx.strokeStyle='#6a2a1a66';ctx.lineWidth=2;ctx.beginPath();ctx.arc(cx,cy,full*.55,0,PI2);ctx.stroke();
+    if(TGM&&TGM.phase!=='lobby'&&rr<full-2){ctx.fillStyle='rgba(200,40,20,.16)';ctx.beginPath();ctx.arc(cx,cy,full+40,0,PI2);ctx.arc(cx,cy,rr,0,PI2,true);ctx.fill();ctx.strokeStyle='#ff6040';ctx.lineWidth=3+Math.sin(time*6);ctx.setLineDash([14,10]);ctx.beginPath();ctx.arc(cx,cy,rr,0,PI2);ctx.stroke();ctx.setLineDash([]);}
+    ctx.restore();
   }
   /* ---------- Đổi bản đồ: lưu, tải gói dữ liệu bản đồ (lần đầu), dựng lại nền, quái, dân làng ---------- */
   let portalArmed=!World.portalAt(hero.x,hero.y),prefAt=0;
@@ -5529,6 +5807,7 @@ window.startGame=(session)=>{
   // ô đứng được trong vùng an toàn quanh điểm vào (làng, thành)
   function safeSpot(cx,cy,R){for(let k=0;k<40;k++){const a=Math.random()*PI2,r=Math.random()*R,x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;if(World.canStand(x,y)&&World.isSafe(x,y))return {x,y};}return null;}
   function spawnBots(){
+    if(World.def&&World.def.event){bots.length=0;return;} // v10.46: bản đồ sự kiện thế giới không có người chơi ảo đi lại
     bots.length=0;botRunAt=time+20+Math.random()*30;const n=Math.max(0,Math.min(8,Number(CFG.nguoi_choi_ao??4))),camps=World.camps;
     if(n&&camps.length)for(let i=0;i<n;i++){
       const cp=camps[i%camps.length],data=botData(i),a=Math.random()*PI2,r=Math.random()*cp.r*.8,e=makeBot(i,data,cp,cp.x+Math.cos(a)*r,cp.y+Math.sin(a)*r);
@@ -5722,6 +6001,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
       if(m.burn){if(time<m.burn.until){m.burnAcc+=m.burn.dps*dt;if(m.burnAcc>=1){const v=Math.floor(m.burnAcc);m.burnAcc-=v;hitMonster(m,{abs:v,owner:'burn',color:m.burn.color||'#ff9a3d'},0,0);if(m.dead)continue;}}else m.burn=null;}
       if(M.tac&&M.tac.length&&bossTactics(m,M,dt))continue;
       if(time<m.stunUntil||time<m.frozenUntil){m.moving=false;continue;}
+      if(m.fighter){updateFighter(m,dt);continue;}
       const slowK=time<m.slowUntil?m.slowK:1;
       if(time<m.fearUntil){moveMon(m,fleeGoal(m,hero.x,hero.y),M.run*slowK,dt,M);continue;}
       const tg=pickTarget(m),dx=tg?tg.x-m.x:0,dy=tg?tg.y-m.y:0,dist=tg?tg.d:1e9,homeD=Math.hypot(m.hx-m.x,m.hy-m.y);
@@ -6289,7 +6569,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
       ctx.fillStyle='#3a2a1a';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(t,e.x,y+13.5,w-12);ctx.restore();}
   }
   /* ---------- Trò chuyện: NPC còn lời dặn thì nói chuyện, sau đó mở thẳng bảng chức năng ---------- */
-  const PANEL_BTN={shop:'Mua bán',quests:'Nhận việc',mercs:'Thuê lính',market:'Chợ',avatar:'Đổi diện mạo',fuse:'Dung hợp',nap:'Nạp thẻ',quiz:'Hỏi bài'};
+  const PANEL_BTN={tg:'Sự kiện',shop:'Mua bán',quests:'Nhận việc',mercs:'Thuê lính',market:'Chợ',avatar:'Đổi diện mạo',fuse:'Dung hợp',nap:'Nạp thẻ',quiz:'Hỏi bài'};
   function nearby(){let best=null,bd=92;for(const n of World.npcs){const d=Math.hypot(n.x-hero.x,n.y-hero.y);if(d<bd){bd=d;best=n;}}return best;}
   function meet(n){
     route=[];targetNPC=null;
@@ -6310,15 +6590,16 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
       if(ask){box.innerHTML=n.choices.map((c,i)=>`<button type="button" data-i="${i}">${esc(c)}</button>`).join('');box.onclick=ev=>{const b=ev.target.closest('button');if(!b||dialogNPC!==n)return;dialogNPC=null;dialogEl.hidden=true;box.hidden=true;$('#next').hidden=false;canvas.focus();n.onChoice&&n.onChoice(+b.dataset.i);};}}
     const st=Player.storyAt(player,n.id);$('#shopBtn').hidden=!(lastPage&&(n.panel||st));$('#shopLabel').textContent=st?(st.state==='ready'?'Trả việc':st.state==='active'?'Việc đang làm':'Có việc nhờ'):PANEL_BTN[n.panel]||'Mở';
   }
+  const wellCd=()=>(World.def&&World.def.event?(Number(CFG.tg_gieng_giay)||60):(Number(Player.CFG.gieng_hoi_giay)||300))*1000; // v10.46: giếng trong bản đồ sự kiện đầy lại nhanh hơn
   function nearWell(r=82){let best=null,bd=r;for(const o of World.wells){const d=Math.hypot(o.x-hero.x,o.y-hero.y);if(d<bd){bd=d;best=o;}}return best;}
   function useWell(o){
     route=[];targetWell=null;targetNPC=null;if(hero.dead)return;
     const left=(player.flags.wells[o.id]||0)-Date.now();
     if(left>0){const s=Math.ceil(left/1000);message(svg('water')+`Giếng cạn \u{b7} nước về sau ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`);return;}
-    const S=HD.tot,gain=Math.max(0,Math.round(S.hp-player.hp));player.hp=S.hp;
-    player.flags.wells[o.id]=Date.now()+(Number(Player.CFG.gieng_hoi_giay)||300)*1000;
-    hero.facing=o.x<hero.x?-1:1;floater(hero.x,hero.y-70-seatH(),'+'+gain,'#7fe0b0',16);burst(o.x,o.y-30,'#9fdcff',26,170);burst(hero.x,hero.y-30,'#9fe8a8',16,120);
-    message(svg('heart')+'Uống nước giếng cổ \u{b7} hồi đầy máu');keepLocal();window.GameUI?.refresh();
+    const S=HD.tot,gain=Math.max(0,Math.round(S.hp-player.hp)),gm=Math.max(0,Math.round(S.mp-player.mana));player.hp=S.hp;player.mana=S.mp; // v10.46: hồi cả mana
+    player.flags.wells[o.id]=Date.now()+wellCd();
+    hero.facing=o.x<hero.x?-1:1;floater(hero.x,hero.y-70-seatH(),'+'+gain,'#7fe0b0',16);if(gm)floater(hero.x+26,hero.y-52-seatH(),'+'+gm,'#8fc8ff',14);burst(o.x,o.y-30,'#9fdcff',26,170);burst(hero.x,hero.y-30,'#9fe8a8',16,120);
+    message(svg('heart')+'Uống nước giếng cổ \u{b7} hồi đầy máu và mana');keepLocal();window.GameUI?.refresh();
   }
   function interact(){if(!overlayEl.hidden)return;if(dialogNPC){nextLine();return;}if(caveTouch()||hqTouch())return;const n=nearby();if(n){meet(n);return;}const w=nearWell();if(w)useWell(w);}
   function endDialog(save=true){if(!dialogNPC)return;if(dialogNPC.tut){const f=dialogNPC.onEnd;dialogNPC=null;dialogEl.hidden=true;canvas.focus();if(f)f();return;}seen.add(dialogNPC.id);dialogNPC=null;dialogEl.hidden=true;window.GameUI?.refresh();canvas.focus();if(save)checkpoint();}
@@ -6356,7 +6637,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     World.bridges.forEach((B,i)=>{const sd=hero.x<B.x0*T?'w':hero.x>(B.x1+1)*T?'e':bridgeSide[i];if(sd!==bridgeSide[i]){const was=bridgeSide[i];bridgeSide[i]=sd;if(was)checkpoint();}});
     if(time-prefAt>1){prefAt=time;for(const P of World.portals)if(Math.hypot((P.x+.5)*T-hero.x,(P.y+.5)*T-hero.y)<T*9)World.prefetch(P.to);}
     {const P=World.portalAt(hero.x,hero.y);if(!P)portalArmed=true;else if(portalArmed&&!travelling&&!hero.dead){portalArmed=false;const lk=Player.mapLock(player,P.to);if(lk)message(svg('lock')+lk.msg+' để vào '+(P.label||(LH_MAPS[P.to]&&LH_MAPS[P.to].name)||''),4);else{checkpoint();travel(P.to,P.tx,P.ty);}}}
-    updateNPCs(dt);updateProjectiles(dt);updateMonsters(dt);updateAllies(dt);updateBots(dt);botRunEvent();hqTick(dt);if(tutPending&&time>1.5&&!busy()){tutPending=false;if(tutOn())tutStart();else if(tut2On())tut2Resume();}if(tut)tutUpdate(dt);if(cave)caveUpdate(dt);caveGossip();pkTick(dt);updateDbf(dt);if(((time*4)|0)!==((time-dt)*4|0))evTick();updateStrikes();updateVillage(dt);updateEffects(dt);
+    updateNPCs(dt);updateProjectiles(dt);updateMonsters(dt);tgTick(dt);updateAllies(dt);updateBots(dt);botRunEvent();hqTick(dt);if(tutPending&&time>1.5&&!busy()){tutPending=false;if(tutOn())tutStart();else if(tut2On())tut2Resume();}if(tut)tutUpdate(dt);if(cave)caveUpdate(dt);caveGossip();pkTick(dt);updateDbf(dt);if(((time*4)|0)!==((time-dt)*4|0))evTick();updateStrikes();updateVillage(dt);updateEffects(dt);
     const a=hero.attack;
     if(a){const p=(time-a.start)/a.dur;while(a.hitIdx<a.cycles&&p>=(a.hitIdx+a.hit)/a.cycles){resolveAttack(a,a.hitIdx);a.hitIdx++;}if(p>=1)hero.attack=null;}
     const ma=hero.mountAct;
@@ -6412,6 +6693,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     ctx.translate(-camera.x+sx,-camera.y+sy);ctx.drawImage(ground,0,0);
     const TH=World.theme&&LH_ART.theme[World.theme];
     ctx.strokeStyle=TH&&TH.ripple||'#c8e0ca55';ctx.lineWidth=2;if(!(TH&&TH.still))for(const R of World.ripples){const y=R.y;if(y%2!==1||World.bridges.some(b=>y>=b.y0-1&&y<=b.y1+1))continue;const rx=(R.x+1.2)*T;ctx.beginPath();ctx.moveTo(rx+Math.sin(time+y)*9,y*T);ctx.lineTo(rx+25+Math.sin(time+y)*9,y*T);ctx.stroke();}
+    tgDrawGround();
     if(route.length){ctx.fillStyle='#f3d58c99';for(let i=0;i<route.length;i+=2){ctx.beginPath();ctx.arc(route[i].x,route[i].y,3,0,PI2);ctx.fill();}const p=route[route.length-1];ctx.strokeStyle='#f3d58c';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(p.x,p.y,12+Math.sin(time*5)*2,6,0,0,PI2);ctx.stroke();}
     const st=Player.stance(player),el=Player.element(player);
     if(lockOn&&isRanged(st.type)&&hero.lockT&&!hero.lockT.dead){const m=hero.lockT,M=MON[m.type],r=M.r+10,pul=Math.sin(time*6)*2;ctx.save();ctx.strokeStyle='#ff6a4a';ctx.lineWidth=2;ctx.globalAlpha=.85;ctx.beginPath();ctx.ellipse(m.x,m.y+2,r+pul,(r+pul)*.42,0,0,PI2);ctx.stroke();const cy=m.y-M.h*.5;for(const [ax,ay] of [[1,0],[-1,0],[0,1],[0,-1]])line(ctx,[m.x+ax*(r+4),cy+ay*(r+4),m.x+ax*(r+12),cy+ay*(r+12)],'#ff6a4a',2);ctx.restore();}
@@ -6422,7 +6704,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     layers.sort((a,b)=>a[0]-b[0]);
     for(const [,o] of layers){
       if(o===hero){if(hero.morph&&time<hero.morph.until&&!hero.dead)drawMorph();else drawHero(ctx,hero,st,el,time);drawDbf();if(hero.shieldHp>0){ctx.save();ctx.globalAlpha=.3+Math.sin(time*6)*.08;ctx.strokeStyle='#ffe9a8';ctx.lineWidth=2.5;ctx.beginPath();ctx.ellipse(hero.x,hero.y-24-seatH(),26,36,0,0,PI2);ctx.stroke();ctx.restore();}}
-      else if(o.key&&o.data){const e=o;if(e.pet){drawPet(e);}else{drawHero(ctx,e,Player.stance(e.data),null,time,{who:e.data,labelColor:e.bot?'#ffd9a8':e.tier&&e.tier!=='n'?(Player.RAR[e.tier]||{}).color||'#bfe3ff':'#bfe3ff',label:e.rob?!!e.lead:(e.bot||safe),mask:e.mask});const sh=seatOf(e.data.equipment);if(e.hp<e.max){roundRect(ctx,e.x-18,e.y-78-sh,36,4,2,'#0a120ecc');roundRect(ctx,e.x-18,e.y-78-sh,36*e.hp/e.max,4,2,e.hp<e.max*.3?'#e05a4a':'#7fd38a');}}}
+      else if(o.key&&o.data){const e=o;if(e.pet){drawPet(e);}else{drawHero(ctx,e,Player.stance(e.data),null,time,{who:e.data,labelColor:e.fighter?(e.main?'#ffa898':'#e8c0b0'):e.bot?'#ffd9a8':e.tier&&e.tier!=='n'?(Player.RAR[e.tier]||{}).color||'#bfe3ff':'#bfe3ff',label:e.rob?!!e.lead:(e.bot||safe),mask:e.mask});const sh=seatOf(e.data.equipment);if(e.hp<e.max){roundRect(ctx,e.x-18,e.y-78-sh,36,4,2,'#0a120ecc');roundRect(ctx,e.x-18,e.y-78-sh,36*e.hp/e.max,4,2,e.hp<e.max*.3?'#e05a4a':'#7fd38a');}}}
       else if(o.amb)drawAmbient(o);
       else if(o.kind==='hq-cage')drawCage(o);
       else if(LH_ART.obj[o.kind])LH_ART.obj[o.kind](ctx,o,time);
@@ -6546,6 +6828,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
       checkpoint();return travel(id);
     },
     get mapId(){return World.id;},
+    tgEnter,tgLeave,get tgm(){return TGM;}, // v10.46
     toggleLock,get lockOn(){return lockOn;},get bots(){return bots;},get tut(){return tut;},get cave(){return cave;},get pk(){return pk;},pkSpawn,get hq(){return {BT,AN,FW,SQ};},duelStart,taunt,botRun(){botRunAt=0;botRunEvent();},
     stop(){route=[];targetNPC=null;keys.clear();joystick={x:0,y:0};holdAttack=false;},
     closeDialog(){dialogNPC=null;dialogEl.hidden=true;}};
@@ -7212,9 +7495,43 @@ window.startUI=(session)=>{
     openModal(ttl('orb','Nạp thẻ')+`<div class="purse">${coins(p.copper)}${ruby(p.rubies)}</div>`,`<div class="shop-grid nap-grid">${tiles}</div>${qr}`,true);
     document.querySelectorAll('[data-nap]').forEach(b=>b.onclick=()=>{napSel=b.dataset.nap;showTopup();});
   }
+  /* ---------- v10.46: Tướng quân \u{2014} lịch sự kiện thế giới, vào sân chờ; bảng kết quả trận ---------- */
+  const hhmm=ms=>{const d=new Date(ms+7*3600000);return d.getUTCHours()+'h'+String(d.getUTCMinutes()).padStart(2,'0');};
+  const left=ms=>{const s=Math.max(0,Math.ceil(ms/1000)),h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h?h+' giờ '+m+' phút':m?m+' phút '+String(s%60).padStart(2,'0')+' giây':s+' giây';};
+  let tgTimer=null;
+  function showTG(){
+    const now=Date.now(),L=Number(Player.CFG.tg_luot_ngay)||4,reg=Number(Player.CFG.tg_dang_ky_phut)||5;let rows='';
+    for(const E of Object.values(Player.TG)){
+      const st=Player.tgState(E.id,now),ts=Player.tgTimes(E.id).map(m=>Math.floor(m/60)+'h'+String(m%60).padStart(2,'0')).join(' \u{b7} ')||'chưa đặt giờ',lt=Player.tgLeft(p,E.id,now);
+      let btn,note;
+      if(!E.on){btn=`<span class="qprog">${svg('lock')}Sắp mở</span>`;note='Mở ở bản cập nhật sau';}
+      else if(st.phase==='reg'){btn=lt>0?`<button class="primary" data-tg-go="${E.id}">${svg('flag')}Vào sân chờ</button>`:`<span class="qprog">Hết lượt</span>`;note=`<b class="tg-hot">Đang ghi danh</b> \u{b7} khai đài lúc ${hhmm(st.start)} (còn ${left(st.start-now)})`;}
+      else if(st.phase==='run'){btn=`<span class="qprog">Đang đánh</span>`;note=`Trận ${hhmm(st.start)} đang diễn ra \u{b7} kết thúc sau ${left(st.end-now)}`;}
+      else{btn=`<span class="qprog">${hhmm(st.start)}</span>`;note=st.start?`Suất tới ${hhmm(st.start)} \u{b7} ghi danh sau ${left(st.start-reg*60000-now)}`:'';}
+      rows+=`<div class="qrow${st.phase==='reg'&&E.on?' act':''}${E.on?'':' dim'}">${svg(E.id==='loi'?'sword':'flag')}<div><b>${esc(E.name)}</b><small>${esc(E.desc)}</small><small>Giờ mở: <b>${ts}</b> \u{b7} ${E.on?`còn <b>${lt}</b>/${L} lượt hôm nay`:'\u{2014}'}</small><small>${note}</small></div>${btn}</div>`;
+    }
+    const intro=`<p class="tg-intro">Trước giờ mở ${reg} phút, cờ của ta có dấu chấm than: vào sân chờ, đúng giờ khai đài. Đối thủ là bản sao các cao thủ chênh không quá ${Number(Player.CFG.tg_chenh_cap)||5} cấp; gục trong trận không mất đồ. Hạ đối thủ được gấp ${Number(Player.CFG.tg_kinh_nghiem_nhan)||3} kinh nghiệm quái cùng vùng, có thể rơi đồ, sách; hết trận nhận vàng theo cấp.</p>`;
+    const fresh=$('#overlay').hidden||$('#modalCard').dataset.mk!=='tg';
+    if(fresh)openModal(`${svg('flag')}Tướng quân \u{b7} Sự kiện thế giới`,intro+rows);else $('#overlayBody').innerHTML=intro+rows;
+    $('#modalCard').dataset.mk='tg';
+    clearInterval(tgTimer);tgTimer=setInterval(()=>{if($('#overlay').hidden||$('#modalCard').dataset.mk!=='tg'){clearInterval(tgTimer);return;}showTG();},1000);
+  }
+  document.addEventListener('click',async ev=>{const b=ev.target.closest('[data-tg-go]');if(!b)return;b.disabled=true;clearInterval(tgTimer);closeModal();await game.tgEnter(b.dataset.tgGo);});
+  function tgResult(r,M0){
+    if(!r)return;const E=M0.E,title=r.win?`${svg('check')}${esc(E.name)} \u{b7} Thắng!`:`${svg('flag')}${esc(E.name)} \u{b7} Hạng ${r.rank}/${r.n}`;
+    const it=r.item,row=(ic,t,v)=>`<div class="qrow">${ic}<div><b>${t}</b></div><span class="qprog">${v}</span></div>`;
+    let body=`<p class="tg-intro">${r.win?'Bạn là người cuối cùng còn đứng trên võ đài.':'Bạn đã bị loại. Có thể ở lại xem các cao thủ khác so tài.'}</p>`;
+    body+=row(svg('sword'),'Hạ đối thủ',r.kills)+row(svg('spark'),'Kinh nghiệm','+'+(r.exp||0))+row(svg('coin'),'Vàng thưởng',coins(r.copper||0));
+    if(it)body+=`<div class="qrow act">${icon(it.type,Player.rar(it).color)}<div><b style="color:${Player.rar(it).color}">${esc(Player.nameOf(it))}</b><small>Phần thưởng người thắng \u{b7} đã cất vào túi</small></div></div>`;
+    if(r.lost)body+=`<p class="tg-intro">Túi đầy, không nhận được phần thưởng đồ.</p>`;
+    body+=`<div class="tg-act"><button type="button" class="primary" id="tgHome">${svg('home')}Về làng</button><button type="button" id="tgStay">${svg('eye')}Ở lại xem</button></div>`;
+    openModal(title,body);$('#modalCard').dataset.mk='tgr';
+    $('#tgHome').onclick=()=>{closeModal();game.tgLeave();};$('#tgStay').onclick=()=>closeModal();
+  }
   function openPanel(n,skipStory){
     npcPanel=true;
     const st=skipStory?null:Player.storyAt(p,n.id);if(st)return showStoryTalk(n,st);
+    if(n.panel==='tg')return showTG();
     if(n.panel==='fuse'){fuseSel={m:null,x:null};return showFuse();}
     if(n.panel==='nap'){napSel=null;return showTopup();}
     if(n.panel==='chest'){CH.chest=null;return showChest('chest');}
@@ -7274,7 +7591,7 @@ window.startUI=(session)=>{
   });
   const alive=()=>{if(!window.LH_KICKED&&Net.token&&document.visibilityState==='visible')Net.call('alive').catch(()=>{});};
   setInterval(alive,20000);document.addEventListener('visibilitychange',alive);
-  window.GameUI={refresh,showAttributes,openPanel,prefetchMarket,showShop:(id,tab)=>{shopSel=null;showShop(id,tab);},showQuestBoard,showMaps,showMercBoard,showMarket,showQuests,save,previewElem,previewWho:()=>previewWho,previewBurst:()=>burstAt,
+  window.GameUI={refresh,showAttributes,openPanel,showTG,tgResult,prefetchMarket,showShop:(id,tab)=>{shopSel=null;showShop(id,tab);},showQuestBoard,showMaps,showMercBoard,showMarket,showQuests,save,previewElem,previewWho:()=>previewWho,previewBurst:()=>burstAt,
     showBag:()=>{if($('#overlay').hidden){selected=null;skillFocus=null;renderBag();}else closeModal();},
     frame(time,st){
       if(time-lastFrame<.1)return;lastFrame=time;refresh();$('#settingsBtn').classList.toggle('dirty',game.unsaved());$('#saveBtn').classList.toggle('dirty',game.unsaved());const now=Date.now();

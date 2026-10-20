@@ -70,6 +70,12 @@ function LH_Core(A){
       return {chest:chestView(ch),state:P,item};
     });
   }
+  // bản sao gọn của một nhân vật (đủ để tính chỉ số và vẽ: trang bị, sách, lính đang theo, thú cưỡi, diện mạo)
+  function dtSnap(c,P,lv){
+    const eq={};for(const [k,v] of Object.entries(P.equipment||{}))if(v)eq[k]=v;
+    const mercs=(Array.isArray(P.mercs)?P.mercs:[]).filter(m=>m&&m.on).slice(0,3).map(m=>({mid:m.mid,name:m.name,gender:m.gender,lv:m.lv,tier:m.tier,gen:m.gen,cmd:m.cmd,stats:m.stats,equipment:Object.fromEntries(Object.entries(m.equipment||{}).filter(([,v])=>v)),skillSlots:m.skillSlots,on:true,hpFrac:1}));
+    return {name:String(c.ten||P.name||''),gender:c.gioi_tinh==='f'?'f':'m',level:lv,stats:P.stats,alloc:P.alloc,equipment:eq,skillSlots:P.skillSlots,passive:P.passive||0,avatar:P.avatar||'',cos:P.cos&&P.cos.use?{use:P.cos.use}:undefined,mercs};
+  }
   const H={
     ping:()=>({msg:'Lữ Hành API'}),
     // v10.37: bảng xếp hạng cho trang chủ (không cần đăng nhập): top 100 cấp độ, top 100 vàng, top 100 hồng ngọc.
@@ -88,6 +94,26 @@ function LH_Core(A){
         level:top((a,b)=>b.cap-a.cap||b.kn-a.kn||a.ten.localeCompare(b.ten)),
         gold:top((a,b)=>b.dong-a.dong||b.hn-a.hn),
         ruby:top((a,b)=>b.hn-a.hn||b.dong-a.dong)};
+    },
+    // v10.46: bản sao người chơi cho sự kiện thế giới (Lôi đài, chiến trường). dtIndex đọc cả bảng nhân vật một lần, gom theo nhóm 5 cấp
+    // (mỗi nhóm tối đa 20 bản sao chọn ngẫu nhiên); Code.gs giữ từng nhóm trong bộ nhớ đệm và làm mới định kỳ nên doiThu không phải đọc Sheet.
+    dtIndex(){
+      const r=(A.staticData().cau_hinh||[]).find(x=>x.khoa==='bxh_an'),hide=new Set(String(r&&r.gia_tri||'').split(',').map(x=>lower(x)).filter(Boolean)),b={};
+      for(const c of A.rows('nhan_vat')){
+        if(c.trang_thai!=='active')continue;if(hide.has(lower(c.ten)))continue;
+        let P=null;try{P=(JSON.parse(c.luu||'{}').player)||null;}catch(e){}if(!P||!P.equipment)continue;
+        const lv=Math.max(1,Math.floor(Number(P.level)||Number(c.cap)||1)),k=Math.floor(lv/5),sn=dtSnap(c,P,lv);if(!sn)continue;
+        const L=b[k]=b[k]||[];L.push(sn);if(L.length>40)L.splice(Math.floor(Math.random()*L.length),1);
+      }
+      for(const k of Object.keys(b))b[k]=b[k].sort(()=>Math.random()-.5).slice(0,20);
+      return {at:A.now(),b};
+    },
+    doiThu(p){
+      const lv=Math.max(1,Math.floor(Number(p.lv)||1)),n=Math.max(1,Math.min(30,Math.floor(Number(p.n)||9))),gap=Math.max(1,cfg('tg_chenh_cap')||5),me=lower(p.ten);
+      const ks=[];for(let k=Math.floor((lv-gap)/5);k<=Math.floor((lv+gap)/5);k++)ks.push(k);
+      const B=A.dtBuckets?A.dtBuckets(ks):(()=>{const x=H.dtIndex().b;return Object.fromEntries(ks.map(k=>[k,x[k]||[]]));})();
+      const all=[];for(const k of ks)for(const sn of B[k]||[])if(Math.abs(sn.level-lv)<=gap&&lower(sn.name)!==me)all.push(sn);
+      return {list:all.sort(()=>Math.random()-.5).slice(0,n)};
     },
     chest(p){const a=auth(p.token);A.rules&&A.rules();return {chest:chestView(chestOf(a))};},
     chestPut(p){return chestMove(p,'put');},

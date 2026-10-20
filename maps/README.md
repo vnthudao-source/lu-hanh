@@ -54,3 +54,8 @@ Bộ sinh `src/04-gen.js`: `theme` (màu đất, chi tiết grass/bamboo/moss/as
 - Bộ sinh `tools/genmaps.mjs` giờ có 20 vùng (cấp 20–150). Vùng thành trì có thêm `goods` (hàng hiệu buôn: `mul` hệ số giá, `mount` thú cưỡi mới, `fx` đồ hiệu ứng) → sinh dòng `vat_pham`, `cua_hang` trong `src/01-data-vung.js`.
 - NPC có `panel:'avatar'` mở bảng Thợ truyền thần (đổi diện mạo). Vai NPC mới: `hieu-buon`, `tho-truyen-than`, `vo-si`, `thai-su`, `ngu-lam`.
 - Thú cưỡi có hai dáng mới: `kylan` (kỳ lân) và `rong` (rồng, vẽ bằng dáng dragon của bộ sinh).
+
+## Bản 10.46 · bản đồ sự kiện thế giới
+
+- `tools/sukien-maps.mjs` sinh bản đồ sự kiện (hiện có `loi-dai-tg`, Lôi đài thế giới). Trường riêng: `event` (mã sự kiện trong `Player.TG`), `ring {x,y,r}` (tâm, bán kính võ đài theo ô). Không có cổng: vào qua NPC Tướng quân (`panel:'tg'`), ra bằng nút Rời / Về làng.
+- Giếng cổ trong bản đồ sự kiện đầy lại sau `tg_gieng_giay` giây. Bản đồ sự kiện không có người chơi ảo đi lại, không có sự kiện đột xuất.

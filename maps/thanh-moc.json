@@ -1089,6 +1089,19 @@
     "Anh ơi chơi với em đi!",
     "Mẹ em bảo không được ra khỏi làng một mình."
    ]
+  },
+  {
+   "id": "tuong-quan-tg-thanh-moc",
+   "role": "tuong-quan-tg",
+   "name": "Tướng quân",
+   "x": 6.5,
+   "y": 13.4,
+   "facing": 1,
+   "panel": "tg",
+   "lines": [
+    "Ta giữ cờ lệnh của triều đình. Lôi đài, chiến trường mở theo giờ, đến giờ ta phất cờ gọi người.",
+    "Trước giờ mở năm phút, thấy cờ ta có dấu chấm than thì tới ghi danh."
+   ]
   }
  ],
  "monsters": [

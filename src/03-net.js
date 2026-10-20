@@ -109,7 +109,7 @@ async function netDiag(e){
   try{const r=await fetch(LH_API+(LH_API.includes('?')?'&':'?')+'t='+Date.now());const j=JSON.parse(await r.text());return Error(j&&j.ok?'POST_LOI':'KHONG_TRUY_CAP');}
   catch(x){return Error('KHONG_TRUY_CAP');}
 }
-const NET_SAFE=new Set(['ping','data','login','chars','load','alive','marketList','quizCheck','quizShow']);
+const NET_SAFE=new Set(['ping','data','login','chars','load','alive','marketList','quizCheck','quizShow','doiThu']);
 // lỗi mạng mỗi trình duyệt báo một kiểu: Chrome "Failed to fetch", Safari "Load failed", Firefox "NetworkError…"
 const netErr=e=>/failed to fetch|load failed|networkerror|network request failed|the internet connection/i.test(String(e&&e.message))?Error('Failed to fetch'):e;
 const netMsg=e=>NET_ERR[e&&e.message]||(e&&e.message==='Failed to fetch'?'Không kết nối được máy chủ Việt Nam, kiểm tra mạng rồi thử lại':'Lỗi: '+(e&&e.message||e));

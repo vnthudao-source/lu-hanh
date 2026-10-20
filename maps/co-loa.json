@@ -409,6 +409,20 @@
  "trees": [],
  "npcs": [
   {
+   "id": "tuong-quan-tg-co-loa",
+   "role": "tuong-quan-tg",
+   "name": "Tướng quân",
+   "act": "stand",
+   "x": 20,
+   "y": 24,
+   "facing": 1,
+   "panel": "tg",
+   "lines": [
+    "Ta giữ cờ lệnh của triều đình. Lôi đài, chiến trường mở theo giờ, đến giờ ta phất cờ gọi người.",
+    "Trước giờ mở năm phút, thấy cờ ta có dấu chấm than thì tới ghi danh."
+   ]
+  },
+  {
    "id": "linh-gac-1",
    "role": "linh-gac",
    "name": "Lính gác",
@@ -501,7 +515,7 @@
   {
    "id": "tuong-quan",
    "role": "tuong-quan",
-   "name": "Tướng quân",
+   "name": "Phó tướng",
    "act": "stand",
    "x": 30,
    "y": 17,

@@ -38,9 +38,9 @@ function lhRows_(sh,cols){
 // Bộ nhớ đệm dữ liệu tĩnh (v10.7): gói dữ liệu đã hơn 100 KB (giới hạn một ô CacheService) nên nén gzip rồi chia nhiều ô; trước đây quá 95 KB là bỏ không đệm,
 // khiến mọi lệnh gọi phải đọc lại toàn bộ Sheet (rất chậm, trang tải đứng ở ~96%).
 const LH_CACHE_GIAY=21600; // v10.31: giữ 6 giờ (trước 5 phút) cho vào game nhanh; kiemTra, capNhat…, xoaBoNhoDem và trigger tuDongLamMoi tự xoá đệm khi Sheet đổi
-function lhCachePut_(key,s){
+function lhCachePut_(key,s,giay){
   try{const z=Utilities.base64Encode(Utilities.gzip(Utilities.newBlob(s,'text/plain')).getBytes()),o={},n=Math.ceil(z.length/90000);
-    for(let i=0;i<n;i++)o[key+'-'+i]=z.slice(i*90000,(i+1)*90000);o[key]=n+':'+z.length;CacheService.getScriptCache().putAll(o,LH_CACHE_GIAY);}catch(e){}
+    for(let i=0;i<n;i++)o[key+'-'+i]=z.slice(i*90000,(i+1)*90000);o[key]=n+':'+z.length;CacheService.getScriptCache().putAll(o,giay||LH_CACHE_GIAY);}catch(e){}
 }
 function lhCacheGet_(key){
   try{const cache=CacheService.getScriptCache(),h=cache.get(key);if(!h)return null;const [n,len]=h.split(':').map(Number),keys=[];for(let i=0;i<n;i++)keys.push(key+'-'+i);
@@ -123,6 +123,7 @@ const LH=LH_Core({
   hideAnswers:d=>({...d,cau_hoi:(d.cau_hoi||[]).map(r=>{const o={...r};delete o.dap_an;delete o.DapAn;return o;})}),
   lock:fn=>{const l=LockService.getScriptLock();l.waitLock(15000);try{return fn();}finally{l.releaseLock();}},
   // v10.13: chữ ký kết quả Thầy đồ (HMAC với khóa bí mật sinh một lần, lưu trong Script Properties LH_KEY)
+  dtBuckets:ks=>lhDtBuckets_(ks), // v10.46: bản sao người chơi theo nhóm 5 cấp, đọc từ bộ nhớ đệm
   sign:s=>Utilities.computeHmacSha256Signature(s,lhKhoaBiMat_(),Utilities.Charset.UTF_8).map(b=>((b+256)%256).toString(16).padStart(2,'0')).join('')
 });
 function lhKhoaBiMat_(){const P=PropertiesService.getScriptProperties();let k=P.getProperty('LH_KEY');if(!k){k=Utilities.getUuid()+Utilities.getUuid();P.setProperty('LH_KEY',k);}return k;}
@@ -130,6 +131,8 @@ function lhKhoaBiMat_(){const P=PropertiesService.getScriptProperties();let k=P.
 function lhRun_(p){
   // v10.37: bảng xếp hạng đọc cả bảng nhân vật, giữ kết quả 10 phút cho trang chủ đỡ chờ
   if(p.action==='rank'){const c=CacheService.getScriptCache(),h=c.get('lh-rank');if(h)return h;LH_DB.fresh();const out=JSON.stringify(LH.handle('rank',{}));if(out.length<95000)c.put('lh-rank',out,600);return out;}
+  if(p.action==='dtIndex')return JSON.stringify({ok:false,error:'KHONG_CO_LENH'});
+  if(p.action==='doiThu')return JSON.stringify(LH.handle('doiThu',p)); // v10.46: chỉ đọc bộ nhớ đệm, không cần đọc lại bảng
   LH_DB.fresh();
   const rid=String(p.rid||'').slice(0,40);if(!rid)return JSON.stringify(LH.handle(p.action,p));
   const c=CacheService.getScriptCache(),k='rid:'+rid;let hit=c.get(k);
@@ -149,6 +152,23 @@ function doGet(e){
   const q=e&&e.parameter&&e.parameter.p;let p={};if(q){try{p=JSON.parse(q);}catch(err){}}
   return ContentService.createTextOutput(q?lhRun_(p):JSON.stringify(LH.handle('ping',{}))).setMimeType(ContentService.MimeType.JSON);
 }
+// v10.46: bản sao người chơi cho sự kiện thế giới. Mỗi nhóm 5 cấp một ô đệm (nén gzip), giữ 30 phút; lamMoiDoiThu chạy 10 phút một lần (trigger do kiemTra tạo)
+// nên lúc vào trận game chỉ đọc ô đệm, không đọc bảng nhân vật. Đệm hết hạn mà trigger chưa chạy: một lượt gọi dựng lại, các lượt khác chờ tối đa 6 giây.
+const LH_DT_GIAY=1800;
+function lamMoiDoiThu(){
+  LH_DB.fresh();const r=LH.handle('dtIndex',{}),cache=CacheService.getScriptCache();let n=0;
+  for(const [k,L] of Object.entries(r.b||{})){lhCachePut_('lh-dt-'+k,JSON.stringify(L),LH_DT_GIAY);n+=L.length;}
+  cache.put('lh-dt-at',String(Date.now()),LH_DT_GIAY);cache.remove('lh-dt-dung');Logger.log('Bản sao người chơi: '+n+' nhân vật, '+Object.keys(r.b||{}).length+' nhóm cấp');return r.b||{};
+}
+function lhDtBuckets_(ks){
+  const cache=CacheService.getScriptCache();
+  for(let i=0;!cache.get('lh-dt-at')&&i<12;i++){
+    if(!cache.get('lh-dt-dung')){cache.put('lh-dt-dung','1',60);try{const b=lamMoiDoiThu();return Object.fromEntries(ks.map(k=>[k,b[k]||[]]));}catch(e){cache.remove('lh-dt-dung');throw e;}}
+    Utilities.sleep(500);
+  }
+  const out={};for(const k of ks){const h=lhCacheGet_('lh-dt-'+k);out[k]=h?JSON.parse(h):[];}return out;
+}
+function lhLichDoiThu_(){try{if(!ScriptApp.getProjectTriggers().some(t=>t.getHandlerFunction()==='lamMoiDoiThu'))ScriptApp.newTrigger('lamMoiDoiThu').timeBased().everyMinutes(10).create();}catch(e){Logger.log('Chưa tạo được lịch làm mới bản sao: '+e);}}
 function xoaBoNhoDem(){lhCacheXoa_('lh-data');}
 // v10.31: chạy một lần — tạo trigger: sửa tay bất kỳ file Sheet dữ liệu tĩnh nào (cấu hình, vật phẩm, quái…) thì tự xoá bộ nhớ đệm, game nhận số mới ngay
 function tuDongLamMoi(){
@@ -482,4 +502,4 @@ function capNhatV1013(){
   const b=xoa('bo_cau_hoi',r=>/^(NV|SKQ)/i.test(String(r.id))),c=xoa('cau_hoi',r=>/^(NV|SKQ)/i.test(String(r.bo||r.id)));
   xoaBoNhoDem();Logger.log('Xóa '+a+' dòng hàng thành trì cũ, '+b+' bộ câu hỏi, '+c+' câu hỏi NV/SKQ');
 }
-function kiemTra(){try{lhDuLieuBoSung_();}catch(e){Logger.log('Chưa bổ sung được quái / nhiệm vụ mới: '+e);}try{const n=lhHinhAnhBoSung_();if(n)Logger.log('Thêm '+n+' dòng ảnh mới vào file Hình ảnh');}catch(e){Logger.log('Chưa bổ sung được file Hình ảnh: '+e);}xoaBoNhoDem();const d=lhStatic_();Logger.log(Object.keys(d).map(k=>k+': '+d[k].length+' dòng').join('\n'));LH_DB.rows('tai_khoan');LH_DB.rows('nhan_vat');LH_DB.rows('cho');Logger.log('Bảng người chơi sẵn sàng. Quyền gửi mail: '+MailApp.getRemainingDailyQuota()+' thư/ngày');}
+function kiemTra(){try{lhDuLieuBoSung_();}catch(e){Logger.log('Chưa bổ sung được quái / nhiệm vụ mới: '+e);}try{const n=lhHinhAnhBoSung_();if(n)Logger.log('Thêm '+n+' dòng ảnh mới vào file Hình ảnh');}catch(e){Logger.log('Chưa bổ sung được file Hình ảnh: '+e);}xoaBoNhoDem();const d=lhStatic_();Logger.log(Object.keys(d).map(k=>k+': '+d[k].length+' dòng').join('\n'));LH_DB.rows('tai_khoan');LH_DB.rows('nhan_vat');LH_DB.rows('cho');lhLichDoiThu_();try{lamMoiDoiThu();}catch(e){Logger.log('Chưa dựng được bản sao người chơi: '+e);}Logger.log('Bảng người chơi sẵn sàng. Quyền gửi mail: '+MailApp.getRemainingDailyQuota()+' thư/ngày');}

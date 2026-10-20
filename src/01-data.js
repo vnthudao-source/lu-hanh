@@ -540,6 +540,28 @@ linh:[
    {khoa:'co_may_man_toi_da',gia_tri:10,ghi_chu:'v10.13 · Cỏ may mắn: số cỏ dùng tối đa một lần gia cường / dung hợp (mỗi cỏ +1% tỉ lệ)'},
    {khoa:'thuoc_kn_phut',gia_tri:60,ghi_chu:'v10.41 · Thuốc kinh nghiệm: số phút hiệu lực mỗi lọ (giờ thực, tắt game vẫn tính)'},
    {khoa:'thuoc_kn_toi_da_phut',gia_tri:480,ghi_chu:'v10.41 · Thuốc kinh nghiệm: tổng thời gian tối đa khi uống cộng dồn (phút)'}
+,
+   {khoa:'tg_loi_dai_gio',gia_tri:'12h00, 20h00',ghi_chu:'v10.46 · Sự kiện thế giới (Tướng quân) · Lôi đài thế giới: giờ mở trong ngày theo giờ Việt Nam, nhiều giờ cách nhau dấu phẩy. Ghi dạng 12h00 (không gõ 12:00 vì Sheet tự đổi thành giờ)'},
+   {khoa:'tg_loi_dai_phut',gia_tri:5,ghi_chu:'v10.46 · Lôi đài thế giới: số phút một trận (vòng đài thu hẹp dần trong thời gian này)'},
+   {khoa:'tg_loi_dai_so_nguoi',gia_tri:10,ghi_chu:'v10.46 · Lôi đài thế giới: số người một trận, tính cả người chơi (máy yếu thì giảm)'},
+   {khoa:'tg_bac_gio',gia_tri:'13h00, 21h00',ghi_chu:'v10.46 · Chiến trường phương Bắc: giờ mở (dạng 13h00, cách nhau dấu phẩy) · mở ở bản sau'},
+   {khoa:'tg_bac_phut',gia_tri:10,ghi_chu:'v10.46 · Chiến trường phương Bắc: số phút một trận'},
+   {khoa:'tg_the_gioi_gio',gia_tri:'19h00, 22h00',ghi_chu:'v10.46 · Chiến trường thế giới: giờ mở (dạng 19h00, cách nhau dấu phẩy) · mở ở bản sau'},
+   {khoa:'tg_the_gioi_phut',gia_tri:15,ghi_chu:'v10.46 · Chiến trường thế giới: số phút một trận'},
+   {khoa:'tg_dang_ky_phut',gia_tri:5,ghi_chu:'v10.46 · Sự kiện thế giới: trước giờ mở bao nhiêu phút thì Tướng quân hiện dấu chấm than và cho vào bản đồ chờ'},
+   {khoa:'tg_luot_ngay',gia_tri:4,ghi_chu:'v10.46 · Sự kiện thế giới: số lượt tối đa mỗi sự kiện mỗi ngày (giờ Việt Nam)'},
+   {khoa:'tg_chenh_cap',gia_tri:5,ghi_chu:'v10.46 · Sự kiện thế giới: đối thủ / đồng đội là bản sao người chơi chênh không quá bấy nhiêu cấp'},
+   {khoa:'tg_npc_phan_tram',gia_tri:75,ghi_chu:'v10.46 · Sự kiện thế giới: không đủ bản sao thì tạo NPC giả lập theo chỉ số người chơi, mạnh bằng bấy nhiêu %'},
+   {khoa:'tg_mau_nhan',gia_tri:3,ghi_chu:'v10.46 · Sự kiện thế giới: máu của bản sao, NPC giả lập = máu nhân vật × hệ số này (trận đánh kéo dài hơn)'},
+   {khoa:'tg_kinh_nghiem_nhan',gia_tri:3,ghi_chu:'v10.46 · Sự kiện thế giới: hạ một đối thủ được bấy nhiêu lần kinh nghiệm quái thường vùng hợp cấp (lính thuê của đối thủ: một nửa)'},
+   {khoa:'tg_ha_toi_da',gia_tri:60,ghi_chu:'v10.46 · Sự kiện thế giới: số lần hạ được tính thưởng tối đa mỗi trận'},
+   {khoa:'tg_roi_do_nhan',gia_tri:1,ghi_chu:'v10.46 · Sự kiện thế giới: hệ số tỉ lệ rơi đồ khi hạ đối thủ (so với quái thường vùng hợp cấp)'},
+   {khoa:'tg_sach_phan_van',gia_tri:80,ghi_chu:'v10.46 · Sự kiện thế giới: tỉ lệ rơi sách mỗi lần hạ đối thủ (phần vạn; 80 = 0,8%)'},
+   {khoa:'tg_dong_moi_cap',gia_tri:2000,ghi_chu:'v10.46 · Sự kiện thế giới: vàng thưởng cuối trận = cấp nhân vật × bấy nhiêu đồng (10 000 đồng = 1 vàng)'},
+   {khoa:'tg_loai_phan_tram',gia_tri:60,ghi_chu:'v10.46 · Lôi đài thế giới: người bị loại nhận tối đa bấy nhiêu % vàng, theo thứ hạng'},
+   {khoa:'tg_thua_phan_tram',gia_tri:30,ghi_chu:'v10.46 · Chiến trường: phe thua mà còn sống tới cuối trận nhận bấy nhiêu % vàng; gục giữa trận thì về làng, không có vàng'},
+   {khoa:'tg_than_phan_tram',gia_tri:20,ghi_chu:'v10.46 · Thắng Lôi đài từ cấp 250: % cơ hội phần thưởng là đồ Thần (còn lại Huyền thoại)'},
+   {khoa:'tg_gieng_giay',gia_tri:60,ghi_chu:'v10.46 · Giếng cổ trong bản đồ sự kiện: số giây để nước đầy lại'}
   );
   // v10.13: quái sự kiện đột xuất (không có trong bãi quái; hiện theo sự kiện ngoài vùng an toàn gần cổng). Máu / sát thương theo cấp vùng.
   const EVM=[ // [id, tên, máu, sát thương, tốc, chạy, bán kính, cao, tầm đánh, tầm gần, hồi chiêu ms, vung tay ms, đồng, đẩy lùi %, hồi sinh, exp, bản đồ]
