@@ -544,7 +544,7 @@ linh:[
    {khoa:'tg_loi_dai_gio',gia_tri:'12h00, 20h00',ghi_chu:'v10.46 · Sự kiện thế giới (Tướng quân) · Lôi đài thế giới: giờ mở trong ngày theo giờ Việt Nam, nhiều giờ cách nhau dấu phẩy. Ghi dạng 12h00 (không gõ 12:00 vì Sheet tự đổi thành giờ)'},
    {khoa:'tg_loi_dai_phut',gia_tri:5,ghi_chu:'v10.46 · Lôi đài thế giới: số phút một trận (vòng đài thu hẹp dần trong thời gian này)'},
    {khoa:'tg_loi_dai_so_nguoi',gia_tri:10,ghi_chu:'v10.46 · Lôi đài thế giới: số người một trận, tính cả người chơi (máy yếu thì giảm)'},
-   {khoa:'tg_bac_gio',gia_tri:'13h00, 21h00',ghi_chu:'v10.46 · Chiến trường phương Bắc: giờ mở (dạng 13h00, cách nhau dấu phẩy) · mở ở bản sau'},
+   {khoa:'tg_bac_gio',gia_tri:'13h00, 21h00',ghi_chu:'v10.46 · Chiến trường phương Bắc: giờ mở (dạng 13h00, cách nhau dấu phẩy)'},
    {khoa:'tg_bac_phut',gia_tri:10,ghi_chu:'v10.46 · Chiến trường phương Bắc: số phút một trận'},
    {khoa:'tg_the_gioi_gio',gia_tri:'19h00, 22h00',ghi_chu:'v10.46 · Chiến trường thế giới: giờ mở (dạng 19h00, cách nhau dấu phẩy) · mở ở bản sau'},
    {khoa:'tg_the_gioi_phut',gia_tri:15,ghi_chu:'v10.46 · Chiến trường thế giới: số phút một trận'},
@@ -561,6 +561,14 @@ linh:[
    {khoa:'tg_loai_phan_tram',gia_tri:60,ghi_chu:'v10.46 · Lôi đài thế giới: người bị loại nhận tối đa bấy nhiêu % vàng, theo thứ hạng'},
    {khoa:'tg_thua_phan_tram',gia_tri:30,ghi_chu:'v10.46 · Chiến trường: phe thua mà còn sống tới cuối trận nhận bấy nhiêu % vàng; gục giữa trận thì về làng, không có vàng'},
    {khoa:'tg_than_phan_tram',gia_tri:20,ghi_chu:'v10.46 · Thắng Lôi đài từ cấp 250: % cơ hội phần thưởng là đồ Thần (còn lại Huyền thoại)'},
+   {khoa:'tg_bac_so_nguoi',gia_tri:5,ghi_chu:'v10.47 · Chiến trường phương Bắc: số người một đội, tính cả người chơi'},
+   {khoa:'tg_bac_dot_giay',gia_tri:30,ghi_chu:'v10.47 · Chiến trường phương Bắc: bao nhiêu giây một đợt lính phe địch'},
+   {khoa:'tg_bac_linh_dot',gia_tri:5,ghi_chu:'v10.47 · Chiến trường phương Bắc: số lính đợt đầu (cứ 3 đợt thêm 1 lính, 4 đợt có 1 Tướng phương Bắc)'},
+   {khoa:'tg_bac_tang_phan_tram',gia_tri:15,ghi_chu:'v10.47 · Chiến trường phương Bắc: mỗi đợt sau máu lính tăng bấy nhiêu % (sát thương tăng 10%)'},
+   {khoa:'tg_bac_linh_don',gia_tri:6,ghi_chu:'v10.47 · Chiến trường phương Bắc: máu lính đợt đầu = bấy nhiêu đòn thường của nhân vật'},
+   {khoa:'tg_bac_tru_don',gia_tri:70,ghi_chu:'v10.47 · Chiến trường phương Bắc: máu trụ canh phe địch = bấy nhiêu đòn thường của nhân vật'},
+   {khoa:'tg_bac_nha_don',gia_tri:130,ghi_chu:'v10.47 · Chiến trường phương Bắc: máu nhà chính phe địch = bấy nhiêu đòn thường của nhân vật'},
+   {khoa:'tg_bac_ha_toi_da',gia_tri:150,ghi_chu:'v10.47 · Chiến trường phương Bắc: số lần hạ lính / trụ được tính thưởng tối đa mỗi trận'},
    {khoa:'tg_gieng_giay',gia_tri:60,ghi_chu:'v10.46 · Giếng cổ trong bản đồ sự kiện: số giây để nước đầy lại'}
   );
   // v10.13: quái sự kiện đột xuất (không có trong bãi quái; hiện theo sự kiện ngoài vùng an toàn gần cổng). Máu / sát thương theo cấp vùng.

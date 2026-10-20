@@ -556,10 +556,10 @@ window.startUI=(session)=>{
   }
   document.addEventListener('click',async ev=>{const b=ev.target.closest('[data-tg-go]');if(!b)return;b.disabled=true;clearInterval(tgTimer);closeModal();await game.tgEnter(b.dataset.tgGo);});
   function tgResult(r,M0){
-    if(!r)return;const E=M0.E,title=r.win?`${svg('check')}${esc(E.name)} · Thắng!`:`${svg('flag')}${esc(E.name)} · Hạng ${r.rank}/${r.n}`;
+    if(!r)return;const E=M0.E,loi=E.id==='loi',title=r.win?`${svg('check')}${esc(E.name)} · Thắng!`:loi?`${svg('flag')}${esc(E.name)} · Hạng ${r.rank}/${r.n}`:`${svg('close')}${esc(E.name)} · Thất bại`;
     const it=r.item,row=(ic,t,v)=>`<div class="qrow">${ic}<div><b>${t}</b></div><span class="qprog">${v}</span></div>`;
-    let body=`<p class="tg-intro">${r.win?'Bạn là người cuối cùng còn đứng trên võ đài.':'Bạn đã bị loại. Có thể ở lại xem các cao thủ khác so tài.'}</p>`;
-    body+=row(svg('sword'),'Hạ đối thủ',r.kills)+row(svg('spark'),'Kinh nghiệm','+'+(r.exp||0))+row(svg('coin'),'Vàng thưởng',coins(r.copper||0));
+    let body=`<p class="tg-intro">${loi?(r.win?'Bạn là người cuối cùng còn đứng trên võ đài.':'Bạn đã bị loại. Có thể ở lại xem các cao thủ khác so tài.'):(r.win?'Nhà chính phe địch đã đổ. Phe ta thắng trận!':esc(r.why||'Phe ta thua trận.')+(r.copper?' Còn trụ tới cuối trận nên vẫn nhận một phần vàng.':''))}</p>`;
+    body+=row(svg('sword'),loi?'Hạ đối thủ':'Hạ lính, trụ phe địch',r.kills)+row(svg('spark'),'Kinh nghiệm','+'+(r.exp||0))+row(svg('coin'),'Vàng thưởng',coins(r.copper||0));
     if(it)body+=`<div class="qrow act">${icon(it.type,Player.rar(it).color)}<div><b style="color:${Player.rar(it).color}">${esc(Player.nameOf(it))}</b><small>Phần thưởng người thắng · đã cất vào túi</small></div></div>`;
     if(r.lost)body+=`<p class="tg-intro">Túi đầy, không nhận được phần thưởng đồ.</p>`;
     body+=`<div class="tg-act"><button type="button" class="primary" id="tgHome">${svg('home')}Về làng</button><button type="button" id="tgStay">${svg('eye')}Ở lại xem</button></div>`;

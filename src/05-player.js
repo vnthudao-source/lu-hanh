@@ -682,7 +682,7 @@ const Player=(()=>{
   const TG={
     loi:{id:'loi',name:'Lôi đài thế giới',short:'Lôi đài',map:'loi-dai-tg',gio:'tg_loi_dai_gio',phut:'tg_loi_dai_phut',gio0:'12h00, 20h00',phut0:5,on:1,
       desc:'Hỗn chiến tự do với các cao thủ cùng cấp. Vòng đài thu hẹp dần, người cuối cùng còn trụ lại (hoặc còn sống khi hết giờ) là người thắng.'},
-    bac:{id:'bac',name:'Chiến trường phương Bắc',short:'Phương Bắc',map:'bac-chien-tg',gio:'tg_bac_gio',phut:'tg_bac_phut',gio0:'13h00, 21h00',phut0:10,on:0,
+    bac:{id:'bac',name:'Chiến trường phương Bắc',short:'Phương Bắc',map:'bac-chien-tg',gio:'tg_bac_gio',phut:'tg_bac_phut',gio0:'13h00, 21h00',phut0:10,on:1,team:5,
       desc:'Đội 5 người giữ một đường chéo, chặn các đợt lính mạnh dần và phá nhà chính phe địch.'},
     the:{id:'the',name:'Chiến trường thế giới',short:'Thế giới',map:'the-gioi-tg',gio:'tg_the_gioi_gio',phut:'tg_the_gioi_phut',gio0:'19h00, 22h00',phut0:15,on:0,
       desc:'10 đấu 10 trên bản đồ ba đường, có lính hai phe. Phá nhà chính đối phương trước là thắng.'}};
@@ -715,7 +715,7 @@ const Player=(()=>{
     if(t==='tgStart'){const st=tgState(id,now+90000),f=tgFlags(s,now);if(!(st.phase==='run'&&Math.abs(now-st.start)<=150000))throw Error('TG_SAI_GIO');
       if(f.cur&&f.cur.ev===id&&f.cur.at===st.start)throw Error('TG_DA_VAO');if(tgLeft(s,id,now)<=0)throw Error('TG_HET_LUOT');
       f.n[id]=num(f.n[id])+1;f.cur={ev:id,at:st.start,k:0};return {ev:id,left:tgLeft(s,id,now)};}
-    if(t==='tgKill'){const c=tgCur(s,id,now);if(c.k>=num(CFG.tg_ha_toi_da,60))throw Error('TG_DU_LUOT_HA');c.k++;
+    if(t==='tgKill'){const c=tgCur(s,id,now);if(c.k>=num(CFG['tg_'+id+'_ha_toi_da'],num(CFG.tg_ha_toi_da,60)))throw Error('TG_DU_LUOT_HA');c.k++;
       const M=MON[tgMon(s.level||1)],D=derive(s),F=D.fx||{},exp=Math.min(expNeed(s.level||1),Math.round(killExp(M,num(F.expUp)+xpBuff(s,now))*num(CFG.tg_kinh_nghiem_nhan,3)*(op.m?.5:1))); // như hạ quái: mỗi lần hạ tối đa 1 cấp
       const items_=[],lost=[];const drop=rollDrop(tgMon(s.level||1),rng,(1+num(F.luck)/100)*num(CFG.tg_roi_do_nhan,1));
       if(rng()*1e4<num(CFG.tg_sach_phan_van,80))drop.items.push(tgItem(s.level||1,tgQuality(s.level||1,rng),rng,true));
