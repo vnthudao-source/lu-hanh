@@ -24,7 +24,9 @@ const LH_IMG=(()=>{
   function probe(){if(NOSIZE||typeof Image==='undefined')return;const k=Object.keys(MAP).find(k=>/=w\d+/.test(MAP[k]));if(!k)return;const im=new Image();im.referrerPolicy='no-referrer';
     im.onerror=()=>{const o=new Image();o.referrerPolicy='no-referrer';o.onload=()=>off();o.src=String(MAP[k]).replace(/=w\d+(?=\?|$)/,'');};im.src=MAP[k];
     function off(){NOSIZE=true;try{localStorage.setItem('lh-img-nosize','1');}catch(e){}const m={};for(const [k,u] of Object.entries(MAP))m[k]=String(u).replace(/=w\d+(?=\?|$)/,'');try{localStorage.setItem(KEY,JSON.stringify(m));}catch(e){}load(m);}}
-  const url=key=>MAP[key]||'';
+  // v10.51: đồ dùng chung ảnh với đồ khác (Hổ trắng Tây Bắc của nhiệm vụ Vịt con = ảnh Hổ trắng Tây Bắc bán ở Thăng Long)
+  const ALIAS={'vat_pham:ho-trang-vit':'vat_pham:ho-trang'};
+  const url=key=>MAP[key]||(ALIAS[key]&&MAP[ALIAS[key]])||'';
   const attr=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
   // Biểu tượng HTML: ảnh nếu có, lỗi thì quay về biểu tượng mặc định
   function icon(key,fb,color){
@@ -34,7 +36,7 @@ const LH_IMG=(()=>{
   }
   // Ảnh cho canvas (quái, NPC, túi đồ, vũ khí cầm tay): chỉ trả về khi đã tải xong
   // v10.12: chỉ tải trước ảnh giao diện (nền, logo, chân dung); ảnh quái, NPC, đồ vật tải khi lần đầu cần vẽ (warm để tải sớm khi vào bản đồ)
-  function want(key){const u=MAP[key];if(!u||/^bieu_tuong:/.test(key))return null;let p=PIC[key];if(!p||p.src!==u){p=new Image();p.referrerPolicy='no-referrer';p.src=u;PIC[key]=p;}return p;}
+  function want(key){const u=url(key);if(!u||/^bieu_tuong:/.test(key))return null;let p=PIC[key];if(!p||p.src!==u){p=new Image();p.referrerPolicy='no-referrer';p.src=u;PIC[key]=p;}return p;}
   function pic(key){const p=PIC[key]||want(key);return p&&p.complete&&p.naturalWidth>0?p:null;}
   const warm=keys=>{for(const k of keys||[])want(k);};
   // Biểu tượng giao diện: thay nội dung <symbol id="i-…"> bằng ảnh, mọi chỗ dùng biểu tượng đó tự đổi theo
