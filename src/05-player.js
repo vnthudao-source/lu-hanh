@@ -35,10 +35,10 @@ const Player=(()=>{
     weak:{name:'Suy nhược',desc:'giảm sát thương 40%',color:'#c060ff',dur:6},armor:{name:'Phá giáp',desc:'giảm phòng ngự 50%',color:'#ff9040',dur:6},poison:{name:'Trúng độc',desc:'mất máu dần',color:'#80e060',dur:5},
     bomb:{name:'Nổ',desc:'nổ tại chỗ đứng, sát thương lớn',color:'#ff5030',dur:0},tubao:{name:'Tự bạo',desc:'khi yếu, trùm nổ tung',color:'#ff2020',dur:0},
     // v10.22: chiến thuật trùm (bị động, không phải đòn đánh) — cần cách đánh riêng mới hạ được
-    tron:{name:'Bỏ chạy',desc:'còn dưới 20% máu thì bỏ chạy về hang, thoát được là hồi đầy máu',hint:'Dùng sách Hỏa đốt cháy để giữ chân, hoặc cung, nỏ, gậy phép bắn theo khi trùm bỏ chạy',color:'#ff80c0',dur:0,passive:1},
+    tron:{name:'Bỏ chạy',desc:'còn dưới 20% máu thì bỏ chạy về hang một lần, thoát được là hồi một nửa máu; lần sau đánh tới cùng',hint:'Dùng sách Hỏa đốt cháy để giữ chân, hoặc cung, nỏ, gậy phép bắn theo khi trùm bỏ chạy',color:'#ff80c0',dur:0,passive:1},
     bay:{name:'Bay lượn',desc:'thỉnh thoảng bay lên cao, đòn cận chiến chỉ còn 15% sát thương',hint:'Đổi sang cung, nỏ hoặc gậy phép khi trùm bay lên',color:'#c0d8ff',dur:0,passive:1},
     'giap-bang':{name:'Giáp băng',desc:'giáp băng giảm 70% sát thương nhận vào',hint:'Gắn sách Hỏa: đòn lửa làm tan giáp băng trong 5 giây',color:'#a0e0ff',dur:0,passive:1},
-    'hoi-mau':{name:'Tái sinh',desc:'mỗi giây hồi 1% máu',hint:'Đốt cháy (sách Hỏa) hoặc làm trúng độc thì trùm ngừng hồi máu',color:'#90e070',dur:0,passive:1},
+    'hoi-mau':{name:'Tái sinh',desc:'ngừng trúng đòn quá 2,5 giây thì mỗi giây hồi 1% máu',hint:'Đốt cháy (sách Hỏa) hoặc làm trúng độc thì trùm ngừng hồi máu',color:'#90e070',dur:0,passive:1},
     'phan-giap':{name:'Da đá',desc:'đòn cận chiến chỉ còn 60% sát thương và dội lại 15% vào người đánh',hint:'Đánh từ xa bằng cung, nỏ, gậy phép để không bị dội đòn',color:'#c8b8a0',dur:0,passive:1}};
   // Loại vũ khí (tab vu_khi): sát thương, tầm đánh, độ lan, thời gian một đòn, mana kỹ năng, thời gian hồi chiêu, nội tại mỗi đòn
   const W_DEF={punch:{name:'Tay không',dmg:.55,range:50,spread:75,dur:.32,mana:1,cd:1,passive:12}};

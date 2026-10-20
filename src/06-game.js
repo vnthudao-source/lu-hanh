@@ -1798,14 +1798,15 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
   function tacHint(m,M){if(tacSeen.has(m.type))return;tacSeen.add(m.type);const t=M.tac.map(k=>Player.SKILLS[k]).filter(Boolean);message(svg('eye')+`<b>${esc(M.name)}</b> · ${t.map(x=>x.name+': '+x.desc).join(' · ')}<br><small>${t.map(x=>x.hint).join(' · ')}</small>`,7);}
   function bossTactics(m,M,dt){
     const T=M.tac,c=center(m);if(m.aggro>time)tacHint(m,M);
-    if(T.includes('hoi-mau')&&m.hp<m.max&&!(m.burn&&m.burn.until>time)){m.hp=Math.min(m.max,m.hp+m.max*.01*dt);if(time>(m.regAt||0)&&m.aggro>time){m.regAt=time+1.5;floater(c.x,c.y-M.h*.5-20,'Tái sinh','#90e070',12);}}
+    // v10.52: chỉ tái sinh khi không trúng đòn trong 2,5 giây (đánh liên tục thì luôn hạ được, dù sát thương thấp)
+    if(T.includes('hoi-mau')&&m.hp<m.max&&!(m.burn&&m.burn.until>time)&&time-(m.hurt||-9)>2.5){m.hp=Math.min(m.max,m.hp+m.max*.01*dt);if(time>(m.regAt||0)&&m.aggro>time){m.regAt=time+1.5;floater(c.x,c.y-M.h*.5-20,'Tái sinh','#90e070',12);}}
     if(T.includes('bay')&&m.aggro>time){if(!m.flyNext)m.flyNext=time+6;if(time>=m.flyNext){m.flyUntil=time+4;m.flyNext=time+12;floater(c.x,c.y-M.h-20,'Bay lên cao!','#c0d8ff',16);}}
     m.fly=m.flyUntil>time?60*Math.min(1,(m.flyUntil-time)/.4,(time-(m.flyUntil-4))/.4):0;
     if(T.includes('tron')){
-      if(!m.fleeing&&m.hp<m.max*.2&&time>(m.fleeCd||0)){if(m.scorch>time){if(time>(m.pinAt||0)){m.pinAt=time+3;floater(c.x,c.y-M.h-20,'Lửa giữ chân!','#ffb070',15);}}else{m.fleeing={until:time+7};m.atk=null;m.leap=null;m.cast=null;floater(c.x,c.y-M.h-20,'Bỏ chạy!','#ff80c0',18);message(svg('eye')+`${esc(M.name)} bỏ chạy! Đốt cháy bằng sách Hỏa hoặc bắn theo, không thì nó hồi đầy máu`,4);}}
+      if(!m.fleeing&&!m.fledOnce&&m.hp<m.max*.2&&time>(m.fleeCd||0)){if(m.scorch>time){if(time>(m.pinAt||0)){m.pinAt=time+3;floater(c.x,c.y-M.h-20,'Lửa giữ chân!','#ffb070',15);}}else{m.fleeing={until:time+7};m.fledOnce=true;m.atk=null;m.leap=null;m.cast=null;floater(c.x,c.y-M.h-20,'Bỏ chạy!','#ff80c0',18);message(svg('eye')+`${esc(M.name)} bỏ chạy! Đốt cháy bằng sách Hỏa hoặc bắn theo, không thì nó hồi một nửa máu · lần sau nó sẽ không chạy nữa`,4);}}
       if(m.fleeing){
         if(m.scorch>time){m.fleeing=null;m.fleeCd=time+6;m.stunUntil=time+2;floater(c.x,c.y-M.h-20,'Bị lửa thiêu, ngã quỵ!','#ffb070',16);burst(c.x,c.y,'#ff8a3d',24,180);return true;}
-        if(time>m.fleeing.until||Math.hypot(m.x-hero.x,m.y-hero.y)>760){m.fleeing=null;m.fleeCd=time+10;m.hp=m.max;m.x=m.hx;m.y=m.hy;m.aggro=0;m.burn=null;burst(m.x,m.y-30,'#ff80c0',30,200);message(svg('close')+`${esc(M.name)} đã trốn về hang và hồi đầy máu`,4);return true;}
+        if(time>m.fleeing.until||Math.hypot(m.x-hero.x,m.y-hero.y)>760){m.fleeing=null;m.fleeCd=time+10;m.hp=Math.max(m.hp,Math.round(m.max*.5));m.x=m.hx;m.y=m.hy;m.aggro=0;m.burn=null;burst(m.x,m.y-30,'#ff80c0',30,200);message(svg('close')+`${esc(M.name)} đã trốn về hang và hồi một nửa máu · lần này nó sẽ đánh tới cùng`,4);return true;}
         moveMon(m,fleeGoal(m,hero.x,hero.y),M.run*1.6,dt,M);return true;
       }
     }
@@ -1863,7 +1864,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
           if(!hero.dead&&Math.hypot(hero.x-m.x,hero.y-m.y)<R)hurtHero(M.dmg*4,m);for(const e of allies)if(e.hp>0&&Math.hypot(e.x-m.x,e.y-m.y)<R)hurtAlly(e,M.dmg*4);for(const e of bots)if(!e.dead&&Math.hypot(e.x-m.x,e.y-m.y)<R)hurtBot(e,M.dmg*4);
           m.tubao=null;m.hp=0;kill(m,'hero');continue;}
         m.moving=false;if(Math.random()<.5)burst(m.x+(Math.random()-.5)*60,m.y-Math.random()*M.h,'#ff6030',3,120);continue;}
-      if(m.dead){if(time>m.respawn){Object.assign(m,{dead:false,hp:m.max,heroDmg:0,cast:null,tubao:null,skillCd:0,x:m.hx,y:m.hy,atk:null,aggro:-9,flee:0,burn:null,leap:null,stunUntil:0,frozenUntil:0,slowUntil:0,fearUntil:0,path:null,stuck:0});}continue;}
+      if(m.dead){if(time>m.respawn){Object.assign(m,{dead:false,fledOnce:false,fleeing:null,hp:m.max,heroDmg:0,cast:null,tubao:null,skillCd:0,x:m.hx,y:m.hy,atk:null,aggro:-9,flee:0,burn:null,leap:null,stunUntil:0,frozenUntil:0,slowUntil:0,fearUntil:0,path:null,stuck:0});}continue;}
       if(m.burn){if(time<m.burn.until){m.burnAcc+=m.burn.dps*dt;if(m.burnAcc>=1){const v=Math.floor(m.burnAcc);m.burnAcc-=v;hitMonster(m,{abs:v,owner:'burn',color:m.burn.color||'#ff9a3d'},0,0);if(m.dead)continue;}}else m.burn=null;}
       if(M.tac&&M.tac.length&&bossTactics(m,M,dt))continue;
       if(time<m.stunUntil||time<m.frozenUntil){m.moving=false;continue;}
