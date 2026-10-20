@@ -23,7 +23,13 @@ const LH_SHEETS=@@IDS@@;
 const LH_STATIC={cau_hinh:'cau_hinh',gia_cuong:'cau_hinh',pham_chat:'pham_chat',thuoc_tinh:'pham_chat',vat_pham:'vat_pham',cua_hang:'cua_hang',bo_huyen_thoai:'bo_huyen_thoai',tuong:'bo_huyen_thoai',do_than:'do_than',quai:'quai',nhiem_vu:'nhiem_vu',linh:'linh',vu_khi:'vat_pham',ban_do:'cau_hinh',dien_mao:'cau_hinh',goi_nap:'cau_hinh',bo_cau_hoi:'nhiem_vu',cau_hoi:'nhiem_vu',hinh_anh:'hinh_anh'};
 // Bảng ngoài (v10.11): câu hỏi Thầy đồ đọc thẳng từ tab CauHoi của bảng OCD_Quest (cột QuestionID, QuestID, StepID, ThuTu, CauHoi, A, B, C, D, DapAn).
 // Đọc được thì thay cho tab cau_hoi; không đọc được (chưa chia sẻ quyền) thì dùng tab cau_hoi / số mặc định. Để trống id để tắt.
-const LH_NGOAI={cau_hoi:{id:'10EjfikAuPyc1t_aGDDsUlq0eewo0WUl5qOyXjkVG28M',tab:'CauHoi',cot:{id:'QuestionID',bo:'QuestID',thu_tu:'ThuTu',cau:'CauHoi',a:'A',b:'B',c:'C',d:'D',dap_an:'DapAn'}}};
+// v10.53: mỗi tab đọc được nhiều bảng ngoài; bảng NganHangCauHoi không có cột bộ → mỗi Chủ đề (ChuDe) thành một bài (mã TP_ + tên chủ đề không dấu), chỉ lấy dòng TrangThai = ACTIVE.
+//   Bộ nào có trong bảng ngoài thì thay bộ cùng mã ở tab cau_hoi / mặc định; bộ khác giữ nguyên.
+const LH_NGOAI={cau_hoi:[
+ {id:'10EjfikAuPyc1t_aGDDsUlq0eewo0WUl5qOyXjkVG28M',tab:'CauHoi',cot:{id:'QuestionID',bo:'QuestID',thu_tu:'ThuTu',cau:'CauHoi',a:'A',b:'B',c:'C',d:'D',dap_an:'DapAn'}},
+ {id:'10wfRsE496JYzfit06qwzb_MP_-fbbNyFe9UNW3TqBE4',tab:'NganHangCauHoi',cot:{id:'QuestionID',cau:'CauHoi',a:'A',b:'B',c:'C',d:'D',dap_an:'DapAn',chu_de:'ChuDe',trang_thai:'TrangThai'},boTheo:'chu_de',tienTo:'TP_'}
+]};
+function lhSlug_(t){return String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toUpperCase().replace(/[^A-Z0-9]+/g,'_').replace(/^_+|_+$/g,'');}
 // Cột của các bảng người chơi (file "LH · Người chơi")
 const LH_COLS={
   tai_khoan:['id','username','email','muoi','mat_khau','tao_luc','token','token_het_han','ma_khoi_phuc','ma_het_han','token_cu','ruong'],
@@ -59,8 +65,11 @@ function lhStatic_(){
   // Quái, nhiệm vụ mới của bản cập nhật (vùng mới) mà Sheet chưa có dòng: dùng số liệu mặc định cho tới khi chạy kiemTra để chép vào Sheet
   for(const tab of LH_BO_SUNG)if(LH_SHEETS[LH_STATIC[tab]]&&Array.isArray(out[tab])&&out[tab].length){const has=new Set(out[tab].map(r=>lhKhoa_(tab,r)));for(const r of LH_DEFAULT[tab]||[])if(!has.has(lhKhoa_(tab,r)))out[tab].push(r);}
   // Câu hỏi Thầy đồ từ bảng ngoài
-  for(const [tab,N] of Object.entries(LH_NGOAI)){if(!N.id)continue;try{const sh=SpreadsheetApp.openById(N.id).getSheetByName(N.tab);if(!sh||sh.getLastRow()<2)continue;
-    const rows=lhRows_(sh).map(r=>Object.fromEntries(Object.entries(N.cot).map(([k,c])=>[k,r[c]===undefined?'':r[c]]))).filter(r=>r.id&&r.cau&&!/^(NV|SKQ)/i.test(String(r.bo||''))); /* v10.13: bỏ bộ NV*, SKQ* */if(rows.length)out[tab]=rows;}catch(e){Logger.log('Không đọc được bảng ngoài '+tab+': '+e);}}
+  for(const [tab,list] of Object.entries(LH_NGOAI)){const ext=[];for(const N of [].concat(list)){if(!N.id)continue;try{const sh=SpreadsheetApp.openById(N.id).getSheetByName(N.tab);if(!sh||sh.getLastRow()<2)continue;
+    let rows=lhRows_(sh).map(r=>Object.fromEntries(Object.entries(N.cot).map(([k,c])=>[k,r[c]===undefined?'':r[c]])));
+    if(N.boTheo){const n={};rows=rows.filter(r=>!r.trang_thai||/^active$/i.test(String(r.trang_thai).trim())).map(r=>{const bo=(N.tienTo||'')+lhSlug_(r[N.boTheo]);n[bo]=(n[bo]||0)+1;const o={...r,bo,thu_tu:n[bo]};delete o.trang_thai;return o;});}
+    ext.push(...rows.filter(r=>r.id&&r.cau&&r.bo&&!/^(NV|SKQ)/i.test(String(r.bo||'')))); /* v10.13: bỏ bộ NV*, SKQ* */}catch(e){Logger.log('Không đọc được bảng ngoài '+tab+' '+N.tab+': '+e);}}
+    if(ext.length){const bos=new Set(ext.map(r=>String(r.bo)));out[tab]=(out[tab]||[]).filter(r=>!bos.has(String(r.bo))).concat(ext);}}
   // Mã băm nội dung (trình duyệt lưu đệm, gửi lại h để khỏi tải lại)
   {const s0=JSON.stringify(out);let h=5381;for(let i=0;i<s0.length;i++)h=((h*33)^s0.charCodeAt(i))>>>0;out._h=s0.length.toString(36)+'-'+h.toString(36);}
   // Ảnh tĩnh: chỉ gửi các dòng đã dán link

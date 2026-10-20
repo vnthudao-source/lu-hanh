@@ -471,14 +471,14 @@ window.startUI=(session)=>{
   /* ---------- Thầy đồ: hỏi bài thư pháp (máy chủ chấm). Sai quá → săn quái lấy manh mối → thầy chỉ đáp án → trả lời lại nhận thưởng giảm ---------- */
   let quizSt={bo:null,ans:{}};
   function showQuiz(){
-    const sets=Object.values(Player.QUIZ).filter(Q=>Q.qs.length).sort((a,b)=>a.order-b.order),Z=p.quiz||{},maxWrong=Number(Player.CFG.quiz_sai_toi_da)||1,tries=Number(Player.CFG.quiz_lan_thu)||2,lo=Number(Player.CFG.quiz_thuong_lo)||50;
+    const sets=Object.values(Player.QUIZ).filter(Q=>Q.qs.length).sort((a,b)=>a.order-b.order),Z=p.quiz||{},tries=Number(Player.CFG.quiz_lan_thu)||2,lo=Number(Player.CFG.quiz_thuong_lo)||50;
     const st=id=>Z[id]||{done:0,fail:0,hunt:null,reveal:false};
-    let firstOpen=null;sets.forEach((Q,i)=>{if(firstOpen==null&&!st(Q.id).done)firstOpen=i;});
+    // v10.53: chọn bài bất kỳ (không khóa theo thứ tự)
     if(quizSt.bo==null){
-      const rows=sets.map((Q,i)=>{const z=st(Q.id),locked=i>(firstOpen==null?sets.length:firstOpen),M=Player.MON[Q.mon];
+      const rows=sets.map((Q,i)=>{const z=st(Q.id),locked=false,M=Player.MON[(z.hunt&&z.hunt.mon)||Q.mon],hmap=(z.hunt&&z.hunt.map)||Q.map;
         const tag=z.done?`<span class="qprog">${svg('check')}Đã xong</span>`:locked?`<span class="qprog">${svg('lock')}Bài trước</span>`:z.reveal?`<button class="primary" data-quiz="${Q.id}">${svg('eye')}Xem đáp án</button>`:z.hunt?`<span class="qprog">${svg('quest')}Manh mối ${z.hunt.got}/${z.hunt.need}</span>`:`<button data-quiz="${Q.id}">${svg('next')}Trả lời</button>`;
-        return `<div class="qrow${z.done?' dim':''}">${svg('book')}<div><b>${esc(Q.name)}</b><small>${Q.qs.length} câu${z.hunt&&!z.done?` · săn ${M?esc(M.name):Q.mon} ${z.hunt.got}/${z.hunt.need}${Q.map?' ở '+esc((Player.REGIONS.find(r=>r.id===Q.map)||{}).name||Q.map):''}`:''}${z.fail&&!z.done?` · sai ${z.fail} lần`:''}</small><span class="chips">${chip('orb','+'+Q.rubies+' hồng ngọc','#ff7aa0')}</span></div>${tag}</div>`;}).join('');
-      openModal(ttl('book','Thầy đồ hỏi bài')+`<div class="purse">${ruby(p.rubies)}</div>`,`<small class="sel-desc">Sách "Thư pháp Việt". Mỗi bài ${sets[0]?sets[0].qs.length:5} câu, sai tối đa ${maxWrong} câu vẫn được thưởng. Sai quá ${tries} lần hoặc chọn "chưa biết" thì đi săn quái lấy manh mối, thầy sẽ chỉ đáp án (thưởng còn ${lo}%).</small><div class="quest-rows" style="margin-top:8px">${rows||'<div class="cho-note">Chưa có câu hỏi</div>'}</div>`,true);
+        return `<div class="qrow${z.done?' dim':''}">${svg('book')}<div><b>${esc(Q.name)}</b><small>${Q.qs.length} câu · sai tối đa ${Player.quizMaxWrong(Q)}${z.hunt&&!z.done?` · săn ${M?esc(M.name):z.hunt.mon} ${z.hunt.got}/${z.hunt.need}${hmap?' ở '+esc((Player.REGIONS.find(r=>r.id===hmap)||{}).name||hmap):''}`:''}${z.fail&&!z.done?` · sai ${z.fail} lần`:''}</small><span class="chips">${chip('orb','+'+Q.rubies+' hồng ngọc','#ff7aa0')}</span></div>${tag}</div>`;}).join('');
+      openModal(ttl('book','Thầy đồ hỏi bài')+`<div class="purse">${ruby(p.rubies)}</div>`,`<small class="sel-desc">Sách "Thư pháp Việt". Chọn bài nào trả lời trước cũng được. Mỗi 5 câu sai tối đa ${Number(Player.CFG.quiz_sai_toi_da)||1} câu vẫn được thưởng. Sai quá ${tries} lần hoặc chọn "chưa biết" thì đi săn quái lấy manh mối, thầy sẽ chỉ đáp án (thưởng còn ${lo}%).</small><div class="quest-rows" style="margin-top:8px">${rows||'<div class="cho-note">Chưa có câu hỏi</div>'}</div>`,true);
       document.querySelectorAll('[data-quiz]').forEach(b=>b.onclick=()=>{quizSt={bo:b.dataset.quiz,ans:{}};showQuiz();});
       return;
     }
@@ -486,7 +486,7 @@ window.startUI=(session)=>{
     if(z.reveal&&!quizSt.show){Net.call('quizShow',{charId:session.charId,bo:Q.id}).then(r=>{quizSt.show=r.show;r.show.forEach((K,i)=>{quizSt.ans[i]=K;});showQuiz();},()=>{});}
     const qs=Q.qs.map((q,i)=>`<div class="quiz-q${wrongSet.has(i)?' wrong':''}"><b>${i+1}. ${esc(q.q)}</b><div class="quiz-opts">${['a','b','c','d'].map(k=>{const K=k.toUpperCase(),on=quizSt.ans[i]===K,isAns=z.reveal&&quizSt.show&&quizSt.show[i]===K;return `<button data-qa="${i}:${K}" class="${on?'on':''}${isAns?' ans':''}"><i>${K}</i>${esc(q[k])}</button>`;}).join('')}</div></div>`).join('');
     const n=Q.qs.length,picked=Object.keys(quizSt.ans).length;
-    openModal(ttl('book',Q.name)+`<div class="purse">${ruby(p.rubies)}</div>`,`<div class="quiz-wrap">${z.reveal?`<small class="sel-desc">${svg('eye')}Thầy đồ đã chỉ đáp án (viền sáng). Chọn đúng để nhận ${lo}% thưởng.</small>`:`<small class="sel-desc">Chọn đáp án cho ${n} câu rồi nộp bài. Sai tối đa ${maxWrong} câu.</small>`}${qs}
+    openModal(ttl('book',Q.name)+`<div class="purse">${ruby(p.rubies)}</div>`,`<div class="quiz-wrap">${z.reveal?`<small class="sel-desc">${svg('eye')}Thầy đồ đã chỉ đáp án (viền sáng). Chọn đúng để nhận ${lo}% thưởng.</small>`:`<small class="sel-desc">Chọn đáp án cho ${n} câu rồi nộp bài. Sai tối đa ${Player.quizMaxWrong(Q)} câu.</small>`}${qs}
       <div class="quiz-bar"><button id="quizBack">${svg('close')}Quay lại</button>${z.reveal||z.hunt?'':`<button id="quizHunt">${svg('quest')}Chưa biết, xin việc săn</button>`}<button id="quizGo" class="primary"${picked<n?' disabled':''}>${svg('check')}Nộp bài (${picked}/${n})</button></div></div>`,true);
     document.querySelectorAll('[data-qa]').forEach(b=>b.onclick=()=>{const [i,K]=b.dataset.qa.split(':');quizSt.ans[i]=K;showQuiz();});
     $('#quizBack').onclick=()=>{quizSt={bo:null,ans:{}};showQuiz();};

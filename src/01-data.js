@@ -529,11 +529,12 @@ linh:[
   ];
   for(const [id,ten,gioi_tinh,gia,menh_lenh,suc_manh,nhanh_nhen,suc_khoe,tri_tue,trang_bi,mo_ta,thanh] of ML)GAME_DATA.linh.push({id,ten,gioi_tinh,gia,menh_lenh,suc_manh,nhanh_nhen,suc_khoe,tri_tue,trang_bi,mo_ta,thanh});
   GAME_DATA.cau_hinh.push(
-   {khoa:'quiz_sai_toi_da',gia_tri:1,ghi_chu:'Thầy đồ: số câu sai tối đa vẫn được thưởng (trong 5 câu)'},
+   {khoa:'quiz_sai_toi_da',gia_tri:1,ghi_chu:'Thầy đồ: số câu sai tối đa vẫn được thưởng, tính cho mỗi 5 câu (v10.53: bài 10 câu sai tối đa gấp đôi)'},
    {khoa:'quiz_lan_thu',gia_tri:2,ghi_chu:'Thầy đồ: trả lời sai quá số lần này thì phải đi săn quái lấy manh mối'},
    {khoa:'quiz_san_so_luong',gia_tri:8,ghi_chu:'Thầy đồ: số quái phải săn để được chỉ đáp án (bỏ trống cột so_luong ở bo_cau_hoi thì dùng số này)'},
    {khoa:'quiz_thuong_lo',gia_tri:50,ghi_chu:'Thầy đồ: % thưởng khi trả lời sau khi được chỉ đáp án'},
-   {khoa:'quiz_kinh_nghiem',gia_tri:300,ghi_chu:'Thầy đồ: kinh nghiệm thưởng mỗi bộ câu hỏi (nhân với thứ tự bộ)'},
+   {khoa:'quiz_kinh_nghiem',gia_tri:300,ghi_chu:'Thầy đồ: kinh nghiệm thưởng mỗi bộ câu hỏi (v10.53: nhân với số bài đã xong + 1, chọn bài bất kỳ)'},
+   {khoa:'quiz_hong_ngoc_chu_de',gia_tri:10,ghi_chu:'v10.53 · Thầy đồ: hồng ngọc thưởng mỗi bài theo chủ đề (bảng NganHangCauHoi, mỗi ChuDe một bài)'},
    {khoa:'chet_mat_do',gia_tri:1,ghi_chu:'Gục ngã thì mất toàn bộ đồ đang mặc (1 = bật, 0 = tắt). Cấp, sách, lính, thú thu phục, túi đồ giữ nguyên'},
    {khoa:'linh_thanh_he_so',gia_tri:100,ghi_chu:'Lính thành trì: % chỉ số so với bảng linh (chỉnh độ mạnh chung)'},
    {khoa:'linh_diem_cap',gia_tri:3,ghi_chu:'v10.13 · Lính thành trì chào thuê: điểm chỉ số cộng thêm mỗi cấp (chia ngẫu nhiên vào 4 chỉ số, đổi suất mỗi ngày)'},

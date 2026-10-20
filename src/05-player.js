@@ -99,7 +99,7 @@ const Player=(()=>{
     // v10.13: bỏ các bộ mã NV* và SKQ* (chỉ giữ bộ DX_*)
     const boOk=id=>!/^(NV|SKQ)/i.test(String(id||''));
     for(const r of (data.bo_cau_hoi||[]).filter(r=>boOk(r.id)))QUIZ[r.id]={id:r.id,name:r.ten||r.id,order:num(r.thu_tu,99),rubies:num(r.thuong_hong_ngoc,5),mon:r.quai||'',need:num(r.so_luong,0),map:r.ban_do||'',qs:[]};
-    for(const r of data.cau_hoi||[]){const bo=String(r.bo||r.QuestID||'');if(!bo||!boOk(bo))continue;if(!QUIZ[bo])QUIZ[bo]={id:bo,name:bo,order:99,rubies:5,mon:'',need:0,map:'',qs:[]};QUIZ[bo].qs.push({id:r.id||r.QuestionID,n:num(r.thu_tu||r.ThuTu,QUIZ[bo].qs.length+1),q:r.cau||r.CauHoi||'',a:r.a||r.A||'',b:r.b||r.B||'',c:r.c||r.C||'',d:r.d||r.D||'',ans:String(r.dap_an||r.DapAn||'').trim().toUpperCase()});}
+    for(const r of data.cau_hoi||[]){const bo=String(r.bo||r.QuestID||'');if(!bo||!boOk(bo))continue;if(!QUIZ[bo])QUIZ[bo]={id:bo,name:String(r.chu_de||'')||bo,order:100+Object.keys(QUIZ).length,rubies:r.chu_de?num(CFG.quiz_hong_ngoc_chu_de,10):5,mon:'',need:0,map:'',qs:[]};QUIZ[bo].qs.push({id:r.id||r.QuestionID,n:num(r.thu_tu||r.ThuTu,QUIZ[bo].qs.length+1),q:r.cau||r.CauHoi||'',a:r.a||r.A||'',b:r.b||r.B||'',c:r.c||r.C||'',d:r.d||r.D||'',ans:String(r.dap_an||r.DapAn||'').trim().toUpperCase()});}
     for(const Q of Object.values(QUIZ))Q.qs.sort((x,y)=>x.n-y.n);
     REGIONS.length=0;for(const r of data.ban_do||[])REGIONS.push({id:String(r.id),name:r.ten,lv:num(r.cap,1),icon:r.bieu_tuong||'pin',order:num(r.thu_tu,99),gate:String(r.khoa_mo||'')});REGIONS.sort((a,b)=>a.order-b.order);
     TOPUPS.length=0;for(const r of data.goi_nap||[])TOPUPS.push({id:r.id,name:r.ten,vnd:num(r.tien),ruby:num(r.hong_ngoc),gold:num(r.vang),desc:r.mo_ta||'',order:num(r.thu_tu,99)});TOPUPS.sort((a,b)=>a.order-b.order);
@@ -621,7 +621,7 @@ const Player=(()=>{
     s.recruit=cleanRecruit(p.recruit); // v10.14: đơn chiêu mộ đang chờ
     s.avatars=(Array.isArray(p.avatars)?p.avatars:[]).filter(id=>AVATARS[id]).slice(0,60);const av=AVATARS[p.avatar];s.avatar=av&&(!av.gender||av.gender===s.gender)&&(s.avatars.includes(p.avatar)||!(av.price||av.ruby))?p.avatar:'';
     s.cos=newCos();if(p.cos&&typeof p.cos==='object'){for(const k of COS_KINDS){const own=(p.cos.own&&Array.isArray(p.cos.own[k])?p.cos.own[k]:[]).filter(id=>k==='ten'?NAME_FX[id]:items[id]&&items[id].slot==='cos').slice(0,40);s.cos.own[k]=[...new Set(own)];const u=p.cos.use&&typeof p.cos.use[k]==='string'?p.cos.use[k]:'';s.cos.use[k]=s.cos.own[k].includes(u)?u:'';}}
-    s.quiz={};if(p.quiz&&typeof p.quiz==='object')for(const [k,v] of Object.entries(p.quiz)){if(!v||typeof v!=='object')continue;s.quiz[k]={done:Math.floor(n(v.done,0,99,0)),fail:Math.floor(n(v.fail,0,99,0)),hunt:v.hunt&&typeof v.hunt==='object'?{mon:String(v.hunt.mon||''),need:Math.floor(n(v.hunt.need,0,999,0)),got:Math.floor(n(v.hunt.got,0,999,0))}:null,reveal:!!v.reveal};}
+    s.quiz={};if(p.quiz&&typeof p.quiz==='object')for(const [k,v] of Object.entries(p.quiz)){if(!v||typeof v!=='object')continue;s.quiz[k]={done:Math.floor(n(v.done,0,99,0)),fail:Math.floor(n(v.fail,0,99,0)),hunt:v.hunt&&typeof v.hunt==='object'?{mon:String(v.hunt.mon||''),need:Math.floor(n(v.hunt.need,0,999,0)),got:Math.floor(n(v.hunt.got,0,999,0)),...(v.hunt.map?{map:String(v.hunt.map)}:{})}:null,reveal:!!v.reveal};}
     if(Array.isArray(p.pets)){const now=Date.now();s.pets=p.pets.filter(x=>x&&MON[x.type]&&!(MON[x.type].boss>=2)&&typeof x.pid==='string'&&!(num(x.exp)>0&&num(x.exp)<=now)).slice(0,PET_CAP).map(x=>({pid:x.pid.slice(0,30),type:x.type,hpFrac:n(x.hpFrac,0,1,1),...(num(x.exp)>0?{exp:Math.floor(num(x.exp))}:{})}));} // v10.21: quái hết hạn thu phục thì đi mất; trùm vùng thu phục được
     {const mt=s.equipment&&s.equipment.mount;if(mt&&mountCmd(s.equipment)>derive(s).main.cmd){const b=s.bag.indexOf(null);if(b>=0){s.bag[b]=mt;s.equipment.mount=null;}}} // v10.17: thú cưỡi cần nhiều Mệnh lệnh hơn đang có thì cất vào túi
     const D=derive(s);
@@ -783,15 +783,19 @@ const Player=(()=>{
     // Thầy đồ: trả lời bộ câu hỏi (máy chủ chấm); sai quá thì giao việc săn quái; săn xong được chỉ đáp án, trả lời lại nhận thưởng giảm
     if(t==='quizShow'){const bo=String(op.bo||''),Q=QUIZ[bo],z=s.quiz&&s.quiz[bo];if(!Q)throw Error('QUIZ');if(!(z&&z.reveal))throw Error('QUIZ_CHUA');return {show:Q.qs.map(q=>q.ans)};}
     if(t==='quiz'||t==='quizHunt'){const bo=String(op.bo||''),Q=QUIZ[bo];if(!Q||!Q.qs.length)throw Error('QUIZ');s.quiz=s.quiz||{};const z=s.quiz[bo]=s.quiz[bo]||{done:0,fail:0,hunt:null,reveal:false};if(z.done)throw Error('QUIZ_XONG');
-      const order=Object.values(QUIZ).filter(x=>x.qs.length).sort((a,b)=>a.order-b.order),idx=order.findIndex(x=>x.id===bo),prev=idx>0?order[idx-1]:null;if(prev&&!(s.quiz[prev.id]&&s.quiz[prev.id].done))throw Error('QUIZ_TRUOC');
-      const startHunt=()=>{if(!z.hunt){const mon=Q.mon&&MON[Q.mon]?Q.mon:'';if(!mon)throw Error('QUIZ_QUAI');z.hunt={mon,need:Q.need||num(CFG.quiz_san_so_luong,8),got:0};}return {hunt:z.hunt,reveal:z.reveal};};
+      // v10.53: chọn bài bất kỳ, không cần xong bài trước; kinh nghiệm theo số bài đã xong (bài thứ n xong được quiz_kinh_nghiem × n)
+      const doneN=Object.values(s.quiz).filter(x=>x&&x.done).length;
+      const startHunt=()=>{if(!z.hunt){let mon=Q.mon&&MON[Q.mon]?Q.mon:'',map=Q.map||'';
+        // bài chưa gắn quái (bài theo chủ đề) hoặc quái ở vùng nhân vật chưa tới được: săn quái của vùng cao nhất mà nhân vật đã vào được, trong các vùng có bài gắn quái
+        if(!mon||(map&&mapLevel(map)>(s.level||1))){mon='';const c=Object.values(QUIZ).filter(x=>x.mon&&MON[x.mon]&&x.map).sort((a,b)=>mapLevel(a.map)-mapLevel(b.map));const ok=c.filter(x=>mapLevel(x.map)<=(s.level||1));const pick=ok.length?ok[ok.length-1]:c[0];if(pick){mon=pick.mon;map=pick.map;}}
+        if(!mon)throw Error('QUIZ_QUAI');z.hunt={mon,need:Q.need||num(CFG.quiz_san_so_luong,8),got:0,...(map?{map}:{})};}return {hunt:z.hunt,reveal:z.reveal};};
       if(t==='quizHunt')return startHunt();
       // v10.13: op mang sẵn câu sai + chữ ký của quizCheck (ans cũ vẫn chấm được khi không có chữ ký và đang ở máy chủ)
       let wrong,ok;if(Array.isArray(op.wrong)){wrong=op.wrong.map(i=>Math.floor(i)).filter(i=>i>=0&&i<Q.qs.length);if(API._sign&&API._sign(quizKey(API._sid,bo,wrong))!==String(op.sig||''))throw Error('QUIZ_SIG');ok=Q.qs.length-wrong.length;}
       else{const ans=Array.isArray(op.ans)?op.ans.map(x=>String(x||'').toUpperCase()):[];ok=0;wrong=[];Q.qs.forEach((q,i)=>{if(ans[i]===q.ans)ok++;else wrong.push(i);});}
-      const pass=wrong.length<=num(CFG.quiz_sai_toi_da,1);
+      const pass=wrong.length<=quizMaxWrong(Q);
       if(!pass){z.fail++;const r={ok,total:Q.qs.length,wrong,pass:false,fail:z.fail};if(z.fail>=num(CFG.quiz_lan_thu,2)&&!z.hunt){startHunt();r.hunt=z.hunt;}return r;}
-      const k=z.reveal?num(CFG.quiz_thuong_lo,50)/100:1,rubies=Math.round(Q.rubies*k),exp=Math.round(num(CFG.quiz_kinh_nghiem,300)*Math.max(1,idx+1)*k);
+      const k=z.reveal?num(CFG.quiz_thuong_lo,50)/100:1,rubies=Math.round(Q.rubies*k),exp=Math.round(num(CFG.quiz_kinh_nghiem,300)*(doneN+1)*k);
       s.rubies+=rubies;const up=gainExp(s,exp);z.done=1;z.hunt=null;return {ok,total:Q.qs.length,wrong,pass:true,rubies,exp,up,late:z.reveal};}
     if(t==='fuse'){const mi=Math.floor(op.m),xi=Math.floor(op.x);if(!(mi>=0&&mi<BAG_SIZE&&xi>=0&&xi<BAG_SIZE))throw Error('SLOT');return fuse(s,mi,xi,rng,op.luck);}
     if(t==='enh'){const bag=op.where==='bag',key=bag?Math.floor(op.key):String(op.key);if(!bag&&!slots.includes(key))throw Error('SLOT');const r=enhance(s,{where:bag?'bag':'equipment',key},rng,op.shop,op.luck);return {...r,item:bag?s.bag[key]:s.equipment[key]};}
@@ -823,8 +827,10 @@ const Player=(()=>{
     if(t==='recruitDrop'){s.recruit=null;return {};}
     throw Error('LENH');
   }
+  // v10.53: số câu sai tối đa theo độ dài bài (quiz_sai_toi_da cho mỗi 5 câu: bài 10 câu sai tối đa 2)
+  function quizMaxWrong(Q){const b=num(CFG.quiz_sai_toi_da,1);return Math.max(b,Math.round(b*((Q&&Q.qs&&Q.qs.length)||5)/5));}
   load(typeof GAME_DATA!=='undefined'?GAME_DATA:{});
-  const API={VERSION,BAG_SIZE,SKILL_SLOTS,MAX_LV,MAX_MERC,TIERS,TIER_NAME,tierMul,killCopper,killExp,mercDefMul,petDmgMul,mountPow,mercCost,mercPow,mercGainExp,TUONG,recruitRoll,MAX_ACTIVE_QUEST,ELEMENTS,BEASTS,GROUPS,FX_NAMES,STAT_KEYS,CFG,RAR,ADD,SHOPS,SETS,MON,QUESTS,MERCS,AVATARS,TOPUPS,QUIZ,NAME_FX,items,slots,skills,shopEnh,shopRow,fuse,mercDaily,mercOffers,dayOf,EVENTS,TG,tgState,tgTimes,tgLeft,tgDur,tgReg,tgMon,
+  const API={VERSION,BAG_SIZE,SKILL_SLOTS,MAX_LV,MAX_MERC,TIERS,TIER_NAME,tierMul,killCopper,killExp,mercDefMul,petDmgMul,mountPow,mercCost,mercPow,mercGainExp,TUONG,recruitRoll,MAX_ACTIVE_QUEST,ELEMENTS,BEASTS,GROUPS,FX_NAMES,STAT_KEYS,CFG,RAR,ADD,SHOPS,SETS,MON,QUESTS,MERCS,AVATARS,TOPUPS,QUIZ,quizMaxWrong,NAME_FX,items,slots,skills,shopEnh,shopRow,fuse,mercDaily,mercOffers,dayOf,EVENTS,TG,tgState,tgTimes,tgLeft,tgDur,tgReg,tgMon,
     layout,relayout,load,info,kind,weapon,skillCost,cmdInfo,WEAPONS,PREDICT,seqRng,setFollow,fitFollow,mercCmd,mercGuard,isGen,petMax,PET_CAP,mountNeed,tameMin,bookFx,bookBac,demonOf,shopRuby,SHOP_ENH,expNeed,maxLevel,gainExp,xpBuff,spendPoints,mountGain,bookStat,mountCmd,qOf,rar,nameOf,stat,canEnhance,tradeable,gainOf,enhRate,enhCost,enhance,roll,rollDrop,create,derive,targets,equip,unequip,stance,isTwo,pairOk,setSkill,unsetSkill,toggleBook,element,money,shopPrice,buy,sell,sellPrice,addItem,cast,
     aimAcc,isRanged,REGIONS,MON_REGION,SKILLS,mapLevel,mapLock,monLv,expLvK,armorMul,tierBase,tierAdd,regionLv,regionOf,questLevel,storyAt,storyNext,storyDone,questReady,quizKey,questAccept,questProgress,questTurnIn,hireNpc,addMerc,mercEquip,mercUnequip,dismissMerc,makeMerc,cleanItem,serialize,restore,restorePlayer,merge,applyOp,allItems};
   return API;
