@@ -1149,7 +1149,7 @@ window.startGame=(session)=>{
   function die(){
     if(TGM&&TGM.phase!=='lobby'){if(!(HD.fx.revive&&time>=hero.reviveAt)){tgHeroDown();return;}}
     if(HD.fx.revive&&time>=hero.reviveAt){player.hp=Math.round(HD.tot.hp*HD.fx.revive/100);hero.reviveAt=time+300;hero.invuln=time+2;LH_Audio.play('heal');message(svg('heart')+'Hồi sinh tại chỗ');burst(hero.x,hero.y-24,'#ffe0f0',30,200);return;}
-    player.hp=0;hero.dead=time+2.2;hero.attack=null;hero.mountAct=null;route=[];LH_Audio.play('die');message(svg('heart')+'Bạn đã gục · về làng');
+    {const b=monsters.find(o=>!o.dead&&o.tk&&o.tk.on);if(b){bossLine(b,'thang',3.6);b.tk.on=false;b.tk.i=0;}}player.hp=0;hero.dead=time+2.2;hero.attack=null;hero.mountAct=null;route=[];LH_Audio.play('die');message(svg('heart')+'Bạn đã gục · về làng');
     // mất toàn bộ đồ đang mặc (cau_hinh chet_mat_do): máy chủ xác nhận, cấp / sách / lính / túi giữ nguyên
     const tk=!!(tut&&tut.koed);op(tk?{t:'die',tut:1}:{t:'die'}).then(r=>{refreshHD();if(r.lost&&r.lost.length){window.GameUI?.refresh();setTimeout(()=>message(svg('close')+`Gục ngã: mất ${r.lost.length} món đang mặc (${r.lost.slice(0,3).map(it=>Player.nameOf(it)).join(', ')}${r.lost.length>3?'…':''})`),2600);}},()=>{});
   }
@@ -1803,10 +1803,10 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     if(T.includes('bay')&&m.aggro>time){if(!m.flyNext)m.flyNext=time+6;if(time>=m.flyNext){m.flyUntil=time+4;m.flyNext=time+12;floater(c.x,c.y-M.h-20,'Bay lên cao!','#c0d8ff',16);}}
     m.fly=m.flyUntil>time?60*Math.min(1,(m.flyUntil-time)/.4,(time-(m.flyUntil-4))/.4):0;
     if(T.includes('tron')){
-      if(!m.fleeing&&!m.fledOnce&&m.hp<m.max*.2&&time>(m.fleeCd||0)){if(m.scorch>time){if(time>(m.pinAt||0)){m.pinAt=time+3;floater(c.x,c.y-M.h-20,'Lửa giữ chân!','#ffb070',15);}}else{m.fleeing={until:time+7};m.fledOnce=true;m.atk=null;m.leap=null;m.cast=null;floater(c.x,c.y-M.h-20,'Bỏ chạy!','#ff80c0',18);message(svg('eye')+`${esc(M.name)} bỏ chạy! Đốt cháy bằng sách Hỏa hoặc bắn theo, không thì nó hồi một nửa máu · lần sau nó sẽ không chạy nữa`,4);}}
+      if(!m.fleeing&&!m.fledOnce&&m.hp<m.max*.2&&time>(m.fleeCd||0)){if(m.scorch>time){if(time>(m.pinAt||0)){m.pinAt=time+3;floater(c.x,c.y-M.h-20,'Lửa giữ chân!','#ffb070',15);}}else{m.fleeing={until:time+7};m.fledOnce=true;bossLine(m,'chay',3.4);m.atk=null;m.leap=null;m.cast=null;floater(c.x,c.y-M.h-20,'Bỏ chạy!','#ff80c0',18);message(svg('eye')+`${esc(M.name)} bỏ chạy! Đốt cháy bằng sách Hỏa hoặc bắn theo, không thì nó hồi một nửa máu · lần sau nó sẽ không chạy nữa`,4);}}
       if(m.fleeing){
         if(m.scorch>time){m.fleeing=null;m.fleeCd=time+6;m.stunUntil=time+2;floater(c.x,c.y-M.h-20,'Bị lửa thiêu, ngã quỵ!','#ffb070',16);burst(c.x,c.y,'#ff8a3d',24,180);return true;}
-        if(time>m.fleeing.until||Math.hypot(m.x-hero.x,m.y-hero.y)>760){m.fleeing=null;m.fleeCd=time+10;m.hp=Math.max(m.hp,Math.round(m.max*.5));m.x=m.hx;m.y=m.hy;m.aggro=0;m.burn=null;burst(m.x,m.y-30,'#ff80c0',30,200);message(svg('close')+`${esc(M.name)} đã trốn về hang và hồi một nửa máu · lần này nó sẽ đánh tới cùng`,4);return true;}
+        if(time>m.fleeing.until||Math.hypot(m.x-hero.x,m.y-hero.y)>760){m.fleeing=null;m.fleeCd=time+10;if(m.tk){m.tk.on=false;m.tk.quay=true;}m.hp=Math.max(m.hp,Math.round(m.max*.5));m.x=m.hx;m.y=m.hy;m.aggro=0;m.burn=null;burst(m.x,m.y-30,'#ff80c0',30,200);message(svg('close')+`${esc(M.name)} đã trốn về hang và hồi một nửa máu · lần này nó sẽ đánh tới cùng`,4);return true;}
         moveMon(m,fleeGoal(m,hero.x,hero.y),M.run*1.6,dt,M);return true;
       }
     }
@@ -1857,6 +1857,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     evBannerSet(`${svg('flag')}<b>${E.name}</b><span>${E.flee?'':alive+' tên · '}${mm}:${ss}</span>`);
   }
   function updateMonsters(dt){
+    bossTalk();
     for(const m of monsters){
       const M=MON[m.type];
       if(m.cast&&time>=m.cast.at){resolveCast(m);m.cast=null;}
@@ -2492,15 +2493,45 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     else{ctx.fillStyle='#8a5228';ctx.beginPath();ctx.moveTo(x-30,y-34);ctx.quadraticCurveTo(x,y-56,x+30,y-34);ctx.closePath();ctx.fill();roundRect(ctx,x-5,y-30,10,12,2,'#ffd84a');ell(ctx,x,y-25,2,2.4,'#5a3a10');}
     ctx.restore();
   }
+  /* ---------- v10.54 · Thoại boss (LH_THOAI ở 04-boss-thoai.js): nói khi gặp, xen giữa trận, khi máu dưới 30%, khi gục, khi hạ người chơi, khi bỏ chạy / quay lại ---------- */
+  function bossSpeak(m,t,sec){if(!t)return;t=String(t).replace(/\{cha\}/g,player.gender==='f'?'Mẹ':'Cha');m.say={text:t,until:time+(sec||Math.min(5.2,2.4+t.length*.035)),mon:true};}
+  function bossLine(m,key,sec){const L=typeof LH_THOAI!=='undefined'&&LH_THOAI[m.type];if(L&&L[key])bossSpeak(m,L[key],sec);}
+  function bossTalk(){
+    if(typeof LH_THOAI==='undefined')return;
+    const gapOf=n=>Number(CFG['thoai_giay_'+n])||({nhieu:5,vua:10,it:18})[n]||10;
+    for(const m of monsters){const L=LH_THOAI[m.type];if(!L)continue;const M=MON[m.type];let k=m.tk||(m.tk={on:false,i:0,next:0,last:-1,sap:false,off:0});
+      if(m.dead){if(k.on&&!k.guc){k.guc=true;k.on=false;bossSpeak(m,L.guc,3.8);}continue;}
+      if(k.guc)k=m.tk={on:false,i:0,next:0,last:-1,sap:false,off:0}; // đã hồi sinh
+      if(m.fleeing)continue;
+      const d=Math.hypot(m.x-hero.x,m.y-hero.y),eng=!hero.dead&&d<640&&m.tgt==='hero'&&(m.aggro>time||d<(M.aggro||300)+40);
+      if(!eng){if(k.on){if(!k.off)k.off=time;if(time-k.off>6){k.on=false;k.i=0;k.off=0;}}else if(k.sap&&m.hp>=m.max*.9)k.sap=false;continue;}
+      k.off=0;
+      if(!k.on){k.on=true;const t=k.quay&&L.quay?L.quay:L.gap;k.quay=false;bossSpeak(m,t);k.next=time+(t?3.6:1.2);continue;}
+      if(!k.sap&&L.sap&&m.hp<m.max*.3){k.sap=true;bossSpeak(m,L.sap);k.next=time+Math.max(3.6,gapOf(L.n)*.6);continue;}
+      if(time<k.next)continue;
+      const ch=L.chuoi||[],cu=L.cau||[];let t='';
+      if(k.i<ch.length){t=ch[k.i++];k.next=time+(k.i<ch.length?3.4:gapOf(L.n));} // chuỗi: nói liền một mạch như độc thoại
+      else if(cu.length){let j=Math.floor(Math.random()*cu.length);if(cu.length>1&&j===k.last)j=(j+1)%cu.length;k.last=j;t=cu[j];k.next=time+gapOf(L.n)*(.8+Math.random()*.4);}
+      else if(ch.length){k.i=0;k.next=time+gapOf(L.n)*2;continue;} // chỉ có chuỗi: nghỉ một lúc rồi kể lại từ đầu
+      bossSpeak(m,t);
+    }
+  }
   // bóng thoại của người chơi ảo
   function drawSay(){
     const placed=[];
-    for(const e of [...bots,...World.npcs,...(AN&&AN.map===World.id?[AN]:[]),...(DUCK&&DUCK.map===World.id?[DUCK]:[]),...(VIT&&VIT.duck?[VIT.duck]:[])]){if(!e.say||e.dead||time>e.say.until)continue;const t=e.say.text;ctx.save();ctx.font='600 13px system-ui';const w=Math.min(260,ctx.measureText(t).width+20),a=Math.min(1,(e.say.until-time)*3);let y=e.data?e.y-128-seatOf(e.data.equipment):e.y-(e===AN?84:e.duckling?62:108); // v10.34: dân làng, con gái cũng nói
+    for(const e of [...bots,...World.npcs,...(AN&&AN.map===World.id?[AN]:[]),...(DUCK&&DUCK.map===World.id?[DUCK]:[]),...(VIT&&VIT.duck?[VIT.duck]:[]),...monsters.filter(m=>m.say)]){if(!e.say||time>e.say.until||(e.dead&&!e.say.mon))continue;const t=e.say.text;ctx.save();ctx.font='600 13px system-ui';
+      // v10.54: câu dài tự xuống dòng (tối đa 240 px một dòng)
+      const lines=[];{let cur='';for(const wd of t.split(' ')){const nx=cur?cur+' '+wd:wd;if(cur&&ctx.measureText(nx).width>240){lines.push(cur);cur=wd;}else cur=nx;}if(cur)lines.push(cur);}
+      const w=Math.min(260,Math.max(...lines.map(l=>ctx.measureText(l).width))+20),h=9+lines.length*17,a=Math.min(1,(e.say.until-time)*3);
+      let y;if(e.say.mon){const M=MON[e.type],MT=Math.max(M.h,(LH_BOSS.top||{})[e.type]||0);y=e.y-MT-46-h;}else y=e.data?e.y-128-seatOf(e.data.equipment):e.y-(e===AN?84:e.duckling?62:108); // v10.34: dân làng, con gái cũng nói
+      if(!e.say.mon)y-=h-26;
       // bóng thoại đè nhau thì đẩy lên trên
-      for(let k=0;k<6&&placed.some(r=>Math.abs(r.x-e.x)<(r.w+w)/2+4&&Math.abs(r.y-y)<30);k++)y-=31;placed.push({x:e.x,y,w});ctx.globalAlpha=a;
-      roundRect(ctx,e.x-w/2,y,w,26,9,'#fff8e2');ctx.fillStyle='#fff8e2';ctx.beginPath();ctx.moveTo(e.x-6,y+25);ctx.lineTo(e.x,y+33);ctx.lineTo(e.x+6,y+25);ctx.fill();
-      ctx.fillStyle='#3a2a1a';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(t,e.x,y+13.5,w-12);ctx.restore();}
+      for(let k=0;k<6&&placed.some(r=>Math.abs(r.x-e.x)<(r.w+w)/2+4&&y<r.y+r.h+4&&y+h+4>r.y);k++)y-=31;placed.push({x:e.x,y,w,h});ctx.globalAlpha=a;
+      const bg=e.say.mon?'#fff1dc':'#fff8e2';roundRect(ctx,e.x-w/2,y,w,h,9,bg);ctx.fillStyle=bg;ctx.beginPath();ctx.moveTo(e.x-6,y+h-1);ctx.lineTo(e.x,y+h+7);ctx.lineTo(e.x+6,y+h-1);ctx.fill();
+      if(e.say.mon){ctx.strokeStyle=MON[e.type].boss===2?'#d070a8':'#c88040';ctx.lineWidth=1.5;ctx.beginPath();ctx.roundRect?ctx.roundRect(e.x-w/2,y,w,h,9):ctx.rect(e.x-w/2,y,w,h);ctx.stroke();}
+      ctx.fillStyle='#3a2a1a';ctx.textAlign='center';ctx.textBaseline='middle';lines.forEach((l,n)=>ctx.fillText(l,e.x,y+4.5+8.5+n*17,w-12));ctx.restore();}
   }
+
   /* ---------- Trò chuyện: NPC còn lời dặn thì nói chuyện, sau đó mở thẳng bảng chức năng ---------- */
   const PANEL_BTN={tg:'Sự kiện',shop:'Mua bán',quests:'Nhận việc',mercs:'Thuê lính',market:'Chợ',avatar:'Đổi diện mạo',fuse:'Dung hợp',nap:'Nạp thẻ',quiz:'Hỏi bài'};
   function nearby(){let best=null,bd=92;for(const n of World.npcs){const d=Math.hypot(n.x-hero.x,n.y-hero.y);if(d<bd){bd=d;best=n;}}return best;}

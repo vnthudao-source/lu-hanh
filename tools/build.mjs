@@ -11,7 +11,7 @@ const root=path.resolve(path.dirname(new URL(import.meta.url).pathname),'..');
 const rd=f=>fs.readFileSync(path.join(root,f),'utf8'),wr=(f,s)=>{fs.writeFileSync(path.join(root,f),s);console.log(f.padEnd(24),s.length);};
 const V=rd('VERSION').trim();
 const API='https://script.google.com/macros/s/AKfycbwEUXIQSLK1t6FXNDDD18lbJGNomqhMAzcwh55N_uzKbUL19LaxvieMyhLpzrB06VfzgA/exec';
-const GAME=['00-loader.js','01-data.js','01-data-vung.js','01-data-canbang.js','02-core.js','03-net.js','03-audio.js','03-img.js','04-art.js','04-boss.js','04-boss-cao.js','04-world.js','04-looks.js','05-player.js','06-game.js','07-tro-choi.js','07-ui.js','08-portal.js'];
+const GAME=['00-loader.js','01-data.js','01-data-vung.js','01-data-canbang.js','02-core.js','03-net.js','03-audio.js','03-img.js','04-art.js','04-boss.js','04-boss-cao.js','04-boss-thoai.js','04-world.js','04-looks.js','05-player.js','06-game.js','07-tro-choi.js','07-ui.js','08-portal.js'];
 const CHO=['cho/cho.js'];
 // CSS: gắn mọi luật vào khung gốc (#lu-hanh, #cho-phien) để giao diện Blogspot không đè được (nút, chữ, ô nhập)
 function scope(src,id){
