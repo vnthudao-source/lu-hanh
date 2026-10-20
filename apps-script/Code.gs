@@ -41,7 +41,7 @@ const LH_NGOAI={cau_hoi:[
  {id:'10EjfikAuPyc1t_aGDDsUlq0eewo0WUl5qOyXjkVG28M',tab:'CauHoi',cot:{id:'QuestionID',bo:'QuestID',thu_tu:'ThuTu',cau:'CauHoi',a:'A',b:'B',c:'C',d:'D',dap_an:'DapAn'}},
  {id:'10wfRsE496JYzfit06qwzb_MP_-fbbNyFe9UNW3TqBE4',tab:'NganHangCauHoi',cot:{id:'QuestionID',cau:'CauHoi',a:'A',b:'B',c:'C',d:'D',dap_an:'DapAn',chu_de:'ChuDe',trang_thai:'TrangThai'},boTheo:'chu_de',tienTo:'TP_'}
 ]};
-function lhSlug_(t){return String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toUpperCase().replace(/[^A-Z0-9]+/g,'_').replace(/^_+|_+$/g,'');}
+function lhSlug_(t){return String(t||'').normalize('NFD').split('').filter(c=>{const k=c.charCodeAt(0);return k<768||k>879;}).join('').replace(/đ/g,'d').replace(/Đ/g,'D').toUpperCase().replace(/[^A-Z0-9]+/g,'_').replace(/^_+|_+$/g,'');}
 // Cột của các bảng người chơi (file "LH · Người chơi")
 const LH_COLS={
   tai_khoan:['id','username','email','muoi','mat_khau','tao_luc','token','token_het_han','ma_khoi_phuc','ma_het_han','token_cu','ruong'],
