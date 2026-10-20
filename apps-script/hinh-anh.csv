@@ -104,7 +104,7 @@ vat_pham,mount-brown,Ngựa nâu,Thú cưỡi,,"128×128, định dạng webp, n
 vat_pham,mount-black,Ngựa ô,Thú cưỡi,,"128×128, định dạng webp, nền trong suốt. Thú quay mặt sang phải, chân chạm đáy, thấy yên cưỡi. Màu: chính #2e2a2a, phụ #201d1d, viền #777575.",Chung,
 vat_pham,mount-white,Bạch mã,Thú cưỡi,,"128×128, định dạng webp, nền trong suốt. Thú quay mặt sang phải, chân chạm đáy, thấy yên cưỡi. Màu: chính #ece6da, phụ #a5a199, viền #f3efe7.",Chung,
 vat_pham,mount-tiger,Hổ,Thú cưỡi,,"128×128, định dạng webp, nền trong suốt. Thú quay mặt sang phải, chân chạm đáy, thấy yên cưỡi. Màu: chính #e08a2e, phụ #9d6120, viền #ebb377.",Chung,
-vat_pham,mount-elephant,Voi,Thú cưỡi,,"128×128, định dạng webp, nền trong suốt. Thú quay mặt sang phải, chân chạm đáy, thấy yên cưỡi. Màu: chính #8e9398, phụ #63676a, viền #b6b9bc.",Chung,
+vat_pham,ho-trang-vit,Hổ trắng Tây Bắc,Thú cưỡi,,"128×128, định dạng webp, nền trong suốt. Thú quay mặt sang phải, chân chạm đáy, thấy yên cưỡi. Màu: chính #f0f0f4, phụ #a8a8ab, viền #f5f5f8.",Chung,
 vat_pham,ore,Khoáng thạch,Nguyên liệu,,"128×128, định dạng webp, nền trong suốt. Màu: chính #7a6a55, phụ #554a3b, viền #a99e91.",Chung,
 vat_pham,book-fire,Sách Hỏa,Sách,,"128×128, định dạng webp, nền trong suốt. Bìa sách màu hệ, biểu tượng hệ ở giữa.",Chung,
 vat_pham,book-water,Sách Thủy,Sách,,"128×128, định dạng webp, nền trong suốt. Bìa sách màu hệ, biểu tượng hệ ở giữa.",Chung,

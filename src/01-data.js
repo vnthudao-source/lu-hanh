@@ -239,7 +239,8 @@ vat_pham:[
  ['canh-thien-than','Cánh thiên thần','wings','wings','',0,6,0,30000,'#f4f0ff',''],['canh-ac-quy','Cánh ác quỷ','wings','wings','',0,6,0,30000,'#5a1a3a',''],['canh-tien-nu','Cánh tiên nữ','wings','wings','',0,6,0,30000,'#ffc0e8',''],['canh-anh-sang','Cánh ánh sáng','wings','wings','',0,6,0,30000,'#fff0a0',''],
  ['canh-xuong','Cánh xương','wings','wings','',0,6,0,30000,'#e8e0d0',''],['canh-loi-phong','Cánh lôi phong','wings','wings','',0,6,0,30000,'#a0c8ff',''],['canh-dai-bang','Cánh đại bàng','wings','wings','',0,6,0,30000,'#8a5a30',''],['canh-lua','Cánh lửa','wings','wings','',0,6,0,30000,'#ff8a3d',''],
  ['mount','Ngựa con','mount','mount','',0,0,1.15,200,'#b78452','horse',5],['mount-brown','Ngựa nâu','mount','mount','',0,0,1.25,600,'#7a4b2a','horse',5],['mount-black','Ngựa ô','mount','mount','',0,0,1.35,1200,'#2e2a2a','horse',5],['mount-white','Bạch mã','mount','mount','',0,0,1.5,2500,'#ece6da','horse',5],
- ['mount-tiger','Hổ','mount','mount','',4,0,1.45,4000,'#e08a2e','tiger',10],['mount-elephant','Voi','mount','mount','',0,8,1.2,6000,'#8e9398','elephant',15],
+ ['mount-tiger','Hổ','mount','mount','',4,0,1.45,4000,'#e08a2e','tiger',10],
+ ['ho-trang-vit','Hổ trắng Tây Bắc','mount','mount','',0,0,1.6,0,'#f0f0f4','tiger',12], // v10.50: phần thưởng nhiệm vụ ẩn Vịt con (đổi ở Nghệ nhân đèn), thú cấp vit_thu_cap, không bán ở đâu['mount-elephant','Voi','mount','mount','',0,8,1.2,6000,'#8e9398','elephant',15],
  ['ore','Khoáng thạch','','ore','',0,0,0,20,'',''],
  ['book-fire','Sách Hỏa','book','book','',0,0,0,400,'','',0,'fire'],['book-water','Sách Thủy','book','book','',0,0,0,300,'','',0,'water'],['book-earth','Sách Thổ','book','book','',0,0,0,450,'','',0,'earth'],['book-metal','Sách Kim','book','book','',0,0,0,450,'','',0,'metal'],['book-wood','Sách Mộc','book','book','',0,0,0,300,'','',0,'wood'],
  ['book-loi','Sách Lôi','book','book','',0,0,0,900,'','',0,'thunder'],['book-phong','Sách Phong','book','book','',0,0,0,700,'','',0,'wind'],['book-bang','Sách Băng','book','book','',0,0,0,800,'','',0,'ice'],['book-ma','Sách Ma công','book','book','',0,0,0,1500,'','',0,'demon'],['book-sang','Sách Ánh sáng','book','book','',0,0,0,1000,'','',0,'light']
@@ -569,6 +570,8 @@ linh:[
    {khoa:'tg_bac_tru_don',gia_tri:70,ghi_chu:'v10.47 · Chiến trường phương Bắc: máu trụ canh phe địch = bấy nhiêu đòn thường của nhân vật'},
    {khoa:'tg_bac_nha_don',gia_tri:130,ghi_chu:'v10.47 · Chiến trường phương Bắc: máu nhà chính phe địch = bấy nhiêu đòn thường của nhân vật'},
    {khoa:'tg_bac_ha_toi_da',gia_tri:150,ghi_chu:'v10.47 · Chiến trường phương Bắc: số lần hạ lính / trụ được tính thưởng tối đa mỗi trận'},
+   {khoa:'vit_vang',gia_tri:30,ghi_chu:'v10.50 · Nhiệm vụ ẩn Vịt con (Hang động): Thợ săn Núi tuyết đổi vịt lấy bấy nhiêu vàng (1 vàng = 10 000 đồng)'},
+   {khoa:'vit_thu_cap',gia_tri:90,ghi_chu:'v10.50 · Nhiệm vụ ẩn Vịt con: cấp của Hổ trắng Tây Bắc mà Nghệ nhân đèn (Thăng Long) đổi cho con vịt'},
    {khoa:'tg_the_gioi_so_nguoi',gia_tri:10,ghi_chu:'v10.48 · Chiến trường thế giới: số người mỗi phe, tính cả người chơi (phe địch là bản sao người chơi chênh không quá tg_chenh_cap cấp, kèm lính thuê)'},
    {khoa:'tg_the_gioi_dot_giay',gia_tri:30,ghi_chu:'v10.48 · Chiến trường thế giới: bao nhiêu giây một đợt lính, cả hai phe'},
    {khoa:'tg_the_gioi_linh_dot',gia_tri:9,ghi_chu:'v10.48 · Chiến trường thế giới: số lính mỗi đợt mỗi phe, chia đều ba đường'},

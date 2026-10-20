@@ -112,7 +112,7 @@ const Player=(()=>{
     {const MK=num(CFG.thu_cuoi_nhan_gia,1),MS=num(CFG.thu_cuoi_nhan_chi_so,1),MC=num(CFG.thu_cuoi_menh_lenh_cap,0),lvOf={};
       for(const k in SHOPS){const m=k.match(/^thanh-(.+?)(?:-ren|-thu|-sach)?$/);if(!m)continue;const L=mapLevel(m[1]);for(const r of SHOPS[k])lvOf[r.id]=Math.max(lvOf[r.id]||0,L);}
       for(const [id,d] of Object.entries(items)){if(d.slot!=='mount')continue;
-        const town=lvOf[id]||0,L=town||(d.q==='m'?num(CFG.thu_cuoi_cap_bo_than,330):d.q==='l'||d.set?num(CFG.thu_cuoi_cap_bo_huyen_thoai,250):Math.round(2*Math.sqrt(num(d.price)/50)));d.mlv=L;
+        const town=lvOf[id]||0,L=id==='ho-trang-vit'?num(CFG.vit_thu_cap,90):town||(d.q==='m'?num(CFG.thu_cuoi_cap_bo_than,330):d.q==='l'||d.set?num(CFG.thu_cuoi_cap_bo_huyen_thoai,250):Math.round(2*Math.sqrt(num(d.price)/50)));d.mlv=L;
         if(!d.atk&&!d.def){const B=MOUNT_BASE[d.beast]||MOUNT_BASE.horse,f=town?1:1+L/25;d.atk=Math.round(B[0]*f);d.def=Math.round(B[1]*f);}
         if(d.price)d.price=Math.round(d.price*MK);if(MS!==1){d.atk=Math.round(d.atk*MS);d.def=Math.round(d.def*MS);}
         d.cmd=(BEASTS[d.beast]||BEASTS.horse).cmd+Math.round(L*MC);}
@@ -601,7 +601,7 @@ const Player=(()=>{
     s.copper=Math.floor(n(p.copper,0,Number.MAX_SAFE_INTEGER,0));s.rubies=Math.floor(n(p.rubies,0,Number.MAX_SAFE_INTEGER,0));s.luck=Math.floor(n(p.luck,0,9999,0));
     s.stats.command=Math.floor(n(p.stats&&p.stats.command,0,999,s.stats.command));
     if(p.flags){s.flags.river=!!p.flags.river;s.flags.hunted=!!p.flags.hunted;if(Array.isArray(p.flags.tutGift))s.flags.tutGift=p.flags.tutGift.slice(0,6).map(String);if(p.flags.tutDied)s.flags.tutDied=true;if(p.flags.caveOk)s.flags.caveOk=true;if(num(p.flags.freeRecruit)>0)s.flags.freeRecruit=Math.min(5,Math.floor(num(p.flags.freeRecruit)));if(Number.isFinite(+p.flags.caveDay)&&p.flags.caveDay!=null)s.flags.caveDay=Math.floor(+p.flags.caveDay);if(p.flags.tg&&typeof p.flags.tg==='object'){const g=p.flags.tg,o={d:Math.floor(+g.d||0),n:{}};for(const k of Object.keys(TG))if(g.n&&+g.n[k]>0)o.n[k]=Math.min(99,Math.floor(+g.n[k]));if(g.cur&&TG[g.cur.ev])o.cur={ev:String(g.cur.ev),at:+g.cur.at||0,k:Math.max(0,Math.floor(+g.cur.k||0))};s.flags.tg=o;} // v10.46: lượt sự kiện thế giới trong ngày, trận đang đánhif(p.flags.wells&&typeof p.flags.wells==='object')for(const [k,v] of Object.entries(p.flags.wells))if(/^gieng-\d+$/.test(k)&&Number.isFinite(+v))s.flags.wells[k]=+v;for(const [k,v] of Object.entries(p.flags.kills||{}))if(MON[k])s.flags.kills[k]=Math.floor(n(v,0,1e9,0));
-      if(p.flags.hq&&typeof p.flags.hq==='object'){const hq={};for(const k of Object.keys(HQ_MSG))if(p.flags.hq[k])hq[k]=1;if(Object.keys(hq).length)s.flags.hq=hq;}if(num(p.flags.duel)>0)s.flags.duel=Math.min(10,Math.floor(num(p.flags.duel)));if(num(p.flags.rescue)>0)s.flags.rescue=Math.min(2,Math.floor(num(p.flags.rescue)));if(p.flags.xp&&num(p.flags.xp.p)>0&&num(p.flags.xp.u)>0)s.flags.xp={p:Math.min(1000,num(p.flags.xp.p)),u:Math.floor(num(p.flags.xp.u))};}
+      if(p.flags.hq&&typeof p.flags.hq==='object'){const hq={};for(const k of Object.keys(HQ_MSG))if(p.flags.hq[k])hq[k]=1;if(Object.keys(hq).length)s.flags.hq=hq;}if(num(p.flags.duel)>0)s.flags.duel=Math.min(10,Math.floor(num(p.flags.duel)));if(num(p.flags.rescue)>0)s.flags.rescue=Math.min(2,Math.floor(num(p.flags.rescue)));if(num(p.flags.vit)>0)s.flags.vit=Math.min(3,Math.floor(num(p.flags.vit)));if(p.flags.xp&&num(p.flags.xp.p)>0&&num(p.flags.xp.u)>0)s.flags.xp={p:Math.min(1000,num(p.flags.xp.p)),u:Math.floor(num(p.flags.xp.u))};}
     const extra=[],eq=Object.fromEntries(slots.map(k=>[k,null]));
     for(const k of slots){const it=valid(p.equipment&&p.equipment[k]);if(!it)continue;const d=items[it.type];const ok=(d.slot==='hand'?(k==='left'||k==='right'):d.slot===k)&&(!d.gender||d.gender===s.gender);if(ok)eq[k]=it;else extra.push(it);}
     if(isTwo(eq.left)){extra.push(eq.left);eq.left=null;}
@@ -669,7 +669,7 @@ const Player=(()=>{
   // Các lệnh làm thay đổi tiền/đồ, chạy trên máy chủ (và trên trình duyệt ở chế độ ngoại tuyến)
   // số lần hạ một loài quái trong một lượt hồi sinh: bãi quái lớn có nhiều con cùng loài (Sheet cau_hinh gioi_han_ha_quai)
   const KILL_LIMIT=id=>MON[id].boss?1:num(CFG.gioi_han_ha_quai,16);
-  const PREDICT=new Set(['kill','buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff','av','fuse','use','cos','die','quiz','quizHunt','eventWin','recruit','recruitHire','tutGift','cavePass','caveChest','pkWin','hqFlag','duelWin','rescue','rescueHome','sg','tgStart','tgKill','tgEnd']);
+  const PREDICT=new Set(['kill','buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff','av','fuse','use','cos','die','quiz','quizHunt','eventWin','recruit','recruitHire','tutGift','cavePass','caveChest','pkWin','hqFlag','duelWin','rescue','rescueHome','vitNhan','vitBan','vitDoi','sg','tgStart','tgKill','tgEnd']);
   // v10.13: khóa chữ ký kết quả Thầy đồ (máy chủ ký bằng khóa bí mật; trình duyệt chỉ áp dụng trước, máy chủ kiểm khi nhận gói lưu)
   const quizKey=(cid,bo,wrong)=>'quiz|'+cid+'|'+bo+'|'+(wrong||[]).join(',');
   // v10.43: xong Tìm con (đã đưa An về làng) → đồ cốt truyện rời túi, cất vào Kỷ vật (flags.kyvat, không chiếm ô túi). Người chơi cũ đã xong được dọn ở lệnh kế tiếp.
@@ -810,6 +810,11 @@ const Player=(()=>{
     if(t==='duelWin'){if((s.level||1)<mapLevel('vo-dai'))throw Error('LEVEL');const cur=Math.min(10,Math.floor(num(s.flags.duel))),k=Math.floor(num(op.n));if(k!==cur+1||k>10)throw Error('SAI_TRAN');srv.duelAt=num(srv.duelAt);if(now-srv.duelAt<8000)throw Error('NHANH_QUA');srv.duelAt=now;
       s.flags.duel=k;const ru=Math.max(0,Math.floor(num(CFG.vo_dai_hong_ngoc,5)))*k;s.rubies+=ru;if(k===10){s.flags.hq=s.flags.hq||{};s.flags.hq['vo-dai']=1;}return {duel:k,rubies:ru};}
     if(t==='rescue'){if(!(num(s.flags.kills&&s.flags.kills['hon-nguyen-ma-to'])>0))throw Error('CHUA_HA_TRUM');if(num(s.flags.rescue)>=1)throw Error('DA_CUU');s.flags.rescue=1;return {rescue:1};}
+    // v10.50: nhiệm vụ ẩn Vịt con — hạ Đại Bàng Tinh, trứng trong tổ (Hang động) nở ra vịt con đi theo (vit=1, chỉ một lần trong đời nhân vật);
+    //   Thợ săn Núi tuyết đổi lấy vit_vang vàng (vit=2) hoặc Nghệ nhân đèn Thăng Long đổi lấy Hổ trắng Tây Bắc cấp vit_thu_cap (vit=3)
+    if(t==='vitNhan'){if(!(num(s.flags.kills&&s.flags.kills['dai-bang'])>0))throw Error('CHUA_HA_TRUM');if(num(s.flags.vit)>=1)throw Error('DA_NHAN');s.flags.vit=1;return {vit:1};}
+    if(t==='vitBan'){if(num(s.flags.vit)!==1)throw Error('KHONG_CO_VIT');if((s.level||1)<mapLevel('nui-tuyet'))throw Error('LEVEL');const c=Math.max(0,Math.round(num(CFG.vit_vang,30)*10000));s.copper+=c;s.flags.vit=2;return {vit:2,copper:c};}
+    if(t==='vitDoi'){if(num(s.flags.vit)!==1)throw Error('KHONG_CO_VIT');if((s.level||1)<mapLevel('thang-long'))throw Error('LEVEL');if(!items['ho-trang-vit'])throw Error('ITEM');const i=addItem(s,roll('ho-trang-vit','n',rng));s.flags.vit=3;return {vit:3,i,item:s.bag[i]};}
     if(t==='rescueHome'){if(num(s.flags.rescue)!==1)throw Error('CHUA_CUU');s.flags.rescue=2;keepsake(s);const ru=Math.max(0,Math.floor(num(CFG.cuu_con_hong_ngoc,999)));s.rubies+=ru;return {rescue:2,rubies:ru};}
     if(t==='pkWin'){srv.pkAt=num(srv.pkAt);if(now-srv.pkAt<60000)throw Error('NHANH_QUA');srv.pkAt=now;s.flags.freeRecruit=Math.min(5,num(s.flags.freeRecruit)+1);return {free:s.flags.freeRecruit};}
     if(t==='recruitHire'){const m=recruitHire(s,rng);return {mid:m.mid,name:m.name,lv:m.lv,tier:m.tier};}
