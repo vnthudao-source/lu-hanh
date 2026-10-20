@@ -54,11 +54,36 @@ function bacChien(){
     zones:[{name:'Doanh trại phe ta',...safe},{name:'Doanh trại phe địch',x0:36,y0:1,x1:46,y1:9},{name:'Chiến tuyến',x0:10,y0:8,x1:38,y1:32}],
     objects,trees:trees.filter(([x,y])=>!keepFree.some(p=>Math.abs(p[0]-x)<=1&&Math.abs(p[1]-y)<=1)),npcs:[],monsters:[],portals:[],theme:'bac-chien-tg',sky:'bac-chien-tg',event:'bac',lane,level:1};
 }
+// Chiến trường thế giới: ba đường (trên, giữa, dưới) từ doanh trại phe ta (góc dưới trái) lên doanh trại phe địch (góc trên phải); mỗi đường một trụ mỗi phe
+function theGioi(){
+  const W=56,H=44,R=Math.round;
+  const lanes=[[[8,33],[5,22],[5,6],[18,4],[44,5]],[[11,34],[28,21],[45,9]],[[12,38],[30,40],[50,39],[51,24],[48,11]]];
+  const segD=(x,y,a,b)=>{const vx=b[0]-a[0],vy=b[1]-a[1],t=Math.max(0,Math.min(1,((x-a[0])*vx+(y-a[1])*vy)/(vx*vx+vy*vy)));return Math.hypot(x-a[0]-vx*t,y-a[1]-vy*t);};
+  const dl=(x,y)=>Math.min(...lanes.map(L=>Math.min(...L.slice(1).map((b,i)=>segD(x,y,L[i],b)))));
+  const len=L=>L.slice(1).reduce((s,b,i)=>s+Math.hypot(b[0]-L[i][0],b[1]-L[i][1]),0);
+  const at=(L,f)=>{let d=len(L)*f;for(let i=1;i<L.length;i++){const a=L[i-1],b=L[i],l=Math.hypot(b[0]-a[0],b[1]-a[1]);if(d<=l){const t=d/l;return [R(a[0]+(b[0]-a[0])*t),R(a[1]+(b[1]-a[1])*t)];}d-=l;}return L[L.length-1];};
+  const g=[...Array(H)].map((_,y)=>[...Array(W)].map((_,x)=>{if(x===0||y===0||x===W-1||y===H-1)return '#';const d=dl(x,y);if(d<=1.6)return ':';if(d<=3.6)return hash(x,y)<.12?',':'.';return hash(x*5,y*3)<.07?'#':(hash(x,y*7)<.3?',':'.');}));
+  for(let y=33;y<=42;y++)for(let x=1;x<=13;x++)if(g[y][x]==='#')g[y][x]='.';
+  for(let y=1;y<=12;y++)for(let x=42;x<=54;x++)if(g[y][x]==='#')g[y][x]='.';
+  const objects=[],solid=new Set(),put=(kind,x,y,o={})=>{objects.push({kind,x,y,...o});if(o.solid!==false)solid.add(x+','+y);};
+  const safe={x0:1,y0:38,x1:7,y1:42};
+  const lane={ours:{house:[9,36],towers:lanes.map(L=>at(L,.3))},theirs:{house:[47,8],towers:lanes.map(L=>at(L,.7)),spawn:[46,10]},spawnA:[11,36],spawnB:[46,10],paths:lanes};
+  for(const [x,y] of [[2,36],[5,36],[12,41]])put('leu-bac-ta',x,y);for(const [x,y] of [[1,39],[8,42],[13,38]])put('duoc-bac',x,y,{light:'#ffb060'});put('co-bac-ta',10,33,{solid:false});put('co-bac-ta',14,36,{solid:false});
+  for(const [x,y] of [[51,3],[53,8],[43,2]])put('leu-bac-dich',x,y);for(const [x,y] of [[54,4],[44,11],[50,12]])put('duoc-bac',x,y,{light:'#ff8050'});put('co-bac-dich',45,6,{solid:false});put('co-bac-dich',42,9,{solid:false});
+  const keep=[lane.ours.house,lane.theirs.house,...lane.ours.towers,...lane.theirs.towers,lane.spawnA,lane.spawnB];
+  const trees=[];for(let y=2;y<H-2;y++)for(let x=2;x<W-2;x++){if(g[y][x]!=='.'&&g[y][x]!==',')continue;if(solid.has(x+','+y))continue;const d=dl(x,y);if(d>4.2&&hash(x*7,y*13)<.26&&!(x<=14&&y>=32)&&!(x>=41&&y<=13)&&!keep.some(p=>Math.abs(p[0]-x)<=1&&Math.abs(p[1]-y)<=1))trees.push([x,y,hash(x,y)<.4?1:0]);}
+  const wells=[[12,40,'gieng-921'],[20,17,'gieng-922'],[37,29,'gieng-923']];
+  for(const [x,y,id] of wells){objects.push({kind:'well',x,y,ancient:true,id});for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){if(g[y+dy][x+dx]==='#')g[y+dy][x+dx]='.';}}
+  const T2=trees.filter(([x,y])=>!wells.some(w=>Math.abs(w[0]-x)<=1&&Math.abs(w[1]-y)<=1));
+  return {id:'the-gioi-tg',name:'Chiến Trường Thế Giới',w:W,h:H,tiles:g.map(r=>r.join('')),spawn:{x:4,y:40},safe,
+    zones:[{name:'Doanh trại phe ta',...safe},{name:'Doanh trại phe địch',x0:42,y0:1,x1:54,y1:12},{name:'Đường giữa',x0:15,y0:12,x1:40,y1:32},{name:'Đường trên',x0:1,y0:1,x1:41,y1:30},{name:'Đường dưới',x0:14,y0:13,x1:54,y1:42}],
+    objects,trees:T2,npcs:[],monsters:[],portals:[],theme:'bac-chien-tg',sky:'bac-chien-tg',event:'the',lane,level:1};
+}
 const ART={theme:{'bac-chien-tg':{g:['#6a5a40','#544630'],d:'ash',r:['#7a6a54','#4a4034','#2a241c'],w:['#5a6a70','#3a4a50'],p:'#8a7450',sd:'#8a7450'},'loi-dai-tg':{g:['#8a7a5a','#706244'],d:'brick',r:['#9a8468','#6a5844','#3a3024'],w:['#5a8aa0','#3a6a80'],p:'#c0a878',sd:'#a89070'}},
   sky:{'bac-chien-tg':{n:30,col:'#ffb070',size:2,vx:24,vy:-6,glow:1,tint:'#3018081a'},'loi-dai-tg':{n:18,col:'#ffd080',size:3,vx:6,vy:-8,glow:1,tint:'#40201010'}},
   obj:{'leu-bac-ta':{base:'tent',c:['#2a5a6a','#3a3220']},'leu-bac-dich':{base:'tent',c:['#8a2a20','#4a3220']},'duoc-bac':{base:'torch',c:['#4a3220','#ff8a30']},'co-bac-ta':{base:'flag',s:1.5,c:['#4a3220','#2a6ab0','#ffd040']},'co-bac-dich':{base:'flag',s:1.5,c:['#4a3220','#c02020','#ffd040']},'cot-loi-dai':{base:'pillar',c:['#b0a080','#6a2a1a']},'den-loi-dai':{base:'lantern',c:['#5a2a1a','#ff7040']},'co-loi-dai':{base:'flag',s:1.4,c:['#4a3220','#c02020','#ffd040']},
     'leu-loi-dai':{base:'tent',c:['#8a2a20','#4a3220']},'trong-loi-dai':{base:'drum',c:['#6a1a10','#e8d0a0','#e0b040']}}};
-for(const d of [loiDai(),bacChien()]){
+for(const d of [loiDai(),bacChien(),theGioi()]){
   fs.writeFileSync(path.join(root,'maps',d.id+'.json'),JSON.stringify(d,null,1)+'\n');
   fs.writeFileSync(path.join(root,'maps',d.id+'.art.js'),`/* ${d.name} · sinh bởi tools/sukien-maps.mjs (bản đồ sự kiện thế giới) */\nK=>LH_ART.gen(${JSON.stringify(ART)})\n`);
   console.log('Đã sinh',d.id,d.objects.length,'vật',d.trees.length,'cây');

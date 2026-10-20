@@ -220,6 +220,7 @@
   setTimeout(()=>{try{A.add('su-kien',K=>A.gen({mon:{
     'ke-trom-cho':{body:'human',s:.95,c:['#4a3a2a','#2a1a10','#8a7a60','#6b4a2e'],weapon:'club',hat:'hood',skin:'#d9ad80',eye:'#2a2018'},
     'linh-phuong-bac':{body:'human',s:1,c:['#8a2a2a','#5a1a1a','#d8c060','#c0c0c0'],weapon:'spear',hat:'helm',armor:1,skin:'#e4c69b',eye:'#2a2018'},
+    'linh-phe-ta':{body:'human',s:1,c:['#2a4a8a','#1a2a5a','#d8c060','#c0c0c0'],weapon:'spear',hat:'helm',armor:1,skin:'#e4c69b',eye:'#2a2018'},
     'tuong-phuong-bac':{body:'human',s:1.5,c:['#6a1a1a','#3a0a0a','#ffd040','#d0d0d8'],weapon:'sword',hat:'helm',armor:1,skin:'#e4c69b',eye:'#ff6060',glow:'#ff404033'},
     'dao-tac':{body:'human',s:.95,c:['#2a2a3a','#14141e','#8a8aa0','#c0c0c0'],weapon:'sword',hat:'hood',skin:'#d9ad80',eye:'#ffd040'},
     'ho-du':{body:'quad',s:1.25,c:['#e08a2e','#7a3a10','#f0c070','#2a1a0a'],tail:1,eye:'#ffe060'},

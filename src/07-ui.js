@@ -77,7 +77,7 @@ window.startUI=(session)=>{
   let npcPanel=false;
   function closeMenu(){menu.hidden=true;$('#settingsBtn').setAttribute('aria-expanded','false');}
   function closeModal(){if(npcPanel){npcPanel=false;game.checkpoint();}$('#overlay').hidden=true;shopSel=null;previewWho=null;$('#scene').focus();}
-  function openModal(titleHtml,content,wide=false){if($('#overlay').hidden)LH_Audio.play('open');delete $('#modalCard').dataset.mk;game.stop();game.closeDialog();closeMenu();$('#modalCard').classList.toggle('wide',wide);$('#overlayTitle').innerHTML=titleHtml;const keep=$('#overlay').hidden?0:$('#modalCard').scrollTop;$('#overlayBody').innerHTML=content;$('#overlay').hidden=false;$('#modalCard').scrollTop=keep;}
+  function openModal(titleHtml,content,wide=false){if($('#overlay').hidden)LH_Audio.play('open');delete $('#modalCard').dataset.mk;delete $('#modalCard').dataset.tg;game.stop();game.closeDialog();closeMenu();$('#modalCard').classList.toggle('wide',wide);$('#overlayTitle').innerHTML=titleHtml;const keep=$('#overlay').hidden?0:$('#modalCard').scrollTop;$('#overlayBody').innerHTML=content;$('#overlay').hidden=false;$('#modalCard').scrollTop=keep;}
   function questHtml(){
     const V=villagers(),s=V.filter(n=>game.seen.includes(n.id)).length,total=V.length;if(s<total)return svg('talk')+`Gặp dân làng ${s}/${total}`;
     const act=Object.entries(p.quests.active);
@@ -549,10 +549,10 @@ window.startUI=(session)=>{
       rows+=`<div class="qrow${st.phase==='reg'&&E.on?' act':''}${E.on?'':' dim'}">${svg(E.id==='loi'?'sword':'flag')}<div><b>${esc(E.name)}</b><small>${esc(E.desc)}</small><small>Giờ mở: <b>${ts}</b> · ${E.on?`còn <b>${lt}</b>/${L} lượt hôm nay`:'—'}</small><small>${note}</small></div>${btn}</div>`;
     }
     const intro=`<p class="tg-intro">Trước giờ mở ${reg} phút, cờ của ta có dấu chấm than: vào sân chờ, đúng giờ khai đài. Đối thủ là bản sao các cao thủ chênh không quá ${Number(Player.CFG.tg_chenh_cap)||5} cấp; gục trong trận không mất đồ. Hạ đối thủ được gấp ${Number(Player.CFG.tg_kinh_nghiem_nhan)||3} kinh nghiệm quái cùng vùng, có thể rơi đồ, sách; hết trận nhận vàng theo cấp.</p>`;
-    const fresh=$('#overlay').hidden||$('#modalCard').dataset.mk!=='tg';
+    const fresh=$('#overlay').hidden||$('#modalCard').dataset.tg!=='1';
     if(fresh)openModal(`${svg('flag')}Tướng quân · Sự kiện thế giới`,intro+rows);else $('#overlayBody').innerHTML=intro+rows;
-    $('#modalCard').dataset.mk='tg';
-    clearInterval(tgTimer);tgTimer=setInterval(()=>{if($('#overlay').hidden||$('#modalCard').dataset.mk!=='tg'){clearInterval(tgTimer);return;}showTG();},1000);
+    $('#modalCard').dataset.tg='1'; // v10.48: không dùng dataset.mk (dấu bảng Chợ) — trước đây bảng Chợ tải xong tưởng đang mở chợ, vẽ đè lên bảng Tướng quân
+    clearInterval(tgTimer);tgTimer=setInterval(()=>{if($('#overlay').hidden||$('#modalCard').dataset.tg!=='1'){clearInterval(tgTimer);return;}showTG();},1000);
   }
   document.addEventListener('click',async ev=>{const b=ev.target.closest('[data-tg-go]');if(!b)return;b.disabled=true;clearInterval(tgTimer);closeModal();await game.tgEnter(b.dataset.tgGo);});
   function tgResult(r,M0){
@@ -563,7 +563,7 @@ window.startUI=(session)=>{
     if(it)body+=`<div class="qrow act">${icon(it.type,Player.rar(it).color)}<div><b style="color:${Player.rar(it).color}">${esc(Player.nameOf(it))}</b><small>Phần thưởng người thắng · đã cất vào túi</small></div></div>`;
     if(r.lost)body+=`<p class="tg-intro">Túi đầy, không nhận được phần thưởng đồ.</p>`;
     body+=`<div class="tg-act"><button type="button" class="primary" id="tgHome">${svg('home')}Về làng</button><button type="button" id="tgStay">${svg('eye')}Ở lại xem</button></div>`;
-    openModal(title,body);$('#modalCard').dataset.mk='tgr';
+    openModal(title,body);$('#modalCard').dataset.tg='2';
     $('#tgHome').onclick=()=>{closeModal();game.tgLeave();};$('#tgStay').onclick=()=>closeModal();
   }
   function openPanel(n,skipStory){

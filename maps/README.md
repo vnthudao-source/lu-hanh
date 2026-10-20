@@ -57,6 +57,6 @@ Bộ sinh `src/04-gen.js`: `theme` (màu đất, chi tiết grass/bamboo/moss/as
 
 ## Bản 10.46 · bản đồ sự kiện thế giới
 
-- `tools/sukien-maps.mjs` sinh bản đồ sự kiện (hiện có `loi-dai-tg` Lôi đài thế giới, `bac-chien-tg` Chiến trường phương Bắc). Trường riêng: `event` (mã sự kiện trong `Player.TG`), `ring {x,y,r}` (tâm, bán kính võ đài theo ô). Không có cổng: vào qua NPC Tướng quân (`panel:'tg'`), ra bằng nút Rời / Về làng.
+- `tools/sukien-maps.mjs` sinh bản đồ sự kiện (hiện có `loi-dai-tg` Lôi đài thế giới, `bac-chien-tg` Chiến trường phương Bắc, `the-gioi-tg` Chiến trường thế giới — `lane.paths` là ba đường đi theo ô từ phe ta lên phe địch, `lane.theirs.spawn` nơi phe địch xuất quân). Trường riêng: `event` (mã sự kiện trong `Player.TG`), `ring {x,y,r}` (tâm, bán kính võ đài theo ô). Không có cổng: vào qua NPC Tướng quân (`panel:'tg'`), ra bằng nút Rời / Về làng.
 - Giếng cổ trong bản đồ sự kiện đầy lại sau `tg_gieng_giay` giây. Bản đồ sự kiện không có người chơi ảo đi lại, không có sự kiện đột xuất.
 - `lane` (Chiến trường): `ours {house:[x,y], towers:[[x,y]…]}`, `theirs {towers, house, spawn}` — vị trí nhà chính, trụ canh hai phe và chỗ lính phe địch xuất hiện (ô).

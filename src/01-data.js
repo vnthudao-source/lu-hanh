@@ -546,7 +546,7 @@ linh:[
    {khoa:'tg_loi_dai_so_nguoi',gia_tri:10,ghi_chu:'v10.46 · Lôi đài thế giới: số người một trận, tính cả người chơi (máy yếu thì giảm)'},
    {khoa:'tg_bac_gio',gia_tri:'13h00, 21h00',ghi_chu:'v10.46 · Chiến trường phương Bắc: giờ mở (dạng 13h00, cách nhau dấu phẩy)'},
    {khoa:'tg_bac_phut',gia_tri:10,ghi_chu:'v10.46 · Chiến trường phương Bắc: số phút một trận'},
-   {khoa:'tg_the_gioi_gio',gia_tri:'19h00, 22h00',ghi_chu:'v10.46 · Chiến trường thế giới: giờ mở (dạng 19h00, cách nhau dấu phẩy) · mở ở bản sau'},
+   {khoa:'tg_the_gioi_gio',gia_tri:'19h00, 22h00',ghi_chu:'v10.46 · Chiến trường thế giới: giờ mở (dạng 19h00, cách nhau dấu phẩy)'},
    {khoa:'tg_the_gioi_phut',gia_tri:15,ghi_chu:'v10.46 · Chiến trường thế giới: số phút một trận'},
    {khoa:'tg_dang_ky_phut',gia_tri:5,ghi_chu:'v10.46 · Sự kiện thế giới: trước giờ mở bao nhiêu phút thì Tướng quân hiện dấu chấm than và cho vào bản đồ chờ'},
    {khoa:'tg_luot_ngay',gia_tri:4,ghi_chu:'v10.46 · Sự kiện thế giới: số lượt tối đa mỗi sự kiện mỗi ngày (giờ Việt Nam)'},
@@ -569,6 +569,14 @@ linh:[
    {khoa:'tg_bac_tru_don',gia_tri:70,ghi_chu:'v10.47 · Chiến trường phương Bắc: máu trụ canh phe địch = bấy nhiêu đòn thường của nhân vật'},
    {khoa:'tg_bac_nha_don',gia_tri:130,ghi_chu:'v10.47 · Chiến trường phương Bắc: máu nhà chính phe địch = bấy nhiêu đòn thường của nhân vật'},
    {khoa:'tg_bac_ha_toi_da',gia_tri:150,ghi_chu:'v10.47 · Chiến trường phương Bắc: số lần hạ lính / trụ được tính thưởng tối đa mỗi trận'},
+   {khoa:'tg_the_gioi_so_nguoi',gia_tri:10,ghi_chu:'v10.48 · Chiến trường thế giới: số người mỗi phe, tính cả người chơi (phe địch là bản sao người chơi chênh không quá tg_chenh_cap cấp, kèm lính thuê)'},
+   {khoa:'tg_the_gioi_dot_giay',gia_tri:30,ghi_chu:'v10.48 · Chiến trường thế giới: bao nhiêu giây một đợt lính, cả hai phe'},
+   {khoa:'tg_the_gioi_linh_dot',gia_tri:9,ghi_chu:'v10.48 · Chiến trường thế giới: số lính mỗi đợt mỗi phe, chia đều ba đường'},
+   {khoa:'tg_the_gioi_tang_phan_tram',gia_tri:8,ghi_chu:'v10.48 · Chiến trường thế giới: mỗi đợt sau máu, sát thương lính tăng bấy nhiêu %'},
+   {khoa:'tg_the_gioi_hoi_sinh_giay',gia_tri:15,ghi_chu:'v10.48 · Chiến trường thế giới: đồng đội, bản sao phe địch gục thì bấy nhiêu giây sau đứng dậy ở doanh trại (người chơi gục thì về làng)'},
+   {khoa:'tg_the_gioi_tru_don',gia_tri:90,ghi_chu:'v10.48 · Chiến trường thế giới: máu trụ canh phe địch = bấy nhiêu đòn thường của nhân vật'},
+   {khoa:'tg_the_gioi_nha_don',gia_tri:180,ghi_chu:'v10.48 · Chiến trường thế giới: máu nhà chính phe địch = bấy nhiêu đòn thường của nhân vật'},
+   {khoa:'tg_the_gioi_ha_toi_da',gia_tri:200,ghi_chu:'v10.48 · Chiến trường thế giới: số lần hạ lính / bản sao / trụ được tính thưởng tối đa mỗi trận'},
    {khoa:'tg_gieng_giay',gia_tri:60,ghi_chu:'v10.46 · Giếng cổ trong bản đồ sự kiện: số giây để nước đầy lại'}
   );
   // v10.13: quái sự kiện đột xuất (không có trong bãi quái; hiện theo sự kiện ngoài vùng an toàn gần cổng). Máu / sát thương theo cấp vùng.
