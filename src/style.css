@@ -409,3 +409,20 @@ button.fx-vang{color:#ffe08a}button.fx-cau-vong{color:#ffb0ff}button.fx-lua{colo
 .tg-hot{color:#ff8a3a}
 .tg-intro{margin:4px 2px 10px;font-size:13px;line-height:1.5;opacity:.92}
 .tg-act{display:flex;gap:10px;justify-content:center;margin-top:12px}
+
+/* v10.54 · Điện thoại xoay ngang: thanh trên mỏng, cần điều khiển + vòng kỹ năng thu nhỏ sát hai mép, chừa tai thỏ (safe-area) */
+@media (orientation:landscape) and (max-height:540px) and (pointer:coarse),(orientation:landscape) and (max-height:460px){
+ header{height:54px;padding:0 max(10px,env(safe-area-inset-right)) 0 max(14px,env(safe-area-inset-left))}.layout{height:calc(var(--app-h,100dvh) - 54px)}
+ .avatar{width:36px;height:36px;padding:2px;box-shadow:none}.level{font-size:8px;bottom:-6px;padding:0 5px}.profile{gap:9px}
+ .player-info{position:relative;width:190px}.player-name{font-size:14px;max-width:190px;margin-bottom:3px}.bars{gap:3px}.bar{height:6px}.bar small{display:none}
+ .buffs{position:absolute;left:100%;top:0;margin:0 0 0 8px;min-height:0}
+ .top-right{gap:6px}.top-right>button{padding:6px 8px}.top-right>button svg.icon{width:20px;height:20px}.version{display:none}
+ .hint{display:none}.touch-controls{display:block;left:max(14px,env(safe-area-inset-left));bottom:12px}
+ .skill-wheel{transform:scale(.66);transform-origin:bottom right;right:max(4px,env(safe-area-inset-right));bottom:4px}
+ .map-box{right:max(10px,env(safe-area-inset-right));top:8px;gap:4px}#minimap{width:112px;height:60px;border-width:3px}.map-meta{font-size:10px;padding:4px 6px}
+ .quest-track{left:max(10px,env(safe-area-inset-left));top:8px;font-size:11px;padding:5px 7px;gap:5px}.quest-track svg{width:16px;height:16px}
+ #dialog{bottom:8px;left:50%;width:min(520px,calc(100% - 330px));min-width:260px;padding:10px 12px}#dialog p{font-size:13px;margin:4px 0}
+ #toast{top:6px;padding:6px 11px;font-size:12px;white-space:nowrap}
+ .overlay{padding:6px}.card{max-height:calc(var(--app-h,100dvh) - 12px);max-width:640px;padding:12px}
+ .portal{place-items:start center;padding:6px max(10px,env(safe-area-inset-right)) 6px max(10px,env(safe-area-inset-left))}.portal-card{padding:12px 16px}.plogo{margin-bottom:6px}.plogo b{font-size:24px}
+}
