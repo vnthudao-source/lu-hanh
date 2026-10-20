@@ -44,7 +44,7 @@
     return {tile,over,ripple:S.ripple||'#ffffff55'};
   }
   // ---------- vật trang trí ----------
-  // spec: {base:'tree|rock|pillar|lantern|wall|gate|roof|flag|torch|shrine|bones|crystal|drum|tent', c:[màu…], s:cỡ, shape:'round|cone|palm|bamboo|dead'}
+  // spec: {base:'tree|rock|pillar|lantern|wall|gate|roof|flag|torch|shrine|bones|crystal|drum|tent|rack|barrel|crate|palisade|brazier|dummy|banner|cart|grass|stones', c:[màu…], s:cỡ, shape:'round|cone|palm|bamboo|dead'}
   const shadow=(c,x,y,rx,ry)=>ell(c,x+rx*.25,y+3,rx,ry,'#00000026');
   const OBJ={
     tree(c,o,t,S){const x=o.x,y=o.y+4,s=(S.s||1)*(.85+(o.seed%4)*.1),sw=Math.sin(t*.9+o.seed)*1.4,[trunk,leaf,leaf2]=S.c;shadow(c,x,y,20*s,6*s);
@@ -66,6 +66,22 @@
     bones(c,o,t,S){const x=o.x,y=o.y,[b]=S.c;ell(c,x-6,y-8,9,8,b);c.fillStyle='#1a1410';c.fillRect(x-9,y-10,4,4);c.fillRect(x-2,y-10,4,4);for(let k=0;k<4;k++)line(c,[x+6+k*6,y-16+k*2,x+10+k*6,y+1],b,2.2);line(c,[x+4,y-14,x+30,y-8],b,3);},
     crystal(c,o,t,S){const x=o.x,y=o.y,[a,g]=S.c,p=.6+Math.sin(t*2+o.seed)*.2;c.save();c.shadowColor=g;c.shadowBlur=16*p;for(const [dx,h,w] of [[-8,28,6],[2,42,8],[12,24,5]])poly(c,[x+dx-w,y,x+dx,y-h,x+dx+w,y],a);c.restore();for(const [dx,h,w] of [[-8,28,6],[2,42,8]])poly(c,[x+dx-w*.5,y-h*.3,x+dx,y-h,x+dx+w*.3,y-h*.25],shade(a,.35));},
     drum(c,o,t,S){const x=o.x,y=o.y,[body,skin,band]=S.c;shadow(c,x,y,22,7);for(const dx of [-12,12])line(c,[x+dx,y,x+dx*1.4,y-40],'#4a3220',3);ell(c,x,y-36,22,10,shade(body,-.2));c.fillStyle=body;c.fillRect(x-22,y-60,44,24);ell(c,x,y-60,22,10,skin);c.strokeStyle=band;c.lineWidth=2;c.beginPath();c.ellipse(x,y-60,22,10,0,0,PI2);c.stroke();for(let k=0;k<8;k++)ell(c,x-19+k*5.4,y-50,1.6,1.6,band);},
+    // v10.49: đồ trang trí doanh trại, chiến trường: giá binh khí, thùng, hòm, rào nhọn, vạc lửa, người rơm, phướn, xe lương, cỏ, đá vụn
+    rack(c,o,t,S){const x=o.x,y=o.y,[wood,metal]=S.c;shadow(c,x,y,26,7);line(c,[x-22,y,x-22,y-44],wood,4);line(c,[x+22,y,x+22,y-44],wood,4);line(c,[x-26,y-40,x+26,y-40],wood,3);line(c,[x-24,y-12,x+24,y-12],wood,3);
+      for(let k=0;k<5;k++){const bx=x-16+k*8;line(c,[bx,y-8,bx+2,y-62],shade(wood,.15),2);if(k%2)poly(c,[bx-1,y-62,bx+2,y-74,bx+5,y-62],metal);else{line(c,[bx+2,y-62,bx+2,y-70],metal,3);}}},
+    barrel(c,o,t,S){const x=o.x,y=o.y,[wood,band]=S.c,n=o.n||1;for(let k=0;k<n;k++){const bx=x+(k-(n-1)/2)*22,by=y-(k===2?18:0);shadow(c,bx,by,12,4);rr(c,bx-11,by-28,22,28,6,wood);c.fillStyle=shade(wood,-.25);c.fillRect(bx+3,by-26,6,24);line(c,[bx-11,by-8,bx+11,by-8],band,2);line(c,[bx-11,by-21,bx+11,by-21],band,2);ell(c,bx,by-28,11,4,shade(wood,.2));}},
+    crate(c,o,t,S){const x=o.x,y=o.y,[wood,dark]=S.c;shadow(c,x,y,22,6);const box=(bx,by,w)=>{c.fillStyle=wood;c.fillRect(bx-w/2,by-w,w,w);c.strokeStyle=dark;c.lineWidth=2;c.strokeRect(bx-w/2+1,by-w+1,w-2,w-2);line(c,[bx-w/2+2,by-2,bx+w/2-2,by-w+2],dark,2);poly(c,[bx-w/2,by-w,bx-w/2+6,by-w-6,bx+w/2+6,by-w-6,bx+w/2,by-w],shade(wood,.2));poly(c,[bx+w/2,by-w,bx+w/2+6,by-w-6,bx+w/2+6,by-6,bx+w/2,by],shade(wood,-.25));};
+      box(x-8,y,24);box(x+14,y,20);if(o.seed%2)box(x+2,y-24,18);},
+    palisade(c,o,t,S){const w=(o.w||2)*48,x0=o.x-w/2,y=o.y,[wood]=S.c;shadow(c,o.x,y,w/2,6);for(let xx=x0+5;xx<x0+w;xx+=10){const h=46+((xx*7)%9);rr(c,xx-4.5,y-h,9,h,2,(xx/10|0)%2?wood:shade(wood,-.12));poly(c,[xx-4.5,y-h,xx,y-h-9,xx+4.5,y-h],shade(wood,.15));}line(c,[x0,y-14,x0+w,y-14],shade(wood,-.35),3);line(c,[x0,y-34,x0+w,y-34],shade(wood,-.35),3);},
+    brazier(c,o,t,S){const x=o.x,y=o.y,[metal,fire]=S.c,f=Math.sin(t*8+o.seed);shadow(c,x,y,16,5);for(const d of [-1,0,1])line(c,[x+d*10,y,x+d*5,y-22],metal,3);poly(c,[x-16,y-22,x+16,y-22,x+11,y-32,x-11,y-32],metal);c.save();c.shadowColor=fire;c.shadowBlur=18;
+      poly(c,[x-11,y-32,x-7,y-48-f*4,x-2,y-38,x+2,y-54+f*3,x+6,y-40,x+9,y-50-f*2,x+11,y-32],fire);ell(c,x,y-36,6,4,'#fff0a0');c.restore();},
+    dummy(c,o,t,S){const x=o.x,y=o.y,[straw,cloth]=S.c,w=Math.sin(t*1.5+o.seed)*1.2;shadow(c,x,y,12,4);line(c,[x,y,x,y-56],'#5a3a1e',4);line(c,[x-20,y-42,x+20,y-42+w],'#5a3a1e',3);ell(c,x,y-34,11,14,straw);c.fillStyle=cloth;c.fillRect(x-11,y-34,22,8);ell(c,x,y-58,9,9,straw);line(c,[x-4,y-60,x+4,y-56],'#3a2a1a',1.5);line(c,[x+4,y-60,x-4,y-56],'#3a2a1a',1.5);for(let k=-2;k<=2;k++)line(c,[x+k*4,y-22,x+k*5,y-14],shade(straw,-.2),1.5);},
+    banner(c,o,t,S){const x=o.x,y=o.y,[pole,cloth,em]=S.c,w=Math.sin(t*1.8+o.seed)*3;line(c,[x,y,x,y-96],pole,3);line(c,[x-2,y-92,x+18,y-92],pole,2);c.fillStyle=cloth;c.beginPath();c.moveTo(x+2,y-92);c.lineTo(x+18,y-92);c.quadraticCurveTo(x+20+w,y-70,x+18+w*1.3,y-44);c.lineTo(x+10+w,y-50);c.lineTo(x+2+w*1.1,y-44);c.quadraticCurveTo(x+4+w*.5,y-70,x+2,y-92);c.fill();
+      if(em){ell(c,x+10+w*.4,y-78,4,4,em);ell(c,x+10+w*.7,y-66,3,3,em);}ell(c,x,y-98,3,3,'#e0b040');},
+    cart(c,o,t,S){const x=o.x,y=o.y,[wood,cargo]=S.c;shadow(c,x,y,34,8);line(c,[x+24,y-14,x+50,y-6],wood,3);c.fillStyle=wood;c.fillRect(x-30,y-28,56,12);for(let k=0;k<3;k++)ell(c,x-18+k*16,y-34-(k%2)*4,10,8,k%2?shade(cargo,-.1):cargo);line(c,[x-24,y-36,x+18,y-38],shade(cargo,-.4),1.5);
+      for(const wx of [-18,14]){ell(c,x+wx,y-8,10,10,'#3a2a1a');ell(c,x+wx,y-8,7,7,shade(wood,.1));line(c,[x+wx-7,y-8,x+wx+7,y-8],'#3a2a1a',1.5);line(c,[x+wx,y-15,x+wx,y-1],'#3a2a1a',1.5);}},
+    grass(c,o,t,S){const x=o.x,y=o.y,[a,b]=S.c,sw=Math.sin(t*1.3+o.seed)*2;for(let k=-3;k<=3;k++)line(c,[x+k*3,y,x+k*4.5+sw,y-10-Math.abs((k*5+o.seed)%7)],k%2?a:(b||shade(a,.2)),1.6);if(S.flower)for(let k=0;k<3;k++)ell(c,x-6+k*6+sw,y-14-(k%2)*3,2.2,2.2,S.flower);},
+    stones(c,o,t,S){const x=o.x,y=o.y,[a]=S.c;for(let k=0;k<4;k++){const sx=x-12+k*8+((o.seed*k)%5),sy=y-((k*3)%5);ell(c,sx,sy,4+(k%2)*2,3+(k%2),k%2?a:shade(a,-.18));ell(c,sx-1,sy-1,2,1.4,shade(a,.25));}},
     tent(c,o,t,S){const x=o.x,y=o.y,[cloth,pole]=S.c;shadow(c,x,y,34,9);poly(c,[x-34,y,x,y-52,x+34,y],cloth);poly(c,[x-8,y,x,y-20,x+8,y],'#1a1410');line(c,[x,y-52,x,y-62],pole,2);poly(c,[x-34,y,x,y-52,x-10,y],shade(cloth,-.2));}
   };
   // ---------- quái: dáng tham số ----------

@@ -257,6 +257,827 @@
    "y": 31,
    "ancient": true,
    "id": "gieng-901"
+  },
+  {
+   "kind": "phuon-loi-tg",
+   "x": 32,
+   "y": 24
+  },
+  {
+   "kind": "phuon-loi-tg",
+   "x": 26,
+   "y": 28
+  },
+  {
+   "kind": "phuon-loi-tg",
+   "x": 18,
+   "y": 29
+  },
+  {
+   "kind": "phuon-loi-tg",
+   "x": 11,
+   "y": 26
+  },
+  {
+   "kind": "phuon-loi-tg",
+   "x": 6,
+   "y": 20
+  },
+  {
+   "kind": "phuon-loi-tg",
+   "x": 5,
+   "y": 13
+  },
+  {
+   "kind": "phuon-loi-tg",
+   "x": 8,
+   "y": 6
+  },
+  {
+   "kind": "phuon-loi-tg",
+   "x": 14,
+   "y": 2
+  },
+  {
+   "kind": "phuon-loi-tg",
+   "x": 22,
+   "y": 1
+  },
+  {
+   "kind": "phuon-loi-tg",
+   "x": 29,
+   "y": 4
+  },
+  {
+   "kind": "vac-lua-tg",
+   "x": 20,
+   "y": 1,
+   "light": "#ff9040"
+  },
+  {
+   "kind": "vac-lua-tg",
+   "x": 5,
+   "y": 15,
+   "light": "#ff9040"
+  },
+  {
+   "kind": "vac-lua-tg",
+   "x": 35,
+   "y": 15,
+   "light": "#ff9040"
+  },
+  {
+   "kind": "vac-lua-tg",
+   "x": 8,
+   "y": 4,
+   "light": "#ff9040"
+  },
+  {
+   "kind": "vac-lua-tg",
+   "x": 32,
+   "y": 4,
+   "light": "#ff9040"
+  },
+  {
+   "kind": "gia-binh-khi-tg",
+   "x": 14,
+   "y": 28
+  },
+  {
+   "kind": "nguoi-rom-tg",
+   "x": 13,
+   "y": 31
+  },
+  {
+   "kind": "nguoi-rom-tg",
+   "x": 28,
+   "y": 31
+  },
+  {
+   "kind": "thung-go-tg",
+   "x": 11,
+   "y": 32,
+   "n": 2
+  },
+  {
+   "kind": "hom-go-tg",
+   "x": 29,
+   "y": 32
+  },
+  {
+   "kind": "thung-go-tg",
+   "x": 15,
+   "y": 33
+  },
+  {
+   "kind": "hom-go-tg",
+   "x": 25,
+   "y": 33
+  },
+  {
+   "kind": "xe-luong-tg",
+   "x": 6,
+   "y": 30
+  },
+  {
+   "kind": "xe-luong-tg",
+   "x": 33,
+   "y": 30
+  },
+  {
+   "kind": "gia-binh-khi-tg",
+   "x": 5,
+   "y": 26
+  },
+  {
+   "kind": "gia-binh-khi-tg",
+   "x": 35,
+   "y": 26
+  },
+  {
+   "kind": "nguoi-rom-tg",
+   "x": 32,
+   "y": 27
+  },
+  {
+   "kind": "thung-go-tg",
+   "x": 3,
+   "y": 33,
+   "n": 3
+  },
+  {
+   "kind": "hom-go-tg",
+   "x": 36,
+   "y": 33
+  },
+  {
+   "kind": "da-tang-tg",
+   "x": 36,
+   "y": 5
+  },
+  {
+   "kind": "da-tang-tg",
+   "x": 2,
+   "y": 20
+  },
+  {
+   "kind": "da-tang-tg",
+   "x": 37,
+   "y": 22
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 1,
+   "y": 1,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 2,
+   "y": 1,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-do-tg",
+   "x": 15,
+   "y": 1,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 31,
+   "y": 1,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 37,
+   "y": 1,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 25,
+   "y": 2,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 28,
+   "y": 2,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-do-tg",
+   "x": 31,
+   "y": 2,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 35,
+   "y": 2,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 17,
+   "y": 3,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-do-tg",
+   "x": 23,
+   "y": 3,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 29,
+   "y": 3,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 36,
+   "y": 3,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 10,
+   "y": 4,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-do-tg",
+   "x": 16,
+   "y": 4,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 24,
+   "y": 4,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-do-tg",
+   "x": 35,
+   "y": 5,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 2,
+   "y": 6,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 6,
+   "y": 6,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-do-tg",
+   "x": 29,
+   "y": 6,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 5,
+   "y": 7,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 10,
+   "y": 7,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 32,
+   "y": 7,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 34,
+   "y": 7,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 10,
+   "y": 8,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 11,
+   "y": 8,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 29,
+   "y": 8,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 35,
+   "y": 8,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 4,
+   "y": 9,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-do-tg",
+   "x": 38,
+   "y": 9,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 5,
+   "y": 10,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 10,
+   "y": 10,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 23,
+   "y": 10,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 38,
+   "y": 10,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 6,
+   "y": 11,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 31,
+   "y": 11,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 1,
+   "y": 12,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-do-tg",
+   "x": 6,
+   "y": 12,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 7,
+   "y": 12,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 26,
+   "y": 12,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-do-tg",
+   "x": 8,
+   "y": 13,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 14,
+   "y": 13,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 31,
+   "y": 13,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 3,
+   "y": 14,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 7,
+   "y": 14,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 9,
+   "y": 14,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 19,
+   "y": 14,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 37,
+   "y": 14,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 13,
+   "y": 16,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 22,
+   "y": 16,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 1,
+   "y": 17,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 31,
+   "y": 17,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 5,
+   "y": 18,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-do-tg",
+   "x": 6,
+   "y": 18,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 7,
+   "y": 18,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 8,
+   "y": 18,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 19,
+   "y": 18,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 2,
+   "y": 19,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 35,
+   "y": 19,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 37,
+   "y": 19,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 32,
+   "y": 20,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 33,
+   "y": 20,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 34,
+   "y": 20,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 36,
+   "y": 20,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 3,
+   "y": 21,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 6,
+   "y": 21,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 10,
+   "y": 21,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 12,
+   "y": 21,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 9,
+   "y": 22,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 20,
+   "y": 23,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 22,
+   "y": 23,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 12,
+   "y": 24,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 14,
+   "y": 25,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 26,
+   "y": 25,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 35,
+   "y": 25,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-do-tg",
+   "x": 1,
+   "y": 26,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 13,
+   "y": 26,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-do-tg",
+   "x": 29,
+   "y": 26,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 32,
+   "y": 26,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 38,
+   "y": 26,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 5,
+   "y": 27,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 6,
+   "y": 27,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 23,
+   "y": 27,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-do-tg",
+   "x": 30,
+   "y": 27,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 6,
+   "y": 28,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 21,
+   "y": 28,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-do-tg",
+   "x": 1,
+   "y": 29,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 5,
+   "y": 29,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 10,
+   "y": 29,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 11,
+   "y": 29,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 32,
+   "y": 29,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-do-tg",
+   "x": 5,
+   "y": 30,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 35,
+   "y": 30,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 5,
+   "y": 31,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 14,
+   "y": 31,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 20,
+   "y": 31,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 30,
+   "y": 31,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 31,
+   "y": 31,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 3,
+   "y": 32,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 14,
+   "y": 32,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 26,
+   "y": 32,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-do-tg",
+   "x": 35,
+   "y": 32,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 36,
+   "y": 32,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 1,
+   "y": 33,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 7,
+   "y": 33,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 4,
+   "y": 34,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-do-tg",
+   "x": 18,
+   "y": 34,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 20,
+   "y": 34,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 28,
+   "y": 34,
+   "solid": false
   }
  ],
  "trees": [

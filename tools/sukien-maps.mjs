@@ -82,8 +82,49 @@ function theGioi(){
 const ART={theme:{'bac-chien-tg':{g:['#6a5a40','#544630'],d:'ash',r:['#7a6a54','#4a4034','#2a241c'],w:['#5a6a70','#3a4a50'],p:'#8a7450',sd:'#8a7450'},'loi-dai-tg':{g:['#8a7a5a','#706244'],d:'brick',r:['#9a8468','#6a5844','#3a3024'],w:['#5a8aa0','#3a6a80'],p:'#c0a878',sd:'#a89070'}},
   sky:{'bac-chien-tg':{n:30,col:'#ffb070',size:2,vx:24,vy:-6,glow:1,tint:'#3018081a'},'loi-dai-tg':{n:18,col:'#ffd080',size:3,vx:6,vy:-8,glow:1,tint:'#40201010'}},
   obj:{'leu-bac-ta':{base:'tent',c:['#2a5a6a','#3a3220']},'leu-bac-dich':{base:'tent',c:['#8a2a20','#4a3220']},'duoc-bac':{base:'torch',c:['#4a3220','#ff8a30']},'co-bac-ta':{base:'flag',s:1.5,c:['#4a3220','#2a6ab0','#ffd040']},'co-bac-dich':{base:'flag',s:1.5,c:['#4a3220','#c02020','#ffd040']},'cot-loi-dai':{base:'pillar',c:['#b0a080','#6a2a1a']},'den-loi-dai':{base:'lantern',c:['#5a2a1a','#ff7040']},'co-loi-dai':{base:'flag',s:1.4,c:['#4a3220','#c02020','#ffd040']},
-    'leu-loi-dai':{base:'tent',c:['#8a2a20','#4a3220']},'trong-loi-dai':{base:'drum',c:['#6a1a10','#e8d0a0','#e0b040']}}};
+    'leu-loi-dai':{base:'tent',c:['#8a2a20','#4a3220']},
+    // v10.49: trang trí thêm (tên có đuôi -tg vì tên vật dùng chung mọi gói bản đồ — 'gia-binh-khi' đã có ở vo-dai)
+    'gia-binh-khi-tg':{base:'rack',c:['#6a4a2a','#c8c8d0']},'thung-go-tg':{base:'barrel',c:['#7a5a34','#3a2a1a']},'hom-go-tg':{base:'crate',c:['#9a7444','#5a3e20']},
+    'rao-nhon-tg':{base:'palisade',c:['#7a5a34']},'vac-lua-tg':{base:'brazier',c:['#3a3434','#ff8a30']},'nguoi-rom-tg':{base:'dummy',c:['#d8b860','#8a2a20']},
+    'phuon-ta-tg':{base:'banner',c:['#4a3220','#2a5ab0','#ffd040']},'phuon-dich-tg':{base:'banner',c:['#4a3220','#b02020','#ffd040']},'phuon-loi-tg':{base:'banner',c:['#4a3220','#c08020','#8a1a10']},
+    'xe-luong-tg':{base:'cart',c:['#7a5a34','#c8b070']},'co-dai-tg':{base:'grass',c:['#7a8a40','#9aa050']},'co-hoa-tg':{base:'grass',c:['#6a8a3a','#8aa048'],flower:'#e8c040'},'co-hoa-do-tg':{base:'grass',c:['#6a8a3a','#8aa048'],flower:'#d05040'},
+    'da-vun-tg':{base:'stones',c:['#8a8070']},'xuong-tran-tg':{base:'bones',c:['#d8d0b8']},'da-tang-tg':{base:'rock',s:1.1,c:['#7a7264','#4a4438']},'trong-loi-dai':{base:'drum',c:['#6a1a10','#e8d0a0','#e0b040']}}};
+// v10.49: trang trí thêm cho đỡ đơn điệu — đặt theo danh sách (bỏ qua ô bận), rồi rải cỏ, hoa, đá vụn (đi xuyên qua được)
+function decorate(d,list,scatter){
+  const busy=new Set(),key=(x,y)=>x+','+y;for(const o of d.objects)for(let k=0;k<(o.w||1);k++)busy.add(key(o.x+k,o.y));for(const [x,y] of d.trees)busy.add(key(x,y));
+  const keep=[];if(d.lane){for(const s of ['ours','theirs']){const L=d.lane[s];if(L.house)keep.push(L.house);for(const t of L.towers||[])keep.push(t);if(L.spawn)keep.push(L.spawn);}if(d.lane.spawnA)keep.push(d.lane.spawnA);}
+  const tile=(x,y)=>(d.tiles[y]||'')[x];
+  const free=(x,y,w=1,path=false)=>{for(let k=0;k<w;k++){const t=tile(x+k,y);if(!t||t==='#'||busy.has(key(x+k,y)))return false;if(!path&&t===':')return false;}
+    if(keep.some(p=>Math.abs(p[0]-x)<=2&&Math.abs(p[1]-y)<=2))return false;for(const o of d.objects)if(o.kind==='well'&&Math.abs(o.x-x)<=1&&Math.abs(o.y-y)<=1)return false;return true;};
+  let n=0;for(const [kind,x,y,o] of list){const w=(o&&o.w)||1,solid=!(o&&o.solid===false);if(!free(x,y,w,!solid))continue;d.objects.push({kind,x,y,...(o||{})});for(let k=0;k<w;k++)busy.add(key(x+k,y));n++;}
+  for(let y=1;y<d.h-1;y++)for(let x=1;x<d.w-1;x++){const h=hash(x*11+3,y*17+5),t=tile(x,y);if(h>=(t===':'?scatter.pathRate||0:scatter.rate))continue;if(t==='#'||busy.has(key(x,y)))continue;
+    const kinds=t===':'?scatter.path:scatter.ground;if(!kinds||!kinds.length)continue;d.objects.push({kind:kinds[Math.floor(hash(x,y*3)*kinds.length)],x,y,solid:false});busy.add(key(x,y));n++;}
+  return n;
+}
+const DECO={
+  'loi-dai-tg':d=>decorate(d,[
+    // phướn vàng quanh võ đài, vạc lửa ở bốn hướng, giá binh khí và người rơm trong sân chờ, thùng hòm cạnh lều
+    ...[...Array(12)].map((_,k)=>{const a=k/12*Math.PI*2+.13;return ['phuon-loi-tg',Math.round(20+Math.cos(a)*15),Math.round(15+Math.sin(a)*14.2)];}),
+    ['vac-lua-tg',20,1,{light:'#ff9040'}],['vac-lua-tg',5,15,{light:'#ff9040'}],['vac-lua-tg',35,15,{light:'#ff9040'}],['vac-lua-tg',8,4,{light:'#ff9040'}],['vac-lua-tg',32,4,{light:'#ff9040'}],
+    ['gia-binh-khi-tg',14,28],['gia-binh-khi-tg',26,28],['nguoi-rom-tg',13,31],['nguoi-rom-tg',28,31],['thung-go-tg',11,32,{n:2}],['hom-go-tg',29,32],['thung-go-tg',15,33],['hom-go-tg',25,33],
+    ['xe-luong-tg',6,30],['xe-luong-tg',33,30],['gia-binh-khi-tg',5,26],['gia-binh-khi-tg',35,26],['nguoi-rom-tg',8,27],['nguoi-rom-tg',32,27],['thung-go-tg',3,33,{n:3}],['hom-go-tg',36,33],
+    ['da-tang-tg',3,4],['da-tang-tg',36,5],['da-tang-tg',2,20],['da-tang-tg',37,22]],
+    {rate:.13,pathRate:.025,ground:['co-dai-tg','co-dai-tg','co-hoa-tg','co-hoa-do-tg','da-vun-tg'],path:['da-vun-tg']}),
+  'bac-chien-tg':d=>decorate(d,[
+    // doanh trại phe ta: rào nhọn, giá binh khí, thùng, hòm, xe lương, vạc lửa, phướn xanh; phe địch tương tự phướn đỏ; dọc đường: đá, xương, xe hỏng
+    ['rao-nhon-tg',1,32,{w:3}],['rao-nhon-tg',10,39,{w:2}],['gia-binh-khi-tg',3,35],['thung-go-tg',6,38,{n:2}],['hom-go-tg',2,37],['xe-luong-tg',10,33],['vac-lua-tg',6,35,{light:'#ff9040'}],['phuon-ta-tg',9,35],['phuon-ta-tg',1,34],['nguoi-rom-tg',12,37],
+    ['rao-nhon-tg',39,10,{w:3}],['rao-nhon-tg',46,9],['gia-binh-khi-tg',40,5],['thung-go-tg',43,3,{n:2}],['hom-go-tg',39,4],['xe-luong-tg',36,8],['vac-lua-tg',42,6,{light:'#ff7040'}],['phuon-dich-tg',37,3],['phuon-dich-tg',45,3],
+    ['xuong-tran-tg',20,22],['xuong-tran-tg',27,16],['xuong-tran-tg',33,13],['xe-luong-tg',17,22],['da-tang-tg',23,17],['da-tang-tg',30,10],['thung-go-tg',25,22],['hom-go-tg',31,18],['phuon-ta-tg',14,28],['phuon-dich-tg',34,10]],
+    {rate:.12,pathRate:.05,ground:['co-dai-tg','co-dai-tg','co-hoa-tg','da-vun-tg','da-vun-tg'],path:['da-vun-tg','da-vun-tg','da-vun-tg','xuong-tran-tg']}),
+  'the-gioi-tg':d=>decorate(d,[
+    ['rao-nhon-tg',1,37,{w:2}],['rao-nhon-tg',8,37,{w:2}],['gia-binh-khi-tg',3,38],['gia-binh-khi-tg',6,42],['thung-go-tg',1,41,{n:2}],['hom-go-tg',7,40],['xe-luong-tg',14,40],['vac-lua-tg',4,37,{light:'#ff9040'}],['phuon-ta-tg',7,38],['phuon-ta-tg',13,35],['nguoi-rom-tg',2,42],
+    ['rao-nhon-tg',42,12,{w:3}],['rao-nhon-tg',52,10,{w:2}],['gia-binh-khi-tg',49,4],['thung-go-tg',52,6,{n:2}],['hom-go-tg',45,3],['xe-luong-tg',53,12],['vac-lua-tg',48,2,{light:'#ff7040'}],['phuon-dich-tg',44,9],['phuon-dich-tg',50,8],
+    // giữa bản đồ: tàn tích trận cũ giữa các đường
+    ['xuong-tran-tg',16,14],['xuong-tran-tg',38,24],['xuong-tran-tg',24,32],['xuong-tran-tg',40,16],['xe-luong-tg',18,24],['xe-luong-tg',36,31],['da-tang-tg',22,10],['da-tang-tg',33,34],['da-tang-tg',42,26],['da-tang-tg',12,18],
+    ['thung-go-tg',20,30],['hom-go-tg',34,12],['phuon-ta-tg',9,25],['phuon-ta-tg',22,36],['phuon-dich-tg',33,7],['phuon-dich-tg',47,30],['vac-lua-tg',27,27,{light:'#ff9040'}],['vac-lua-tg',17,7,{light:'#ff9040'}],['vac-lua-tg',45,36,{light:'#ff9040'}]],
+    {rate:.11,pathRate:.04,ground:['co-dai-tg','co-dai-tg','co-hoa-tg','co-hoa-do-tg','da-vun-tg'],path:['da-vun-tg']})};
 for(const d of [loiDai(),bacChien(),theGioi()]){
+  const nd=DECO[d.id]?DECO[d.id](d):0;if(nd)console.log('  trang trí',d.id,nd);
   fs.writeFileSync(path.join(root,'maps',d.id+'.json'),JSON.stringify(d,null,1)+'\n');
   fs.writeFileSync(path.join(root,'maps',d.id+'.art.js'),`/* ${d.name} · sinh bởi tools/sukien-maps.mjs (bản đồ sự kiện thế giới) */\nK=>LH_ART.gen(${JSON.stringify(ART)})\n`);
   console.log('Đã sinh',d.id,d.objects.length,'vật',d.trees.length,'cây');

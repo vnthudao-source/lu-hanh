@@ -192,6 +192,488 @@
    "y": 19,
    "ancient": true,
    "id": "gieng-912"
+  },
+  {
+   "kind": "rao-nhon-tg",
+   "x": 1,
+   "y": 32,
+   "w": 3
+  },
+  {
+   "kind": "thung-go-tg",
+   "x": 6,
+   "y": 38,
+   "n": 2
+  },
+  {
+   "kind": "hom-go-tg",
+   "x": 2,
+   "y": 37
+  },
+  {
+   "kind": "phuon-ta-tg",
+   "x": 9,
+   "y": 35
+  },
+  {
+   "kind": "phuon-ta-tg",
+   "x": 1,
+   "y": 34
+  },
+  {
+   "kind": "rao-nhon-tg",
+   "x": 46,
+   "y": 9
+  },
+  {
+   "kind": "hom-go-tg",
+   "x": 39,
+   "y": 4
+  },
+  {
+   "kind": "phuon-dich-tg",
+   "x": 37,
+   "y": 3
+  },
+  {
+   "kind": "xe-luong-tg",
+   "x": 17,
+   "y": 22
+  },
+  {
+   "kind": "da-tang-tg",
+   "x": 23,
+   "y": 17
+  },
+  {
+   "kind": "da-tang-tg",
+   "x": 30,
+   "y": 10
+  },
+  {
+   "kind": "hom-go-tg",
+   "x": 31,
+   "y": 18
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 37,
+   "y": 1,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 40,
+   "y": 1,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 42,
+   "y": 1,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 43,
+   "y": 1,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 35,
+   "y": 2,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 41,
+   "y": 2,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 36,
+   "y": 3,
+   "solid": false
+  },
+  {
+   "kind": "xuong-tran-tg",
+   "x": 45,
+   "y": 4,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 35,
+   "y": 5,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 32,
+   "y": 7,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 34,
+   "y": 7,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 29,
+   "y": 8,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 35,
+   "y": 8,
+   "solid": false
+  },
+  {
+   "kind": "xuong-tran-tg",
+   "x": 39,
+   "y": 8,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 45,
+   "y": 8,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 44,
+   "y": 9,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 25,
+   "y": 10,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 41,
+   "y": 10,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 42,
+   "y": 10,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 24,
+   "y": 11,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 31,
+   "y": 11,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 22,
+   "y": 12,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 26,
+   "y": 12,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 41,
+   "y": 12,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 31,
+   "y": 13,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 40,
+   "y": 13,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 21,
+   "y": 14,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 26,
+   "y": 14,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 27,
+   "y": 14,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 37,
+   "y": 14,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 40,
+   "y": 14,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 22,
+   "y": 16,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 25,
+   "y": 16,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 19,
+   "y": 18,
+   "solid": false
+  },
+  {
+   "kind": "xuong-tran-tg",
+   "x": 29,
+   "y": 18,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 14,
+   "y": 19,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 35,
+   "y": 19,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 37,
+   "y": 19,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 32,
+   "y": 20,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 33,
+   "y": 20,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 34,
+   "y": 20,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 12,
+   "y": 21,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 19,
+   "y": 21,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 25,
+   "y": 22,
+   "solid": false
+  },
+  {
+   "kind": "xuong-tran-tg",
+   "x": 20,
+   "y": 23,
+   "solid": false
+  },
+  {
+   "kind": "xuong-tran-tg",
+   "x": 22,
+   "y": 23,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 14,
+   "y": 25,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 22,
+   "y": 25,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 26,
+   "y": 25,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 28,
+   "y": 26,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 5,
+   "y": 27,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 6,
+   "y": 27,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 6,
+   "y": 28,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 21,
+   "y": 28,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 1,
+   "y": 29,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 5,
+   "y": 29,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 20,
+   "y": 29,
+   "solid": false
+  },
+  {
+   "kind": "co-hoa-tg",
+   "x": 5,
+   "y": 31,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 14,
+   "y": 31,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 20,
+   "y": 31,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 4,
+   "y": 32,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 14,
+   "y": 32,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 1,
+   "y": 33,
+   "solid": false
+  },
+  {
+   "kind": "xuong-tran-tg",
+   "x": 4,
+   "y": 34,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 18,
+   "y": 34,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 2,
+   "y": 35,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 3,
+   "y": 35,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 16,
+   "y": 35,
+   "solid": false
+  },
+  {
+   "kind": "co-dai-tg",
+   "x": 14,
+   "y": 37,
+   "solid": false
+  },
+  {
+   "kind": "da-vun-tg",
+   "x": 12,
+   "y": 38,
+   "solid": false
   }
  ],
  "trees": [
