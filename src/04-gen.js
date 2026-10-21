@@ -233,7 +233,21 @@
     return out;
   };
   // v10.13: hình quái sự kiện đột xuất (kẻ trộm chó, quân phương Bắc, đạo tặc, hổ dữ, gian tế) — đăng ký sẵn trong game, không cần gói bản đồ
-  setTimeout(()=>{try{A.add('su-kien',K=>A.gen({mon:{
+  // v10.67: kẻ trộm chó vác bao tải trên lưng, đầu và một chân chó thò ra khỏi miệng bao (vẽ thêm lên hình người)
+  function dogSack(c,m,st){const {t,g,col}=st,mv=m.moving?1:0,sw=Math.sin(g)*2*mv+Math.sin(t*2)*.6,s=.95;
+    c.save();c.translate(-9*s,-34*s);c.rotate(-.25+sw*.03);
+    line(c,[4*s,-4*s,8*s,-8*s],'#c8b08a',1.6); // dây buộc qua vai
+    ell(c,-8*s,0,11*s,14*s,col('#9a7a4c'));ell(c,-9*s,-4*s,8*s,8*s,col('#a98858'));line(c,[-14*s,10*s,-2*s,12*s],'#6b5030',1.2);line(c,[-15*s,2*s,-4*s,1*s],'#6b503066',1);
+    poly(c,[-15*s,-11*s,-1*s,-12*s,-3*s,-7*s,-13*s,-6*s],col('#7a5c36')); // miệng bao thắt lại
+    // chân chó thò ra bên hông bao, đạp đạp
+    c.save();c.translate(-17*s,4*s);c.rotate(.9+Math.sin(t*7+1)*.25*(1+mv));line(c,[0,0,-9*s,2*s],col('#c99a58'),3.4*s);ell(c,-10*s,2*s,2.6*s,2*s,col('#e6c48e'));c.restore();
+    // đầu chó thò ra khỏi miệng bao, ngó quanh
+    c.save();c.translate(-9*s,-13*s);c.rotate(Math.sin(t*2.5)*.18);
+    ell(c,0,-3*s,7*s,6*s,col('#c99a58'));ell(c,-6*s,-2*s,4.5*s,3.4*s,col('#e6c48e'));ell(c,-9.5*s,-3*s,1.8*s,1.6*s,'#2a1f18');
+    poly(c,[2*s,-7*s,5*s,-14*s,7*s,-6*s],col('#8a5a2a'));poly(c,[-3*s,-8*s,-4*s,-14*s,0,-8*s],col('#8a5a2a'));c.fillStyle='#2a1f18';c.fillRect(-4*s,-5.5*s,2*s,2*s);
+    if(Math.sin(t*4)>.5)line(c,[-7*s,0,-9*s,2*s],'#e07070',1.4); // lè lưỡi
+    c.restore();c.restore();}
+  setTimeout(()=>{try{A.add('su-kien',K=>{const r=A.gen({mon:{
     'ke-trom-cho':{body:'human',s:.95,c:['#4a3a2a','#2a1a10','#8a7a60','#6b4a2e'],weapon:'club',hat:'hood',skin:'#d9ad80',eye:'#2a2018'},
     'linh-phuong-bac':{body:'human',s:1,c:['#8a2a2a','#5a1a1a','#d8c060','#c0c0c0'],weapon:'spear',hat:'helm',armor:1,skin:'#e4c69b',eye:'#2a2018'},
     'linh-phe-ta':{body:'human',s:1,c:['#2a4a8a','#1a2a5a','#d8c060','#c0c0c0'],weapon:'spear',hat:'helm',armor:1,skin:'#e4c69b',eye:'#2a2018'},
@@ -241,7 +255,7 @@
     'dao-tac':{body:'human',s:.95,c:['#2a2a3a','#14141e','#8a8aa0','#c0c0c0'],weapon:'sword',hat:'hood',skin:'#d9ad80',eye:'#ffd040'},
     'ho-du':{body:'quad',s:1.25,c:['#e08a2e','#7a3a10','#f0c070','#2a1a0a'],tail:1,eye:'#ffe060'},
     'gian-te':{body:'human',s:1,c:['#1a1a22','#0a0a10','#5a5a70','#c03030'],weapon:'sword',hat:'hood',skin:'#c8a080',eye:'#ff3040',glow:'#ff204022'}
-  },ring:{'tuong-phuong-bac':'#ff6060'}}));}catch(e){}},0);
+  },ring:{'tuong-phuong-bac':'#ff6060'}});const base=r.mon['ke-trom-cho'];r.mon['ke-trom-cho']=(c,m,M,st)=>{base(c,m,M,st);dogSack(c,m,st);};return r;});}catch(e){}},0);
   // gói mới có thể trả về cả npc
   const add0=A.add;A.add=(id,fn)=>{if(A.packs[id]||typeof fn!=='function')return;A.packs[id]=true;const r=fn(K)||{};for(const k of ['theme','obj','mon','sky','ring','npc'])Object.assign(A[k],r[k]||{});};
 })();

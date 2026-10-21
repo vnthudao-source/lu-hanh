@@ -1036,7 +1036,7 @@ window.startGame=(session)=>{
           inflight=null;sent.forEach((b,i)=>{b.res=(r.results||[])[i];});
           for(const b of sent)if(b.ent){const i=pending.indexOf(b.ent);if(i>=0)pending.splice(i,1);}
           adopt(r.state);
-          const bad=(r.results||[]).filter(x=>!x.ok).length;if(bad)message(svg('close')+'Máy chủ không nhận '+bad+' lệnh, đã đồng bộ lại');
+          const badL=(r.results||[]).filter(x=>!x.ok),bad=badL.length;if(bad)message(svg('close')+(badL.some(x=>x.error==='LENH'||x.error==='KHONG_CO_LENH')?'Máy chủ đang chạy Code.gs cũ, chưa biết lệnh mới · hãy dán lại Code.gs rồi Triển khai':'Máy chủ không nhận '+bad+' lệnh, đã đồng bộ lại'),6); // v10.67: báo rõ khi Gs chưa cập nhật
           sent=[];
         }while(sync.queue.length>=CHUNK);
         sync.at=time;if(!unsaved())LH_Local.clear(session.charId);else keepLocal(true);return true;
