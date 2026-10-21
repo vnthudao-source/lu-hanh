@@ -1993,7 +1993,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     }
     if(U.ph==='fight'){
       const m=U.lion;
-      if(time>U.hint){U.hint=time+14;message(svg('sword')+(hero.dead?'':'Hạ con sư tử! Bấm Đánh (Space), dùng Combo (1) khi có mana'),4);}
+      if(time>U.hint){U.hint=time+14;message(svg('sword')+(hero.dead?'':'Hạ con sư tử! Bấm Đánh (Space), dùng Combo (H) khi có mana'),4);}
       if(!m.dead){if(!hero.dead&&!World.isSafe(hero.x,hero.y)&&Math.hypot(hero.x-m.x,hero.y-m.y)<640)m.chase={ent:hero,until:time+2};return;}
       U.ph='greet';U.t=time;
       const G=tutPt(27,15),e=tutBot(9,'Hiệp khách Vân','f',G.x,G.y);bots.push(e);U.vy=e;tutSay(e,'Khoan đã, các hạ!',2.4);
@@ -2786,14 +2786,15 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
   canvas.addEventListener('pointerdown',e=>{if(e.button&&e.button!==0)return;e.preventDefault();const r=canvas.getBoundingClientRect(),pt=screenPoint(e.clientX-r.left,e.clientY-r.top);if(e.pointerType==='mouse')mouseAim={x:pt.x,y:pt.y,t:time};goTo(pt);});
   canvas.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;const r=canvas.getBoundingClientRect(),pt=screenPoint(e.clientX-r.left,e.clientY-r.top);mouseAim={x:pt.x,y:pt.y,t:time};});
   // Đọc vị trí phím (e.code) thay vì ký tự: bộ gõ tiếng Việt biến W thành ư, D thành đ… làm nhận sai nút
-  const KEYMAP={KeyW:'w',KeyA:'a',KeyS:'s',KeyD:'d',ArrowUp:'arrowup',ArrowDown:'arrowdown',ArrowLeft:'arrowleft',ArrowRight:'arrowright',KeyE:'e',KeyB:'b',Escape:'escape',Space:' ',Digit1:'1',Digit2:'2',Digit3:'3',Digit4:'4',Numpad1:'1',Numpad2:'2',Numpad3:'3',Numpad4:'4'};
+  const KEYMAP={KeyW:'w',KeyA:'a',KeyS:'s',KeyD:'d',ArrowUp:'arrowup',ArrowDown:'arrowdown',ArrowLeft:'arrowleft',ArrowRight:'arrowright',KeyE:'e',KeyB:'b',KeyT:'t',KeyH:'h',KeyJ:'j',KeyK:'k',KeyL:'l',Escape:'escape',Space:' '}; // v10.64: kỹ năng H J K L (bỏ phím số 1–4)
   const keyOf=e=>KEYMAP[e.code]||(e.key&&e.key.length===1?e.key.toLowerCase():String(e.key||'').toLowerCase());
   document.addEventListener('keydown',e=>{
     if(window.LH_KICKED)return;
     if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;const k=keyOf(e);
-    if(['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright','e','escape',' ','1','2','3','4','b'].includes(k))e.preventDefault();
-    if(k===' '){keys.add(' ');if(!e.repeat)cast('normal');return;}
-    if(['1','2','3','4'].includes(k)){if(!e.repeat)cast(['basic','intermediate','advanced','mount'][Number(k)-1]);return;}
+    if(['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright','e','escape',' ','h','j','k','l','b'].includes(k))e.preventDefault();
+    // v10.64: Space — đang hội thoại thì sang lời tiếp, đứng cạnh NPC / giếng / vật tương tác thì nói chuyện, còn lại thì đánh (giữ để đánh liên tục)
+    if(k===' '){if(!e.repeat&&overlayEl.hidden&&(dialogNPC||nearby()||nearWell())){interact();return;}if(!e.repeat&&overlayEl.hidden&&(caveTouch()||hqTouch()))return;keys.add(' ');if(!e.repeat)cast('normal');return;}
+    if(['h','j','k','l'].includes(k)){if(!e.repeat)cast({h:'basic',j:'intermediate',k:'advanced',l:'mount'}[k]);return;}
     if(k==='b'&&!e.repeat){window.GameUI?.showBag();return;}
     if(k==='t'&&!e.repeat){toggleLock();return;}
     if(k==='e'&&!e.repeat)interact();else if(k==='escape'){if(dialogNPC&&dialogNPC.tut)endDialog();else if(dialogNPC){dialogNPC=null;dialogEl.hidden=true;checkpoint();}}else keys.add(k);
