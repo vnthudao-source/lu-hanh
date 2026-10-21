@@ -459,3 +459,9 @@ button.fx-vang{color:#ffe08a}button.fx-cau-vong{color:#ffb0ff}button.fx-lua{colo
 .bag-sel .bs-left .big svg{width:72%;height:72%}
 .bag-sel .bs-btns{display:flex;flex-direction:column;gap:6px}.bag-sel .bs-btns button{width:100%;justify-content:center;flex:none}
 .bag-sel .bs-info{min-width:0;display:flex;flex-direction:column;gap:6px}.bag-sel .bs-info .sel-info{flex:none}
+
+/* v10.59 · nút X bỏ chọn ở góc trên phải khung món đồ */
+.sel-bar.bag-sel{position:relative;padding-top:12px}
+.bag-sel .bs-x{position:absolute;top:6px;right:6px;width:32px;height:32px;padding:0;display:grid;place-items:center;border-radius:50%;background:#1a2a21;z-index:1}
+.bag-sel .bs-x svg{width:16px;height:16px}
+.bag-sel .bs-info{padding-right:34px}

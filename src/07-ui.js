@@ -72,7 +72,7 @@ window.startUI=(session)=>{
     return h+'</div>';
   }
   const petLeft=e=>{const m=Math.max(0,Math.round((e-Date.now())/60000));return m>=60?Math.floor(m/60)+' giờ '+(m%60?m%60+' phút':''):Math.max(1,m)+' phút';};
-  const menu=$('#gameMenu');let lastExp='',lastFrame=-1,lastType='',selected=null,skillFocus=null,burstAt=-9,lastBuffs='',shopSel=null,enhSel=null,shopQ='n',previewWho=null,mercSel=null,lastGender='';
+  const menu=$('#gameMenu');let lastExp='',lastFrame=-1,lastType='',selected=null,skillFocus=null,eqFocus=null,eqTap={slot:null,t:0},burstAt=-9,lastBuffs='',shopSel=null,enhSel=null,shopQ='n',previewWho=null,mercSel=null,lastGender='';
   // bảng mở từ dân làng (cửa hàng, nhận việc, thuê lính, chợ): đóng bảng = rời cuộc nói chuyện → lưu
   let npcPanel=false;
   function closeMenu(){menu.hidden=true;$('#settingsBtn').setAttribute('aria-expanded','false');}
@@ -149,7 +149,7 @@ window.startUI=(session)=>{
   // v10.58: khung món đồ đang chọn trong túi — ảnh to bên trái (~40%) với các nút bấm bên dưới, thông tin món đồ bên phải (~60%)
   function bagSel(bar){const t=document.createElement('div');t.innerHTML=bar;const big=t.querySelector('.big'),btns=[...t.children].filter(e=>e.tagName==='BUTTON');
     const L=document.createElement('div');L.className='bs-left';if(big)L.appendChild(big);const B=document.createElement('div');B.className='bs-btns';btns.forEach(b=>B.appendChild(b));L.appendChild(B);
-    const R=document.createElement('div');R.className='bs-info';while(t.firstChild)R.appendChild(t.firstChild);return `<div class="sel-bar bag-sel">${L.outerHTML}${R.outerHTML}</div>`;}
+    const R=document.createElement('div');R.className='bs-info';while(t.firstChild)R.appendChild(t.firstChild);return `<div class="sel-bar bag-sel"><button class="bs-x" data-act="clear" aria-label="Bỏ chọn" title="Bỏ chọn">${svg('close')}</button>${L.outerHTML}${R.outerHTML}</div>`;}
   function renderBag(){
     previewWho=null;
     const sel=selected!==null?p.bag[selected]:null,sd=info(sel),tg=sel?Player.targets(p,sel):[],st=Player.stance(p),D=game.HD;
@@ -159,26 +159,32 @@ window.startUI=(session)=>{
     let bar='';
     if(sel){
       bar=`<span class="big" style="color:${tintOf(sel)||'#e4cc8d'}">${icon(sel.type)}</span>${itemInfo(sel)}`+(sd.slot==='book'?`<button class="primary" data-act="book">${svg('book')}Gắn sách</button>`:'')
-        +(sd.slot==='cos'?(sd.kind==='thuoc'?Object.entries(Player.NAME_FX).map(([k,v])=>`<button class="primary fx-${k}" data-usefx="${k}">${svg('orb')}${v}</button>`).join(''):`<button class="primary" data-use="1">${svg('check')}Dùng</button>`):'')+`<button data-act="clear">${svg('close')}Bỏ chọn</button>`;
-      if(tg.length)bar=bar.replace('</small></div>',' · chạm ô sáng để mặc</small></div>');
+        +(sd.slot==='cos'?(sd.kind==='thuoc'?Object.entries(Player.NAME_FX).map(([k,v])=>`<button class="primary fx-${k}" data-usefx="${k}">${svg('orb')}${v}</button>`).join(''):`<button class="primary" data-use="1">${svg('check')}Dùng</button>`):'')+(tg.length?`<button class="primary" data-act="equip">${svg('check')}Trang bị</button>`:'');
+      if(tg.length)bar=bar.replace('</small></div>',' · hoặc chạm ô sáng để mặc</small></div>');
+    }else if(eqFocus&&p.equipment[eqFocus]){
+      const it=p.equipment[eqFocus];
+      bar=`<span class="big" style="color:${tintOf(it)||'#e4cc8d'}">${icon(it.type)}</span>${itemInfo(it).replace('</small></div>',' · đang mặc · chạm 2 lần vào ô để tháo</small></div>')}<button data-act="unequip">${svg('out')}Tháo</button>`;
     }else if(skillFocus!==null&&p.skillSlots[skillFocus]){
       const it=p.skillSlots[skillFocus],on=p.activeBook===skillFocus;
-      bar=`<span class="big" style="color:${tintOf(it)}">${icon(it.type,tintOf(it))}</span><div class="sel-info"><b class="sel-name">${esc(info(it).name)}</b>${chips(it)}<small class="sel-desc">Đang gắn · hào quang ${on?'bật':'tắt'}</small></div><button class="primary" data-act="toggle">${svg('eye')}${on?'Tắt':'Bật'} hào quang</button><button data-act="remove">${svg('out')}Tháo</button><button data-act="clear">${svg('close')}Bỏ chọn</button>`;
+      bar=`<span class="big" style="color:${tintOf(it)}">${icon(it.type,tintOf(it))}</span><div class="sel-info"><b class="sel-name">${esc(info(it).name)}</b>${chips(it)}<small class="sel-desc">Đang gắn · hào quang ${on?'bật':'tắt'}</small></div><button class="primary" data-act="toggle">${svg('eye')}${on?'Tắt':'Bật'} hào quang</button><button data-act="remove">${svg('out')}Tháo</button>`;
     }
     openModal(ttl('bag','Túi đồ'),`<div class="bag-layout"><section><div class="equip-head"><canvas id="preview"></canvas><div><span class="chips" style="justify-content:flex-start">${chip(st.type,KIND_NAMES[st.type]+(st.dual?' đôi':''))}${chip('sword',`Sát thương ${D.tot.dmgMin}–${D.tot.dmgMax}`)}${chip('shield','Phòng ngự '+D.tot.def)}</span>${D.sets.length?`<span class="chips" style="justify-content:flex-start;margin-top:4px">${D.sets.map(x=>chip('quest',`${Player.SETS[x.id].hero} ${x.n}/${Math.min(9,Player.SETS[x.id].pieces.length)}`,(Player.RAR[Player.SETS[x.id].q||'l']||Player.RAR.l).color)).join('')}</span>`:''}</div></div><div class="equip-grid">${equip}</div><div class="gap"></div><div class="skill-grid">${skillSlots}</div>${bar?bagSel(bar):''}</section><section><div class="bag-grid">${bagHtml()}</div><div class="money"><span class="coin gold"><i></i>${money.gold}</span><span class="coin silver"><i></i>${money.silver}</span><span class="coin"><i></i>${money.copper}</span>${ruby(p.rubies)}${luckTag()}</div></section></div>`,true);
     const act=fn=>{try{fn();game.refreshHD();refresh();renderBag();}catch(err){fail(err);}};
-    document.querySelectorAll('[data-bag]').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.bag);skillFocus=null;if(!p.bag[i]||selected===i){selected=null;}else{selected=i;if(info(p.bag[i]).element)burstAt=game.now();}renderBag();});
+    document.querySelectorAll('[data-bag]').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.bag);skillFocus=null;eqFocus=null;if(!p.bag[i]||selected===i){selected=null;}else{selected=i;if(info(p.bag[i]).element)burstAt=game.now();}renderBag();});
     document.querySelectorAll('[data-slot]').forEach(btn=>btn.onclick=()=>act(()=>{
       const slot=btn.dataset.slot;
-      if(selected===null){Player.unequip(p,slot);return;}
+      // v10.59: không chọn đồ trong túi → chạm 1 lần xem đồ đang mặc (nút Tháo), chạm 2 lần liền thì tháo luôn
+      if(selected===null){const s2=slot==='left'&&Player.isTwo(p.equipment.right)?'right':slot,now=Date.now(),dbl=eqTap.slot===s2&&now-eqTap.t<450;eqTap={slot:s2,t:now};skillFocus=null;
+        if(dbl&&p.equipment[s2]){Player.unequip(p,s2);eqFocus=null;eqTap={slot:null,t:0};return;}
+        eqFocus=p.equipment[s2]?s2:null;return;}
       const item=p.bag[selected],d=info(item),t=Player.targets(p,item);let dest=slot;
       if(d.gender&&d.gender!==p.gender)throw Error('GENDER');
       if(d.grip==='two'&&(slot==='left'||slot==='right'))dest='right';
       if(!t.includes(dest))throw Error(d.slot==='hand'?'PAIR':'SLOT');
-      Player.equip(p,selected,dest);selected=null;
+      Player.equip(p,selected,dest);selected=null;eqFocus=null;
     }));
     document.querySelectorAll('[data-skillslot]').forEach(btn=>btn.onclick=()=>act(()=>{
-      const i=Number(btn.dataset.skillslot);
+      const i=Number(btn.dataset.skillslot);eqFocus=null;
       if(selected!==null&&info(p.bag[selected]).slot==='book'){Player.setSkill(p,selected,i);selected=null;skillFocus=i;game.activateBurst(Player.element(p));burstAt=game.now();return;}
       selected=null;if(!p.skillSlots[i]){skillFocus=null;return;}
       skillFocus=i;if(p.activeBook!==i){p.activeBook=i;game.activateBurst(Player.element(p));burstAt=game.now();}
@@ -189,7 +195,11 @@ window.startUI=(session)=>{
       if(a==='book'){Player.setSkill(p,selected,null);skillFocus=p.activeBook;selected=null;game.activateBurst(Player.element(p));burstAt=game.now();}
       else if(a==='toggle'){Player.toggleBook(p,skillFocus);if(p.activeBook===skillFocus){game.activateBurst(Player.element(p));burstAt=game.now();}}
       else if(a==='remove'){Player.unsetSkill(p,skillFocus);skillFocus=null;}
-      else{selected=null;skillFocus=null;}
+      else if(a==='unequip'){Player.unequip(p,eqFocus);eqFocus=null;}
+      else if(a==='equip'){ // v10.59: mặc thay đồ đang mặc — ô trống trước, hết ô trống thì thay ô đầu tiên
+        const item=p.bag[selected],d=info(item),t=Player.targets(p,item);if(!t.length)throw Error(d.slot==='hand'?'PAIR':'SLOT');if(d.gender&&d.gender!==p.gender)throw Error('GENDER');
+        const dest=d.grip==='two'?'right':(t.find(x=>!p.equipment[x])||t[0]);Player.equip(p,selected,dest);selected=null;eqFocus=null;}
+      else{selected=null;skillFocus=null;eqFocus=null;}
     }));
   }
   /* ---------- Cửa hàng + gia cường ---------- */
@@ -612,10 +622,11 @@ window.startUI=(session)=>{
       <button id="dgClear">Xóa nhật ký</button></div>`);
     $('#dgClear').onclick=()=>{LH_DIAG.clear();showDiag();};
   }
-  // v10.57: nút "Tình trạng" trong menu đổi thành "Toàn màn hình" (LH_FS ở 08-portal.js); xem Tình trạng bằng cách chạm số phiên bản
+  // v10.59: nút Toàn màn hình nằm ngoài, cạnh nút menu (LH_FS ở 08-portal.js); "Tình trạng" về lại menu, chạm số phiên bản cũng mở được
   {const v=document.querySelector('.version');if(v){v.style.cursor='pointer';v.onclick=showDiag;}}
+  $('#diagBtn').onclick=showDiag;
   $('#modeBtn').onclick=()=>{closeMenu();if(window.LH_FS)LH_FS.toggle();};
-  $('#questBtn').onclick=showQuests;$('#bagBtn').onclick=()=>{selected=null;skillFocus=null;renderBag();};
+  $('#questBtn').onclick=showQuests;$('#bagBtn').onclick=()=>{selected=null;skillFocus=null;eqFocus=null;renderBag();};
   $('#closeOverlay').onclick=closeModal;$('#overlay').onclick=evt=>{if(evt.target.id==='overlay')closeModal();};
   document.querySelectorAll('[data-skill]').forEach(btn=>{
     const id=btn.dataset.skill,up=()=>{btn.classList.remove('pressed');if(id==='normal')game.setHold(false);};

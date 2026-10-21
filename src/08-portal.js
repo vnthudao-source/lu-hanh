@@ -28,7 +28,7 @@
     function swipeCheck(){if(!swipeOn)return;if(!land()){swipeOn=false;const sp=D.getElementById('lhSwipeSpacer');if(sp)sp.remove();swipeEnd();scrollTo(0,0);return;}if(D.getElementById('lhSwipe')&&!barsShown())swipeEnd();}
     window.LH_SWIPE=()=>swipeOn; // fit() không kéo trang về đầu khi đang ở chế độ này
     const btn=D.getElementById('modeBtn');
-    const sync=()=>{if(btn){const on=isFS(),u=btn.querySelector('use'),t=btn.querySelector('span');if(u)u.setAttribute('href',on?'#i-shrink':'#i-expand');if(t)t.textContent=on?'Thoát toàn màn hình':'Toàn màn hình';}setTimeout(fit,120);};
+    const sync=()=>{if(btn){const on=isFS(),u=btn.querySelector('use');if(u)u.setAttribute('href',on?'#i-shrink':'#i-expand');btn.setAttribute('aria-label',on?'Thoát toàn màn hình':'Toàn màn hình');btn.title=btn.getAttribute('aria-label');}setTimeout(fit,120);};
     window.LH_FS={isFS,toggle(){if(canFS){isFS()?leave():enter();return;}
       if(!land()){const m=window.mapGame&&mapGame.message;if(m)m('Xoay ngang điện thoại rồi bấm lại để chơi toàn màn hình',3);return;}swipeStart(true);}};
     D.addEventListener('fullscreenchange',sync);D.addEventListener('webkitfullscreenchange',sync);sync();
