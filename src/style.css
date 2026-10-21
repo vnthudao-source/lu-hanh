@@ -451,3 +451,11 @@ button.fx-vang{color:#ffe08a}button.fx-cau-vong{color:#ffb0ff}button.fx-lua{colo
 #lhSwipe button{margin-top:6px;padding:7px 14px;border-radius:9px;background:#23362e;border:1px solid #b5ba9866;color:#f3e3bb}
 @keyframes lhSwipeUp{0%{transform:translateY(26px);opacity:0}30%{opacity:1}100%{transform:translateY(-34px);opacity:0}}
 #lhSwipeSpacer{height:220vh;width:1px;pointer-events:none}
+
+/* v10.58 · Túi đồ: món đồ đang chọn — ảnh to bên trái 40% (nút bấm dưới ảnh), thông tin bên phải 60% */
+.sel-bar.bag-sel{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:12px;align-items:start;flex-wrap:nowrap;padding:10px}
+.bag-sel .bs-left{display:flex;flex-direction:column;align-items:stretch;gap:8px;min-width:0}
+.bag-sel .bs-left .big{width:100%;height:auto;aspect-ratio:1;max-height:180px;border-radius:12px;background:radial-gradient(circle at 50% 55%,#24392d,#0b1410 72%);border:1px solid var(--line)}
+.bag-sel .bs-left .big svg{width:72%;height:72%}
+.bag-sel .bs-btns{display:flex;flex-direction:column;gap:6px}.bag-sel .bs-btns button{width:100%;justify-content:center;flex:none}
+.bag-sel .bs-info{min-width:0;display:flex;flex-direction:column;gap:6px}.bag-sel .bs-info .sel-info{flex:none}
