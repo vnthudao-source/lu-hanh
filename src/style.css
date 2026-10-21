@@ -284,7 +284,7 @@ button.busy{opacity:.6;pointer-events:none}
 @media(max-width:760px){.mk-row{flex-wrap:wrap}.mk-end{flex-basis:100%}}
 .qbar [data-mreload]{display:inline-flex;align-items:center;gap:4px;margin-left:auto}.qbar [data-mreload] svg{width:15px;height:15px}
 @media(max-width:760px){[data-mtab] span{display:none}[data-mtab].on span{display:inline}[data-mtab]{padding:7px 9px}}
-.dg{display:flex;flex-direction:column;gap:6px}.dg-row{display:flex;justify-content:space-between;gap:10px;padding:6px 9px;border:1px solid var(--line);border-radius:9px;background:#0b1a13;font-size:12px}.dg-row span{text-align:right;color:#c9d2c4}
+.dg{display:flex;flex-direction:column;gap:6px}.dg-row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px 10px;padding:6px 9px;border:1px solid var(--line);border-radius:9px;background:#0b1a13;font-size:12px}.dg-row span{text-align:right;color:#c9d2c4}
 .dg-bad{font-style:normal;color:#ff9a8a}.dg-err{display:flex;flex-direction:column;gap:2px;padding:7px 9px;border:1px solid #ff9a8a55;border-radius:9px;background:#2a1512;font-size:12px}.dg-err small{color:#a8b4a7;word-break:break-all;font-size:10px}
 #dgClear{align-self:flex-start;margin-top:6px}
 /* v9.9: nhóm việc theo cấp, bảng chọn bản đồ */
@@ -464,3 +464,6 @@ button.fx-vang{color:#ffe08a}button.fx-cau-vong{color:#ffb0ff}button.fx-lua{colo
 .bag-sel .bs-x{position:absolute;top:6px;right:6px;width:32px;height:32px;padding:0;display:grid;place-items:center;border-radius:50%;background:#1a2a21;z-index:1}
 .bag-sel .bs-x svg{width:16px;height:16px}
 .bag-sel .bs-info{padding-right:34px}
+
+/* v10.66: chọn chế độ đồ họa trong bảng Tình trạng */
+.dg-perf{display:inline-flex;flex-wrap:wrap;gap:4px}.dg-perf button{padding:3px 8px;font-size:11px;border-radius:7px;background:#1b2a24;border:1px solid #b5ba9855;color:#d8d0b8}.dg-perf button.on{background:#3a5a46;color:#fff3c4;border-color:#9fe8a8}

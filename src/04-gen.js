@@ -215,10 +215,10 @@
   // ---------- trời: hạt rơi / bay + màu phủ ----------
   // spec: {n, col, size, vx, vy, tint, glow, dark} — hạt (tro, lá, hoa, tuyết, đom đóm, sương), tint = màu phủ cả màn hình
   function sky(S){
-    return (c,s)=>{const {w,h,t}=s,n=S.n||40;
+    return (c,s)=>{const {w,h,t}=s,n=Math.round((S.n||40)*(s.q===2?.3:s.q===1?.55:1)); // v10.66: máy yếu bớt hạt
       if(S.tint){c.fillStyle=S.tint;c.fillRect(0,0,w,h);}
       if(S.dark){const g=c.createRadialGradient(s.hx,s.hy,80,s.hx,s.hy,Math.max(w,h)*.7);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,S.dark);c.fillStyle=g;c.fillRect(0,0,w,h);}
-      c.save();if(S.glow){c.shadowColor=S.col;c.shadowBlur=8;}c.fillStyle=S.col;
+      c.save();if(S.glow&&!s.q){c.shadowColor=S.col;c.shadowBlur=8;}c.fillStyle=S.col;
       for(let i=0;i<n;i++){const ph=hash(i,1)*1000,x=((hash(i,2)*w+t*(S.vx||20)*(.5+hash(i,3))+Math.sin(t+ph)*14)%(w+40)+w+40)%(w+40)-20,y=((hash(i,4)*h+t*(S.vy||30)*(.6+hash(i,5)))%(h+40)+h+40)%(h+40)-20,r=(S.size||2)*(.6+hash(i,6));
         if(S.leaf){c.save();c.translate(x,y);c.rotate(t*2+ph);c.fillRect(-r*1.5,-r*.6,r*3,r*1.2);c.restore();}else{c.globalAlpha=S.glow?.5+Math.sin(t*3+ph)*.4:.8;c.beginPath();c.arc(x,y,r,0,PI2);c.fill();}}
       c.restore();};

@@ -88,17 +88,18 @@ window.startUI=(session)=>{
   }
   function refresh(){
     const D=game.HD,S=D.tot;
-    $('#playerName').textContent=p.name;$('#levelBadge').textContent='Lv. '+p.level;
+    const txt=(sel,v)=>{const e=$(sel);v=String(v);if(e&&e.textContent!==v)e.textContent=v;},wid=(sel,v)=>{const e=$(sel);v=v.toFixed(1)+'%';if(e&&e.style.width!==v)e.style.width=v;}; // v10.66: chỉ ghi DOM khi đổi
+    txt('#playerName',p.name);txt('#levelBadge','Lv. '+p.level);
     const need=Player.expNeed(p.level),maxed=p.level>=Player.maxLevel(),pct=maxed?100:Math.min(100,(p.exp||0)/need*100),dash=pct.toFixed(1)+' 100';
     if(lastExp!==dash){lastExp=dash;$('#expArc').setAttribute('stroke-dasharray',dash);$('#avatarBtn').title=maxed?'Cấp tối đa':`Kinh nghiệm ${p.exp||0} / ${need}`;}
     $('#ptDot').hidden=!(p.points>0);
-    $('#hpFill').style.width=(p.hp/S.hp*100)+'%';$('#hpText').textContent=Math.ceil(p.hp)+' / '+S.hp;
-    $('#manaFill').style.width=(p.mana/S.mp*100)+'%';$('#manaText').textContent=Math.floor(p.mana)+' / '+S.mp;
-    $('#passiveFill').style.width=p.passive+'%';$('#passiveText').textContent='★ '+Math.floor(p.passive)+'%';
+    wid('#hpFill',p.hp/S.hp*100);txt('#hpText',Math.ceil(p.hp)+' / '+S.hp);
+    wid('#manaFill',p.mana/S.mp*100);txt('#manaText',Math.floor(p.mana)+' / '+S.mp);
+    wid('#passiveFill',p.passive);txt('#passiveText','★ '+Math.floor(p.passive)+'%');
     $('#skill-normal').classList.toggle('charged',p.passive>=100);
-    $('#placeName').textContent=World.zoneAt(game.hero.x,game.hero.y);$('#placeCoord').textContent=Math.floor(game.hero.x/World.T)+', '+Math.floor(game.hero.y/World.T);
+    txt('#placeName',World.zoneAt(game.hero.x,game.hero.y));txt('#placeCoord',Math.floor(game.hero.x/World.T)+', '+Math.floor(game.hero.y/World.T));
     $('#safeTag').hidden=!game.safe;
-    const q=questHtml();if($('#questTrack').innerHTML!==q){$('#questTrack').innerHTML=q;$('#questTrack').hidden=!q;}
+    const q=questHtml();if(refresh.lastQ!==q){refresh.lastQ=q;$('#questTrack').innerHTML=q;$('#questTrack').hidden=!q;}
     const type=Player.stance(p).type;if(lastType!==type){$('#normalIcon').innerHTML=`<use href="#i-${type}"/>`;lastType=type;const W=Player.weapon(type);$('#skill-normal').title='Space · '+W.name;[['basic','H','Combo'],['intermediate','J','Diện rộng'],['advanced','K','Liên hoàn']].forEach(([id,k,n])=>{$('#skill-'+id).title=`${k} \u{b7} ${n} \u{b7} ${Player.skillCost(p,id)} mana`;});}
     const el=Player.element(p);$('#skill-normal').style.setProperty('--elem',el?EL[el].color:'#dfc480');
     const books=Object.keys(D.books),xb=Player.xpBuff(p),key=books.join()+'|'+(xb?xb+':'+xpLeft(p.flags.xp.u):'');if(key!==lastBuffs){lastBuffs=key;$('#buffs').innerHTML=books.map(b=>`<span class="buff" style="color:${EL[b].color}" title="${EL[b].name}: ${elInfo(b)}">${svg(EL[b].icon)}</span>`).join('')+(xb?`<span class="buff xpb" title="Thuốc kinh nghiệm +${xb}% · còn ${xpLeft(p.flags.xp.u)}">${svg('spark')}<small>+${xb}%</small></span>`:'');}
@@ -616,11 +617,12 @@ window.startUI=(session)=>{
   function showDiag(){
     closeMenu();const D=LH_DIAG.data,v=document.querySelector('.version');
     const row=(a,b)=>`<div class="dg-row"><b>${a}</b><span>${b}</span></div>`;
-    openModal(ttl('eye','Tình trạng'),`<div class="dg">${row('Phiên bản',esc(v?v.textContent:''))}${row('Máy chủ',Net.online?'Việt Nam':'Ngoại tuyến')}${row('Chưa lưu',game.unsaved()?'Có · lưu khi về làng, qua cầu, gặp dân làng hoặc bấm Lưu':'Không')}
+    openModal(ttl('eye','Tình trạng'),`<div class="dg">${row('Phiên bản',esc(v?v.textContent:''))}${row('Máy chủ',Net.online?'Việt Nam':'Ngoại tuyến')}${row('Chưa lưu',game.unsaved()?'Có · lưu khi về làng, qua cầu, gặp dân làng hoặc bấm Lưu':'Không')}${window.LH_PERF?row('Đồ họa',`<span class="dg-perf">${['Đầy đủ','Tiết kiệm','Cực tiết kiệm'].map((n,i)=>`<button type="button" data-perf="${i}"${LH_PERF.lv===i?' class="on"':''}>${n}</button>`).join('')}<button type="button" data-perf="auto"${LH_PERF.manual?'':' class="on"'}>Tự động</button></span><small>${LH_PERF.ms?Math.round(1000/LH_PERF.ms)+' fps':''}${LH_PERF.manual?' · đang ép tay':' · tự chọn theo máy'}</small>`):''}
       <h4 class="mk-h">Gọi máy chủ</h4>${D.net.length?D.net.map(x=>row(esc(x.t+' '+x.a),x.err?`<i class="dg-bad">${esc(NET_ERR[x.err]||x.err)}</i>`:'OK')).join(''):'<p class="mk-hint">Chưa có</p>'}
       <h4 class="mk-h">Lỗi gần đây</h4>${D.err.length?D.err.map(x=>`<div class="dg-err"><b>${esc(x.t)} · ${esc(x.where)}</b><span>${esc(x.m)}</span><small>${esc(x.s)}</small></div>`).join(''):'<p class="mk-hint">Không có lỗi</p>'}
       <button id="dgClear">Xóa nhật ký</button></div>`);
     $('#dgClear').onclick=()=>{LH_DIAG.clear();showDiag();};
+    document.querySelectorAll('[data-perf]').forEach(b=>b.onclick=()=>{const v=b.dataset.perf;if(v==='auto')LH_PERF.auto();else LH_PERF.set(Number(v));showDiag();});
   }
   // v10.59: nút Toàn màn hình nằm ngoài, cạnh nút menu (LH_FS ở 08-portal.js); "Tình trạng" về lại menu, chạm số phiên bản cũng mở được
   {const v=document.querySelector('.version');if(v){v.style.cursor='pointer';v.onclick=showDiag;}}
