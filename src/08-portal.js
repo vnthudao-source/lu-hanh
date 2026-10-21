@@ -16,21 +16,28 @@
     // thanh địa chỉ còn hiện: chiều cao nhìn thấy thấp hơn rõ so với cạnh ngắn của màn hình
     const barsShown=()=>innerHeight<Math.min(screen.width,screen.height)*.92;
     let swipeOn=false;
-    function swipeEnd(){const o=D.getElementById('lhSwipe');if(o)o.remove();R.style.overflow='hidden';D.body.style.overflow='hidden';setTimeout(fit,60);}
+    // v10.60: đoạn nhúng Blogspot khóa cuộn (overflow:hidden!important) và ẩn mọi thứ ngoài #lu-hanh → dùng style !important nội tuyến, lớp vuốt đặt trong #lu-hanh
+    const setOv=v=>{for(const e of [R,D.body])e.style.setProperty('overflow',v,'important');};
+    const say=t=>{const m=window.mapGame&&mapGame.message;if(m)m(t,4);};
+    function swipeEnd(){const o=D.getElementById('lhSwipe');if(o)o.remove();setOv('hidden');setTimeout(fit,60);}
     function swipeStart(force){
       if(standalone||!land()||(!force&&!barsShown()))return;
-      swipeOn=true;R.style.overflow='';D.body.style.overflow='';
-      if(!D.getElementById('lhSwipeSpacer')){const sp=D.createElement('div');sp.id='lhSwipeSpacer';D.body.appendChild(sp);}
+      swipeOn=true;setOv('visible');
+      if(!D.getElementById('lhSwipeSpacer')){const sp=D.createElement('div');sp.id='lhSwipeSpacer';sp.style.cssText='height:220vh;width:1px;pointer-events:none';D.body.appendChild(sp);}
       if(D.getElementById('lhSwipe'))return;
-      const o=D.createElement('div');o.id='lhSwipe';o.innerHTML='<div class="hand">☝</div><b>Vuốt lên để chơi toàn màn hình</b><small>Thanh địa chỉ của trình duyệt sẽ tự thu lại</small><button type="button">Để sau</button>';
-      o.querySelector('button').onclick=e=>{e.stopPropagation();swipeEnd();};(D.body||R).appendChild(o);
+      const host=D.getElementById('lu-hanh')||D.body,o=D.createElement('div');o.id='lhSwipe';
+      o.style.cssText='position:fixed;inset:0;z-index:2147483600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(7,16,11,.86);color:#f3e3bb;font:600 16px/1.4 system-ui,sans-serif;text-align:center;touch-action:pan-y;padding:20px;visibility:visible';
+      o.innerHTML='<div class="hand" style="font-size:42px">☝</div><b>Vuốt lên để chơi toàn màn hình</b><small style="font-weight:400;font-size:13px;color:#c9c2a8">Đặt ngón tay lên màn hình rồi vuốt lên, thanh địa chỉ sẽ tự thu lại</small><button type="button" style="margin-top:6px;padding:7px 14px;border-radius:9px;background:#23362e;border:1px solid #b5ba9866;color:#f3e3bb">Để sau</button>';
+      o.querySelector('button').onclick=e=>{e.stopPropagation();swipeEnd();};host.appendChild(o);
     }
     function swipeCheck(){if(!swipeOn)return;if(!land()){swipeOn=false;const sp=D.getElementById('lhSwipeSpacer');if(sp)sp.remove();swipeEnd();scrollTo(0,0);return;}if(D.getElementById('lhSwipe')&&!barsShown())swipeEnd();}
     window.LH_SWIPE=()=>swipeOn; // fit() không kéo trang về đầu khi đang ở chế độ này
     const btn=D.getElementById('modeBtn');
     const sync=()=>{if(btn){const on=isFS(),u=btn.querySelector('use');if(u)u.setAttribute('href',on?'#i-shrink':'#i-expand');btn.setAttribute('aria-label',on?'Thoát toàn màn hình':'Toàn màn hình');btn.title=btn.getAttribute('aria-label');}setTimeout(fit,120);};
-    window.LH_FS={isFS,toggle(){if(canFS){isFS()?leave():enter();return;}
-      if(!land()){const m=window.mapGame&&mapGame.message;if(m)m('Xoay ngang điện thoại rồi bấm lại để chơi toàn màn hình',3);return;}swipeStart(true);}};
+    window.LH_FS={isFS,toggle(){
+      if(canFS){if(isFS()){leave();return;}enter();setTimeout(()=>{if(!isFS())say('Trình duyệt này không cho bật toàn màn hình. Hãy mở game bằng Chrome hoặc Safari');},700);return;}
+      if(!land()){say('Xoay ngang điện thoại rồi bấm lại để chơi toàn màn hình');return;}
+      if(!barsShown()){say('Đang ở toàn màn hình');return;}swipeStart(true);}};
     D.addEventListener('fullscreenchange',sync);D.addEventListener('webkitfullscreenchange',sync);sync();
     addEventListener('resize',swipeCheck);if(window.visualViewport)visualViewport.addEventListener('resize',swipeCheck);addEventListener('scroll',swipeCheck,{passive:true});
     if(!touch||standalone)return;
