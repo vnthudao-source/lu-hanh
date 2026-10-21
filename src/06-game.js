@@ -118,7 +118,7 @@ window.startGame=(session)=>{
     if(slow>.6&&PERF.lv<2){PERF.down=time;perfSet(PERF.lv+1);message(svg('eye')+'Máy chạy chậm · đã chuyển sang chế độ '+(PERF.lv===2?'cực tiết kiệm':'tiết kiệm')+' cho mượt hơn',4);}
     else if(slow<.02&&mid<.2&&PERF.lv>0&&time-PERF.changed>30&&time-PERF.down>90)perfSet(PERF.lv-1);
   }
-  window.LH_PERF={get lv(){return PERF.lv;},get ms(){return PERF.ema;},get cpu(){return {update:PERF.ums||0,render:PERF.rms||0,avg:PERF.cnt?PERF.sum/PERF.cnt:0};},reset(){PERF.sum=0;PERF.cnt=0;},get bytes(){return SPR.bytes;},get sprites(){return SPR.map.size+MSPR.size+HSPR.size;},set:lv=>{perfSet(lv,true);try{localStorage.setItem('lh-perf-manual','1');}catch(e){}},auto(){PERF.manual=false;PERF.changed=time;PERF.n=0;try{localStorage.removeItem('lh-perf-manual');}catch(e){}},get manual(){return !!PERF.manual;}};
+  window.LH_PERF={get lv(){return PERF.lv;},get ms(){return PERF.ema;},get cpu(){return {update:PERF.ums||0,render:PERF.rms||0,avg:PERF.cnt?PERF.sum/PERF.cnt:0};},reset(){PERF.sum=0;PERF.cnt=0;},get bytes(){return SPR.bytes;},get sprites(){return SPR.map.size+MSPR.size+HSPR.size;},get taint(){return SPR.taint;},set:lv=>{perfSet(lv,true);try{localStorage.setItem('lh-perf-manual','1');}catch(e){}},auto(){PERF.manual=false;PERF.changed=time;PERF.n=0;try{localStorage.removeItem('lh-perf-manual');}catch(e){}},get manual(){return !!PERF.manual;}};
   try{if(localStorage.getItem('lh-perf-manual')==='1')PERF.manual=true;}catch(e){}
   function resize(){const r=canvas.getBoundingClientRect(),d=perfDpr();width=r.width;height=r.height;canvas.width=Math.round(width*d);canvas.height=Math.round(height*d);ctx.setTransform(d,0,0,d,0,0);scale=width<700?.95:1.1;camera.x=clamp(hero.x-width/scale/2,0,Math.max(0,W*T-width/scale));camera.y=clamp(hero.y-height/scale/2,0,Math.max(0,H*T-height/scale));}
 
@@ -741,7 +741,7 @@ window.startGame=(session)=>{
     const key=m.type+'|'+(m.art||'')+'|'+(open?1:0)+(fl?1:0)+(mv?1:0)+'|'+gq.toFixed(2)+'|'+tq;
     let sp=MSPR.get(key);
     if(sp===undefined){if(SPR.made>=3){monArt(c,m,M,open,fl,g);return;}SPR.made++;if(SPR.bytes>56e6)sprReset();
-      const mm=Object.create(m);mm.moving=mv;mm.walk=gq;sp=sprMake(mm,c2=>monArt(c2,mm,M,open,fl,gq),0,0,tq);MSPR.set(key,sp);}
+      const mm=Object.create(m);mm.moving=mv;mm.walk=gq;sp=sprMake(mm,c2=>monArt(c2,mm,M,open,fl,gq),0,0,tq,'mon');MSPR.set(key,sp);}
     if(!sp){monArt(c,m,M,open,fl,g);return;}if(sp.empty)return;
     c.drawImage(sp.cv,sp.dx,sp.dy,sp.w,sp.h);
   }
@@ -2998,18 +2998,20 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
   /* ---------- v10.66: ảnh đệm cảnh vật — cây, đá, nhà, tường… vẽ một lần vào canvas nhỏ rồi dán lại mỗi khung hình ----------
      Mỗi cây tre vẽ sống tốn ~33 nét; một màn hình Rừng Trúc hơn 1 000 nét / khung chỉ cho cây. Dán ảnh đệm thì mỗi cây là 1 lệnh drawImage.
      Cây, cỏ đung đưa: nghiêng ảnh theo gió (transform) thay vì vẽ lại. Vật có lửa / cờ bay (SPR_LIVE) vẫn vẽ sống. Hết hạn mức bộ nhớ thì vẽ sống như cũ. */
-  const SPR={map:new Map(),bytes:0,cv:null,cx:null,k:1,res:'',made:0};
+  const SPR={map:new Map(),bytes:0,cv:null,cx:null,k:1,res:'',made:0,taint:{}};
   const SPR_LIVE={lantern:1,torch:1,crystal:1,brazier:1,flag:1,banner:1,fire:1,well:1,'hq-cage':1};
   const SPR_SWAY={tree:1,grass:1,banyan:.5,bamboo:1};
   const sprKey=o=>o.kind+'|'+(o.seed||0)+'|'+(o.w||0)+'|'+(o.h||0)+'|'+(o.dry?1:0)+'|'+(o.style||'')+'|'+(o.v||o.var||o.type||'');
-  function sprReset(){SPR.map.clear();if(typeof MSPR!=='undefined')MSPR.clear();if(typeof HSPR!=='undefined')HSPR.clear();SPR.bytes=0;}
+  function sprReset(){SPR.taint={};SPR.map.clear();if(typeof MSPR!=='undefined')MSPR.clear();if(typeof HSPR!=='undefined')HSPR.clear();SPR.bytes=0;}
   // vẽ vật o (gốc tại chân vật ox,oy) bằng hàm draw(c) lên canvas đo, tìm khung thật rồi dựng ảnh đệm ở độ phân giải k
-  function sprMake(o,draw,ox,oy,tt=0){
+  function sprMake(o,draw,ox,oy,tt=0,cat='obj'){
+    if(SPR.taint[cat])return null; // v10.67: nhóm này từng dính ảnh khác nguồn (Drive) → không đệm nữa, vẽ sống
     // đo khung ở 1/4 cỡ (canvas 200×150, quét ~30 000 điểm — rẻ) rồi mới dựng ảnh thật
     const k=SPR.k,Q=4;if(!SPR.cv){SPR.cv=document.createElement('canvas');SPR.cv.width=200;SPR.cv.height=150;SPR.cx=SPR.cv.getContext('2d',{willReadFrequently:true});}
     const mc=SPR.cx,MX=100,MY=125;mc.setTransform(1/Q,0,0,1/Q,0,0);mc.clearRect(0,0,200*Q,150*Q);mc.save();mc.translate(MX*Q-ox,MY*Q-oy);
     const real=ctx,t0=time;ctx=mc;time=tt;SPR.baking=true;try{draw(mc);}catch(e){ctx=real;time=t0;SPR.baking=false;mc.restore();return null;}ctx=real;time=t0;SPR.baking=false;mc.restore();
-    const d=mc.getImageData(0,0,200,150).data;let x0=200,y0=150,x1=-1,y1=-1;
+    // v10.67: Safari / iOS: canvas đã vẽ ảnh khác nguồn (ảnh Drive của trang bị, NPC) thì getImageData ném SecurityError "The operation is insecure" → bỏ canvas đo, nhóm này vẽ sống
+    let d;try{d=mc.getImageData(0,0,200,150).data;}catch(e){SPR.cv=null;SPR.cx=null;SPR.taint[cat]=true;return null;}let x0=200,y0=150,x1=-1,y1=-1;
     for(let y=0;y<150;y++){let row=y*200*4+3;for(let x=0;x<200;x++,row+=4)if(d[row]){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;}}
     if(x1<0)return {empty:true};
     if(x0<=0||y0<=0||x1>=199||y1>=149)return null; // tràn khung đo (vật quá to / rộng): vẽ sống
@@ -3047,17 +3049,17 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     const mv=!!e.moving,gq=mv?walkQ(e.walk):0,tq=timeQ(mv),key='H|'+(e.key||'')+'|'+who.name+'|'+(who.avatar||'')+'|'+who.gender+'|'+eqSig(who.equipment)+'|'+(safe?1:0)+(mv?1:0)+'|'+gq.toFixed(2)+'|'+tq;
     let sp=HSPR.get(key);
     if(sp===undefined){if(SPR.made>=3){drawHero(c,e,st,el,t,opts);return;}SPR.made++;if(SPR.bytes>56e6)sprReset();
-      const hh=Object.create(e);hh.x=0;hh.y=0;hh.facing=1;hh.walk=gq;hh.moving=mv;hh.hurt=-9;sp=sprMake(hh,c2=>drawHero(c2,hh,st,el,tq,{...opts,label:false}),0,0,tq);HSPR.set(key,sp);}
+      const hh=Object.create(e);hh.x=0;hh.y=0;hh.facing=1;hh.walk=gq;hh.moving=mv;hh.hurt=-9;sp=sprMake(hh,c2=>drawHero(c2,hh,st,el,tq,{...opts,label:false}),0,0,tq,'hero');HSPR.set(key,sp);}
     if(!sp){drawHero(c,e,st,el,t,opts);return;}
     if(!sp.empty){c.save();c.translate(e.x,e.y);c.scale(e.facing,1);c.drawImage(sp.cv,sp.dx,sp.dy,sp.w,sp.h);c.restore();}
     if(opts.label!==false)label(e.name,e.x,e.y-(64+seatOf(who.equipment)),opts.labelColor||'#fff2d1',null);
   }
   function drawNPCQ(n){
-    if(PERF.lv<1||n.panel==='fuse'){drawNPC(n);return;}
+    if(PERF.lv<1||n.panel==='fuse'||LH_IMG.pic('npc:'+n.id)){drawNPC(n);return;}
     const mv=!!n.moving,gq=mv?walkQ(n.walk):0,tq=timeQ(mv),key='N|'+n.id+'|'+n.role+'|'+(n.phase||'')+'|'+(mv?1:0)+'|'+gq.toFixed(2)+'|'+tq;
     let sp=HSPR.get(key);
     if(sp===undefined){if(SPR.made>=3){drawNPC(n);return;}SPR.made++;if(SPR.bytes>56e6)sprReset();
-      const nn=Object.create(n);nn.x=0;nn.y=0;nn.facing=1;nn.walk=gq;nn.moving=mv;sp=sprMake(nn,()=>drawNPC(nn),0,0,tq);HSPR.set(key,sp);}
+      const nn=Object.create(n);nn.x=0;nn.y=0;nn.facing=1;nn.walk=gq;nn.moving=mv;sp=sprMake(nn,()=>drawNPC(nn),0,0,tq,'npc');HSPR.set(key,sp);}
     if(!sp){drawNPC(n);return;}if(sp.empty)return;
     ctx.save();ctx.translate(n.x,n.y);ctx.scale(n.facing,1);ctx.drawImage(sp.cv,sp.dx,sp.dy,sp.w,sp.h);ctx.restore();
     label(n.name,n.x,n.y-(n.role==='wizard'?82:n.role==='guide'||n.role==='trainer'||n.role==='merchant'?70:66),'#ecdfb9');
