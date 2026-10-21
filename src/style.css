@@ -426,8 +426,8 @@ button.fx-vang{color:#ffe08a}button.fx-cau-vong{color:#ffb0ff}button.fx-lua{colo
 }
 /* Điện thoại xoay ngang: chân dung nhỏ, cần điều khiển và vòng kỹ năng to, sát hai mép, chừa tai thỏ (safe-area) */
 @media (orientation:landscape) and (max-height:540px) and (pointer:coarse),(orientation:landscape) and (max-height:460px){
- :root{--hud-h:52px}
- header{padding:0 max(8px,env(safe-area-inset-right)) 0 max(10px,env(safe-area-inset-left))}
+ :root{--hud-h:64px}
+ header{padding:max(12px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) 0 max(10px,env(safe-area-inset-left))} /* v10.62: hạ chân dung, nút toàn màn hình, nút menu xuống ~10px */
  .avatar{width:36px;height:36px;padding:2px;box-shadow:none}.level{font-size:8px;bottom:-6px;padding:0 5px}.profile{gap:9px}
  header .profile{padding:3px 14px 3px 3px}
  .player-info{position:relative;width:170px}.player-name{font-size:14px;max-width:170px;margin-bottom:3px}.bars{gap:3px}.bar{height:6px}.bar small{display:none}
