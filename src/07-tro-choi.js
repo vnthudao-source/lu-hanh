@@ -1,6 +1,6 @@
 /* v10.39: trò nhỏ của tuyến Tìm con (kịch bản chốt 19/10/2026).
    LH_TC: cách làm từng việc chính tuyến không phải săn quái, theo mã nhiệm vụ.
-     Trên bản đồ (06-game.js, sqTick): talk = hỏi chuyện vài NPC · find = tìm điểm sáng (seq: hiện lần lượt; back: mang về NPC; t: giây trước khi tan) · escort = dắt NPC tới chỗ cắm cờ.
+     Trên bản đồ (06-game.js, sqTick): talk = hỏi chuyện vài NPC · find = tìm vật (obj: hình vẽ của vật — camel lạc đà đi theo, ice khối băng cầm theo, drawing, foot, thread; seq: hiện lần lượt; back: mang về NPC; t: giây trước khi tan) · escort = dắt NPC tới chỗ cắm cờ.
      Bảng nhỏ (LH_TroChoi bên dưới): pick = chọn 1 đáp án mỗi lượt · seq = nhớ dãy đá · cards = lật thẻ · rhythm = bấm đúng nhịp · cups = úp cốc · lights = bật đèn 3×3 · order = xếp thứ tự.
      cond = việc có sẵn trong game (đoạt cờ, võ đài, cứu con), chỉ ghi gợi ý.
    Thua thì chơi lại ngay, không giới hạn lượt. Trò chạy ở máy người chơi bằng vài khối DOM, không tải thêm ảnh; xong gửi op sg để máy chủ ghi nhận. */
@@ -9,12 +9,12 @@ const LH_TC={
     smith:['Con bé tóc buộc nơ đỏ hả? Ta mải rèn, chẳng để ý ai qua lại.','Hỏi bọn trẻ trong làng xem, chúng chạy nhảy khắp nơi.'],
     merchant:['Mấy hôm trước có hai gã áo đen ghé mua lương khô, trả bằng bạc lạ.','Chúng hỏi đường tới Hang động, ta còn thấy lạ.'],
     'be-na':['Em thấy rồi! Có một chị cầm cây bút lông, khóc thút thít.','Hai chú áo đen nắm tay chị ấy dắt về phía Hang động. Em sợ quá trốn sau gốc đa…']}},
-  'tc-q02':{k:'find',map:'hang-dong',n:3,label:'Hình vẽ',col:'#ffd27a',hint:'Tìm 3 hình vẽ bằng than trên vách hang (điểm sáng)',say:['Một hình con mèo, nét run run…','Hình một ngôi nhà có ba người nắm tay.','Mặt trời và con lạc đà, góc dưới ký chữ "An"!']},
-  'tc-q03':{k:'find',map:'sa-mac',n:3,back:1,label:'Lạc đà',col:'#f0c070',hint:'Tìm từng con lạc đà lạc rồi dắt về chỗ Trưởng đoàn buôn',say:['Bắt được một con lạc đà! Dắt về cho trưởng đoàn.','Con thứ hai đây rồi!','Con cuối cùng, nó đang gặm bụi gai.']},
-  'tc-q04':{k:'find',map:'nui-tuyet',n:6,seq:1,label:'Dấu chân',col:'#e8f4ff',hint:'Đi theo hàng dấu chân nhỏ trên tuyết',say:['Dấu chân nhỏ, cỡ chân trẻ con…','Dấu chân lẫn với vết vó ngựa.','Có chỗ dấu chân dừng lại, như em đứng khóc.','Dấu chân rẽ về phía rừng.','Một vệt kéo lê…','Chiếc khăn quàng đỏ vướng trên cành cây!']},
+  'tc-q02':{k:'find',obj:'drawing',map:'hang-dong',n:3,label:'Hình vẽ',col:'#ffd27a',hint:'Tìm 3 hình vẽ bằng than trên vách hang (điểm sáng)',say:['Một hình con mèo, nét run run…','Hình một ngôi nhà có ba người nắm tay.','Mặt trời và con lạc đà, góc dưới ký chữ "An"!']},
+  'tc-q03':{k:'find',obj:'camel',map:'sa-mac',n:3,back:1,label:'Lạc đà',col:'#f0c070',hint:'Tìm từng con lạc đà lạc rồi dắt về chỗ Trưởng đoàn buôn',say:['Bắt được một con lạc đà! Dắt về cho trưởng đoàn.','Con thứ hai đây rồi!','Con cuối cùng, nó đang gặm bụi gai.']},
+  'tc-q04':{k:'find',obj:'foot',map:'nui-tuyet',n:6,seq:1,label:'Dấu chân',col:'#e8f4ff',hint:'Đi theo hàng dấu chân nhỏ trên tuyết',say:['Dấu chân nhỏ, cỡ chân trẻ con…','Dấu chân lẫn với vết vó ngựa.','Có chỗ dấu chân dừng lại, như em đứng khóc.','Dấu chân rẽ về phía rừng.','Một vệt kéo lê…','Chiếc khăn quàng đỏ vướng trên cành cây!']},
   'tc-q06':{k:'seq',title:'Lối qua đầm',hint:'Nhớ thứ tự các phiến đá nổi lên rồi bước lại',rounds:[3,5,7],n:6},
   'tc-q08':{k:'escort',map:'co-loa',dist:11,hint:'Dắt bà lão tới chỗ cắm cờ, đừng bỏ bà quá xa',say:'Cảm ơn con, bà qua được đường rồi!'},
-  'tc-q10':{k:'find',map:'nui-lua',n:3,back:1,t:60,label:'Khối băng',col:'#9fe0ff',hint:'Lấy khối băng (điểm sáng xanh), mang về lò rèn trước khi tan',say:['Khối băng lạnh buốt tay — mau mang về lò!','Khối thứ hai!','Khối cuối cùng!']},
+  'tc-q10':{k:'find',obj:'ice',map:'nui-lua',n:3,back:1,t:60,label:'Khối băng',col:'#9fe0ff',hint:'Lấy khối băng (điểm sáng xanh), mang về lò rèn trước khi tan',say:['Khối băng lạnh buốt tay — mau mang về lò!','Khối thứ hai!','Khối cuối cùng!']},
   'tc-q12':{k:'pick',title:'Câu đố của Băng Hoàng',restart:1,hint:'Trả lời đúng cả ba câu đố',qs:[
     ['Mình trong như ngọc, nắng lên thì khóc, khóc mãi thì mất. Là gì?',['Khối băng','Tấm gương','Sương mù','Hạt ngọc'],0],
     ['Trắng như bông, rơi không tiếng, phủ đầy đồng mà chẳng ai gieo trồng. Là gì?',['Mây','Tuyết','Muối','Hoa bưởi'],1],
@@ -40,7 +40,7 @@ const LH_TC={
     ['Bốn người lần lượt đứng cạnh ngọn đèn, bóng in trên vách đá:\n\nBác tiều phu — bóng vác rìu trên vai.\nCô hái thuốc — bóng tóc dài, sau lưng phe phẩy chín ngọn như đuôi.\nChú bé chăn trâu — bóng đội nón, tay cầm sáo.\nBà cụ — bóng lưng còng, chống gậy.\n\nAi là hồ ly?',['Bác tiều phu','Cô hái thuốc','Chú bé chăn trâu','Bà cụ'],1]]},
   'tc-q22':{k:'rhythm',title:'Chày giã thuốc',hint:'Giã theo nhịp chày của Thỏ Ngọc',beats:8,miss:1,col:'#f0f0ff'},
   'tc-q23':{k:'order',title:'Lễ dâng ấn',hint:'Làm lễ theo đúng thứ tự',items:['Dâng hương','Rót rượu','Đặt ấn','Đọc sớ']},
-  'tc-q25':{k:'find',map:'hu-khong',n:5,seq:1,label:'Chỉ đỏ',col:'#ff5a6a',hint:'Lần theo sợi chỉ đỏ buộc ở các khe nứt',say:['Một sợi chỉ đỏ buộc ở khe nứt…','Sợi thứ hai, thắt nút kiểu An hay thắt.','Sợi thứ ba.','Sợi thứ tư, đã sờn.','Sợi cuối cùng, cạnh khe nứt tỏa hơi đỏ!']},
+  'tc-q25':{k:'find',obj:'thread',map:'hu-khong',n:5,seq:1,label:'Chỉ đỏ',col:'#ff5a6a',hint:'Lần theo sợi chỉ đỏ buộc ở các khe nứt',say:['Một sợi chỉ đỏ buộc ở khe nứt…','Sợi thứ hai, thắt nút kiểu An hay thắt.','Sợi thứ ba.','Sợi thứ tư, đã sờn.','Sợi cuối cùng, cạnh khe nứt tỏa hơi đỏ!']},
   'tc-q26':{k:'order',title:'Thuyền giấy',hint:'Xếp chữ trên năm chiếc thuyền giấy thành câu',items:['Bố ơi,','con','ở','Cổ','Chiến Trường']},
   'tc-q27':{k:'cond',hint:'Đoạt cờ soái giữa doanh trại địch (đứng cạnh cờ vài giây)'},
   'tc-q28':{k:'cups',title:'Úp sọ',hint:'Đoán đúng cái sọ giấu chuỗi hạt 3 lần liền',n:3,need:3,thing:'Chuỗi hạt',col:'#e0c080'},
