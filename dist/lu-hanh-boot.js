@@ -1,4 +1,10 @@
-/*! Lữ Hành v10.62 · khởi động · https://github.com/vnthudao-source/lu-hanh */
+/*! Lữ Hành v10.63 · khởi động · https://github.com/vnthudao-source/lu-hanh */
+/* v10.63: Safari cũ (macOS / iOS trước Safari 16) chưa có ctx.roundRect \u{2192} báo "Lỗi vẽ: roundRect is not a function". Bổ sung thay thế (bán kính số hoặc mảng). */
+(function(){const add=P=>{if(!P||P.roundRect)return;P.roundRect=function(x,y,w,h,r){let a=Array.isArray(r)?r:[r==null?0:r];a=a.map(v=>typeof v==='object'&&v?(v.x||0):(+v||0));
+  const [tl,tr,br,bl]=a.length===1?[a[0],a[0],a[0],a[0]]:a.length===2?[a[0],a[1],a[0],a[1]]:a.length===3?[a[0],a[1],a[2],a[1]]:a;
+  if(w<0){x+=w;w=-w;}if(h<0){y+=h;h=-h;}const m=Math.min(w,h)/2,k=v=>Math.max(0,Math.min(v,m));const A=k(tl),B=k(tr),C=k(br),D=k(bl);
+  this.moveTo(x+A,y);this.lineTo(x+w-B,y);this.arcTo(x+w,y,x+w,y+B,B);this.lineTo(x+w,y+h-C);this.arcTo(x+w,y+h,x+w-C,y+h,C);this.lineTo(x+D,y+h);this.arcTo(x,y+h,x,y+h-D,D);this.lineTo(x,y+A);this.arcTo(x,y,x+A,y,A);this.closePath();return this;};};
+  try{add(window.CanvasRenderingContext2D&&CanvasRenderingContext2D.prototype);add(window.Path2D&&Path2D.prototype);add(window.OffscreenCanvasRenderingContext2D&&OffscreenCanvasRenderingContext2D.prototype);}catch(e){}})();
 /* ================= MÀN HÌNH CHỜ: thanh tải 0\u{2013}100%, cảnh làng + lời dẫn truyện =================
    Dùng chung cho file khởi động (tải tài nguyên trang) và game (kết nối máy chủ, tải nhân vật, dựng bản đồ). */
 window.LH_Loader=window.LH_Loader||(()=>{
@@ -99,7 +105,7 @@ window.LH_Loader=window.LH_Loader||(()=>{
 })();
 ;/* ================= KHỞI ĐỘNG: hiện màn hình chờ ngay, tải CSS + JS của game có đếm phần trăm ================= */
 (function(){
-  var me=document.currentScript,base=(me&&me.src||'').replace(/[^\/]*$/,''),FILES={"css":{"name":"lu-hanh.css","size":56980},"js":{"name":"lu-hanh.js","size":811251}};
+  var me=document.currentScript,base=(me&&me.src||'').replace(/[^\/]*$/,''),FILES={"css":{"name":"lu-hanh.css","size":56980},"js":{"name":"lu-hanh.js","size":812109}};
   window.LH_BASE=window.LH_BASE||base;
   // v10.32: mở sẵn kết nối tới máy chủ Apps Script và kho ảnh Drive (đỡ vài trăm ms bắt tay TLS trên điện thoại)
   ['https://script.google.com','https://script.googleusercontent.com','https://lh3.googleusercontent.com'].forEach(function(h){try{var l=document.createElement('link');l.rel='preconnect';l.href=h;if(!/lh3/.test(h))l.crossOrigin='';document.head.appendChild(l);}catch(e){}});
