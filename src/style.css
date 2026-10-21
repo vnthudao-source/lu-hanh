@@ -410,19 +410,44 @@ button.fx-vang{color:#ffe08a}button.fx-cau-vong{color:#ffb0ff}button.fx-lua{colo
 .tg-intro{margin:4px 2px 10px;font-size:13px;line-height:1.5;opacity:.92}
 .tg-act{display:flex;gap:10px;justify-content:center;margin-top:12px}
 
-/* v10.54 · Điện thoại xoay ngang: thanh trên mỏng, cần điều khiển + vòng kỹ năng thu nhỏ sát hai mép, chừa tai thỏ (safe-area) */
+/* v10.57 · Máy tính và điện thoại xoay ngang: thanh trên không còn là dải nền tối — chân dung + thanh máu và các nút nổi trên bản đồ thành từng khối bo tròn trong mờ,
+   bản đồ chiếm trọn chiều cao. Điện thoại dọc giữ nguyên. */
+:root{--hud-h:94px}
+@media (min-width:761px),(orientation:landscape) and (max-height:540px) and (pointer:coarse),(orientation:landscape) and (max-height:460px){
+ header{position:absolute;top:0;left:0;right:0;z-index:6;height:var(--hud-h);background:none;border-bottom:0;pointer-events:none}
+ header .profile,header .top-right{pointer-events:auto}
+ header .profile{background:linear-gradient(90deg,#0d1912d9,#0d191299);border:1px solid #d8b67838;border-radius:999px;padding:5px 18px 5px 5px;box-shadow:0 4px 16px #0006;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+ header .top-right>button{background:#0d1912c4;box-shadow:0 3px 12px #0005}
+ header .boss-mini{background:#0d1912c4}
+ header .version{background:#0d1912b0}
+ .layout{height:var(--app-h,100dvh)}
+ .quest-track{top:calc(var(--hud-h) + 4px)}.map-box{top:calc(var(--hud-h) + 4px)}
+ #toast{top:calc(var(--hud-h) + 6px)}.ev-banner{top:calc(var(--hud-h) + 48px)}
+}
+/* Điện thoại xoay ngang: chân dung nhỏ, cần điều khiển và vòng kỹ năng to, sát hai mép, chừa tai thỏ (safe-area) */
 @media (orientation:landscape) and (max-height:540px) and (pointer:coarse),(orientation:landscape) and (max-height:460px){
- header{height:54px;padding:0 max(10px,env(safe-area-inset-right)) 0 max(14px,env(safe-area-inset-left))}.layout{height:calc(var(--app-h,100dvh) - 54px)}
+ :root{--hud-h:52px}
+ header{padding:0 max(8px,env(safe-area-inset-right)) 0 max(10px,env(safe-area-inset-left))}
  .avatar{width:36px;height:36px;padding:2px;box-shadow:none}.level{font-size:8px;bottom:-6px;padding:0 5px}.profile{gap:9px}
- .player-info{position:relative;width:190px}.player-name{font-size:14px;max-width:190px;margin-bottom:3px}.bars{gap:3px}.bar{height:6px}.bar small{display:none}
- .buffs{position:absolute;left:100%;top:0;margin:0 0 0 8px;min-height:0}
+ header .profile{padding:3px 14px 3px 3px}
+ .player-info{position:relative;width:170px}.player-name{font-size:14px;max-width:170px;margin-bottom:3px}.bars{gap:3px}.bar{height:6px}.bar small{display:none}
+ .buffs{position:absolute;left:100%;top:0;margin:0 0 0 18px;min-height:0}
  .top-right{gap:6px}.top-right>button{padding:6px 8px}.top-right>button svg.icon{width:20px;height:20px}.version{display:none}
- .hint{display:none}.touch-controls{display:block;left:max(14px,env(safe-area-inset-left));bottom:12px}
- .skill-wheel{transform:scale(.66);transform-origin:bottom right;right:max(4px,env(safe-area-inset-right));bottom:4px}
- .map-box{right:max(10px,env(safe-area-inset-right));top:8px;gap:4px}#minimap{width:112px;height:60px;border-width:3px}.map-meta{font-size:10px;padding:4px 6px}
- .quest-track{left:max(10px,env(safe-area-inset-left));top:8px;font-size:11px;padding:5px 7px;gap:5px}.quest-track svg{width:16px;height:16px}
- #dialog{bottom:8px;left:50%;width:min(520px,calc(100% - 330px));min-width:260px;padding:10px 12px}#dialog p{font-size:13px;margin:4px 0}
- #toast{top:6px;padding:6px 11px;font-size:12px;white-space:nowrap}
+ .hint{display:none}.touch-controls{display:block;left:max(18px,env(safe-area-inset-left));bottom:16px}
+ .pad{width:132px;height:132px}.knob{left:42px;top:42px;width:48px;height:48px}
+ .skill-wheel{transform:scale(.92);transform-origin:bottom right;right:max(6px,env(safe-area-inset-right));bottom:6px}
+ .map-box{right:max(10px,env(safe-area-inset-right));gap:4px}#minimap{width:112px;height:60px;border-width:3px}.map-meta{font-size:10px;padding:4px 6px}
+ .quest-track{left:max(10px,env(safe-area-inset-left));font-size:11px;padding:5px 7px;gap:5px}.quest-track svg{width:16px;height:16px}
+ #dialog{bottom:8px;left:50%;width:min(520px,calc(100% - 420px));min-width:260px;padding:10px 12px}#dialog p{font-size:13px;margin:4px 0}
+ #toast{padding:6px 11px;font-size:12px;white-space:nowrap}
  .overlay{padding:6px}.card{max-height:calc(var(--app-h,100dvh) - 12px);max-width:640px;padding:12px}
  .portal{place-items:start center;padding:6px max(10px,env(safe-area-inset-right)) 6px max(10px,env(safe-area-inset-left))}.portal-card{padding:12px 16px}.plogo{margin-bottom:6px}.plogo b{font-size:24px}
 }
+@media (orientation:landscape) and (max-height:330px) and (pointer:coarse){.skill-wheel{transform:scale(.8)}.pad{width:116px;height:116px}.knob{left:36px;top:36px;width:44px;height:44px}}
+/* v10.57 · iPhone: vuốt lên để Safari ẩn thanh địa chỉ (không cần thêm vào màn hình chính) */
+#lhSwipe{position:fixed;inset:0;z-index:2147483600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:#07100bd9;color:#f3e3bb;font:600 16px/1.4 system-ui,sans-serif;text-align:center;touch-action:pan-y;padding:20px}
+#lhSwipe .hand{font-size:42px;animation:lhSwipeUp 1.3s ease-in-out infinite}
+#lhSwipe small{font-weight:400;font-size:13px;color:#c9c2a8}
+#lhSwipe button{margin-top:6px;padding:7px 14px;border-radius:9px;background:#23362e;border:1px solid #b5ba9866;color:#f3e3bb}
+@keyframes lhSwipeUp{0%{transform:translateY(26px);opacity:0}30%{opacity:1}100%{transform:translateY(-34px);opacity:0}}
+#lhSwipeSpacer{height:220vh;width:1px;pointer-events:none}

@@ -150,7 +150,7 @@ window.startUI=(session)=>{
     previewWho=null;
     const sel=selected!==null?p.bag[selected]:null,sd=info(sel),tg=sel?Player.targets(p,sel):[],st=Player.stance(p),D=game.HD;
     const equip=Player.slots.map(slot=>slotHtml(p,slot,s=>sel&&(tg.includes(s)||(sd&&sd.grip==='two'&&s==='left')))).join('');
-    const skillSlots=p.skillSlots.map((it,i)=>`<button class="skill-slot${it?'':' empty'}${p.activeBook===i?' active':''}${skillFocus===i?' focus':''}" data-skillslot="${i}" title="${it?esc(info(it).name):'Ô kỹ năng trống'}">${it?`<span style="color:${tintOf(it)}">${svg(EL[info(it).element].icon)}</span>`:svg('book')}</button>`).join('');
+    const skillSlots=p.skillSlots.map((it,i)=>`<button class="skill-slot${it?'':' empty'}${p.activeBook===i?' active':''}${skillFocus===i?' focus':''}" data-skillslot="${i}" title="${it?esc(info(it).name):'Ô kỹ năng trống'}">${it?`<span style="color:${tintOf(it)}">${icon(it.type,tintOf(it))}</span>${lvb(it)}`:svg('book')}</button>`).join('');
     const money=Player.money(p.copper);
     let bar='';
     if(sel){
@@ -159,9 +159,9 @@ window.startUI=(session)=>{
       if(tg.length)bar=bar.replace('</small></div>',' · chạm ô sáng để mặc</small></div>');
     }else if(skillFocus!==null&&p.skillSlots[skillFocus]){
       const it=p.skillSlots[skillFocus],on=p.activeBook===skillFocus;
-      bar=`<span class="big" style="color:${tintOf(it)}">${svg(EL[info(it).element].icon)}</span><div class="sel-info"><b class="sel-name">${esc(info(it).name)}</b>${chips(it)}<small class="sel-desc">Đang gắn · hào quang ${on?'bật':'tắt'}</small></div><button class="primary" data-act="toggle">${svg('eye')}${on?'Tắt':'Bật'} hào quang</button><button data-act="remove">${svg('out')}Tháo</button><button data-act="clear">${svg('close')}Bỏ chọn</button>`;
+      bar=`<span class="big" style="color:${tintOf(it)}">${icon(it.type,tintOf(it))}</span><div class="sel-info"><b class="sel-name">${esc(info(it).name)}</b>${chips(it)}<small class="sel-desc">Đang gắn · hào quang ${on?'bật':'tắt'}</small></div><button class="primary" data-act="toggle">${svg('eye')}${on?'Tắt':'Bật'} hào quang</button><button data-act="remove">${svg('out')}Tháo</button><button data-act="clear">${svg('close')}Bỏ chọn</button>`;
     }
-    openModal(ttl('bag','Túi đồ'),`<div class="bag-layout"><section><div class="equip-head"><canvas id="preview"></canvas><div><span class="chips" style="justify-content:flex-start">${chip(st.type,KIND_NAMES[st.type]+(st.dual?' đôi':''))}${chip('sword',`Sát thương ${D.tot.dmgMin}–${D.tot.dmgMax}`)}${chip('shield','Phòng ngự '+D.tot.def)}</span>${D.sets.length?`<span class="chips" style="justify-content:flex-start;margin-top:4px">${D.sets.map(x=>chip('quest',`${Player.SETS[x.id].hero} ${x.n}/${Math.min(9,Player.SETS[x.id].pieces.length)}`,(Player.RAR[Player.SETS[x.id].q||'l']||Player.RAR.l).color)).join('')}</span>`:''}</div></div><div class="equip-grid">${equip}</div><div class="gap"></div><div class="skill-grid">${skillSlots}</div></section><section><div class="bag-grid">${bagHtml()}</div><div class="money"><span class="coin gold"><i></i>${money.gold}</span><span class="coin silver"><i></i>${money.silver}</span><span class="coin"><i></i>${money.copper}</span>${ruby(p.rubies)}${luckTag()}</div></section></div>${bar?`<div class="sel-bar">${bar}</div>`:''}`,true);
+    openModal(ttl('bag','Túi đồ'),`<div class="bag-layout"><section><div class="equip-head"><canvas id="preview"></canvas><div><span class="chips" style="justify-content:flex-start">${chip(st.type,KIND_NAMES[st.type]+(st.dual?' đôi':''))}${chip('sword',`Sát thương ${D.tot.dmgMin}–${D.tot.dmgMax}`)}${chip('shield','Phòng ngự '+D.tot.def)}</span>${D.sets.length?`<span class="chips" style="justify-content:flex-start;margin-top:4px">${D.sets.map(x=>chip('quest',`${Player.SETS[x.id].hero} ${x.n}/${Math.min(9,Player.SETS[x.id].pieces.length)}`,(Player.RAR[Player.SETS[x.id].q||'l']||Player.RAR.l).color)).join('')}</span>`:''}</div></div><div class="equip-grid">${equip}</div><div class="gap"></div><div class="skill-grid">${skillSlots}</div>${bar?`<div class="sel-bar">${bar}</div>`:''}</section><section><div class="bag-grid">${bagHtml()}</div><div class="money"><span class="coin gold"><i></i>${money.gold}</span><span class="coin silver"><i></i>${money.silver}</span><span class="coin"><i></i>${money.copper}</span>${ruby(p.rubies)}${luckTag()}</div></section></div>`,true);
     const act=fn=>{try{fn();game.refreshHD();refresh();renderBag();}catch(err){fail(err);}};
     document.querySelectorAll('[data-bag]').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.bag);skillFocus=null;if(!p.bag[i]||selected===i){selected=null;}else{selected=i;if(info(p.bag[i]).element)burstAt=game.now();}renderBag();});
     document.querySelectorAll('[data-slot]').forEach(btn=>btn.onclick=()=>act(()=>{
@@ -608,7 +608,9 @@ window.startUI=(session)=>{
       <button id="dgClear">Xóa nhật ký</button></div>`);
     $('#dgClear').onclick=()=>{LH_DIAG.clear();showDiag();};
   }
-  $('#diagBtn').onclick=showDiag;
+  // v10.57: nút "Tình trạng" trong menu đổi thành "Toàn màn hình" (LH_FS ở 08-portal.js); xem Tình trạng bằng cách chạm số phiên bản
+  {const v=document.querySelector('.version');if(v){v.style.cursor='pointer';v.onclick=showDiag;}}
+  $('#modeBtn').onclick=()=>{closeMenu();if(window.LH_FS)LH_FS.toggle();};
   $('#questBtn').onclick=showQuests;$('#bagBtn').onclick=()=>{selected=null;skillFocus=null;renderBag();};
   $('#closeOverlay').onclick=closeModal;$('#overlay').onclick=evt=>{if(evt.target.id==='overlay')closeModal();};
   document.querySelectorAll('[data-skill]').forEach(btn=>{

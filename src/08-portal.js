@@ -2,32 +2,42 @@
 // Khung game vừa đúng phần nhìn thấy của màn hình: trên điện thoại trừ thanh địa chỉ / thanh công cụ của trình duyệt
 (()=>{
   const el=document.getElementById('lu-hanh');if(!el)return;
-  const fit=()=>{const vv=window.visualViewport,h=Math.round(Math.min(innerHeight,vv?vv.height*vv.scale:innerHeight));el.style.setProperty('--app-h',h+'px');el.style.height=h+'px';el.style.bottom='auto';if(scrollY)scrollTo(0,0);};
+  const fit=()=>{const vv=window.visualViewport,h=Math.round(Math.min(innerHeight,vv?vv.height*vv.scale:innerHeight));el.style.setProperty('--app-h',h+'px');el.style.height=h+'px';el.style.bottom='auto';if(scrollY&&!(window.LH_SWIPE&&LH_SWIPE()))scrollTo(0,0);};
   fit();addEventListener('resize',fit);addEventListener('orientationchange',()=>setTimeout(fit,350));if(window.visualViewport)visualViewport.addEventListener('resize',fit);
-  // v10.54: điện thoại xoay ngang — thanh địa chỉ, thanh tab che mất nửa màn hình nên vào chế độ toàn màn hình:
-  //   nút #fsBtn trên thanh trên (bật / tắt), và tự vào toàn màn hình ở lần chạm đầu tiên sau khi xoay ngang (trình duyệt chỉ cho bật khi người chơi chạm).
-  //   iPhone (Safari không cho trang web toàn màn hình): nhắc một lần "Thêm vào MH chính" — mở từ biểu tượng ngoài màn hình chính thì không còn thanh địa chỉ.
+  // v10.57: toàn màn hình — nút "Toàn màn hình" trong menu (LH_FS.toggle) và tự vào toàn màn hình ở lần chạm đầu sau khi xoay ngang
+  //   (trình duyệt chỉ cho bật khi người chơi chạm). iPhone (Safari không có toàn màn hình cho trang web): hiện lớp "vuốt lên" —
+  //   trang có thêm chỗ cuộn, người chơi vuốt lên một lần thì Safari tự thu thanh địa chỉ khi xoay ngang; không cần Thêm vào MH chính.
   (()=>{
     const D=document,R=D.documentElement,touch=!!(window.matchMedia&&matchMedia('(pointer:coarse)').matches)||'ontouchstart' in window;
-    for(const [n,c] of [['apple-mobile-web-app-capable','yes'],['mobile-web-app-capable','yes'],['apple-mobile-web-app-status-bar-style','black-translucent']])if(!D.querySelector(`meta[name="${n}"]`)){const m=D.createElement('meta');m.name=n;m.content=c;(D.head||R).appendChild(m);}
     const canFS=!!(R.requestFullscreen||R.webkitRequestFullscreen),isFS=()=>!!(D.fullscreenElement||D.webkitFullscreenElement),land=()=>innerWidth>innerHeight;
     const standalone=!!(navigator.standalone||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches));
     const enter=()=>{const f=R.requestFullscreen||R.webkitRequestFullscreen;try{const r=f.call(R,{navigationUI:'hide'});if(r&&r.catch)r.catch(()=>{});}catch(e){}};
     const leave=()=>{const f=D.exitFullscreen||D.webkitExitFullscreen;try{const r=f&&f.call(D);if(r&&r.catch)r.catch(()=>{});}catch(e){}};
-    const btn=D.getElementById('fsBtn');
-    const sync=()=>{if(btn){btn.hidden=!(touch&&canFS);const u=btn.querySelector('use');if(u)u.setAttribute('href',isFS()?'#i-shrink':'#i-expand');btn.setAttribute('aria-label',isFS()?'Thoát toàn màn hình':'Toàn màn hình');}setTimeout(fit,120);};
-    if(btn)btn.onclick=e=>{e.stopPropagation();isFS()?leave():enter();};
+    // thanh địa chỉ còn hiện: chiều cao nhìn thấy thấp hơn rõ so với cạnh ngắn của màn hình
+    const barsShown=()=>innerHeight<Math.min(screen.width,screen.height)*.92;
+    let swipeOn=false;
+    function swipeEnd(){const o=D.getElementById('lhSwipe');if(o)o.remove();R.style.overflow='hidden';D.body.style.overflow='hidden';setTimeout(fit,60);}
+    function swipeStart(force){
+      if(standalone||!land()||(!force&&!barsShown()))return;
+      swipeOn=true;R.style.overflow='';D.body.style.overflow='';
+      if(!D.getElementById('lhSwipeSpacer')){const sp=D.createElement('div');sp.id='lhSwipeSpacer';D.body.appendChild(sp);}
+      if(D.getElementById('lhSwipe'))return;
+      const o=D.createElement('div');o.id='lhSwipe';o.innerHTML='<div class="hand">☝</div><b>Vuốt lên để chơi toàn màn hình</b><small>Thanh địa chỉ của trình duyệt sẽ tự thu lại</small><button type="button">Để sau</button>';
+      o.querySelector('button').onclick=e=>{e.stopPropagation();swipeEnd();};(D.body||R).appendChild(o);
+    }
+    function swipeCheck(){if(!swipeOn)return;if(!land()){swipeOn=false;const sp=D.getElementById('lhSwipeSpacer');if(sp)sp.remove();swipeEnd();scrollTo(0,0);return;}if(D.getElementById('lhSwipe')&&!barsShown())swipeEnd();}
+    window.LH_SWIPE=()=>swipeOn; // fit() không kéo trang về đầu khi đang ở chế độ này
+    const btn=D.getElementById('modeBtn');
+    const sync=()=>{if(btn){const on=isFS(),u=btn.querySelector('use'),t=btn.querySelector('span');if(u)u.setAttribute('href',on?'#i-shrink':'#i-expand');if(t)t.textContent=on?'Thoát toàn màn hình':'Toàn màn hình';}setTimeout(fit,120);};
+    window.LH_FS={isFS,toggle(){if(canFS){isFS()?leave():enter();return;}
+      if(!land()){const m=window.mapGame&&mapGame.message;if(m)m('Xoay ngang điện thoại rồi bấm lại để chơi toàn màn hình',3);return;}swipeStart(true);}};
     D.addEventListener('fullscreenchange',sync);D.addEventListener('webkitfullscreenchange',sync);sync();
+    addEventListener('resize',swipeCheck);if(window.visualViewport)visualViewport.addEventListener('resize',swipeCheck);addEventListener('scroll',swipeCheck,{passive:true});
     if(!touch||standalone)return;
     let tried=false,wasLand=land();
-    addEventListener('resize',()=>{const l=land();if(l&&!wasLand)tried=false;wasLand=l;if(l&&!canFS)tip();});
+    addEventListener('resize',()=>{const l=land();if(l&&!wasLand){tried=false;if(!canFS)setTimeout(()=>swipeStart(false),400);}wasLand=l;});
     D.addEventListener('pointerdown',e=>{if(!canFS||tried||isFS()||!land())return;if(btn&&btn.contains(e.target))return;tried=true;enter();},true);
-    // iPhone: nhắc một lần
-    function tip(){let seen='';try{seen=localStorage.getItem('lh-fs-tip')||'';}catch(e){}if(seen||D.getElementById('lhFsTip'))return;
-      const d=D.createElement('div');d.id='lhFsTip';d.style.cssText='position:fixed;left:50%;top:8px;transform:translateX(-50%);z-index:2147483600;max-width:min(560px,calc(100% - 24px));display:flex;gap:10px;align-items:center;padding:9px 12px;border-radius:12px;background:#15221df5;border:1px solid #d7b77a88;color:#f1e6c8;font:13px/1.4 system-ui,sans-serif;box-shadow:0 6px 20px #0008';
-      d.innerHTML='<span>Muốn chơi ngang toàn màn hình trên iPhone: bấm nút <b>Chia sẻ</b> của Safari → <b>Thêm vào MH chính</b>, rồi mở game từ biểu tượng đó.</span><button style="flex:none;padding:6px 10px;border-radius:8px;background:#a4452c;border:1px solid #e3b86f;color:#fff3d6">Đã hiểu</button>';
-      d.querySelector('button').onclick=()=>{try{localStorage.setItem('lh-fs-tip','1');}catch(e){}d.remove();};(D.body||R).appendChild(d);setTimeout(()=>d.remove(),15000);}
-    if(land()&&!canFS)tip();
+    if(land()&&!canFS)setTimeout(()=>swipeStart(false),800);
   })();
   // trang Blogspot không cuộn được phía sau khung game (trình duyệt cũ không hiểu :has)
   document.documentElement.style.overflow='hidden';document.body.style.overflow='hidden';
