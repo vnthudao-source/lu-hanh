@@ -584,7 +584,9 @@ linh:[
    {khoa:'tg_the_gioi_tru_don',gia_tri:90,ghi_chu:'v10.48 · Chiến trường thế giới: máu trụ canh phe địch = bấy nhiêu đòn thường của nhân vật'},
    {khoa:'tg_the_gioi_nha_don',gia_tri:180,ghi_chu:'v10.48 · Chiến trường thế giới: máu nhà chính phe địch = bấy nhiêu đòn thường của nhân vật'},
    {khoa:'tg_the_gioi_ha_toi_da',gia_tri:200,ghi_chu:'v10.48 · Chiến trường thế giới: số lần hạ lính / bản sao / trụ được tính thưởng tối đa mỗi trận'},
-   {khoa:'tg_gieng_giay',gia_tri:60,ghi_chu:'v10.46 · Giếng cổ trong bản đồ sự kiện: số giây để nước đầy lại'}
+   {khoa:'tg_gieng_giay',gia_tri:60,ghi_chu:'v10.46 · Giếng cổ trong bản đồ sự kiện: số giây để nước đầy lại'},
+   {khoa:'ngo_khong_vang',gia_tri:1,ghi_chu:'v10.65 · Nhiệm vụ ẩn Tôn Ngộ Không (Núi tuyết 12,28): mỗi ngày chọn không thả thì được bấy nhiêu vàng'},
+   {khoa:'ngo_khong_hong_ngoc',gia_tri:1,ghi_chu:'v10.65 · Nhiệm vụ ẩn Tôn Ngộ Không: đã thả, hạ Tôn Ngộ Không ở Rừng Trúc thì được bấy nhiêu hồng ngọc (một lần)'}
   );
   // v10.13: quái sự kiện đột xuất (không có trong bãi quái; hiện theo sự kiện ngoài vùng an toàn gần cổng). Máu / sát thương theo cấp vùng.
   const EVM=[ // [id, tên, máu, sát thương, tốc, chạy, bán kính, cao, tầm đánh, tầm gần, hồi chiêu ms, vung tay ms, đồng, đẩy lùi %, hồi sinh, exp, bản đồ]

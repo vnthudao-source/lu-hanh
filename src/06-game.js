@@ -688,6 +688,7 @@ window.startGame=(session)=>{
   }
 
   /* ---------- Quái vật ---------- */
+  const ADD_ART={'hoa-moc':(...a)=>drawFlower(...a),'ngo-khong':(...a)=>drawWukong(...a),'ngo-khong-ao':(...a)=>drawWukong(...a)};
   function drawMonster(m){
     const M=MON[m.type],c=ctx;let alpha=1;
     if(m.dead){alpha=clamp(1-(time-m.deadAt)/1.2,0,1);if(alpha<=0)return;}
@@ -696,11 +697,12 @@ window.startGame=(session)=>{
     c.translate(m.x,m.y-(m.fly||0));c.scale(m.facing,1);
     let lunge=0,open=false;
     if(m.atk){if(time<m.atk.at)lunge=-5*clamp((time-(m.atk.at-M.windup))/M.windup,0,1);else{lunge=12*Math.max(0,1-(time-m.atk.at)/.3);open=true;}}
-    c.translate(lunge,0);if(m.dead)c.rotate(-.5*(1-alpha));
+    c.translate(lunge,0);if(m.dead)c.rotate(-.5*(1-alpha));if(m.sc)c.scale(m.sc,m.sc);
     const leg=(x,ph,len,w,colr)=>line(c,[x,-len,x+Math.sin(g+ph)*len*.3*(m.moving?1:0),0],colr,w);
-    const pic=LH_IMG.pic('quai:'+(m.art||m.type));
+    const own=ADD_ART[m.type],pic=!own&&LH_IMG.pic('quai:'+(m.art||m.type)); // v10.65: hình vẽ riêng (Hoa Mộc, Tôn Ngộ Không)
     const art=!pic&&LH_ART.mon[m.art||m.type]; // v10.46: m.art = hình vẽ mượn (lính phe địch ở Chiến trường)
-    if(pic){if(fl)c.filter='brightness(1.8)';drawPic(c,pic,Math.max(M.h*1.3,M.r*2),m.moving?-Math.abs(Math.sin(g))*3:0);c.filter='none';}
+    if(own)own(c,m,M,{t:time,open,col,g,fl,atk:!!m.atk});
+    else if(pic){if(fl)c.filter='brightness(1.8)';drawPic(c,pic,Math.max(M.h*1.3,M.r*2),m.moving?-Math.abs(Math.sin(g))*3:0);c.filter='none';}
     else if(LH_BOSS[m.type])LH_BOSS[m.type](c,m,M,{t:time,open,col,g,fl,atk:!!m.atk}); // v10.18: boss vẽ chi tiết
     else if(art)art(c,m,M,{t:time,open,col,g,fl,atk:!!m.atk});
     else if(!['deer','lion','elephant','croc','chua-son-lam','ngu-tinh'].includes(m.type)){World.monPack(m.type);ell(c,0,-M.h*.45,M.r,M.h*.45,col('#5a4a3a'));ell(c,M.r*.6,-M.h*.7,3,3,'#ffd27a');}
@@ -791,6 +793,7 @@ window.startGame=(session)=>{
   }
   function hitMonster(m,atk,dx,dy,opt={}){
     if(m.dead)return 0;const M=MON[m.type];
+    if(m.reviveUntil>time){if(time>(m.tipAt||0)){m.tipAt=time+1;const cc=center(m);floater(cc.x,cc.y-M.h*.5-26,'Đang hồi sinh','#a0ff80',12);}return 0;}
     const r=atk.abs?{dmg:Math.max(1,Math.round(atk.abs)),tag:'',color:atk.color||'#fff1c4',size:13}:rollHit(atk.D,atk.mul,atk.owner);
     let dmg=r.dmg;const f=atk.owner==='hero'&&!atk.abs?HD.fx:{};
     if(!atk.abs&&M.def>0)dmg=Math.max(1,Math.round(dmg*Player.armorMul(M.def,player.level||1))); // v10.35: thủ của quái (cột thu) theo cấp nhân vật
@@ -880,6 +883,9 @@ window.startGame=(session)=>{
   }
   function kill(m,owner){
     if(m.fighter){tgDown(m,owner);return;} // v10.46: bản sao / NPC sự kiện thế giới
+    if(m.add){addDown(m,owner);return;} // v10.65: hoa Mộc Tinh, khỉ con, phân thân Ngộ Không
+    if(m.wk){wkDown(m,owner);return;}
+    if(XA_REV[m.type]&&!m.ev&&(m.rev||0)<XA_REV[m.type].length){xaRevive(m);return;} // v10.65: Xà Tinh hồi sinh 3 lần
     if(m.chase&&m.chase.ent!==hero&&!m.chase.ent.dead){const e=m.chase.ent;floater(e.x,e.y-84,'Đa tạ đại hiệp!','#ffe6a8',14);m.chase=null;}
     const M=MON[m.type];m.dead=true;m.deadAt=time;m.respawn=m.ev?1e18:time+M.respawn;m.atk=null;m.burn=null;m.leap=null;
     if(owner==='bot'&&(m.heroDmg||0)<m.max*.3){burst(m.x,m.y-M.h*.4,'#e9dcb4',12);return;}
@@ -1506,7 +1512,7 @@ window.startGame=(session)=>{
     clearTimeout(slow);if(L)L.step(70,'Dựng '+nm,96);
     if(cave&&cave.ph==='fight'&&World.id==='hang-cuop'&&id==='sa-mac')caveChase=time+60; // v10.29: bị toán cướp rượt ra khỏi hang
     World.use(def);W=World.W;H=World.H;grid=World.grid;
-    tut=null;cave=null;EV=null;hqReset();evSlot=-1;evBannerSet(null);monsters.length=0;monsters.push(...makeMonsters());warmMap();spawnBots();syncMerc();projectiles.length=0;particles.length=0;floaters.length=0;fx.length=0;
+    tut=null;cave=null;EV=null;hqReset();evSlot=-1;evBannerSet(null);monsters.length=0;eshots.length=0;WKB=null;monsters.push(...makeMonsters());warmMap();spawnBots();syncMerc();projectiles.length=0;particles.length=0;floaters.length=0;fx.length=0;
     Object.assign(hero,tx!=null?{x:(tx+.5)*T,y:(ty+.5)*T}:World.spawn,{map:World.id,attack:null,mountAct:null});
     // điểm đến bị chặn (đá, tường, vật) thì dời sang ô trống gần nhất — không bao giờ kẹt khi vừa qua cổng
     if(!World.canStand(hero.x,hero.y)){const o=World.nearestOpen(Math.floor(hero.x/T),Math.floor(hero.y/T));if(o){hero.x=(o.x+.5)*T;hero.y=(o.y+.5)*T;}}
@@ -1857,7 +1863,8 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     evBannerSet(`${svg('flag')}<b>${E.name}</b><span>${E.flee?'':alive+' tên · '}${mm}:${ss}</span>`);
   }
   function updateMonsters(dt){
-    bossTalk();
+    bossTalk();updateEshots(dt);
+    for(let i=monsters.length-1;i>=0;i--){const o=monsters[i];if(o.add&&o.dead&&time-o.deadAt>2)monsters.splice(i,1);} // v10.65: dọn quái gọi thêm đã gục
     for(const m of monsters){
       const M=MON[m.type];
       if(m.cast&&time>=m.cast.at){resolveCast(m);m.cast=null;}
@@ -1865,8 +1872,10 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
           if(!hero.dead&&Math.hypot(hero.x-m.x,hero.y-m.y)<R)hurtHero(M.dmg*4,m);for(const e of allies)if(e.hp>0&&Math.hypot(e.x-m.x,e.y-m.y)<R)hurtAlly(e,M.dmg*4);for(const e of bots)if(!e.dead&&Math.hypot(e.x-m.x,e.y-m.y)<R)hurtBot(e,M.dmg*4);
           m.tubao=null;m.hp=0;kill(m,'hero');continue;}
         m.moving=false;if(Math.random()<.5)burst(m.x+(Math.random()-.5)*60,m.y-Math.random()*M.h,'#ff6030',3,120);continue;}
-      if(m.dead){if(time>m.respawn){Object.assign(m,{dead:false,fledOnce:false,fleeing:null,hp:m.max,heroDmg:0,cast:null,tubao:null,skillCd:0,x:m.hx,y:m.hy,atk:null,aggro:-9,flee:0,burn:null,leap:null,stunUntil:0,frozenUntil:0,slowUntil:0,fearUntil:0,path:null,stuck:0});}continue;}
+      if(m.dead){if(time>m.respawn){Object.assign(m,{dead:false,fledOnce:false,fleeing:null,hp:m.max,heroDmg:0,cast:null,tubao:null,skillCd:0,x:m.hx,y:m.hy,atk:null,aggro:-9,flee:0,burn:null,leap:null,stunUntil:0,frozenUntil:0,slowUntil:0,fearUntil:0,path:null,stuck:0,rev:0,bloom:null,bloomGone:false,reviveUntil:0});}continue;}
       if(m.burn){if(time<m.burn.until){m.burnAcc+=m.burn.dps*dt;if(m.burnAcc>=1){const v=Math.floor(m.burnAcc);m.burnAcc-=v;hitMonster(m,{abs:v,owner:'burn',color:m.burn.color||'#ff9a3d'},0,0);if(m.dead)continue;}}else m.burn=null;}
+      if(m.flower){flowerAI(m,M,dt);continue;}
+      if(BLOOM[m.type])bloomCheck(m);
       if(M.tac&&M.tac.length&&bossTactics(m,M,dt))continue;
       if(time<m.stunUntil||time<m.frozenUntil){m.moving=false;continue;}
       if(m.fighter){updateFighter(m,dt);continue;}
@@ -2201,6 +2210,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
   const cageAt=()=>{const r=World.def.kind==='final'&&World.def.rescue;return r?{x:(r.x+.5)*T,y:(r.y+.8)*T}:null;};
   // v10.40: bấm / chạm vào lồng (điện thoại không có phím E): đứng xa thì tự đi tới rồi mở; đứng sát lồng sau khi đã hạ trùm thì tự mở
   function hqTouch(pt){
+    if(wkTouch(pt))return true; // v10.65: Tôn Ngộ Không dưới núi
     const c=cageAt();if(!c||Number(player.flags.rescue)>=1)return false;
     if(pt&&!(Math.abs(pt.x-c.x)<52&&pt.y>c.y-120&&pt.y<c.y+30))return false;
     if(Math.hypot(hero.x-c.x,hero.y-c.y)>110){if(!pt)return false;const p=World.findPath(hero,{x:c.x,y:c.y+44});if(p){route=p;targetNPC=null;cageWant=true;}return true;}
@@ -2432,8 +2442,229 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
         else glow(p.x,p.y,S.col,S.label);});}
     else if(S.k==='escort'&&SQ.flag){const F=SQ.flag;glow(F.x,F.y,'#ffd27a','Bên kia đường');line(c,[F.x,F.y,F.x,F.y-60],'#6a4a2a',3);c.fillStyle='#d03030';c.beginPath();c.moveTo(F.x,F.y-60);c.lineTo(F.x+26,F.y-52);c.lineTo(F.x,F.y-44);c.fill();}
   }
+  /* ---------- v10.65: hiệu ứng đặc biệt của trùm + quái gọi thêm (m.add: không rơi đồ, không gửi máy chủ) ----------
+     Mộc Tinh (Rừng Trúc): máu còn 10% thì mọc 5 Hoa Mộc quanh mình, hoa bắn hạt vào người chơi và truyền máu cho Mộc Tinh (mỗi hoa 1% máu / giây).
+       Hạ hết hoa thì hết hồi máu; sát thương đủ lớn vẫn hạ được Mộc Tinh khi hoa còn sống.
+     Xà Tinh (Đầm Lầy): bị hạ thì hồi sinh, tối đa 3 lần (30% · 20% · 10% máu), mỗi lần một câu thoại (LH_THOAI['xa-tinh'].hoi).
+     Tôn Ngộ Không: nhiệm vụ ẩn Núi tuyết (ô 12,28) → trùm phụ Rừng Trúc cùng bầy khỉ con; hạ hết khỉ con thì phân thân. */
+  const BLOOM={'moc-tinh':{n:5,at:.1,heal:.01}},XA_REV={'xa-tinh':[.3,.2,.1]};
+  // giữ lượt thoại của trùm để câu đặc biệt không bị câu chào đè (bossTalk)
+  function talkHold(m,sec){const k=m.tk||(m.tk={on:false,i:0,next:0,last:-1,sap:false,off:0});k.on=true;k.off=0;k.next=time+(sec||4);}
+  function addType(id,o){MON[id]=Object.assign(MON[id]||{},{def:0,speed:0,run:0,r:18,h:50,aggro:300,range:60,cd:1.5,windup:.4,copper:0,knock:0,boss:0,respawn:1e9,drops:{g:0,p:0,l:0,m:0},rubies:[0,0],dtype:'thuong',crit:5,exp:0,skills:[],tac:[]},o);delete MON[id].lv;return MON[id];}
+  function mkMon(type,x,y,o){const M=MON[type];return Object.assign({id:9700+monsters.length,type,hx:x,hy:y,x,y,hp:M.hp,max:M.hp,dead:false,deadAt:0,respawn:1e18,facing:-1,walk:0,moving:false,hurt:-9,aggro:-9,atk:null,cd:0,flee:0,wander:null,stunUntil:0,burn:null,burnAcc:0,leapCd:0,leap:null},o||{});}
+  function spotNear(x,y,r){for(let k=0;k<10;k++){const a=Math.random()*PI2,rr=r*(.55+Math.random()*.45),px=x+Math.cos(a)*rr,py=y+Math.sin(a)*rr*.8;if(World.canStand(px,py,14)&&!World.isSafe(px,py))return {x:px,y:py};}return {x:x+(Math.random()-.5)*30,y:y+(Math.random()-.5)*20};}
+  // quái gọi thêm gục: không rơi túi, không tính lệnh kill
+  function addDown(m,owner){
+    const M=MON[m.type];m.dead=true;m.deadAt=time;m.respawn=1e18;m.atk=null;m.burn=null;m.leap=null;m.cast=null;
+    if(m.flower){burst(m.x,m.y-50,'#ff7ab8',22,170);burst(m.x,m.y-20,'#6ac040',10,110);}
+    else if(m.clone){burst(m.x,m.y-40,'#f0e8d8',30,180);floater(m.x,m.y-M.h-20,'Chỉ là sợi lông khỉ!','#ffe0a0',14);}
+    else burst(m.x,m.y-M.h*.4,'#e9dcb4',14);
+    LH_Audio.play('kill');if(m.onDown)m.onDown(m,owner);
+  }
+  /* Mộc Tinh: Hoa Mộc */
+  function bloomCheck(m){
+    const B=BLOOM[m.type];if(!B||m.bloom||m.dead||m.ev||m.hp>m.max*B.at)return;
+    const M=MON[m.type],FM=addType('hoa-moc',{name:'Hoa Mộc',hp:Math.max(1,Math.round(M.hp*.08)),dmg:Math.max(1,Math.round(M.dmg*.35)),r:18,h:62,aggro:460,cd:1.7,crit:5,map:M.map,def:M.def||0});
+    m.bloom=[];m.bloomGone=false;
+    for(let i=0;i<B.n;i++){const a=i/B.n*PI2+Math.random()*.4;let p=null;for(const rr of [140,115,95,170]){const px=m.x+Math.cos(a)*rr,py=m.y+Math.sin(a)*rr*.75;if(World.canStand(px,py,14)){p={x:px,y:py};break;}}if(!p)p=spotNear(m.x,m.y,130);
+      const f=mkMon('hoa-moc',p.x,p.y,{add:true,flower:true,owner:m,aggro:time+30,born:time,cd:time+1+i*.3,facing:p.x<m.x?1:-1,onDown:flowerDown});monsters.push(f);m.bloom.push(f);
+      burst(p.x,p.y-10,'#6ac040',18,150);fx.push({kind:'ring',x:p.x,y:p.y,r0:6,r1:46,color:'#90e070',age:0,life:.5,lw:3});}
+    talkHold(m);bossLine(m,'hoa',3.8);shake(5);LH_Audio.play('boss');
+    message(svg('eye')+`<b>${esc(M.name)}</b> gọi ${B.n} Hoa Mộc · hoa bắn hạt và truyền máu cho trùm<br><small>Hạ hết hoa để chặn hồi máu · hoặc dồn sát thương thật lớn</small>`,6);
+    void FM;
+  }
+  function flowerDown(f){
+    const m=f.owner;if(!m||m.dead||!m.bloom||m.bloomGone)return;
+    if(m.bloom.every(o=>o.dead)){m.bloomGone=true;talkHold(m);bossLine(m,'hoa_het',3.4);const c=center(m);floater(c.x,c.y-MON[m.type].h*.5-30,'Hết hồi máu!','#ffd0a0',16);message(svg('check')+'Đã hạ hết Hoa Mộc · '+esc(MON[m.type].name)+' hết hồi máu',4);}
+  }
+  function flowerAI(f,M,dt){
+    const m=f.owner,B=m&&BLOOM[m.type];
+    if(!m||m.dead||!m.bloom||!m.bloom.includes(f)){f.hp=0;addDown(f,'');return;} // trùm gục / hồi sinh lại: hoa héo
+    f.moving=false;
+    if(time<f.stunUntil||time<f.frozenUntil)return;
+    // truyền máu cho trùm
+    if(m.hp<m.max){const v=m.max*B.heal*dt;m.hp=Math.min(m.max,m.hp+v);m.bloomHeal=(m.bloomHeal||0)+v;}
+    if(time>(m.bloomShow||0)&&m.bloomHeal>=1){m.bloomShow=time+1;const c=center(m);floater(c.x+(Math.random()-.5)*20,c.y-MON[m.type].h*.5-8,'+'+Math.round(m.bloomHeal),'#90f070',13);m.bloomHeal=0;}
+    // bắn hạt vào mục tiêu gần nhất
+    const tg=pickTarget(f);if(!tg||tg.d>M.aggro)return;f.facing=tg.x<f.x?-1:1;
+    if(time>f.cd){f.cd=time+M.cd*(.85+Math.random()*.3);f.shotAt=time;const ox=f.x+f.facing*4,oy=f.y-56,ty=tg.y-24,a=Math.atan2(ty-oy,tg.x-ox),sp=290;
+      eshots.push({x:ox,y:oy,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,age:0,life:Math.min(2.4,(M.aggro+80)/sp),dmg:M.dmg,src:f,col:'#ff7ab8'});LH_Audio.play('bow');}
+  }
+  // đạn của quái (hạt hoa): trúng người chơi, lính, người chơi ảo
+  const eshots=[];
+  function updateEshots(dt){
+    for(let i=eshots.length-1;i>=0;i--){const s=eshots[i];s.age+=dt;s.x+=s.vx*dt;s.y+=s.vy*dt;let hit=s.age>s.life;
+      if(!hit&&!hero.dead&&Math.hypot(hero.x-s.x,hero.y-24-s.y)<20){hurtHero(s.dmg,s.src);hit=true;}
+      if(!hit)for(const e of allies)if(e.hp>0&&Math.hypot(e.x-s.x,e.y-24-s.y)<20){hurtAlly(e,s.dmg);hit=true;break;}
+      if(!hit)for(const e of bots)if(!e.dead&&Math.hypot(e.x-s.x,e.y-24-s.y)<20){hurtBot(e,s.dmg);hit=true;break;}
+      if(hit){burst(s.x,s.y,s.col,8,90);eshots.splice(i,1);}}
+  }
+  function drawAdds(){
+    // dây truyền máu từ hoa tới trùm
+    for(const f of monsters){if(!f.flower||f.dead||!f.owner||f.owner.dead)continue;const c=center(f.owner),x0=f.x,y0=f.y-56,ph=(time*1.4+f.id*.37)%1;
+      ctx.save();ctx.globalAlpha=.55+Math.sin(time*6+f.id)*.15;ctx.strokeStyle='#8af070';ctx.lineWidth=2.4;ctx.shadowColor='#b0ff80';ctx.shadowBlur=10;ctx.setLineDash([7,6]);ctx.lineDashOffset=-time*40;
+      const mx=(x0+c.x)/2,my=Math.min(y0,c.y)-40;ctx.beginPath();ctx.moveTo(x0,y0);ctx.quadraticCurveTo(mx,my,c.x,c.y);ctx.stroke();ctx.setLineDash([]);
+      const u=ph,px=(1-u)*(1-u)*x0+2*(1-u)*u*mx+u*u*c.x,py=(1-u)*(1-u)*y0+2*(1-u)*u*my+u*u*c.y;ctx.globalAlpha=1;ctx.fillStyle='#e8ffd0';ctx.beginPath();ctx.arc(px,py,3.2,0,PI2);ctx.fill();ctx.restore();}
+    for(const s of eshots){ctx.save();ctx.shadowColor=s.col;ctx.shadowBlur=12;ctx.fillStyle=s.col;ctx.globalAlpha=.4;ctx.beginPath();ctx.arc(s.x-s.vx*.03,s.y-s.vy*.03,4,0,PI2);ctx.fill();ctx.globalAlpha=1;ctx.beginPath();ctx.arc(s.x,s.y,5.5,0,PI2);ctx.fill();ctx.fillStyle='#fff6c0';ctx.beginPath();ctx.arc(s.x-1,s.y-1,2.2,0,PI2);ctx.fill();ctx.restore();}
+  }
+  // Hoa Mộc: gốc rễ, thân uốn, hai lá, đóa hoa hồng có miệng nhả hạt (há ra khi bắn)
+  function drawFlower(c,m,M,st){
+    const K=LH_BOSS.kit,t=st.t,fl=st.fl,f=v=>fl?'#fff3e6':v,sw=Math.sin(t*2+m.id)*3,op=Math.max(0,1-(t-(m.shotAt??-9))/.35),grow=Math.min(1,(t-(m.born??-9))/.6);
+    c.save();c.scale(1,grow);
+    K.E(c,0,-2,15,4.5,f('#3e2a18'));for(const d of [-1,1])K.S(c,[d*4,-2,d*12,2,d*19,0],f('#4a3220'),3);
+    K.S(c,[0,-2,-3+sw*.3,-20,2+sw*.6,-36,sw,-50],f('#3f7a2a'),5);
+    c.save();c.translate(-1+sw*.3,-18);c.rotate(-.7+Math.sin(t*2.4)*.1);K.E(c,-9,0,11,4.5,f('#5aa83a'));K.L(c,[-18,0,-2,0],f('#3f7a2a'),1);c.restore();
+    c.save();c.translate(1+sw*.5,-30);c.rotate(.6-Math.sin(t*2.1)*.1);K.E(c,9,0,10,4,f('#4a9a30'));K.L(c,[2,0,17,0],f('#3f7a2a'),1);c.restore();
+    c.save();c.translate(sw,-56);const R=13+op*3;K.glow(c,'#ff7ab8',8+op*12);
+    for(let i=0;i<7;i++){c.save();c.rotate(i/7*PI2+t*.4);K.E(c,R*.78,0,R*.62,R*.36,f(i%2?'#ff5a9a':'#ff8ac0'));c.restore();}
+    K.noGlow(c);K.E(c,0,0,R*.5,R*.5,f('#ffd84a'));K.E(c,0,1,R*.26,R*.1+op*R*.22,'#7a2a10');
+    c.restore();c.restore();
+  }
+  /* Xà Tinh: hồi sinh 3 lần */
+  function xaRevive(m){
+    const M=MON[m.type],P=XA_REV[m.type],k=m.rev=(m.rev||0)+1,L=(typeof LH_THOAI!=='undefined'&&LH_THOAI[m.type]&&LH_THOAI[m.type].hoi)||[];
+    m.hp=Math.max(1,Math.round(m.max*(P[k-1]||.1)));m.atk=null;m.leap=null;m.cast=null;m.burn=null;m.reviveUntil=time+1.4;m.stunUntil=time+1.4;m.aggro=time+10;
+    const c=center(m);burst(c.x,c.y,'#80e060',44,240);burst(m.x,m.y-6,'#2a4a2a',20,140);fx.push({kind:'ring',x:m.x,y:m.y,r0:10,r1:150,color:'#90f070',age:0,life:.7,lw:6});shake(7);LH_Audio.play('boss');
+    floater(c.x,c.y-M.h*.5-34,'Hồi sinh '+k+'/'+P.length,'#a0ff80',18);
+    if(L[k-1]){talkHold(m,3.8);bossSpeak(m,L[k-1],3.2);}
+    message(svg('eye')+`<b>${esc(M.name)}</b> hồi sinh với ${Math.round((P[k-1]||.1)*100)}% máu · ${k<P.length?'còn '+(P.length-k)+' lần nữa':'đây là lần cuối'}`,4);
+  }
+  /* ---------- Tôn Ngộ Không ---------- */
+  const WK_AT={map:'nui-tuyet',x:12,y:28};
+  let WK=null,WKB=null;
+  const wkFlag=()=>Number(player.flags.wk)||0;
+  const wkNgu=()=>player.gender==='f'?'con':'thằng';
+  function wkTypes(){
+    const B=MON['moc-tinh']||MON['khi-rung'],K0=MON['khi-rung']||B;
+    addType('ngo-khong',{name:'Tôn Ngộ Không',hp:Math.round(B.hp*1.4),dmg:Math.round(B.dmg*.9),speed:90,run:200,r:26,h:92,aggro:320,range:96,cd:1.3,windup:.45,knock:.08,boss:1,dtype:'hoan_hao',crit:15,map:'rung-truc',def:B.def||0,skills:['stun']});
+    addType('ngo-khong-ao',{name:'Tôn Ngộ Không',hp:Math.round(B.hp*.16),dmg:Math.round(B.dmg*.45),speed:90,run:210,r:26,h:92,aggro:360,range:96,cd:1.5,windup:.45,knock:.1,boss:1,dtype:'thuong',crit:5,map:'rung-truc',def:0});
+    addType('khi-con',{name:'Khỉ con',hp:Math.round(K0.hp*.55),dmg:Math.round(K0.dmg*.6),speed:85,run:215,r:16,h:38,aggro:300,range:50,cd:1.1,windup:.35,knock:.4,crit:8,map:'rung-truc',def:K0.def||0});
+  }
+  function wkTick(dt){
+    // Núi tuyết: núi đè, lá bùa
+    if(World.id===WK_AT.map){
+      if(!WK||WK.map!==World.id){const o=World.canStand((WK_AT.x+.5)*T,(WK_AT.y+.5)*T)?{x:WK_AT.x,y:WK_AT.y}:(World.nearestOpen(WK_AT.x,WK_AT.y)||WK_AT);WK={map:World.id,x:(o.x+.5)*T,y:(o.y+.5)*T,ph:wkFlag()?'gone':'trap',t:time,near:false};WK.bub={name:'Tôn Ngộ Không',x:WK.x+34,y:WK.y,sayH:88};}
+      const tx=WK.x+34,ty=WK.y+8,d=Math.hypot(hero.x-tx,hero.y-ty);
+      if(WK.ph==='trap'){
+        if(d<420&&d>150&&time>(WK.callAt||0)&&!dialogNPC){WK.callAt=time+7+Math.random()*4;tutSay(WK.bub,['Ê! Ê! Bên này!','Người qua đường ơi! Cứu lão Tôn với!','Này! Lại đây lão Tôn bảo!','Ngứa mũi quá… ai gãi hộ với…'][Math.floor(Math.random()*4)],2.6);}
+        if(d<110&&!WK.near&&!dialogNPC&&!hero.dead&&!busy()){WK.near=true;wkTalk();}else if(d>200)WK.near=false;
+      }else if(WK.ph==='crack'&&time>WK.t+1.3){WK.ph='out';WK.t=time;burst(WK.x,WK.y-60,'#c8c0b0',60,300);burst(WK.x+30,WK.y-20,'#ffe080',30,220);shake(10);LH_Audio.play('boss');
+        WK.mx=WK.x+70;WK.my=WK.y+26;WK.bub.sayH=118;tutSay(WK.bub,'Bố '+wkNgu()+' ngu! Bye bye!',3.4);}
+      else if(WK.ph==='out'&&time>WK.t+2.6){WK.ph='fly';WK.t=time;LH_Audio.play('rare');}
+      else if(WK.ph==='fly'&&time>WK.t+1.8){WK.ph='gone';message(svg('eye')+'Tôn Ngộ Không cưỡi cân đẩu vân bay mất… nghe đồn hắn kéo một bầy khỉ về Rừng Trúc',6);}
+    }else if(WK&&WK.map!==World.id)WK=null;
+    // Rừng Trúc: trùm phụ + bầy khỉ con
+    if(World.id==='rung-truc'&&wkFlag()===1&&!tut){
+      if(!WKB||!monsters.includes(WKB))wkSpawn();
+      else if(!WKB.dead&&!WKB.split&&WKB.kids.every(k=>k.dead)&&WKB.aggro>time)wkSplit(WKB);
+    }else if(WKB&&!monsters.includes(WKB))WKB=null;
+  }
+  function wkSpawn(){
+    wkTypes();const cp=(World.def.camps||[]).find(c=>c.mon&&c.mon['khi-rung'])||(World.def.camps||[])[0];
+    let o=cp?{x:(cp.x+.5)*T,y:(cp.y+.5)*T}:{x:World.spawn.x+600,y:World.spawn.y};if(!World.canStand(o.x,o.y,14)){const n=World.nearestOpen(Math.floor(o.x/T),Math.floor(o.y/T));if(n)o={x:(n.x+.5)*T,y:(n.y+.5)*T};}
+    const b=mkMon('ngo-khong',o.x,o.y,{wk:true,kids:[],split:false});monsters.push(b);WKB=b;
+    for(let i=0;i<6;i++){const p=spotNear(o.x,o.y,110),k=mkMon('khi-con',p.x,p.y,{add:true,art:'khi-rung',sc:.72,owner:b});monsters.push(k);b.kids.push(k);}
+    World.monPack&&World.monPack('khi-rung');
+  }
+  // hạ hết khỉ con: phân thân — ba bản sao, xếp lẫn với con thật
+  function wkSplit(b){
+    b.split=true;wkTypes();talkHold(b);bossLine(b,'phan',3.6);const n=3,cx=b.x,cy=b.y,a0=Math.random()*PI2,pos=[];
+    for(let i=0;i<=n;i++){const a=a0+i/(n+1)*PI2;let p={x:cx+Math.cos(a)*80,y:cy+Math.sin(a)*60};if(!World.canStand(p.x,p.y,14))p=spotNear(cx,cy,90);pos.push(p);}
+    const real=Math.floor(Math.random()*(n+1));b.x=pos[real].x;b.y=pos[real].y;b.atk=null;b.leap=null;
+    let j=0;for(let i=0;i<=n;i++){if(i===real)continue;const p=pos[i],cl=mkMon('ngo-khong-ao',p.x,p.y,{add:true,clone:true,owner:b,aggro:time+20,facing:b.facing,leapCd:time+1+j});monsters.push(cl);b.kids.push(cl);j++;}
+    for(const p of pos){burst(p.x,p.y-40,'#f0ece0',34,200);fx.push({kind:'ring',x:p.x,y:p.y,r0:6,r1:60,color:'#ffe0a0',age:0,life:.5,lw:4});}
+    floater(cx,cy-130,'Phân thân!','#ffd060',20);shake(6);LH_Audio.play('rare');
+    message(svg('eye')+'<b>Tôn Ngộ Không</b> phân thân! Chỉ một con là thật · bản sao trúng đòn sẽ hiện nguyên hình sợi lông khỉ',5);
+  }
+  function wkDown(b,owner){
+    const M=MON[b.type];b.dead=true;b.deadAt=time;b.respawn=1e18;b.atk=null;b.burn=null;b.leap=null;b.cast=null;
+    for(const k of b.kids||[])if(!k.dead){k.hp=0;addDown(k,'');}
+    burst(b.x,b.y-M.h*.4,'#ffd060',40,240);shake(10);LH_Audio.play('boss');message(svg('check')+'Đã hạ '+M.name);
+    op({t:'wkHa'}).then(r=>{if(r&&r.rubies){floater(b.x,b.y-M.h-30,'+'+r.rubies,'#ff9ab8',16,'ruby');message(svg('heart')+`Hạ Tôn Ngộ Không · nhận ${r.rubies} hồng ngọc`,6);}window.GameUI?.refresh();},
+      e=>message(svg('close')+'Chưa nhận được thưởng ('+esc(String(e&&e.message||e))+')',4));
+    void owner;
+  }
+  // nói chuyện với Tôn Ngộ Không dưới núi
+  function wkTalk(){
+    if(!WK||WK.ph!=='trap'||dialogNPC)return false;
+    const again=Number(player.flags.wkDay)>0,gold=Number(CFG.ngo_khong_vang)||1;
+    const lines=again?['Lại là ngươi! Hôm nay đổi ý chưa?','Bóc giùm lá bùa trên đỉnh núi đi mà… lão Tôn mỏi cổ lắm rồi.']
+      :['Ê! Ê! Dưới này! Người qua đường ơi, cúi xuống đây!','Lão Tôn ta đây, Tề Thiên Đại Thánh, từng đại náo Thiên Cung, bị Phật Tổ đè dưới ngọn núi này đã năm trăm năm rồi.','Năm trăm năm! Tuyết phủ đầy đầu, chim làm tổ trên tai, ngứa mũi cũng không gãi được…','Ngày ngày chỉ có viên sắt nóng với nước đồng sôi cho ăn. Răng lão Tôn mẻ hết cả rồi.','Trên đỉnh núi có một lá bùa vàng. Ngươi chỉ cần bóc nó xuống thôi, dễ ợt!','Thả lão Tôn ra, lão Tôn hứa sẽ nhớ ơn ngươi suốt đời. Thật đấy, khỉ không bao giờ nói dối!'];
+    talkBox({id:'ngo-khong',name:'Tôn Ngộ Không',lines,choices:['Bóc lá bùa, thả Ngộ Không','Không thả'],
+      onChoice:i=>{
+        if(i===1){op({t:'wkGiu'}).then(r=>{tutSay(WK.bub,['Đồ keo kiệt! Mai lão Tôn lại năn nỉ tiếp!','Hừ! Năm trăm năm còn chờ được, sợ gì thêm một ngày!','Đi đi! Mai nhớ quay lại đấy!'][Math.floor(Math.random()*3)],3.4);
+            if(r&&r.copper){moneyFloat(hero.x,hero.y-96,r.copper);LH_Audio.play('coin');}message(svg('coin')+`Giữ lời nguyền của Phật Tổ · nhận ${gold} vàng · mỗi ngày quay lại được thưởng thêm`,5);window.GameUI?.refresh();},
+          e=>{const m=String(e&&e.message||e);tutSay(WK.bub,'Hôm nay ngươi qua đây rồi mà! Mai hẵng tới.',3);message(svg('close')+(m==='DA_NHAN'?'Hôm nay đã nhận thưởng giữ núi · mai quay lại':m==='LEVEL'?'Chưa đủ cấp để nhận thưởng ở Núi tuyết':'Chưa nhận được ('+esc(m)+')'),4);});return;}
+        op({t:'wkTha'}).then(()=>{WK.ph='crack';WK.t=time;LH_Audio.play('quest');shake(4);message(svg('spark')+'Bạn bóc lá bùa trên đỉnh núi… ngọn núi rung chuyển!',3);},
+          e=>message(svg('close')+'Chưa thả được ('+esc(String(e&&e.message||e))+')',4));}});
+    return true;
+  }
+  // bấm vào núi / nhấn Space khi đứng gần
+  function wkTouch(pt){
+    if(!WK||WK.map!==World.id||WK.ph!=='trap')return false;
+    if(pt&&!(Math.abs(pt.x-WK.x)<120&&pt.y>WK.y-165&&pt.y<WK.y+24))return false;
+    const tx=WK.x+34,ty=WK.y+8;
+    if(Math.hypot(hero.x-tx,hero.y-ty)>130){if(!pt)return false;const p=World.findPath(hero,{x:tx+20,y:ty+30});if(p){route=p;targetNPC=null;WK.near=false;}return true;}
+    return wkTalk();
+  }
+  // đầu Tôn Ngộ Không (mặt quay sang phải, tâm đầu ở 0,0)
+  function wkHead(c,K,t,f,o){
+    const FUR=f('#a8682e'),FACE=f('#f2cc98');
+    K.E(c,-10,1,4.5,5.5,FACE);K.E(c,0,0,13,12.5,FUR);
+    c.fillStyle=FACE;c.beginPath();c.moveTo(-2,-6);c.quadraticCurveTo(6,-11,12,-5);c.quadraticCurveTo(15,4,9,10);c.quadraticCurveTo(2,13,-1,7);c.quadraticCurveTo(-5,0,-2,-6);c.fill();
+    K.E(c,2,-2,2.4,2.4,'#ffd040');K.E(c,8.5,-2,2.4,2.4,'#ffd040');K.E(c,2.6,-2,1.1,1.3,'#1a0a0a');K.E(c,9,-2,1.1,1.3,'#1a0a0a');
+    K.S(c,[0,-5.5,3,-6.5,5,-5.5],f('#6a3a14'),1.2);K.S(c,[7,-5.5,9.5,-6.5,12,-5],f('#6a3a14'),1.2);
+    K.E(c,11,3,1,.8,'#3a1a0a');K.S(c,[4,6,7.5,7.5+(o&&o.mouth||0),11,5.5],'#7a3a1a',1.3);
+    K.L(c,[-12.5,-4,12.5,-6.5],f('#f0c040'),2.8);K.E(c,0,-5.3,1.8,1.8,f('#e04030'));
+    const sw=Math.sin(t*2)*2;K.S(c,[-2,-9,-8,-24,-18,-34+sw,-30,-38+sw],f('#d8402a'),1.5);K.S(c,[2,-10,0,-26,-6,-38-sw,-16,-46-sw],f('#e86040'),1.5);
+  }
+  // Tôn Ngộ Không đứng (quay sang phải, chân chạm y=0): áo giáp vàng, đai đỏ, áo choàng, đuôi, Gậy Như Ý
+  function drawWukong(c,m,M,st){
+    const K=LH_BOSS.kit,t=st.t,f=v=>st.fl?'#fff3e6':v,g=st.g||0,mv=m.moving?1:0,s=(M.h||92)/92;c.save();c.scale(s,s);
+    if(m.clone)c.globalAlpha*=.92;
+    K.S(c,[-10,-30,-24,-24,-32,-38+Math.sin(t*3)*4,-26,-52+Math.sin(t*3)*5,-18,-54],f('#a8682e'),4);
+    K.F(c,[-6,-60,-22,-22+Math.sin(t*2)*2,-12,-16,6,-52],f('#9a1c1c'));
+    const leg=(x,ph,col)=>{const k=Math.sin(g+ph)*mv;K.L(c,[x,-32,x+k*6,-15,x+k*4,-2],f(col),6.5);K.E(c,x+k*4+2,-1,5.5,2.6,f('#3a2a1a'));};
+    leg(-6,0,'#c89038');leg(6,Math.PI,'#e0aa48');
+    c.fillStyle=st.fl?'#fff3e6':K.lg(c,0,-64,0,-28,['#ffe070','#e8b030','#a87010']);c.beginPath();c.ellipse(0,-46,13,18,0,0,PI2);c.fill();
+    for(let r=0;r<3;r++)for(let q=0;q<4;q++){c.strokeStyle='#a8701888';c.lineWidth=.8;c.beginPath();c.arc(-7+q*4.6+(r%2)*2.3,-54+r*5,2.2,0,Math.PI);c.stroke();}
+    K.L(c,[-12.5,-34,12.5,-34],f('#c8302a'),4.5);K.E(c,0,-50,4.5,4.5,f('#d83a2a'));K.E(c,0,-50,2,2,f('#ffe080'));
+    // gậy Như Ý: đứng yên chống nghiêng, vung lên khi lấy đà, quật ngang khi ra đòn
+    const pre=m.atk&&time<m.atk.at,a=st.open?.25:pre?-2.3:-1.15+Math.sin(t*1.5)*.06;
+    c.save();c.translate(10,-46);c.rotate(a);K.L(c,[-36,0,40,0],f('#c8302a'),3.6);K.L(c,[-36,0,-30,0],f('#f0c040'),4.6);K.L(c,[34,0,40,0],f('#f0c040'),4.6);
+    if(st.open){c.save();c.globalAlpha=.4;K.S(c,[40,0,30,-26,6,-40],'#ffe080',6);c.restore();}c.restore();
+    K.L(c,[4,-56,10,-46],f('#a8682e'),5);K.E(c,10,-46,3.4,3.4,f('#a8682e'));
+    c.save();c.translate(1,-74+(mv?Math.sin(g*2)*1.2:Math.sin(t*1.6)*.8));wkHead(c,K,t,f,{mouth:st.open?2:0});c.restore();
+    c.restore();
+  }
+  // núi đè Tôn Ngộ Không ở Núi tuyết (tuyết phủ đỉnh, lá bùa vàng); thả ra thì Ngộ Không nhảy ra, cưỡi mây bay đi
+  function drawWkMount(o){
+    const c=ctx,K=LH_BOSS.kit,t=time,ph=o.ph,f=v=>v,shk=ph==='crack'?Math.sin(t*50)*Math.min(4,(t-o.t)*4):0;
+    c.save();c.translate(o.x+shk,o.y);c.scale(1.3,1.3);ell(c,0,4,96,18,'#00000030');
+    K.P(c,[-96,0,-74,-46,-46,-78,-14,-120,16,-98,44,-112,74,-58,100,0],'#767b86');
+    K.P(c,[-96,0,-74,-46,-46,-78,-14,-120,-8,-82,-32,-34,-22,0],'#8b909a');K.P(c,[44,-112,74,-58,100,0,62,0,60,-50],'#646973');
+    K.P(c,[-32,-92,-14,-120,4,-104,16,-98,28,-104,44,-112,54,-96,36,-90,20,-84,6,-92,-8,-86,-22,-90],'#f4f8ff');K.P(c,[-74,-46,-62,-58,-50,-50,-60,-44],'#eef4fc');
+    for(const p of [[-60,-20,-44,-34,-48,-48],[30,-30,40,-50,36,-66],[-20,-60,-6,-70]])K.L(c,p,'#565a62',1.4);
+    if(ph==='trap'||(ph==='crack'&&t<o.t+.25)){c.save();c.translate(-12,-118);c.rotate(Math.sin(t*3)*.1);c.fillStyle='#f2d040';c.fillRect(-7,0,14,28);c.strokeStyle='#c83020';c.lineWidth=1.3;c.strokeRect(-5.5,1.5,11,25);
+      for(const y of [6,12,18,23])K.L(c,[-3,y,3,y-2],'#c83020',1.4);K.L(c,[0,4,0,24],'#c83020',1);c.restore();}
+    else if(ph==='crack'){const u=(t-o.t-.25);c.save();c.translate(-12+u*60,-118-u*180);c.rotate(u*8);c.globalAlpha=Math.max(0,1-u);c.fillStyle='#f2d040';c.fillRect(-7,0,14,28);c.restore();}
+    else{c.save();c.translate(-12,-112);c.rotate(.5);c.fillStyle='#d8c060';c.fillRect(-3,0,6,9);c.restore();} // mẩu bùa rách
+    if(ph==='trap'||ph==='crack'){
+      c.save();c.translate(26,-16);c.save();c.rotate(Math.sin(t*4)*.5-.3);K.L(c,[0,0,16,-8],'#a8682e',5);K.E(c,17,-9,4,4,'#f2cc98');c.restore();
+      c.translate(0,-10);c.scale(1.35,1.35);wkHead(c,K,t,f,{mouth:Math.sin(t*6)>.3?2:0});c.restore();
+      K.P(c,[8,-2,20,-12,44,-10,52,0],'#7c818b'); // đá đè lên vai
+    }
+    c.restore();
+    if(ph==='out'||ph==='fly'){
+      const u=ph==='fly'?Math.min(1,(t-o.t)/1.8):0,jx=ph==='out'?Math.min(1,(t-o.t)/.35):1,x=lerp(o.x+20,o.mx,jx)+u*u*520,y=lerp(o.y-30,o.my,jx)-(ph==='out'?Math.sin(jx*Math.PI)*60:0)-u*u*360;
+      c.save();c.globalAlpha=1-u*.9;c.translate(x,y);
+      if(ph==='fly'){for(const [cx,cy,r] of [[-18,6,12],[0,10,15],[18,6,12],[30,10,9],[-30,10,8]])ell(c,cx,cy,r,r*.55,'#ffffff');ell(c,0,12,34,6,'#e8f0ff');}
+      drawWukong(c,{moving:false,facing:1},{h:92},{t,fl:false,g:0,open:false});c.restore();
+      if(o.bub){o.bub.x=x;o.bub.y=y;}
+    }
+  }
   function hqTick(dt){
-    btTick(dt);anTick(dt);vitTick(dt);fwTick();sqTick(dt);
+    btTick(dt);anTick(dt);vitTick(dt);wkTick(dt);fwTick();sqTick(dt);
     {const c=cageAt();if(c&&!(Number(player.flags.rescue)>=1)&&!dialogNPC&&!hero.dead&&!tut){const near=Math.hypot(hero.x-c.x,hero.y-c.y)<110;
       if(cageWant&&!route.length){cageWant=false;if(near)hqTouch();}
       else if(near&&time>cageAuto&&((player.flags.kills||{})['hon-nguyen-ma-to']>0)){cageAuto=time+6;hqTouch();}}}
@@ -2551,7 +2782,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     ctx.restore();
   }
   /* ---------- v10.54 · Thoại boss (LH_THOAI ở 04-boss-thoai.js): nói khi gặp, xen giữa trận, khi máu dưới 30%, khi gục, khi hạ người chơi, khi bỏ chạy / quay lại ---------- */
-  function bossSpeak(m,t,sec){if(!t)return;t=String(t).replace(/\{cha\}/g,player.gender==='f'?'Mẹ':'Cha');m.say={text:t,until:time+(sec||Math.min(5.2,2.4+t.length*.035)),mon:true};}
+  function bossSpeak(m,t,sec){if(!t)return;t=String(t).replace(/\{cha\}/g,player.gender==='f'?'Mẹ':'Cha').replace(/\{ngu\}/g,player.gender==='f'?'con':'thằng');m.say={text:t,until:time+(sec||Math.min(5.2,2.4+t.length*.035)),mon:true};}
   function bossLine(m,key,sec){const L=typeof LH_THOAI!=='undefined'&&LH_THOAI[m.type];if(L&&L[key])bossSpeak(m,L[key],sec);}
   function bossTalk(){
     if(typeof LH_THOAI==='undefined')return;
@@ -2576,11 +2807,11 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
   // bóng thoại của người chơi ảo
   function drawSay(){
     const placed=[];
-    for(const e of [...bots,...World.npcs,...(AN&&AN.map===World.id?[AN]:[]),...(DUCK&&DUCK.map===World.id?[DUCK]:[]),...(VIT&&VIT.duck?[VIT.duck]:[]),...monsters.filter(m=>m.say)]){if(!e.say||time>e.say.until||(e.dead&&!e.say.mon))continue;const t=e.say.text;ctx.save();ctx.font='600 13px system-ui';
+    for(const e of [...bots,...World.npcs,...(AN&&AN.map===World.id?[AN]:[]),...(DUCK&&DUCK.map===World.id?[DUCK]:[]),...(VIT&&VIT.duck?[VIT.duck]:[]),...(WK&&WK.map===World.id&&WK.bub?[WK.bub]:[]),...monsters.filter(m=>m.say)]){if(!e.say||time>e.say.until||(e.dead&&!e.say.mon))continue;const t=e.say.text;ctx.save();ctx.font='600 13px system-ui';
       // v10.54: câu dài tự xuống dòng (tối đa 240 px một dòng)
       const lines=[];{let cur='';for(const wd of t.split(' ')){const nx=cur?cur+' '+wd:wd;if(cur&&ctx.measureText(nx).width>240){lines.push(cur);cur=wd;}else cur=nx;}if(cur)lines.push(cur);}
       const w=Math.min(260,Math.max(...lines.map(l=>ctx.measureText(l).width))+20),h=9+lines.length*17,a=Math.min(1,(e.say.until-time)*3);
-      let y;if(e.say.mon){const M=MON[e.type],MT=Math.max(M.h,(LH_BOSS.top||{})[e.type]||0);y=e.y-MT-46-h;}else y=e.data?e.y-128-seatOf(e.data.equipment):e.y-(e===AN?84:e.duckling?62:108); // v10.34: dân làng, con gái cũng nói
+      let y;if(e.say.mon){const M=MON[e.type],MT=Math.max(M.h,(LH_BOSS.top||{})[e.type]||0);y=e.y-MT-46-h;}else y=e.data?e.y-128-seatOf(e.data.equipment):e.y-(e===AN?84:e.duckling?62:(e.sayH||108)); // v10.34: dân làng, con gái cũng nói
       if(!e.say.mon)y-=h-26;
       // bóng thoại đè nhau thì đẩy lên trên
       for(let k=0;k<6&&placed.some(r=>Math.abs(r.x-e.x)<(r.w+w)/2+4&&y<r.y+r.h+4&&y+h+4>r.y);k++)y-=31;placed.push({x:e.x,y,w,h});ctx.globalAlpha=a;
@@ -2725,19 +2956,20 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     if(st.type==='crossbow'&&!hero.dead){const ax=hero.aim.x,ay=hero.aim.y,ox=hero.x+ax*30,oy=hero.y-20-seatH()+ay*30;ctx.save();ctx.setLineDash([6,8]);ctx.globalAlpha=.55;line(ctx,[ox,oy,ox+ax*170,oy+ay*170],'#f6e3a8',1.5);ctx.setLineDash([]);ctx.beginPath();ctx.arc(ox+ax*180,oy+ay*180,6,0,PI2);ctx.stroke();ctx.restore();}
     const vx0=camera.x-300,vx1=camera.x+width/scale+160,vy0=camera.y-110,vy1=camera.y+height/scale+300,layers=[];
     for(const o of World.objects){const ox=o.kind==='house'?o.x*T:o.x,d=o.kind==='house'?o.foot:o.y;if(ox<vx0||ox>vx1||d<vy0||d>vy1)continue;layers.push([d,o]);}
-    for(const n of World.npcs)layers.push([n.y,n]);for(const m of monsters)layers.push([m.y,m]);if(TGM&&TGM.ours)for(const b of TGM.ours)layers.push([b.y,b]);layers.push([hero.y,hero]);for(const e of allies)layers.push([e.y,e]);for(const e of bots)if(!e.dead&&e.x>vx0&&e.x<vx1&&e.y>vy0&&e.y<vy1)layers.push([e.y,e]);if(AN&&AN.map===World.id)layers.push([AN.y,AN]);if(DUCK&&DUCK.map===World.id)layers.push([DUCK.y,DUCK]);if(VIT&&VIT.map===World.id)layers.push([VIT.y,VIT]);{const cg=cageAt();if(cg)layers.push([cg.y,{kind:'hq-cage',x:cg.x,y:cg.y}]);}if(World.def.ambient==='village')for(const a of village.list)if(a.x>vx0&&a.x<vx1&&a.y>vy0&&a.y<vy1)layers.push([a.y,a]);
+    for(const n of World.npcs)layers.push([n.y,n]);for(const m of monsters)layers.push([m.y,m]);if(TGM&&TGM.ours)for(const b of TGM.ours)layers.push([b.y,b]);layers.push([hero.y,hero]);for(const e of allies)layers.push([e.y,e]);for(const e of bots)if(!e.dead&&e.x>vx0&&e.x<vx1&&e.y>vy0&&e.y<vy1)layers.push([e.y,e]);if(AN&&AN.map===World.id)layers.push([AN.y,AN]);if(DUCK&&DUCK.map===World.id)layers.push([DUCK.y,DUCK]);if(VIT&&VIT.map===World.id)layers.push([VIT.y,VIT]);if(WK&&WK.map===World.id)layers.push([WK.y,WK]);{const cg=cageAt();if(cg)layers.push([cg.y,{kind:'hq-cage',x:cg.x,y:cg.y}]);}if(World.def.ambient==='village')for(const a of village.list)if(a.x>vx0&&a.x<vx1&&a.y>vy0&&a.y<vy1)layers.push([a.y,a]);
     layers.sort((a,b)=>a[0]-b[0]);
     for(const [,o] of layers){
       if(o===hero){if(hero.morph&&time<hero.morph.until&&!hero.dead)drawMorph();else drawHero(ctx,hero,st,el,time);drawDbf();if(hero.shieldHp>0){ctx.save();ctx.globalAlpha=.3+Math.sin(time*6)*.08;ctx.strokeStyle='#ffe9a8';ctx.lineWidth=2.5;ctx.beginPath();ctx.ellipse(hero.x,hero.y-24-seatH(),26,36,0,0,PI2);ctx.stroke();ctx.restore();}}
       else if(o.key&&o.data){const e=o;if(e.pet){drawPet(e);}else{drawHero(ctx,e,Player.stance(e.data),null,time,{who:e.data,labelColor:e.fighter?(e.main?'#ffa898':'#e8c0b0'):e.bot?'#ffd9a8':e.tier&&e.tier!=='n'?(Player.RAR[e.tier]||{}).color||'#bfe3ff':'#bfe3ff',label:e.rob?!!e.lead:(e.bot||safe),mask:e.mask});const sh=seatOf(e.data.equipment);if(e.hp<e.max){roundRect(ctx,e.x-18,e.y-78-sh,36,4,2,'#0a120ecc');roundRect(ctx,e.x-18,e.y-78-sh,36*e.hp/e.max,4,2,e.hp<e.max*.3?'#e05a4a':'#7fd38a');}}}
       else if(o.amb)drawAmbient(o);
       else if(o.kind==='hq-cage')drawCage(o);
+      else if(o===WK)drawWkMount(o);
       else if(o.duckling)drawDuck(o);
       else if(o.kind==='vit-egg')drawEgg(o);
       else if(LH_ART.obj[o.kind])LH_ART.obj[o.kind](ctx,o,time);
       else if(o.kind==='tree')tree(o);else if(o.kind==='house')house(o);else if(o.kind==='banyan')banyan(o);else if(o.kind==='well')well(o);else if(o.kind==='fire')campfire(o);else if(o.role)drawNPC(o);else if(o.build)drawBuilding(o);else drawMonster(o);
     }
-    drawFX();drawLoot();drawNPCMarks();drawWellMarks();drawPortalMarks();drawCave();drawHQ();drawSQ();drawSay();drawTutArrow();
+    drawFX();drawAdds();drawLoot();drawNPCMarks();drawWellMarks();drawPortalMarks();drawCave();drawHQ();drawSQ();drawSay();drawTutArrow();
     ctx.restore();
     // trời riêng của bản đồ (cát bay, tuyết rơi, bóng tối trong hang có đuốc, pha lê sáng)
     const SK=World.def.sky&&LH_ART.sky[World.def.sky];if(SK)try{SK(ctx,{w:width,h:height,t:time,sc:scale,cam:camera,hx:(hero.x-camera.x)*scale,hy:(hero.y-24-camera.y)*scale,lights:World.lights,fires:World.fires,T})}catch(e){oops(e,'vẽ trời');}

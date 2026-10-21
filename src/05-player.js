@@ -671,7 +671,7 @@ const Player=(()=>{
   // Các lệnh làm thay đổi tiền/đồ, chạy trên máy chủ (và trên trình duyệt ở chế độ ngoại tuyến)
   // số lần hạ một loài quái trong một lượt hồi sinh: bãi quái lớn có nhiều con cùng loài (Sheet cau_hinh gioi_han_ha_quai)
   const KILL_LIMIT=id=>MON[id].boss?1:num(CFG.gioi_han_ha_quai,16);
-  const PREDICT=new Set(['kill','buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff','av','fuse','use','cos','die','quiz','quizHunt','eventWin','recruit','recruitHire','tutGift','cavePass','caveChest','pkWin','hqFlag','duelWin','rescue','rescueHome','vitNhan','vitBan','vitDoi','sg','tgStart','tgKill','tgEnd']);
+  const PREDICT=new Set(['kill','buy','sell','enh','enhSk','qa','qt','hire','dismiss','pt','petOff','av','fuse','use','cos','die','quiz','quizHunt','eventWin','recruit','recruitHire','tutGift','cavePass','caveChest','pkWin','hqFlag','duelWin','rescue','rescueHome','vitNhan','vitBan','vitDoi','wkGiu','wkTha','wkHa','sg','tgStart','tgKill','tgEnd']);
   // v10.13: khóa chữ ký kết quả Thầy đồ (máy chủ ký bằng khóa bí mật; trình duyệt chỉ áp dụng trước, máy chủ kiểm khi nhận gói lưu)
   const quizKey=(cid,bo,wrong)=>'quiz|'+cid+'|'+bo+'|'+(wrong||[]).join(',');
   // v10.43: xong Tìm con (đã đưa An về làng) → đồ cốt truyện rời túi, cất vào Kỷ vật (flags.kyvat, không chiếm ô túi). Người chơi cũ đã xong được dọn ở lệnh kế tiếp.
@@ -821,6 +821,11 @@ const Player=(()=>{
     if(t==='vitNhan'){if(!(num(s.flags.kills&&s.flags.kills['dai-bang'])>0)&&!(srv&&srv.kills&&Array.isArray(srv.kills['dai-bang'])&&srv.kills['dai-bang'].length))throw Error('CHUA_HA_TRUM');if(num(s.flags.vit)>=1)throw Error('DA_NHAN');s.flags.vit=1;return {vit:1};}
     if(t==='vitBan'){if(num(s.flags.vit)!==1)throw Error('KHONG_CO_VIT');if((s.level||1)<mapLevel('nui-tuyet'))throw Error('LEVEL');const c=Math.max(0,Math.round(num(CFG.vit_vang,30)*10000));s.copper+=c;s.flags.vit=2;return {vit:2,copper:c};}
     if(t==='vitDoi'){if(num(s.flags.vit)!==1)throw Error('KHONG_CO_VIT');if((s.level||1)<mapLevel('thang-long'))throw Error('LEVEL');if(!items['ho-trang-vit'])throw Error('ITEM');const i=addItem(s,roll('ho-trang-vit','n',rng));s.flags.vit=3;return {vit:3,i,item:s.bag[i]};}
+    // v10.65: nhiệm vụ ẩn Tôn Ngộ Không (Núi tuyết ô 12,28) — flags.wk: 0 còn bị đè · 1 đã thả (thành trùm phụ ở Rừng Trúc) · 2 đã hạ
+    //   wkGiu: không thả, mỗi ngày nhận ngo_khong_vang vàng · wkTha: bóc bùa thả ra · wkHa: hạ Tôn Ngộ Không ở Rừng Trúc, nhận ngo_khong_hong_ngoc hồng ngọc (một lần)
+    if(t==='wkGiu'){if(num(s.flags.wk))throw Error('DA_THA');if((s.level||1)<mapLevel('nui-tuyet'))throw Error('LEVEL');const day=dayOf(now);if(num(s.flags.wkDay)===day)throw Error('DA_NHAN');s.flags.wkDay=day;const c=Math.max(0,Math.round(num(CFG.ngo_khong_vang,1)*10000));s.copper+=c;return {copper:c};}
+    if(t==='wkTha'){if(num(s.flags.wk))throw Error('DA_THA');if((s.level||1)<mapLevel('nui-tuyet'))throw Error('LEVEL');s.flags.wk=1;return {wk:1};}
+    if(t==='wkHa'){if(num(s.flags.wk)!==1)throw Error('CHUA_THA');s.flags.wk=2;const ru=Math.max(0,Math.floor(num(CFG.ngo_khong_hong_ngoc,1)));s.rubies+=ru;return {wk:2,rubies:ru};}
     if(t==='rescueHome'){if(num(s.flags.rescue)!==1)throw Error('CHUA_CUU');s.flags.rescue=2;keepsake(s);const ru=Math.max(0,Math.floor(num(CFG.cuu_con_hong_ngoc,999)));s.rubies+=ru;return {rescue:2,rubies:ru};}
     if(t==='pkWin'){srv.pkAt=num(srv.pkAt);if(now-srv.pkAt<60000)throw Error('NHANH_QUA');srv.pkAt=now;s.flags.freeRecruit=Math.min(5,num(s.flags.freeRecruit)+1);return {free:s.flags.freeRecruit};}
     if(t==='recruitHire'){const m=recruitHire(s,rng);return {mid:m.mid,name:m.name,lv:m.lv,tier:m.tier};}

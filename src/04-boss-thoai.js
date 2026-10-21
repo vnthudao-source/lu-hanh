@@ -17,9 +17,9 @@ const LH_THOAI={
   chay:'Thôi chán rồi, ta về đây! Hẹn ngươi hôm khác!',quay:'Lần này không chạy nữa. Chạy mệt lắm!',guc:'Biết thế… chạy thêm lần nữa…'},
  'dai-bang':{n:'vua',gap:'Kẻ nào dám bước vào hang của ta?',cau:['Bầu trời là của ta, hang này cũng của ta!','Từ trên cao nhìn xuống, ngươi bé như con kiến.','Đừng có lại gần cái tổ!','Quả trứng đó… thật ra ta cũng không chắc là trứng của ta.','Thạch Sanh còn chẳng làm gì được ta. À mà có…'],
   sap:'Ai trông cái tổ giúp ta với!',guc:'Trông… quả trứng… giúp ta…'},
- 'moc-tinh':{n:'vua',gap:'Suỵt. Rừng đang ngủ.',cau:['Chặt cây thì phải trồng cây. Ngươi đã trồng cây nào chưa?','Ta mọc lại được. Còn ngươi thì sao?','Tre già măng mọc. Ta già rồi, nhưng chưa có măng.','Ngươi đánh ta, ta hồi lại. Ngươi ngừng đánh, ta hồi càng nhanh.'],guc:'Gốc ta còn đây. Mùa xuân năm sau…'},
+ 'moc-tinh':{n:'vua',gap:'Suỵt. Rừng đang ngủ.',cau:['Chặt cây thì phải trồng cây. Ngươi đã trồng cây nào chưa?','Ta mọc lại được. Còn ngươi thì sao?','Tre già măng mọc. Ta già rồi, nhưng chưa có măng.','Ngươi đánh ta, ta hồi lại. Ngươi ngừng đánh, ta hồi càng nhanh.'],hoa:'Hỡi các con của rừng, trỗi dậy! Che chở cho ta!',hoa_het:'Các con ta… Ngươi dám!',guc:'Gốc ta còn đây. Mùa xuân năm sau…'},
  'xa-tinh':{n:'nhieu',gap:'Xì… xì… Khách quý, khách quý!',cau:['Ngươi có nghe tiếng xì xì không? Đó là ta đang cười.','Ta không độc đâu. Chỉ hơi… rất độc thôi.','Đầm lầy đẹp không? Ta tự tay làm bẩn đấy.','Bò lại gần đây, ta kể chuyện cho nghe.','Ngươi thấy ta dài không? Ta còn dài dòng nữa cơ.','Xì… quên mất định nói gì rồi.'],
-  sap:'Thôi ta lột xác đây, xác này hỏng rồi!',guc:'Xì… xì… xì……'},
+  sap:'Thôi ta lột xác đây, xác này hỏng rồi!',hoi:['Ta không thể chết!','Không chết!','Thôi chết!'],guc:'Xì… xì… xì……'}, // v10.65: hoi = câu nói khi hồi sinh lần 1, 2, 3
  'loi-dieu':{n:'it',cau:['Ầm!','Ầm ầm!','…Ầm?'],guc:'…ầm.'},
  'tuong-am-binh':{n:'vua',gap:'Kẻ lạ đến gần thành! Toàn quân nghe lệnh!',cau:['Điểm danh! … Sao chỉ có mình ta?','Nỏ thần đâu? Ai cầm nỏ thần rồi?','Thành này xoáy ốc chín vòng. Ngươi đi lạc mấy vòng rồi?','Giữ thành! Giữ thành!'],guc:'Thành… vẫn đứng… dù ta ngã…'},
  'thuong-luong':{n:'it',cau:['Nước chảy đá mòn. Ta chảy, ngươi mòn.','Sóng đến rồi đi. Ngươi cũng vậy thôi.','Ngủ tiếp đây…'],guc:'Biển… đón ta về.'},
@@ -53,5 +53,8 @@ const LH_THOAI={
  'minh-vuong':{n:'it',cau:['Chín tầng âm phủ… ngươi mới ở tầng một.','Ở đây, không ai ra được.','Lặng im.'],guc:'Ánh sáng… đã lâu lắm rồi…'},
  'cuu-dau-xa':{n:'nhieu',cau:['[Đầu 1] Ta trước! — [Đầu 2] Không, ta! — [Đầu 3] Ta mới là đầu cả!','[Đầu 5] Mọi người im lặng, để ta nói… — [Đầu 6] Ngươi nói rồi đấy thôi.','[Đầu 7] Ai đếm giúp ta có mấy đầu với?','[Đầu 9] Không ai hỏi ý ta bao giờ…','[Đầu 4] Chém một đầu mọc hai đầu! — [Đầu 8] Thế thì càng cãi nhau to!'],guc:'[Cả chín] Lần này… đồng ý với nhau… một lần…'},
  'hon-nguyen-ma-to':{n:'vua',gap:'{cha} của đứa trẻ đó sao? Ngươi đi xa thật.',cau:['Trước khi có trời đất, đã có ta.','Ngươi đi khắp ba mươi vùng chỉ vì một đứa con. Lạ thật.','Sức mạnh của ngươi từ đâu ra? Ta muốn biết.','Hỗn độn là khởi đầu. Cũng là kết thúc.','Đứa trẻ đó viết chữ đẹp lắm. "Bình An". Ngươi có biết nghĩa không?'],
-  sap:'Thì ra… thứ ngươi có mà ta không có… là người để trở về.',guc:'Mang nó về đi. Hãy… bình an.'}
+  sap:'Thì ra… thứ ngươi có mà ta không có… là người để trở về.',guc:'Mang nó về đi. Hãy… bình an.'},
+ // v10.65: trùm phụ Rừng Trúc sau khi người chơi thả ở Núi tuyết · {ngu} = thằng / con theo giới tính nhân vật · phan = khi bầy khỉ con bị hạ hết (phân thân)
+ 'ngo-khong':{n:'nhieu',gap:'Ồ! Ân nhân! Ân nhân ngu… à nhầm, ân nhân tốt bụng đây rồi!',cau:['Bọn khỉ con, xông lên! Lão Tôn ngồi xem.','Năm trăm năm dưới núi, giờ ta phải chơi bù!','Gậy Như Ý của ta nặng một vạn ba nghìn năm trăm cân đấy!','Thất thập nhị biến, ngươi muốn xem biến nào?','Ngươi thả ta ra, giờ lại đánh ta. Loài người thật khó hiểu!','Ăn một gậy của lão Tôn!'],
+  phan:'Lũ hầu tôn gục hết rồi à? Xem phép phân thân của lão Tôn đây!',sap:'Khoan! Khoan! Cho lão Tôn thở cái đã!',guc:'Thôi… lão Tôn đi thỉnh kinh đây…',thang:'Bố {ngu} ngu lần thứ hai!'}
 };
