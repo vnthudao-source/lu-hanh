@@ -3373,7 +3373,7 @@ html:has(body.lh-home-view){scroll-behavior:smooth;overflow-x:hidden}
   <header class='lh-nav' id='lh-nav'><div class='lh-shell lh-nav-inner'>
     <a aria-label='Lữ Hành - iKyNa, trang chủ' class='lh-brand' href='/'><img alt='Lữ Hành' height='48' referrerpolicy='no-referrer' src='https://lh3.googleusercontent.com/d/1wUK3vUepfwLawSc-UuyZ4f6zcrUu4a2j' width='100'/><span class='lh-brand-tag'>iKyNa</span></a>
     <nav aria-label='Điều hướng chính' class='lh-menu'><a data-sec='lh-top' href='/'><svg aria-hidden='true' class='lh-ico'><use href='#lh-i-home'/></svg><span>Trang chủ</span></a><a data-sec='lh-guide' href='#lh-guide'><svg aria-hidden='true' class='lh-ico'><use href='#lh-i-guide'/></svg><span>Hướng dẫn</span></a><a data-sec='lh-story' href='#lh-story'><svg aria-hidden='true' class='lh-ico'><use href='#lh-i-story'/></svg><span>Cốt truyện</span></a><a data-sec='lh-rank' href='#lh-rank'><svg aria-hidden='true' class='lh-ico'><use href='#lh-i-trophy'/></svg><span>Xếp hạng</span></a><a data-sec='lh-contact' href='#lh-contact'><svg aria-hidden='true' class='lh-ico'><use href='#lh-i-chat'/></svg><span>Liên hệ</span></a></nav>
-    <a class='lh-btn lh-btn-gold lh-nav-play' href='https://ikynagame.blogspot.com/p/lu-hanh.html'><svg aria-hidden='true' class='lh-ico'><use href='#lh-i-play'/></svg>Vào game</a>
+    <a class='lh-btn lh-btn-gold lh-nav-play' href='https://www.ikyna.com/p/lu-hanh.html'><svg aria-hidden='true' class='lh-ico'><use href='#lh-i-play'/></svg>Vào game</a>
   </div></header>
   <nav aria-label='Điều hướng nhanh' class='lh-dock'><a data-sec='lh-top' href='/'><svg aria-hidden='true' class='lh-ico'><use href='#lh-i-home'/></svg><span>Trang chủ</span></a><a data-sec='lh-guide' href='#lh-guide'><svg aria-hidden='true' class='lh-ico'><use href='#lh-i-guide'/></svg><span>Hướng dẫn</span></a><a data-sec='lh-story' href='#lh-story'><svg aria-hidden='true' class='lh-ico'><use href='#lh-i-story'/></svg><span>Cốt truyện</span></a><a data-sec='lh-rank' href='#lh-rank'><svg aria-hidden='true' class='lh-ico'><use href='#lh-i-trophy'/></svg><span>Xếp hạng</span></a><a data-sec='lh-contact' href='#lh-contact'><svg aria-hidden='true' class='lh-ico'><use href='#lh-i-chat'/></svg><span>Liên hệ</span></a></nav>
   <main>
@@ -3386,7 +3386,7 @@ html:has(body.lh-home-view){scroll-behavior:smooth;overflow-x:hidden}
     <div class='lh-eyebrow lh-rise' style='--i:0'>iKyNa &#183; Nhập vai phiêu lưu</div>
     <h1 class='lh-title lh-rise' id='lh-title' style='--i:1'><span class='lh-title-main'>Lữ Hành</span><span class='lh-title-sub'><span class='lh-sr'>- </span>iKyNa</span></h1>
     <p class='lh-lead lh-rise' style='--i:2'>Rời làng Thanh Mộc, băng qua sa mạc, núi tuyết và những hang sâu chưa ai đi hết. Một thanh kiếm, một cánh cung hay một cuốn sách phép &#8212; hành trình là của bạn.</p>
-    <div class='lh-cta lh-rise' style='--i:3'><a class='lh-btn lh-btn-gold' href='https://ikynagame.blogspot.com/p/lu-hanh.html'><svg aria-hidden='true' class='lh-ico'><use href='#lh-i-play'/></svg>Vào game</a><a class='lh-btn lh-btn-ghost' href='#lh-styles'>Xem lối chơi</a></div>
+    <div class='lh-cta lh-rise' style='--i:3'><a class='lh-btn lh-btn-gold' href='https://www.ikyna.com/p/lu-hanh.html'><svg aria-hidden='true' class='lh-ico'><use href='#lh-i-play'/></svg>Vào game</a><a class='lh-btn lh-btn-ghost' href='#lh-styles'>Xem lối chơi</a></div>
     <div aria-label='Bốn hệ chiến đấu' class='lh-hero-classes lh-rise' role='group' style='--i:4'><button data-go='0' type='button'><span class='lh-orb'><svg aria-hidden='true' class='lh-ico'><use href='#lh-i-sword'/></svg></span>Đánh gần</button><button data-go='1' type='button'><span class='lh-orb'><svg aria-hidden='true' class='lh-ico'><use href='#lh-i-bow'/></svg></span>Đánh xa</button><button data-go='2' type='button'><span class='lh-orb'><svg aria-hidden='true' class='lh-ico'><use href='#lh-i-magic'/></svg></span>Ma công</button><button data-go='3' type='button'><span class='lh-orb'><svg aria-hidden='true' class='lh-ico'><use href='#lh-i-shield'/></svg></span>Phản đòn</button></div>
   </div></div>
   <a aria-label='Cuộn xuống' class='lh-scroll' href='#lh-news'>Khám phá<i></i></a>
@@ -3494,7 +3494,7 @@ html:has(body.lh-home-view){scroll-behavior:smooth;overflow-x:hidden}
 </div></section>
 <section aria-labelledby='lh-outro-title' class='lh-outro'>
   <img alt='' class='lh-outro-bg' height='1080' loading='lazy' referrerpolicy='no-referrer' src='https://lh3.googleusercontent.com/d/1kyvfdE3GctSWeu_LUelgmIyHWqLRli-1' width='1920'/>
-  <div class='lh-shell lh-reveal'><div class='lh-eyebrow'>Lối mòn đang đợi</div><h2 id='lh-outro-title'>Đường đã mở. <em>Còn bạn?</em></h2><a class='lh-btn lh-btn-gold' href='https://ikynagame.blogspot.com/p/lu-hanh.html'><svg aria-hidden='true' class='lh-ico'><use href='#lh-i-play'/></svg>Vào game ngay</a></div>
+  <div class='lh-shell lh-reveal'><div class='lh-eyebrow'>Lối mòn đang đợi</div><h2 id='lh-outro-title'>Đường đã mở. <em>Còn bạn?</em></h2><a class='lh-btn lh-btn-gold' href='https://www.ikyna.com/p/lu-hanh.html'><svg aria-hidden='true' class='lh-ico'><use href='#lh-i-play'/></svg>Vào game ngay</a></div>
 </section>
   </main>
 <section aria-labelledby='lh-contact-title' class='lh-contact' id='lh-contact'><div class='lh-shell'>
@@ -3758,7 +3758,7 @@ body.lh-sub-view .footer,body.lh-sub-view .Attribution{color:var(--lh-muted)}
     <a href='/search/label/H%C6%B0%E1%BB%9Bng%20d%E1%BA%ABn' title='Hướng dẫn'><svg aria-hidden='true' viewBox='0 0 24 24'><path d='M12 6.5C10 5 7 4.5 3.5 5v14c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z'/><path d='M12 6.5v14'/></svg><span>Hướng dẫn</span></a>
     <a href='/#lh-rank' title='Xếp hạng'><svg aria-hidden='true' viewBox='0 0 24 24'><path d='M8 4h8v5a4 4 0 0 1-8 0z'/><path d='M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4'/><path d='M12 13v4M9 20h6M10 17h4'/></svg><span>Xếp hạng</span></a>
   </nav>
-  <a class='lh-s-play' href='https://ikynagame.blogspot.com/p/lu-hanh.html'><svg aria-hidden='true' viewBox='0 0 24 24'><path d='M7 4.5l12.5 7.5L7 19.5z'/></svg>Vào game</a>
+  <a class='lh-s-play' href='https://www.ikyna.com/p/lu-hanh.html'><svg aria-hidden='true' viewBox='0 0 24 24'><path d='M7 4.5l12.5 7.5L7 19.5z'/></svg>Vào game</a>
 </div></header>
 <script>//<![CDATA[
 (function(){var p=location.pathname,a=document.querySelectorAll('#lh-subnav .lh-s-menu a');for(var i=0;i<a.length;i++){var h=a[i].getAttribute('href');if(h!=='/'&&h.indexOf('#')<0&&(p===h||decodeURIComponent(p)===decodeURIComponent(h)))a[i].className='is-on';}
@@ -3840,7 +3840,7 @@ if(p==='/search'&&!location.search)a[1].className='is-on';})();
 
                 <div class='blog-name container'>
                   <b:section class='container' id='header' name='Header' showaddelement='false'>
-                    <b:widget id='Header1' locked='true' title='ikyna.blogspot.com (Tiêu đề)' type='Header' visible='true'>
+                    <b:widget id='Header1' locked='true' title='www.ikyna.com (Tiêu đề)' type='Header' visible='true'>
                       <b:widget-settings>
                         <b:widget-setting name='displayUrl'/>
                         <b:widget-setting name='displayHeight'>0</b:widget-setting>
@@ -3893,7 +3893,7 @@ if(p==='/search'&&!location.search)a[1].className='is-on';})();
                     <b:section class='clearboth' id='page_list_top' name='Page List (Top)' showaddelement='false'>
                       <b:widget cond='!data:view.isPost' id='PageList1' locked='true' title='' type='PageList' visible='false'>
                         <b:widget-settings>
-                          <b:widget-setting name='pageListJson'><![CDATA[{"home":{"href":"http://ikynagame.blogspot.com/","position":0,"title":"Trang chủ"}}]]></b:widget-setting>
+                          <b:widget-setting name='pageListJson'><![CDATA[{"home":{"href":"https://www.ikyna.com/","position":0,"title":"Trang chủ"}}]]></b:widget-setting>
                           <b:widget-setting name='homeTitle'>Trang chủ</b:widget-setting>
                         </b:widget-settings>
                         <b:includable id='main'>
@@ -4911,7 +4911,7 @@ if(p==='/search'&&!location.search)a[1].className='is-on';})();
 
     <b:template-script async='true' name='indie' version='1.0.0'/>
       <b:if cond='not data:view.isHomepage'>
-<footer id='lh-subfoot'><b>Lữ Hành - iKyNa</b><span>&#169; 2026 &#183; ikyna.com</span><br/><a href='/'>Trang chủ</a><a href='/search'>Tất cả bài viết</a><a href='https://ikynagame.blogspot.com/p/lu-hanh.html'>Vào game</a></footer>
+<footer id='lh-subfoot'><b>Lữ Hành - iKyNa</b><span>&#169; 2026 &#183; ikyna.com</span><br/><a href='/'>Trang chủ</a><a href='/search'>Tất cả bài viết</a><a href='https://www.ikyna.com/p/lu-hanh.html'>Vào game</a></footer>
     </b:if>
   
 </body>

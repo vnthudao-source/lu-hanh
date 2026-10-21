@@ -33,7 +33,7 @@ const safe=t=>t.replace(/[^\x00-\x7f]/gu,ch=>/[\p{L}\p{M}\p{N}]/u.test(ch)?ch:'\
 const banner=name=>`/*! Lữ Hành ${V} · ${name} · https://github.com/vnthudao-source/lu-hanh */\n`;
 const inject=(body,probe)=>`(function(){if(document.getElementById('${probe}'))return;document.body.insertAdjacentHTML('beforeend',${safe(JSON.stringify(body))});})();\n`;
 const page=(title,css,body,js,api)=>`<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="game-version" content="${V}"><title>${title}</title><style>\n${css}</style></head><body>\n${body}<script>${cfgJs(api)}</script>\n${js.map(s=>`<script>\n${s}</script>\n`).join('')}</body></html>\n`;
-const cfgJs=api=>`window.LH_API='${api}';window.LH_CHO='https://ikynagame.blogspot.com/p/cho-phien.html';window.LH_GAME='https://ikynagame.blogspot.com/';`;
+const cfgJs=api=>`window.LH_API='${api}';window.LH_CHO='https://www.ikyna.com/p/cho-phien.html';window.LH_GAME='https://www.ikyna.com/';`;
 // ---- bản đồ (thư mục maps/): bản đồ đầu nằm sẵn trong game; bản đồ khác là gói dist/maps/<mã>.js = dữ liệu maps/<mã>.json + hình vẽ maps/<mã>.art.js
 const MAP0='thanh-moc',mapIds=fs.readdirSync(path.join(root,'maps')).filter(f=>f.endsWith('.json')).map(f=>f.slice(0,-5));
 const mapOf=id=>JSON.parse(rd('maps/'+id+'.json'));
@@ -78,7 +78,7 @@ const VIEWPORT="(function(){var m=document.querySelector('meta[name=viewport]');
 const cover=`<style>${HIDE_CSS}</style>\n<script>document.documentElement.classList.add('lh-boot');${VIEWPORT}(function(){if(document.getElementById('lh-cover'))return;var d=document.createElement('div');d.id='lh-cover';d.textContent='L\\u1eef H\\u00e0nh';(document.body||document.documentElement).appendChild(d);})();</script>`;
 wr('blogspot/nhung-vao-blogspot.html',`<!-- Lữ Hành ${V} · trang GAME: dán vào bài/trang Blogspot (chế độ HTML). Bản mới: đổi số sau @ban- -->\n${cover}\n${cfg}\n<script charset="utf-8" src="${cdn}lu-hanh-boot.js"></script>\n`);
 // v10.22: đoạn dán vào Chủ đề → Chỉnh sửa HTML, ngay sau thẻ <head>: trang game không hiện giao diện Blogspot dù chỉ một khung hình, chặn phóng to khi chạm hai lần
-const gamePath=new URL('https://ikynagame.blogspot.com/').pathname; // trùng window.LH_GAME
+const gamePath=new URL('https://www.ikyna.com/').pathname; // trùng window.LH_GAME
 wr('blogspot/dau-trang-blogspot.html',`<!-- Lữ Hành ${V} · DÁN MỘT LẦN vào Chủ đề → Chỉnh sửa HTML, ngay sau thẻ <head>. Chỉ có tác dụng ở trang game (đường dẫn ${gamePath}); các trang khác của blog giữ nguyên. -->\n<script>//<![CDATA[\n(function(){var p=location.pathname;if(p===${JSON.stringify(gamePath)}||p===${JSON.stringify(gamePath)}+'index.html'){document.documentElement.classList.add('lh-boot');${VIEWPORT}}})();\n//]]></script>\n<style>/*<![CDATA[*/${HIDE_CSS}/*]]>*/</style>\n`);
 wr('blogspot/cho-phien.html',`<!-- Lữ Hành ${V} · trang CHỢ PHIÊN: tạo Trang mới tên "cho-phien" trên Blogspot, dán vào (chế độ HTML). -->\n<link rel="stylesheet" href="${cdn}cho-phien.css">\n${cfg}\n<script charset="utf-8" src="${cdn}cho-phien.js"></script>\n`);
 // ---- Code.gs

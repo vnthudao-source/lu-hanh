@@ -196,7 +196,7 @@ cau_hinh:[
  {khoa:'boss_nhan_sat_thuong',gia_tri:1.2,ghi_chu:'v10.22 · Sát thương trùm vùng nhân thêm số này (1.2 = +20%). Hắc Đế, Hắc Thiên Ma giữ nguyên (đã cân cho mốc 1 năm)'},
  {khoa:'nguoi_choi_ao_thanh',gia_tri:5,ghi_chu:'v10.22 · Số người chơi ảo đi lại trong làng / thành (0 = tắt)'},
  {khoa:'nguoi_choi_ao_chay_giay',gia_tri:60,ghi_chu:'v10.22 · Trung bình bao nhiêu giây lại có một người chơi ảo bị quái rượt, ít máu, chạy về làng / thành (0 = tắt)'},
- {khoa:'link_cho_phien',gia_tri:'https://ikynagame.blogspot.com/p/cho-phien.html',ghi_chu:'Địa chỉ trang Chợ phiên (mua bán giữa người chơi, nhân vật đi theo)'}
+ {khoa:'link_cho_phien',gia_tri:'https://www.ikyna.com/p/cho-phien.html',ghi_chu:'Địa chỉ trang Chợ phiên (mua bán giữa người chơi, nhân vật đi theo)'}
 ],
 // cap = cấp hiện tại; ti_le = % thành công lên cấp kế; thất bại: cấp về ngẫu nhiên từ that_bai_tu đến that_bai_den (để trống = giữ nguyên)
 // v10.19: cường hóa theo mức nạp 5–10 triệu/năm: +0..+5 chắc chắn, từ +6 hỏng chỉ tụt 1 cấp. Kỳ vọng mỗi món: +9 ≈ 55, +12 ≈ 154, +15 ≈ 389 hồng ngọc
