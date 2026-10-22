@@ -100,15 +100,25 @@
   const whoOf=c=>c.look&&c.look.equipment?{gender:c.gender,equipment:c.look.equipment,stats:c.stats}:Player.create({name:c.name,gender:c.gender,stats:c.stats});
   // v10.12: lều hiện ngay từ danh sách nhân vật lưu lần trước (lh-chars-cache), rồi thay bằng danh sách mới khi máy chủ trả về
   const CK='lh-chars-cache',charsCached=()=>{try{const c=JSON.parse(localStorage.getItem(CK)||'null');return c&&c.tok===Net.token&&c.account&&Array.isArray(c.chars)?c:null;}catch(e){return null;}},charsKeep=r=>{try{localStorage.setItem(CK,JSON.stringify({tok:Net.token,account:r.account,chars:r.chars,max:r.max}));}catch(e){}};
+  // v10.71: trên Blogspot phần trong game (lu-hanh-game.js) tải ngầm sau gói cổng vào; lều và Vào làng cần nó (startGame) nên chờ ở đây.
+  // Bản một file (Google Doc / thử ngoại tuyến) có sẵn startGame → qua ngay
+  async function gameReady(){
+    if(window.startGame&&window.startUI)return;
+    if(!window.LH_GAME_READY)throw Error('THIEU_GOI_GAME');
+    note('Đang tải phần trong game…',true);
+    await Promise.race([window.LH_GAME_READY,new Promise((_,no)=>setTimeout(()=>no(Error('THIEU_GOI_GAME')),45000))]);
+    if(!window.startGame||!window.startUI)throw Error('THIEU_GOI_GAME');note('');
+  }
   async function chars(selId,pre){
     let r;
+    await gameReady();
     const cached=T.r?null:charsCached();
     if(cached&&!T.r){tent(cached,selId);note('Đang làm mới danh sách nhân vật…',true);}
     // phần chơi còn giữ trên máy (lần trước chưa kịp lưu): gửi trước để lều hiện đúng cấp, tiền
     // v10.70: đã có lều đệm thì cho vào ngay, làm mới danh sách ngầm (máy chủ chậm / lệnh treo không còn giữ thanh tải ở 9x%)
     const job=(async()=>{
-      try{r=await (pre||Net.call('chars'));if(r&&r.__err)throw r.__err;let n=0;for(const c of r.list||r.chars||[])if(c&&c.id&&LH_Local.get(c.id)){await Promise.race([LH_Local.push(c.id).catch(()=>{}),new Promise(ok=>setTimeout(ok,30000))]);n++;}if(n)r=await Net.call('chars');}catch(e){Net.setToken('');note(netMsg(e));return auth('login');}
-      try{charsKeep(r);if(cached)note('');tent(r,selId);}catch(e){LH_DIAG.error(e,'căn lều');note('Lỗi dựng căn lều: '+String(e&&e.message||e).slice(0,80)+' · thử tải lại trang');} // không để lỗi vẽ lều làm kẹt thanh tải
+      try{r=await (pre||Net.call('chars'));if(r&&r.__err)throw r.__err;let n=0;for(const c of r.list||r.chars||[]){const Lc=c&&c.id&&LH_Local.get(c.id);if(!Lc)continue;if(LH_Local.hasOps(Lc)){await Promise.race([LH_Local.push(c.id).catch(()=>{}),new Promise(ok=>setTimeout(ok,30000))]);n++;}else LH_Local.push(c.id).catch(()=>{});}if(n)r=await Net.call('chars');/* v10.71: chỉ có vị trí (không có lệnh) thì gửi ngầm, không bắt lều chờ */}catch(e){Net.setToken('');note(netMsg(e));return auth('login');}
+      try{charsKeep(r);r.fresh=true;if(cached)note('');tent(r,selId);}catch(e){LH_DIAG.error(e,'căn lều');note('Lỗi dựng căn lều: '+String(e&&e.message||e).slice(0,80)+' · thử tải lại trang');} // không để lỗi vẽ lều làm kẹt thanh tải
     })();
     if(cached){job.catch(()=>{});return;}
     return job;
@@ -134,7 +144,7 @@
       const b=$('#tNew');if(b)b.onclick=()=>{T.mode='create';T.st=null;info();};return;}
     // v10.43: bỏ bảng chỉ số — tên, cấp và hình nhân vật đã hiện trên căn lều; dưới lều chỉ còn nút Xoá và Vào làng
     el.innerHTML=`<div class="ti-act">${c.status==='merc'?`<p class="hint2">Đang cho thuê ở Chợ phiên · ${c.price?money(c.price):''}${c.price&&c.ruby?' + ':''}${c.ruby?c.ruby+' hồng ngọc':''}</p>`:`<button class="ghost ti-del" id="tDel" title="Xoá nhân vật">✕ Xoá</button><button class="primary big-btn" id="tEnter">Vào làng</button>`}</div>`;
-    const b=$('#tEnter');if(b)b.onclick=()=>enter(c.id,r.claim,b);
+    const b=$('#tEnter');if(b)b.onclick=()=>enter(c.id,r.claim,b,c);
     const dl=$('#tDel');if(dl)dl.onclick=()=>delForm(c);
   }
   // v10.31: xoá nhân vật — gõ đúng tên để xác nhận, xoá vĩnh viễn (tên được dùng lại)
@@ -237,14 +247,19 @@
     }
     if(T.cv)T.cv.style.cursor='pointer';
   }
-  async function enter(charId,claim,btn){
+  async function enter(charId,claim,btn,ch){
     busy(btn,true);
     L.show({scene:true,label:'Tải nhân vật',bg:'vao_lang'}).step(0,null,45);
     try{
       // v10.12: gói bản đồ nhân vật đứng lần trước tải song song với lệnh load (khóa lh-last-map-<id>)
       let lastMap='';try{lastMap=localStorage.getItem('lh-last-map-'+charId)||'';}catch(e){}if(lastMap)World.prefetch(lastMap);
-      await LH_Local.push(charId);
-      const [r]=await Promise.all([Net.call('load',{charId}),dataReady]);
+      await gameReady();
+      // v10.71: bản lưu đệm trong máy (lh-load-<id>, ghi sau mỗi lần máy chủ xác nhận) — nếu mốc cập nhật trùng với danh sách lều vừa lấy
+      // (char.updated, Code.gs mới) và máy không còn lệnh chưa gửi thì vào ngay, không chờ lệnh load (đỡ 1–4 giây máy chủ)
+      const Lc=LH_Local.get(charId),C=LH_LoadCache.get(charId),fresh=C&&ch&&ch.updated&&T.r&&T.r.fresh&&C.updated===ch.updated&&!(Lc&&LH_Local.hasOps(Lc)); // chỉ tin danh sách lều vừa lấy từ máy chủ trong phiên này, không tin lều đệm
+      let r;
+      if(fresh){r={char:C.char,save:C.save};if(Lc&&Lc.save&&Lc.save.pos)r.save={...r.save,pos:Lc.save.pos,seen:Lc.save.seen||r.save.seen};LH_Local.push(charId).catch(()=>{});await dataReady;}
+      else{await LH_Local.push(charId);[r]=await Promise.all([Net.call('load',{charId}),dataReady]);LH_LoadCache.set(charId,r.char&&r.char.updated,r.char,r.save);}
       L.step(45,'Dựng làng Thanh Mộc',88);
       // dựng bản đồ nhân vật đang đứng (bản đồ chưa có trong game thì tải gói dữ liệu; lỗi thì về làng)
       const mid=(r.save&&r.save.pos&&r.save.pos.map)||World.DEFAULT,got=await World.enter(mid);try{localStorage.setItem('lh-last-map-'+charId,got);}catch(e){}
@@ -254,6 +269,8 @@
       window.startGame({charId,player:R.player,pos:R.pos,seen:R.seen});
       window.startUI({charId,claim});
       if(!r.save)window.mapGame.save();
+      // vào bằng bản lưu đệm: vẫn hỏi máy chủ ngầm — nếu bản trên máy chủ khác (sửa tay trên Sheet, nạp thẻ chưa đổi mốc) thì nhận bản đó ngay
+      if(fresh)Net.call('load',{charId}).then(x=>{if(!x||!x.save||!x.save.player)return;LH_LoadCache.set(charId,x.char&&x.char.updated,x.char,x.save);if(JSON.stringify(x.save.player)!==JSON.stringify(r.save.player)&&window.mapGame&&window.mapGame.charId===charId)window.mapGame.adoptState(x.save.player);}).catch(()=>{});
       await L.done({label:'Vào làng'});
     }catch(e){L.hide();root.hidden=false;note(netMsg(e));busy(btn,false);}
   }

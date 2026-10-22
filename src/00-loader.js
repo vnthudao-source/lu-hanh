@@ -8,7 +8,7 @@
    Dùng chung cho file khởi động (tải tài nguyên trang) và game (kết nối máy chủ, tải nhân vật, dựng bản đồ). */
 window.LH_Loader=window.LH_Loader||(()=>{
   const CSS=`#lh-loader{position:fixed;inset:0;z-index:2147483600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:18px;background:#0d1712;color:#f3e6c4;font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:center;transition:opacity .5s;overflow:hidden}
-#lh-loader.out{opacity:0;pointer-events:none}
+#lh-loader.out{opacity:0;pointer-events:none}#lh-loader.quick{transition-duration:.22s}
 #lh-loader canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
 #lh-loader .lh-in{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:12px;width:min(520px,100%)}
 #lh-loader .lh-logo{font:600 40px/1 Georgia,"Times New Roman",serif;color:#f6dc9c;letter-spacing:1px;text-shadow:0 2px 0 #3a1a0a,0 0 24px #e8b05a55}
@@ -94,11 +94,11 @@ window.LH_Loader=window.LH_Loader||(()=>{
     step(pct,label,next){mount();target=Math.max(target,pct);cap=Math.max(target,next||pct);if(label!=null)lbl.textContent=label;return L;},
     async done(opt={}){
       mount();target=cap=100;lbl.textContent=opt.label||'S\u{1EB5}n s\u{00E0}ng';if(goBtn.dataset.retry){goBtn.hidden=true;delete goBtn.dataset.retry;goBtn.onclick=null;}
-      await new Promise(r=>setTimeout(r,opt.fast?150:450));
+      if(!opt.fast)await new Promise(r=>setTimeout(r,450)); // v10.71: chuyển bản đồ (fast) không đợi thêm, mờ nhanh hơn — bớt ~0,4 giây mỗi lần qua cổng
       await storyDone;
       if(opt.confirm){goBtn.hidden=false;await new Promise(ok=>{goBtn.onclick=ok;});}
       const wait=Math.max(0,(opt.min||0)-(Date.now()-t0));if(wait)await new Promise(r=>setTimeout(r,wait));
-      el.classList.add('out');await new Promise(r=>setTimeout(r,500));el.hidden=true;cancelAnimationFrame(raf);raf=0;
+      el.classList.toggle('quick',!!opt.fast);el.classList.add('out');await new Promise(r=>setTimeout(r,opt.fast?230:500));el.hidden=true;el.classList.remove('quick');cancelAnimationFrame(raf);raf=0;
     },
     hide(){if(!el)return;el.classList.add('out');setTimeout(()=>{el.hidden=true;},500);cancelAnimationFrame(raf);raf=0;},
     get visible(){return !!el&&!el.hidden&&!el.classList.contains('out');}

@@ -1035,7 +1035,7 @@ window.startGame=(session)=>{
           sync.flushedSig=sentSig;
           inflight=null;sent.forEach((b,i)=>{b.res=(r.results||[])[i];});
           for(const b of sent)if(b.ent){const i=pending.indexOf(b.ent);if(i>=0)pending.splice(i,1);}
-          adopt(r.state);
+          adopt(r.state);if(r.savedAt)LH_LoadCache.set(session.charId,r.savedAt,null,{player:r.state,pos:heroPos(),seen:[...seen]}); // v10.71: bản lưu đệm cho lần Vào làng sau
           const badL=(r.results||[]).filter(x=>!x.ok),bad=badL.length;if(bad)message(svg('close')+(badL.some(x=>x.error==='LENH'||x.error==='KHONG_CO_LENH')?'Máy chủ đang chạy Code.gs cũ, chưa biết lệnh mới · hãy dán lại Code.gs rồi Triển khai':'Máy chủ không nhận '+bad+' lệnh, đã đồng bộ lại'),6); // v10.67: báo rõ khi Gs chưa cập nhật
           sent=[];
         }while(sync.queue.length>=CHUNK);
@@ -3196,7 +3196,8 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     else if(L){c.translate(N/2,N/2);c.scale(N/64,N/64);LH_Look.iconWear(c,L,T0);}
     c.restore();curLook=null;return true;
   }
-  window.mapGame={itemIcon,travel,hero,player,camera,monsters,allies,get sq(){return SQ;},get charId(){return session.charId;},get route(){return route;},get seen(){return [...seen];},get safe(){return safe;},get HD(){return HD;},now:()=>time,screenPoint,goTo,cast,message,activateBurst,svg,save,unsaved,checkpoint,server,op,refreshHD,syncMerc,
+  window.mapGame={itemIcon,travel,hero,player,camera,monsters,allies,adoptState:S=>adopt(S), // v10.71: cổng vào đối chiếu bản lưu đệm với máy chủ ngầm
+    get sq(){return SQ;},get charId(){return session.charId;},get route(){return route;},get seen(){return [...seen];},get safe(){return safe;},get HD(){return HD;},now:()=>time,screenPoint,goTo,cast,message,activateBurst,svg,save,unsaved,checkpoint,server,op,refreshHD,syncMerc,
     hammer(color){let n=0;const t=setInterval(()=>{LH_Audio.play('anvil');burst(hero.x+hero.facing*14,hero.y-26,color||'#ffcf7a',6,140);if(color)fx.push({kind:'ring',x:hero.x,y:hero.y-20,r0:6,r1:46,color,age:0,life:.4,lw:3});else shake(2);if(++n>=3)clearInterval(t);},380);},
     levelUp,musicScene,
     setHold(v){holdAttack=!!v;},

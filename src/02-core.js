@@ -24,7 +24,7 @@ function LH_Core(A){
     if(status&&c.trang_thai!==status)fail('SAI_TRANG_THAI');
     return c;
   }
-  const charView=c=>({id:c.id,name:c.ten,gender:c.gioi_tinh,stats:{strength:+c.suc_manh,agility:+c.nhanh_nhen,vitality:+c.suc_khoe,intelligence:+c.tri_tue},status:c.trang_thai,level:+c.cap||1,price:+c.gia_danh_thue||0,ruby:+c.gia_hong_ngoc||0,created:+c.tao_luc});
+  const charView=c=>({id:c.id,name:c.ten,gender:c.gioi_tinh,stats:{strength:+c.suc_manh,agility:+c.nhanh_nhen,vitality:+c.suc_khoe,intelligence:+c.tri_tue},status:c.trang_thai,level:+c.cap||1,price:+c.gia_danh_thue||0,ruby:+c.gia_hong_ngoc||0,created:+c.tao_luc,updated:+c.cap_nhat||0}); // v10.71: updated — mốc lưu gần nhất, trình duyệt so với bản lưu đệm để Vào làng không chờ load
   function newToken(a){a.token_cu=a.token&&Number(a.token_het_han)>A.now()?a.token:'';a.token=A.uid()+A.uid();a.token_het_han=A.now()+TOKEN_DAYS*864e5;A.update('tai_khoan',a);return a.token;}
   // Trạng thái nhân vật lưu trên máy chủ (cột luu): {v, player, pos, seen, srv}
   function stateOf(c){

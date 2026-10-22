@@ -13,7 +13,8 @@ const LH_IMG=(()=>{
     return /^https?:\/\/\S+$/.test(u)||/^data:image\//.test(u)?u:'';
   }
   // v10.32: ảnh Drive (lh3) xin đúng cỡ cần dùng thay vì file gốc (nền 800 KB → ~100–200 KB): =w<rộng> theo nhóm, nền theo cỡ màn hình
-  const scr=()=>{try{const w=Math.max(screen.width||0,screen.height||0,innerWidth||0,innerHeight||0)*Math.min(1.5,devicePixelRatio||1);return Math.min(1600,Math.max(640,Math.ceil(w/320)*320));}catch(e){return 1280;}};
+  // v10.71: điện thoại (cạnh dài ≤ 1024 px CSS) chỉ xin nền tối đa 960 px — nền chờ chỉ hiện vài giây, không cần ảnh 1280–1600
+  const scr=()=>{try{const big=Math.max(screen.width||0,screen.height||0,innerWidth||0,innerHeight||0),w=big*Math.min(1.5,devicePixelRatio||1);return Math.min(big<=1024?960:1600,Math.max(640,Math.ceil(w/320)*320));}catch(e){return 1280;}};
   function sized(u,k){
     if(NOSIZE||!/^https:\/\/lh3\.googleusercontent\.com\/d\/[\w-]+$/.test(u))return u;
     const g=k.split(':')[0],m=k.split(':')[1]||'',w=g==='bieu_tuong'?96:g==='vat_pham'?128:g==='quai'||g==='npc'?320:g==='giao_dien'?(/^nen/.test(m)?scr():m==='logo'?480:/^chan_dung/.test(m)?256:160):0;
@@ -40,15 +41,22 @@ const LH_IMG=(()=>{
   function pic(key){const p=PIC[key]||want(key);return p&&p.complete&&p.naturalWidth>0?p:null;}
   const warm=keys=>{for(const k of keys||[])want(k);};
   // Biểu tượng giao diện: thay nội dung <symbol id="i-…"> bằng ảnh, mọi chỗ dùng biểu tượng đó tự đổi theo
+  // v10.71: 66 biểu tượng không tải ngay lúc mở trang (đỡ 66 yêu cầu mạng chen với gói game, dữ liệu, nền) — biểu tượng vẽ sẵn hiện trước,
+  // ảnh thay vào sau khi trang rảnh (~1,5 giây) với mức ưu tiên thấp; mỗi link chỉ tải một lần dù load() được gọi lại
+  const DONE={};let iconTimer=0;
   function applyIcons(){
     if(typeof document==='undefined')return;
-    for(const [id,html] of Object.entries(ORIG)){const s=document.getElementById('i-'+id);if(s&&!MAP['bieu_tuong:'+id]){s.innerHTML=html;delete ORIG[id];}}
+    for(const [id,html] of Object.entries(ORIG)){const s=document.getElementById('i-'+id);if(s&&!MAP['bieu_tuong:'+id]){s.innerHTML=html;delete ORIG[id];delete DONE[id];}}
+    if(iconTimer)return;const go=()=>{iconTimer=0;applyIconsNow();};
+    iconTimer=setTimeout(()=>{if(window.requestIdleCallback)requestIdleCallback(go,{timeout:3000});else go();},1500);
+  }
+  function applyIconsNow(){
     for(const [k,u] of Object.entries(MAP)){
-      if(!k.startsWith('bieu_tuong:'))continue;const id=k.slice(11),s=document.getElementById('i-'+id);if(!s)continue;
+      if(!k.startsWith('bieu_tuong:'))continue;const id=k.slice(11),s=document.getElementById('i-'+id);if(!s||DONE[id]===u)continue;DONE[id]=u;
       if(!(id in ORIG))ORIG[id]=s.innerHTML;
       const vb=(s.getAttribute('viewBox')||'0 0 32 32').split(/\s+/).map(Number);
       // thử tải trước: lỗi thì giữ biểu tượng cũ
-      const im=new Image();im.referrerPolicy='no-referrer';im.onload=()=>{s.innerHTML=`<image href="${attr(u)}" x="${vb[0]}" y="${vb[1]}" width="${vb[2]}" height="${vb[3]}" preserveAspectRatio="xMidYMid meet"/>`;};im.src=u;
+      const im=new Image();im.referrerPolicy='no-referrer';try{im.fetchPriority='low';}catch(e){}im.onload=()=>{s.innerHTML=`<image href="${attr(u)}" x="${vb[0]}" y="${vb[1]}" width="${vb[2]}" height="${vb[3]}" preserveAspectRatio="xMidYMid meet"/>`;};im.onerror=()=>{delete DONE[id];};im.src=u;
     }
   }
   function load(map){

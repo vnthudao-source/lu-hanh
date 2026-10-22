@@ -10,7 +10,10 @@
     var P={tok:tok,h:h,data:post({h:h,action:'data',token:tok})};if(tok)P.chars=post({action:'chars',token:tok});
     P.data.catch(function(){});if(P.chars)P.chars.catch(function(){});window.LH_PRE=P;}}catch(e){}
   var L=window.LH_Loader.show({label:'T\u{1EA3}i t\u{00E0}i nguy\u{00EA}n trang',bg:'tai_game'});
-  function plain(){var l=document.createElement('link');l.rel='stylesheet';l.href=base+FILES.css.name;document.head.appendChild(l);var s=document.createElement('script');s.src=base+FILES.js.name;s.charset='utf-8';document.head.appendChild(s);}
+  // v10.71: gói trong game (lu-hanh-game.js) tải sau gói cổng vào; cổng vào chờ window.LH_GAME_READY trước khi dựng lều / vào làng
+  var gameOk;window.LH_GAME_READY=new Promise(function(ok){gameOk=ok;});window.LH_GAME_LOADED=function(){gameOk();};
+  function tag(name,cb){var s=document.createElement('script');s.src=base+name;s.charset='utf-8';if(cb)s.onload=cb;s.onerror=function(){if(cb)cb();};document.head.appendChild(s);}
+  function plain(){var l=document.createElement('link');l.rel='stylesheet';l.href=base+FILES.css.name;document.head.appendChild(l);tag(FILES.js.name,function(){tag(FILES.game.name);});}
   // v10.32: CSS + JS tải song song, chung một thanh tiến trình (0–70%)
   var TOT=(FILES.css.size||1)+(FILES.js.size||1),GOT=0;
   async function get(f){
@@ -26,5 +29,7 @@
     var css=await pc,js=await pj;
     var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
     var sc=document.createElement('script');sc.text=js;document.head.appendChild(sc);
+    // gói trong game: tải ngay sau (không chen với thanh tiến trình), lỗi thì thử lại bằng thẻ script thường
+    try{var g=await fetch(base+FILES.game.name);if(!g.ok)throw Error('fetch');var gt=await g.text();var sg=document.createElement('script');sg.text=gt;document.head.appendChild(sg);}catch(e){tag(FILES.game.name);}
   })().catch(function(){plain();});
 })();

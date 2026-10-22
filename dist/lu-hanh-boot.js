@@ -1,4 +1,4 @@
-/*! Lữ Hành v10.70 · khởi động · https://github.com/vnthudao-source/lu-hanh */
+/*! Lữ Hành v10.71 · khởi động · https://github.com/vnthudao-source/lu-hanh */
 /* v10.63: Safari cũ (macOS / iOS trước Safari 16) chưa có ctx.roundRect \u{2192} báo "Lỗi vẽ: roundRect is not a function". Bổ sung thay thế (bán kính số hoặc mảng). */
 (function(){const add=P=>{if(!P||P.roundRect)return;P.roundRect=function(x,y,w,h,r){let a=Array.isArray(r)?r:[r==null?0:r];a=a.map(v=>typeof v==='object'&&v?(v.x||0):(+v||0));
   const [tl,tr,br,bl]=a.length===1?[a[0],a[0],a[0],a[0]]:a.length===2?[a[0],a[1],a[0],a[1]]:a.length===3?[a[0],a[1],a[2],a[1]]:a;
@@ -9,7 +9,7 @@
    Dùng chung cho file khởi động (tải tài nguyên trang) và game (kết nối máy chủ, tải nhân vật, dựng bản đồ). */
 window.LH_Loader=window.LH_Loader||(()=>{
   const CSS=`#lh-loader{position:fixed;inset:0;z-index:2147483600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:18px;background:#0d1712;color:#f3e6c4;font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:center;transition:opacity .5s;overflow:hidden}
-#lh-loader.out{opacity:0;pointer-events:none}
+#lh-loader.out{opacity:0;pointer-events:none}#lh-loader.quick{transition-duration:.22s}
 #lh-loader canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
 #lh-loader .lh-in{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:12px;width:min(520px,100%)}
 #lh-loader .lh-logo{font:600 40px/1 Georgia,"Times New Roman",serif;color:#f6dc9c;letter-spacing:1px;text-shadow:0 2px 0 #3a1a0a,0 0 24px #e8b05a55}
@@ -95,11 +95,11 @@ window.LH_Loader=window.LH_Loader||(()=>{
     step(pct,label,next){mount();target=Math.max(target,pct);cap=Math.max(target,next||pct);if(label!=null)lbl.textContent=label;return L;},
     async done(opt={}){
       mount();target=cap=100;lbl.textContent=opt.label||'S\u{1EB5}n s\u{00E0}ng';if(goBtn.dataset.retry){goBtn.hidden=true;delete goBtn.dataset.retry;goBtn.onclick=null;}
-      await new Promise(r=>setTimeout(r,opt.fast?150:450));
+      if(!opt.fast)await new Promise(r=>setTimeout(r,450)); // v10.71: chuyển bản đồ (fast) không đợi thêm, mờ nhanh hơn \u{2014} bớt ~0,4 giây mỗi lần qua cổng
       await storyDone;
       if(opt.confirm){goBtn.hidden=false;await new Promise(ok=>{goBtn.onclick=ok;});}
       const wait=Math.max(0,(opt.min||0)-(Date.now()-t0));if(wait)await new Promise(r=>setTimeout(r,wait));
-      el.classList.add('out');await new Promise(r=>setTimeout(r,500));el.hidden=true;cancelAnimationFrame(raf);raf=0;
+      el.classList.toggle('quick',!!opt.fast);el.classList.add('out');await new Promise(r=>setTimeout(r,opt.fast?230:500));el.hidden=true;el.classList.remove('quick');cancelAnimationFrame(raf);raf=0;
     },
     hide(){if(!el)return;el.classList.add('out');setTimeout(()=>{el.hidden=true;},500);cancelAnimationFrame(raf);raf=0;},
     get visible(){return !!el&&!el.hidden&&!el.classList.contains('out');}
@@ -108,7 +108,7 @@ window.LH_Loader=window.LH_Loader||(()=>{
 })();
 ;/* ================= KHỞI ĐỘNG: hiện màn hình chờ ngay, tải CSS + JS của game có đếm phần trăm ================= */
 (function(){
-  var me=document.currentScript,base=(me&&me.src||'').replace(/[^\/]*$/,''),FILES={"css":{"name":"lu-hanh.css","size":57276},"js":{"name":"lu-hanh.js","size":842676}};
+  var me=document.currentScript,base=(me&&me.src||'').replace(/[^\/]*$/,''),FILES={"css":{"name":"lu-hanh.css","size":57276},"js":{"name":"lu-hanh.js","size":379785},"game":{"name":"lu-hanh-game.js","size":465369}};
   window.LH_BASE=window.LH_BASE||base;
   // v10.32: mở sẵn kết nối tới máy chủ Apps Script và kho ảnh Drive (đỡ vài trăm ms bắt tay TLS trên điện thoại)
   ['https://script.google.com','https://script.googleusercontent.com','https://lh3.googleusercontent.com'].forEach(function(h){try{var l=document.createElement('link');l.rel='preconnect';l.href=h;if(!/lh3/.test(h))l.crossOrigin='';document.head.appendChild(l);}catch(e){}});
@@ -118,7 +118,10 @@ window.LH_Loader=window.LH_Loader||(()=>{
     var P={tok:tok,h:h,data:post({h:h,action:'data',token:tok})};if(tok)P.chars=post({action:'chars',token:tok});
     P.data.catch(function(){});if(P.chars)P.chars.catch(function(){});window.LH_PRE=P;}}catch(e){}
   var L=window.LH_Loader.show({label:'T\u{1EA3}i t\u{00E0}i nguy\u{00EA}n trang',bg:'tai_game'});
-  function plain(){var l=document.createElement('link');l.rel='stylesheet';l.href=base+FILES.css.name;document.head.appendChild(l);var s=document.createElement('script');s.src=base+FILES.js.name;s.charset='utf-8';document.head.appendChild(s);}
+  // v10.71: gói trong game (lu-hanh-game.js) tải sau gói cổng vào; cổng vào chờ window.LH_GAME_READY trước khi dựng lều / vào làng
+  var gameOk;window.LH_GAME_READY=new Promise(function(ok){gameOk=ok;});window.LH_GAME_LOADED=function(){gameOk();};
+  function tag(name,cb){var s=document.createElement('script');s.src=base+name;s.charset='utf-8';if(cb)s.onload=cb;s.onerror=function(){if(cb)cb();};document.head.appendChild(s);}
+  function plain(){var l=document.createElement('link');l.rel='stylesheet';l.href=base+FILES.css.name;document.head.appendChild(l);tag(FILES.js.name,function(){tag(FILES.game.name);});}
   // v10.32: CSS + JS tải song song, chung một thanh tiến trình (0\u{2013}70%)
   var TOT=(FILES.css.size||1)+(FILES.js.size||1),GOT=0;
   async function get(f){
@@ -134,5 +137,7 @@ window.LH_Loader=window.LH_Loader||(()=>{
     var css=await pc,js=await pj;
     var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
     var sc=document.createElement('script');sc.text=js;document.head.appendChild(sc);
+    // gói trong game: tải ngay sau (không chen với thanh tiến trình), lỗi thì thử lại bằng thẻ script thường
+    try{var g=await fetch(base+FILES.game.name);if(!g.ok)throw Error('fetch');var gt=await g.text();var sg=document.createElement('script');sg.text=gt;document.head.appendChild(sg);}catch(e){tag(FILES.game.name);}
   })().catch(function(){plain();});
 })();

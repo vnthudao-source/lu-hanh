@@ -55,13 +55,18 @@ const mapJs=ids=>`window.LH_MAP_CDN='https://cdn.jsdelivr.net/gh/vnthudao-source
 const body=rd('src/body.html').replaceAll('{{VERSION}}',V),css=rootCss('#lu-hanh','hidden')+scope(rd('src/style.css'),'#lu-hanh');
 const gameJs=ids=>GAME.flatMap(f=>f==='04-art.js'?[safe(rd('src/'+f)),safe(rd('src/04-gen.js')),safe(mapJs(ids))]:[safe(rd('src/'+f))]);
 const js=gameJs([MAP0]),jsAll=gameJs(mapIds);
+// v10.71: trên Blogspot gói JS tách đôi — phần cổng vào (dữ liệu, mạng, ảnh, nhân vật, lều) tải trước để form đăng nhập hiện sớm;
+// phần trong game (vòng lặp, vẽ trùm, giao diện) tải ngầm ngay sau, cổng vào chờ nó xong (LH_GAME_READY) trước khi dựng lều / vào làng
+const LATE=['04-boss.js','04-boss-cao.js','04-boss-thoai.js','06-game.js','07-tro-choi.js','07-ui.js'];
+const coreJs=GAME.filter(f=>!LATE.includes(f)).flatMap(f=>f==='04-art.js'?[safe(rd('src/'+f)),safe(rd('src/04-gen.js')),safe(mapJs([MAP0]))]:[safe(rd('src/'+f))]),lateJs=LATE.map(f=>safe(rd('src/'+f)));
 wr('dist/lu-hanh.css',banner('Làng Thanh Mộc')+miniCss(css));
-wr('dist/lu-hanh.js',safe(await mini(banner('Làng Thanh Mộc')+inject(body,'portal')+js.map(s=>';'+s).join('\n'),'lu-hanh.js')));
+wr('dist/lu-hanh.js',safe(await mini(banner('Làng Thanh Mộc · cổng vào')+inject(body,'portal')+coreJs.map(s=>';'+s).join('\n'),'lu-hanh.js')));
+wr('dist/lu-hanh-game.js',safe(await mini(banner('Làng Thanh Mộc · trong game')+lateJs.map(s=>';'+s).join('\n')+';window.LH_GAME_LOADED&&window.LH_GAME_LOADED();','lu-hanh-game.js')));
 wr('dist/lu-hanh.html',page(`Lữ Hành - iKyNa`,css,body,js,API));
 wr('dist/lu-hanh-offline.html',page(`Lữ Hành ${V} · thử ngoại tuyến`,css,body,jsAll,''));
 // file khởi động: hiện màn hình chờ, tải CSS + JS có đếm phần trăm
 const B=n=>Buffer.byteLength(rd('dist/'+n),'utf8');
-wr('dist/lu-hanh-boot.js',banner('khởi động')+safe(rd('src/00-loader.js'))+';'+safe(rd('src/boot.js')).replace('@@FILES@@',JSON.stringify({css:{name:'lu-hanh.css',size:B('lu-hanh.css')},js:{name:'lu-hanh.js',size:B('lu-hanh.js')}})));
+wr('dist/lu-hanh-boot.js',banner('khởi động')+safe(rd('src/00-loader.js'))+';'+safe(rd('src/boot.js')).replace('@@FILES@@',JSON.stringify({css:{name:'lu-hanh.css',size:B('lu-hanh.css')},js:{name:'lu-hanh.js',size:B('lu-hanh.js')},game:{name:'lu-hanh-game.js',size:B('lu-hanh-game.js')}})));
 // ---- Chợ phiên (dùng chung bộ biểu tượng của game)
 const sprite=body.match(/<svg style="position:absolute;width:0[\s\S]*?<\/svg>/)[0];
 const choBody=rd('src/cho/body.html').replace('<div id="cho-phien">','<div id="cho-phien">\n'+sprite),choCss=rootCss('#cho-phien','auto')+scope(rd('src/cho/cho.css'),'#cho-phien'),choJs=CHO.map(f=>safe(rd('src/'+f)));
