@@ -1,4 +1,4 @@
-/*! Lữ Hành v10.69 · khởi động · https://github.com/vnthudao-source/lu-hanh */
+/*! Lữ Hành v10.70 · khởi động · https://github.com/vnthudao-source/lu-hanh */
 /* v10.63: Safari cũ (macOS / iOS trước Safari 16) chưa có ctx.roundRect \u{2192} báo "Lỗi vẽ: roundRect is not a function". Bổ sung thay thế (bán kính số hoặc mảng). */
 (function(){const add=P=>{if(!P||P.roundRect)return;P.roundRect=function(x,y,w,h,r){let a=Array.isArray(r)?r:[r==null?0:r];a=a.map(v=>typeof v==='object'&&v?(v.x||0):(+v||0));
   const [tl,tr,br,bl]=a.length===1?[a[0],a[0],a[0],a[0]]:a.length===2?[a[0],a[1],a[0],a[1]]:a.length===3?[a[0],a[1],a[2],a[1]]:a;
@@ -22,7 +22,7 @@ window.LH_Loader=window.LH_Loader||(()=>{
 #lh-loader .lh-row b{color:#ffd98a;font-variant-numeric:tabular-nums}
 #lh-loader .lh-go{margin-top:4px;padding:10px 22px;border-radius:10px;border:1px solid #e3b86f;background:linear-gradient(#a4452c,#7c2c1b);color:#fff3d6;font-weight:700;font-size:15px;cursor:pointer}
 #lh-loader .lh-go[hidden]{display:none}`;
-  let el,fill,pctEl,lbl,story,goBtn,cv,bgImg=null,shown=0,target=0,cap=0,raf=0,t0=0,scene=false,storyDone=Promise.resolve();
+  let el,fill,pctEl,lbl,story,goBtn,cv,bgImg=null,shown=0,target=0,cap=0,raf=0,t0=0,scene=false,storyDone=Promise.resolve(),stuckCap=-1,stuckAt=0;
   // Ảnh tĩnh đã lưu từ lần vào trước (Sheet hinh_anh): logo, nền màn hình chờ
   const pics=()=>{try{return JSON.parse(localStorage.getItem('lh-img')||'{}')||{};}catch(e){return {};}};
   // v10.22: chặn phóng to trên điện thoại (chạm hai lần, chụm hai ngón) và ẩn giao diện trang chứa game
@@ -69,6 +69,9 @@ window.LH_Loader=window.LH_Loader||(()=>{
     // thanh chạy mượt về mốc đã đạt; trong lúc chờ mạng thì nhích dần tới sát mốc kế tiếp
     if(target<cap)target=Math.min(cap-1,target+(cap-target)*.006+.01);
     shown+=(target-shown)*.12;if(Math.abs(target-shown)<.05)shown=target;
+    // v10.70: kẹt quá 40 giây ở một mốc (mạng treo, lệnh không trả lời) thì hiện nút Tải lại thay vì đứng im mãi
+    if(cap!==stuckCap){stuckCap=cap;stuckAt=Date.now();}
+    else if(cap<100&&Date.now()-stuckAt>40000&&goBtn.hidden&&!goBtn.dataset.retry){goBtn.dataset.retry='1';goBtn.textContent='T\u{1EA3}i l\u{1EA1}i';goBtn.hidden=false;goBtn.onclick=()=>location.reload();lbl.textContent='Mạng chậm hoặc máy chủ chưa trả lời\u{2026}';}
     fill.style.width=shown.toFixed(1)+'%';pctEl.textContent=Math.floor(shown)+'%';
     if(scene)paint(t);
   }
@@ -79,7 +82,7 @@ window.LH_Loader=window.LH_Loader||(()=>{
       const P=pics(),src=P['giao_dien:nen_cho_'+(opt.bg||'')]||P['giao_dien:nen_cho']||'';
       if(src){if(!bgImg||bgImg.dataset.src!==src){bgImg=new Image();bgImg.referrerPolicy='no-referrer';bgImg.dataset.src=src;bgImg.src=src;}}else bgImg=null;
       scene=!!opt.scene||!!opt.story||!!bgImg;cv.style.display=scene?'':'none';
-      if(!opt.keep){shown=target=cap=0;}story.textContent='';goBtn.hidden=true;lbl.textContent=opt.label||'';
+      if(!opt.keep){shown=target=cap=0;}story.textContent='';goBtn.hidden=true;delete goBtn.dataset.retry;goBtn.textContent='Ti\u{1EBF}p t\u{1EE5}c';goBtn.onclick=null;stuckCap=-1;lbl.textContent=opt.label||'';
       if(opt.story){
         const words=String(opt.story).split(' ');let i=0;
         // chạm màn hình để hiện hết lời dẫn
@@ -91,7 +94,7 @@ window.LH_Loader=window.LH_Loader||(()=>{
     // pct: mốc vừa xong; next: mốc kế tiếp (thanh nhích dần trong lúc chờ)
     step(pct,label,next){mount();target=Math.max(target,pct);cap=Math.max(target,next||pct);if(label!=null)lbl.textContent=label;return L;},
     async done(opt={}){
-      mount();target=cap=100;lbl.textContent=opt.label||'S\u{1EB5}n s\u{00E0}ng';
+      mount();target=cap=100;lbl.textContent=opt.label||'S\u{1EB5}n s\u{00E0}ng';if(goBtn.dataset.retry){goBtn.hidden=true;delete goBtn.dataset.retry;goBtn.onclick=null;}
       await new Promise(r=>setTimeout(r,opt.fast?150:450));
       await storyDone;
       if(opt.confirm){goBtn.hidden=false;await new Promise(ok=>{goBtn.onclick=ok;});}
@@ -105,7 +108,7 @@ window.LH_Loader=window.LH_Loader||(()=>{
 })();
 ;/* ================= KHỞI ĐỘNG: hiện màn hình chờ ngay, tải CSS + JS của game có đếm phần trăm ================= */
 (function(){
-  var me=document.currentScript,base=(me&&me.src||'').replace(/[^\/]*$/,''),FILES={"css":{"name":"lu-hanh.css","size":57276},"js":{"name":"lu-hanh.js","size":841843}};
+  var me=document.currentScript,base=(me&&me.src||'').replace(/[^\/]*$/,''),FILES={"css":{"name":"lu-hanh.css","size":57276},"js":{"name":"lu-hanh.js","size":842676}};
   window.LH_BASE=window.LH_BASE||base;
   // v10.32: mở sẵn kết nối tới máy chủ Apps Script và kho ảnh Drive (đỡ vài trăm ms bắt tay TLS trên điện thoại)
   ['https://script.google.com','https://script.googleusercontent.com','https://lh3.googleusercontent.com'].forEach(function(h){try{var l=document.createElement('link');l.rel='preconnect';l.href=h;if(!/lh3/.test(h))l.crossOrigin='';document.head.appendChild(l);}catch(e){}});

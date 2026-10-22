@@ -105,9 +105,13 @@
     const cached=T.r?null:charsCached();
     if(cached&&!T.r){tent(cached,selId);note('Đang làm mới danh sách nhân vật…',true);}
     // phần chơi còn giữ trên máy (lần trước chưa kịp lưu): gửi trước để lều hiện đúng cấp, tiền
-    try{r=await (pre||Net.call('chars'));if(r&&r.__err)throw r.__err;let n=0;for(const c of r.list||r.chars||[])if(c&&c.id&&LH_Local.get(c.id)){await LH_Local.push(c.id).catch(()=>{});n++;}if(n)r=await Net.call('chars');}catch(e){Net.setToken('');note(netMsg(e));return auth('login');}
-    charsKeep(r);if(cached)note('');
-    tent(r,selId);
+    // v10.70: đã có lều đệm thì cho vào ngay, làm mới danh sách ngầm (máy chủ chậm / lệnh treo không còn giữ thanh tải ở 9x%)
+    const job=(async()=>{
+      try{r=await (pre||Net.call('chars'));if(r&&r.__err)throw r.__err;let n=0;for(const c of r.list||r.chars||[])if(c&&c.id&&LH_Local.get(c.id)){await Promise.race([LH_Local.push(c.id).catch(()=>{}),new Promise(ok=>setTimeout(ok,30000))]);n++;}if(n)r=await Net.call('chars');}catch(e){Net.setToken('');note(netMsg(e));return auth('login');}
+      try{charsKeep(r);if(cached)note('');tent(r,selId);}catch(e){LH_DIAG.error(e,'căn lều');note('Lỗi dựng căn lều: '+String(e&&e.message||e).slice(0,80)+' · thử tải lại trang');} // không để lỗi vẽ lều làm kẹt thanh tải
+    })();
+    if(cached){job.catch(()=>{});return;}
+    return job;
   }
   function tent(r,selId){
     T.r=r;T.mode='view';window.LH_USER=r.account&&r.account.username||''; // tên đăng nhập (ghi trong nội dung chuyển khoản khi nạp thẻ)
@@ -264,7 +268,7 @@
     let pChars=null;
     if(Net.online){
       // v10.32: dùng lại lệnh đã gửi sớm từ file khởi động (LH_PRE) nếu cùng phiên đăng nhập / cùng mã dữ liệu
-      const PRE=window.LH_PRE||{},early=(k,ok,fb)=>{const p=PRE[k];PRE[k]=null;return p&&ok?p.then(r=>{if(!r||!r.ok)throw 0;return r;}).catch(()=>fb()):fb();};
+      const PRE=window.LH_PRE||{},early=(k,ok,fb)=>{const p=PRE[k];PRE[k]=null;if(!(p&&ok))return fb();const lim=new Promise((_,no)=>setTimeout(()=>no(0),20000));return Promise.race([p,lim]).then(r=>{if(!r||!r.ok)throw 0;return r;}).catch(()=>fb());}; // v10.70: lệnh gửi sớm không có hạn giờ (fetch thô) → 20 giây không về thì gọi lại bình thường
       if(Net.token)pChars=early('chars',PRE.tok===Net.token,()=>Net.call('chars')).catch(e=>({__err:e}));
       // v10.31: dữ liệu tĩnh tải song song, không chặn đăng nhập / căn lều; chỉ chờ lúc bấm Vào làng
       dataReady=(async()=>{try{const d=await early('data',PRE.h===(cached?cached.h:''),()=>Net.call('data',{h:cached?cached.h:''}));
@@ -273,7 +277,7 @@
       if(!cached)await dataReady; // lần đầu (chưa có dữ liệu trong máy) vẫn chờ
     }
     L.step(from+(100-from)*.45,Net.token?'Tải nhân vật':'Sẵn sàng',from+(100-from)*.92);
-    if(Net.token)await chars(undefined,pChars);else auth('login');
+    try{if(Net.token)await chars(undefined,pChars);else auth('login');}catch(e){LH_DIAG.error(e,'cổng vào');note('Lỗi cổng vào: '+String(e&&e.message||e).slice(0,80));}
     await L.done();
   })();
 })();
