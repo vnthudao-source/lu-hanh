@@ -2263,6 +2263,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
   // v10.40: bấm / chạm vào lồng (điện thoại không có phím E): đứng xa thì tự đi tới rồi mở; đứng sát lồng sau khi đã hạ trùm thì tự mở
   function hqTouch(pt){
     if(wkTouch(pt))return true; // v10.65: Tôn Ngộ Không dưới núi
+    if(butTouch(pt))return true; // v10.74: Ông Bụt giữa hồ Rừng Trúc
     const c=cageAt();if(!c||Number(player.flags.rescue)>=1)return false;
     if(pt&&!(Math.abs(pt.x-c.x)<52&&pt.y>c.y-120&&pt.y<c.y+30))return false;
     if(Math.hypot(hero.x-c.x,hero.y-c.y)>110){if(!pt)return false;const p=World.findPath(hero,{x:c.x,y:c.y+44});if(p){route=p;targetNPC=null;cageWant=true;}return true;}
@@ -2715,8 +2716,93 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
       if(o.bub){o.bub.x=x;o.bub.y=y;}
     }
   }
+  /* ---------- v10.74: Ông Bụt giữa hồ Rừng Trúc (ô 38,30 cạnh hồ) — nhiệm vụ ẩn rìu đồng / bạc / vàng ----------
+     Tới gần bờ hồ: Bụt hiện lên giữa hồ, cầm rìu đồng, hỏi "có phải rìu ngươi đánh rơi?" — nhận bừa → Bụt biến mất ("Mỡ đấy mà húp!"),
+     nói không → đổi rìu bạc → rồi rìu vàng; tới rìu vàng mà nhận thì được Chùy sắt Hoàn hảo (một lần, lần sau Bụt không hiện nữa),
+     vẫn nói không thì Bụt khen thật thà rồi biến mất, không được gì (lần sau vào lại map Bụt lại hiện). */
+  const BUT_AT={map:'rung-truc',x:38,y:30,lx:41.5,ly:30.2};
+  let OB=null;
+  const butFlag=()=>Number(player.flags.but)||0;
+  const BUT_AXE=[['rìu đồng','#c47a3a','#8a4e22'],['rìu bạc','#dfe4ec','#8d96a6'],['rìu vàng','#f4c53a','#b8841a']];
+  function butTick(dt){
+    if(World.id!==BUT_AT.map){if(OB)OB=null;return;}
+    if(!OB||OB.map!==World.id){OB={map:World.id,x:BUT_AT.lx*T,y:BUT_AT.ly*T,sx:(BUT_AT.x+.5)*T,sy:(BUT_AT.y+.5)*T,ph:butFlag()?'gone':'hide',t:time,stage:0,swap:-9,near:false};OB.bub={name:'Ông Bụt',x:OB.x,y:OB.y-128,sayH:100};}
+    if(OB.ph==='gone')return;
+    OB.bub.x=OB.x;OB.bub.y=OB.y-128;
+    const d=Math.hypot(hero.x-OB.sx,hero.y-OB.sy);
+    if(OB.ph==='hide'){if(d<170&&!hero.dead){OB.ph='rise';OB.t=time;burst(OB.x,OB.y-10,'#fff6c0',30,170);fx.push({kind:'ring',x:OB.x,y:OB.y,r0:8,r1:96,color:'#ffe9a0',age:0,life:.8,lw:4});LH_Audio.play('magic');message(svg('eye')+'Có gì đó hiện lên giữa hồ nước…',3);}return;}
+    if(OB.ph==='rise'){if(time>OB.t+1){OB.ph='show';OB.t=time;}return;}
+    if(OB.ph==='show'){if(d<170&&!OB.near&&!dialogNPC&&!hero.dead&&!busy()){OB.near=true;butTalk();}else if(d>260)OB.near=false;}
+    else if(OB.ph==='fade'&&time>OB.t+1.2)OB.ph='gone';
+  }
+  function butTalk(){
+    if(!OB||OB.ph!=='show'||dialogNPC)return false;
+    const st=OB.stage;
+    const lines=st===0?['Ê thanh niên 6 ngón! Lại đây ông bảo!','Thanh niên không tin mình 6 ngón ư? Nhìn thử icon đánh thường đếm lại coi ta nói đúng không!','Đây có phải cây rìu mà ngươi đánh rơi không?']
+      :st===1?['Hừm… không phải à? Để ta lặn xuống mò lại…','Thế cây rìu bạc này, có phải của ngươi không?']
+      :['Lại không phải? Ngươi thật thà quá đấy… Ta hỏi lần cuối.','Cây rìu vàng này, có phải cây rìu ngươi đánh rơi không?'];
+    talkBox({id:'ong-but',name:'Ông Bụt',lines,choices:['Có, của tôi đấy!','Không phải của tôi'],onChoice:i=>{
+      if(!OB||OB.ph!=='show')return;
+      if(i===0){
+        if(st<2){butGone('Mỡ đấy mà húp!',2.6);return;}
+        op({t:'butChuy'}).then(r=>{const it=r&&r.item,d=it&&Player.info(it);tutSay(OB.bub,'Thôi! Đừng diễn nữa! Đây! Tặng tạm cho ngươi một cái chuỳ xài chơi!',4.4);
+            burst(hero.x,hero.y-40,'#ffe9a0',26,180);LH_Audio.play('quest');if(d)floater(hero.x,hero.y-96,'+ '+d.name+' · Hoàn hảo','#c0a0ff',15);
+            message(svg('bag')+'Ông Bụt tặng <b>'+esc(d?d.name:'Chùy')+' · Hoàn hảo</b> · đã vào túi đồ',6);window.GameUI?.refresh();OB.ph='fade';OB.t=time+3.6;},
+          e=>{const m=String(e&&e.message||e);tutSay(OB.bub,m==='BAG_FULL'?'Túi ngươi đầy rồi! Dọn chỗ rồi quay lại ta cho.':'Ơ… hôm nay ta không trao được.',3.4);message(svg('close')+(m==='BAG_FULL'?'Túi đồ đầy · dọn chỗ rồi nói lại với Ông Bụt':m==='DA_NHAN'?'Đã nhận quà của Ông Bụt rồi':m==='LEVEL'?'Chưa đủ cấp Rừng Trúc':'Chưa nhận được ('+esc(m)+')'),4);OB.near=false;});
+        return;}
+      if(st<2){OB.stage=st+1;OB.swap=time;burst(OB.x+16,OB.y-70,'#ffffff',18,140);LH_Audio.play('magic');
+        setTimeout(()=>{if(OB&&OB.ph==='show'&&!dialogNPC&&!hero.dead&&!busy())butTalk();else if(OB)OB.near=false;},1500);return;}
+      butGone('Ta biết ngươi là người thật thà! Thế Hoy đi nha!',3.4);
+    }});
+    return true;
+  }
+  function butGone(say,sec){tutSay(OB.bub,say,sec);OB.ph='fade';OB.t=time+sec-.4;}
+  // bấm vào Bụt / nhấn Space khi đứng gần bờ hồ: xa thì tự đi tới bờ
+  function butTouch(pt){
+    if(!OB||OB.map!==World.id||OB.ph!=='show')return false;
+    if(pt&&!(Math.abs(pt.x-OB.x)<70&&pt.y>OB.y-170&&pt.y<OB.y+30))return false;
+    if(Math.hypot(hero.x-OB.sx,hero.y-OB.sy)>170){if(!pt)return false;const p=World.findPath(hero,{x:OB.sx,y:OB.sy});if(p){route=p;targetNPC=null;OB.near=false;}return true;}
+    return butTalk();
+  }
+  // Ông Bụt: râu tóc bạc phơ, áo trắng, đứng trên áng mây giữa hồ, tay cầm rìu (đồng → bạc → vàng)
+  function drawBut(o){
+    const c=ctx,K=LH_BOSS.kit,t=time,ph=o.ph;
+    const u=ph==='rise'?Math.min(1,(t-o.t)/1):1,al=ph==='fade'?Math.max(0,1-Math.max(0,t-o.t)/1.2):u,bob=Math.sin(t*1.6)*4,rise=(1-u)*70;
+    if(al<=0)return;
+    c.save();c.translate(o.x,o.y);
+    // mặt nước gợn + ánh sáng dưới chân
+    c.globalAlpha=al*.55;for(let i=0;i<3;i++){const k=((t*.5+i/3)%1);c.strokeStyle='#dff6ff';c.lineWidth=1.2;c.globalAlpha=al*(1-k)*.6;c.beginPath();c.ellipse(0,6,22+k*50,7+k*16,0,0,PI2);c.stroke();}
+    c.globalAlpha=al;
+    c.save();c.translate(0,bob+rise);
+    if(u<1){c.save();c.beginPath();c.rect(-90,-200,180,200-rise);c.clip();}
+    K.glow(c,'#fff2b0',22);K.E(c,0,-70,46,78,'#fff4c840');K.noGlow(c);
+    // mây dưới chân
+    for(const [cx,cy,r] of [[-20,4,13],[0,8,16],[20,4,13],[32,9,9],[-32,9,9]])ell(c,cx,cy,r,r*.55,'#ffffff');ell(c,0,10,38,6,'#e8f0ff');
+    // áo trắng dài
+    K.F(c,[-18,-30,-24,0,24,0,18,-30,10,-78,-10,-78],'#f6f3ea');K.S(c,[-6,-76,-4,-40,-8,-2],'#d9d2c0',1.2);K.S(c,[0,-78,2,-30,0,-2],'#d9d2c0',1.2);
+    K.L(c,[-16,-44,16,-44],'#c9a24a',3); // dây lưng
+    // tay trái giơ rìu, tay phải chống gậy / vuốt râu
+    K.L(c,[-12,-66,-30,-52,-34,-36],'#f6f3ea',9);K.E(c,-34,-36,5,5,'#f1d3a8');
+    K.L(c,[12,-66,26,-58,30,-46],'#f6f3ea',9);K.E(c,30,-46,5,5,'#f1d3a8');
+    // đầu, mũ, râu
+    K.E(c,0,-92,13,14,'#f1d3a8');K.E(c,0,-104,13,6,'#f6f3ea');K.P(c,[-12,-104,12,-104,8,-118,-8,-118],'#f6f3ea');
+    K.E(c,-5,-94,1.4,1.6,'#2a1a10');K.E(c,5,-94,1.4,1.6,'#2a1a10');K.S(c,[-8,-98,-3,-100],'#e6e6e6',1.6);K.S(c,[3,-100,8,-98],'#e6e6e6',1.6);
+    K.F(c,[-11,-88,-14,-66,-6,-50,0,-44,6,-50,14,-66,11,-88,0,-84],'#f4f4f4');K.S(c,[-6,-88,0,-86,6,-88],'#8a6a4a',1); // râu dài, miệng cười
+    // rìu trong tay trái
+    const ax=BUT_AXE[Math.min(2,o.stage)],sw=Math.min(1,(t-(o.swap||-9))/.5),gl=1-sw;
+    c.save();c.translate(-34,-36);c.rotate(-.35+Math.sin(t*1.2)*.05);
+    K.L(c,[0,8,0,-40],'#7a4a22',4);
+    K.glow(c,ax[1],8+gl*20);K.P(c,[-3,-40,-20,-46,-24,-30,-16,-16,-3,-22],ax[1]);K.P(c,[-3,-40,-20,-46,-18,-40,-5,-36],ax[2]);K.noGlow(c);
+    if(gl>0){c.globalAlpha=al*gl;for(let i=0;i<6;i++){const a=i/6*PI2+t*3;K.E(c,-12+Math.cos(a)*18,-32+Math.sin(a)*18,2,2,'#ffffff');}c.globalAlpha=al;}
+    c.restore();
+    if(u<1)c.restore();
+    c.restore();
+    // hào quang tròn sau đầu
+    c.globalAlpha=al*.5;c.strokeStyle='#ffe28a';c.lineWidth=2.5;c.beginPath();c.arc(0,-92+bob+rise,22,0,PI2);c.stroke();
+    c.restore();
+  }
   function hqTick(dt){
-    btTick(dt);anTick(dt);vitTick(dt);wkTick(dt);fwTick();sqTick(dt);
+    btTick(dt);anTick(dt);vitTick(dt);wkTick(dt);butTick(dt);fwTick();sqTick(dt);
     {const c=cageAt();if(c&&!(Number(player.flags.rescue)>=1)&&!dialogNPC&&!hero.dead&&!tut){const near=Math.hypot(hero.x-c.x,hero.y-c.y)<110;
       if(cageWant&&!route.length){cageWant=false;if(near)hqTouch();}
       else if(near&&time>cageAuto&&((player.flags.kills||{})['hon-nguyen-ma-to']>0)){cageAuto=time+6;hqTouch();}}}
@@ -2859,7 +2945,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
   // bóng thoại của người chơi ảo
   function drawSay(){
     const placed=[];
-    for(const e of [...bots,...World.npcs,...(AN&&AN.map===World.id?[AN]:[]),...(DUCK&&DUCK.map===World.id?[DUCK]:[]),...(VIT&&VIT.duck?[VIT.duck]:[]),...(WK&&WK.map===World.id&&WK.bub?[WK.bub]:[]),...monsters.filter(m=>m.say)]){if(!e.say||time>e.say.until||(e.dead&&!e.say.mon))continue;const t=e.say.text;ctx.save();ctx.font='600 13px system-ui';
+    for(const e of [...bots,...World.npcs,...(AN&&AN.map===World.id?[AN]:[]),...(DUCK&&DUCK.map===World.id?[DUCK]:[]),...(VIT&&VIT.duck?[VIT.duck]:[]),...(WK&&WK.map===World.id&&WK.bub?[WK.bub]:[]),...(OB&&OB.map===World.id&&OB.bub?[OB.bub]:[]),...monsters.filter(m=>m.say)]){if(!e.say||time>e.say.until||(e.dead&&!e.say.mon))continue;const t=e.say.text;ctx.save();ctx.font='600 13px system-ui';
       // v10.54: câu dài tự xuống dòng (tối đa 240 px một dòng)
       const lines=[];{let cur='';for(const wd of t.split(' ')){const nx=cur?cur+' '+wd:wd;if(cur&&ctx.measureText(nx).width>240){lines.push(cur);cur=wd;}else cur=nx;}if(cur)lines.push(cur);}
       const w=Math.min(260,Math.max(...lines.map(l=>ctx.measureText(l).width))+20),h=9+lines.length*17,a=Math.min(1,(e.say.until-time)*3);
@@ -3079,7 +3165,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     const layers=[];
     for(const o of World.objects){const ox=o.kind==='house'?o.x*T:o.x,d=o.kind==='house'?o.foot:o.y;if(ox<vx0||ox>vx1||d<vy0||d>vy1)continue;layers.push([d,o]);}
     const vis=e=>e.x>vx0&&e.x<vx1&&e.y>vy0-160&&e.y<vy1; // v10.66: ngoài màn hình thì không vẽ
-    for(const n of World.npcs)if(vis(n))layers.push([n.y,n]);for(const m of monsters)if(vis(m))layers.push([m.y,m]);if(TGM&&TGM.ours)for(const b of TGM.ours)if(vis(b))layers.push([b.y,b]);layers.push([hero.y,hero]);for(const e of allies)if(vis(e))layers.push([e.y,e]);for(const e of bots)if(!e.dead&&e.x>vx0&&e.x<vx1&&e.y>vy0&&e.y<vy1)layers.push([e.y,e]);if(AN&&AN.map===World.id)layers.push([AN.y,AN]);if(DUCK&&DUCK.map===World.id)layers.push([DUCK.y,DUCK]);if(VIT&&VIT.map===World.id)layers.push([VIT.y,VIT]);if(WK&&WK.map===World.id)layers.push([WK.y,WK]);{const cg=cageAt();if(cg)layers.push([cg.y,{kind:'hq-cage',x:cg.x,y:cg.y}]);}if(World.def.ambient==='village')for(const a of village.list)if(a.x>vx0&&a.x<vx1&&a.y>vy0&&a.y<vy1)layers.push([a.y,a]);
+    for(const n of World.npcs)if(vis(n))layers.push([n.y,n]);for(const m of monsters)if(vis(m))layers.push([m.y,m]);if(TGM&&TGM.ours)for(const b of TGM.ours)if(vis(b))layers.push([b.y,b]);layers.push([hero.y,hero]);for(const e of allies)if(vis(e))layers.push([e.y,e]);for(const e of bots)if(!e.dead&&e.x>vx0&&e.x<vx1&&e.y>vy0&&e.y<vy1)layers.push([e.y,e]);if(AN&&AN.map===World.id)layers.push([AN.y,AN]);if(DUCK&&DUCK.map===World.id)layers.push([DUCK.y,DUCK]);if(VIT&&VIT.map===World.id)layers.push([VIT.y,VIT]);if(WK&&WK.map===World.id)layers.push([WK.y,WK]);if(OB&&OB.map===World.id&&OB.ph!=='gone'&&OB.ph!=='hide')layers.push([OB.y,OB]);{const cg=cageAt();if(cg)layers.push([cg.y,{kind:'hq-cage',x:cg.x,y:cg.y}]);}if(World.def.ambient==='village')for(const a of village.list)if(a.x>vx0&&a.x<vx1&&a.y>vy0&&a.y<vy1)layers.push([a.y,a]);
     layers.sort((a,b)=>a[0]-b[0]);
     for(const [,o] of layers){
       if(o===hero){if(hero.morph&&time<hero.morph.until&&!hero.dead)drawMorph();else drawHero(ctx,hero,st,el,time);drawDbf();if(hero.shieldHp>0){ctx.save();ctx.globalAlpha=.3+Math.sin(time*6)*.08;ctx.strokeStyle='#ffe9a8';ctx.lineWidth=2.5;ctx.beginPath();ctx.ellipse(hero.x,hero.y-24-seatH(),26,36,0,0,PI2);ctx.stroke();ctx.restore();}}
@@ -3087,6 +3173,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
       else if(o.amb)drawAmbient(o);
       else if(o.kind==='hq-cage')drawCage(o);
       else if(o===WK)drawWkMount(o);
+      else if(o===OB)drawBut(o);
       else if(o.duckling)drawDuck(o);
       else if(o.kind==='vit-egg')drawEgg(o);
       else drawScenery(o);
