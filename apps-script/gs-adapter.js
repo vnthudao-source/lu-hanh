@@ -137,7 +137,21 @@ const LH=LH_Core({
 });
 function lhKhoaBiMat_(){const P=PropertiesService.getScriptProperties();let k=P.getProperty('LH_KEY');if(!k){k=Utilities.getUuid()+Utilities.getUuid();P.setProperty('LH_KEY',k);}return k;}
 // Lệnh ghi có mã rid: gửi lại cùng mã (mạng rớt, đổi đường GET/POST) thì trả lại kết quả cũ, không chạy lần hai
+// v10.76: chặn thử dồn dập (dò mật khẩu, dò mã khôi phục, xả email khôi phục, tạo tài khoản hàng loạt) — đếm số lần theo khóa trong CacheService
+function lhGioiHan_(key,max,giay){
+  try{const c=CacheService.getScriptCache(),k='gh:'+key,n=Number(c.get(k)||0)+1;c.put(k,String(n),giay);return n>max;}catch(e){return false;}
+}
+function lhChanDonDap_(p){
+  const a=p.action,u=String(p.username||p.email||'').trim().toLowerCase().slice(0,80),e=String(p.email||'').trim().toLowerCase().slice(0,80);
+  if(a==='login'&&u&&lhGioiHan_('login:'+u,12,600))return 'QUA_NHIEU_LAN';            // 12 lần / 10 phút cho một tên đăng nhập
+  if(a==='forgot'&&e&&lhGioiHan_('forgot:'+e,3,900))return 'QUA_NHIEU_LAN';          // 3 email khôi phục / 15 phút cho một địa chỉ
+  if(a==='forgot'&&lhGioiHan_('forgot:*',40,3600))return 'QUA_NHIEU_LAN';            // 40 email / giờ toàn máy chủ (hạn ngạch MailApp)
+  if(a==='reset'&&e&&lhGioiHan_('reset:'+e,6,900))return 'QUA_NHIEU_LAN';            // 6 lần thử mã / 15 phút (mã 6 số không dò được)
+  if(a==='register'&&lhGioiHan_('register:*',30,600))return 'QUA_NHIEU_LAN';         // 30 tài khoản mới / 10 phút toàn máy chủ
+  return '';
+}
 function lhRun_(p){
+  {const chan=lhChanDonDap_(p);if(chan)return JSON.stringify({ok:false,error:chan});}
   // v10.37: bảng xếp hạng đọc cả bảng nhân vật, giữ kết quả 10 phút cho trang chủ đỡ chờ
   if(p.action==='rank'){const c=CacheService.getScriptCache(),h=c.get('lh-rank');if(h)return h;LH_DB.fresh();const out=JSON.stringify(LH.handle('rank',{}));if(out.length<95000)c.put('lh-rank',out,600);return out;}
   if(p.action==='dtIndex')return JSON.stringify({ok:false,error:'KHONG_CO_LENH'});

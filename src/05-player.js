@@ -736,6 +736,7 @@ const Player=(()=>{
     if(t==='tgStart'||t==='tgKill'||t==='tgEnd')return tgOp(s,op,srv,now,rng);
     if(t==='kill'){
       const M=MON[op.mon];if(!M)throw Error('MON');
+      {const R=regionOf(op.mon);if(REGIONS.some(r=>r.id===R)&&(s.level||1)<mapLevel(R))throw Error('LEVEL');} // v10.76: chưa đủ cấp vào vùng thì không thể "hạ" quái vùng đó (chặn gửi lệnh giả)
       srv.kills=srv.kills||{};const win=Math.max(5,M.respawn)*1000,log=(srv.kills[op.mon]||[]).filter(x=>now-x<win);
       if(log.length>=KILL_LIMIT(op.mon))throw Error('NHANH_QUA');log.push(now);srv.kills[op.mon]=log;
       const D=derive(s),F=D.fx||{},copper=killCopper(M,F.coinUp),exp=Math.min(expNeed(s.level||1),Math.round(killExp(M,num(F.expUp)+xpBuff(s,now))*expLvK(s.level||1,op.mon))); // v10.35: phạt chênh cấp, mỗi con tối đa 1 cấp
