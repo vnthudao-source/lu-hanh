@@ -34,8 +34,9 @@ header{height:94px;display:flex;align-items:center;justify-content:space-between
 .layout{position:relative;height:calc(var(--app-h,100dvh) - 94px);overflow:hidden}
 #scene{display:block;width:100%;height:100%;touch-action:none;outline:none}
 .floating{position:absolute;pointer-events:none}
-.map-box{position:absolute;right:22px;top:16px;display:flex;flex-direction:column;align-items:flex-end;gap:6px;pointer-events:none}
+.map-box{position:absolute;right:22px;top:16px;display:flex;flex-direction:column;align-items:flex-end;gap:6px;pointer-events:auto}
 #minimap{display:block;width:180px;height:96px;background:#183324;border:5px solid #15221de0;border-radius:13px}
+.map-box{cursor:pointer}.map-box:hover #minimap,.map-box:focus-visible #minimap{border-color:#f6dc9c}.map-box:focus-visible{outline:none}
 .map-meta{display:flex;align-items:center;gap:6px;font-size:11px;line-height:1.2;color:#e6e4ca;background:#15221de6;border:1px solid var(--line);border-radius:8px;padding:6px 9px;white-space:nowrap}
 .map-meta svg{width:13px;height:13px;flex:none;color:var(--gold)}
 .map-meta .coord{color:#a9b8a6;font-variant-numeric:tabular-nums}

@@ -607,7 +607,7 @@ window.startUI=(session)=>{
   async function save(){closeMenu();const ok=await game.save();game.message(ok?svg('save')+'Đã lưu':svg('close')+'Không lưu được');}
   $('#avatarBtn').onclick=showAttributes;
   $('#settingsBtn').onclick=()=>{menu.hidden=!menu.hidden;$('#settingsBtn').setAttribute('aria-expanded',String(!menu.hidden));};
-  $('#lockBtn').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();game.toggleLock();});$('#saveBtn').onclick=save;$('#mapBtn').onclick=showMaps;
+  $('#lockBtn').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();game.toggleLock();});$('#saveBtn').onclick=save;{const mb=$('#mapBox');mb.onclick=showMaps;mb.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showMaps();}};} // v10.72: mục Bản đồ rời menu, bấm vào bản đồ nhỏ để chọn vùng
   // Âm thanh: bật / tắt (lưu trong máy)
   const amBtn=$('#amBtn'),amPaint=()=>{amBtn.classList.toggle('off',!LH_Audio.on);amBtn.querySelector('span').textContent=LH_Audio.on?'Âm thanh: bật':'Âm thanh: tắt';};amPaint();
   amBtn.onclick=()=>{LH_Audio.toggle();amPaint();if(LH_Audio.on){LH_Audio.unlock();LH_Audio.play('open');game.musicScene();}game.message(svg('sound')+(LH_Audio.on?'Âm thanh: bật':'Âm thanh: tắt'));};
