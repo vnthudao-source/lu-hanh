@@ -828,7 +828,10 @@ const Player=(()=>{
     if(t==='wkTha'){if(num(s.flags.wk))throw Error('DA_THA');if((s.level||1)<mapLevel('nui-tuyet'))throw Error('LEVEL');s.flags.wk=1;return {wk:1};}
     // v10.74: Ông Bụt giữa hồ Rừng Trúc — nói thật ba lần thì được tặng Chùy sắt Hoàn hảo (một lần duy nhất)
     if(t==='butChuy'){if(num(s.flags.but)>=1)throw Error('DA_NHAN');if((s.level||1)<mapLevel('rung-truc'))throw Error('LEVEL');if(!items['mace-iron'])throw Error('ITEM');if(!s.bag.includes(null))throw Error('BAG_FULL');const it=roll('mace-iron','p',rng);addItem(s,it);s.flags.but=1;return {but:1,item:it};}
-    if(t==='wkHa'){if(num(s.flags.wk)!==1)throw Error('CHUA_THA');s.flags.wk=2;const ru=Math.max(0,Math.floor(num(CFG.ngo_khong_hong_ngoc,1)));s.rubies+=ru;return {wk:2,rubies:ru};}
+    // v10.77: hạ Tôn Ngộ Không còn được thêm một món đồ Hoàn hảo ngẫu nhiên (vũ khí / giáp thường, bậc theo vùng Rừng Trúc). Túi đầy thì chưa tính là hạ — dọn túi rồi quay lại đánh lại
+    if(t==='wkHa'){if(num(s.flags.wk)!==1)throw Error('CHUA_THA');if(!s.bag.includes(null))throw Error('BAG_FULL');
+      const pool=BASE_DROP(),lvl=regionLv('rung-truc'),it=pool.length?roll(pool[Math.floor(rng()*pool.length)],'p',rng,lvl>=20?lvl:0):null;if(it)addItem(s,it);
+      s.flags.wk=2;const ru=Math.max(0,Math.floor(num(CFG.ngo_khong_hong_ngoc,1)));s.rubies+=ru;return {wk:2,rubies:ru,item:it};}
     if(t==='rescueHome'){if(num(s.flags.rescue)!==1)throw Error('CHUA_CUU');s.flags.rescue=2;keepsake(s);const ru=Math.max(0,Math.floor(num(CFG.cuu_con_hong_ngoc,999)));s.rubies+=ru;return {rescue:2,rubies:ru};}
     if(t==='pkWin'){srv.pkAt=num(srv.pkAt);if(now-srv.pkAt<60000)throw Error('NHANH_QUA');srv.pkAt=now;s.flags.freeRecruit=Math.min(5,num(s.flags.freeRecruit)+1);return {free:s.flags.freeRecruit};}
     if(t==='recruitHire'){const m=recruitHire(s,rng);return {mid:m.mid,name:m.name,lv:m.lv,tier:m.tier};}

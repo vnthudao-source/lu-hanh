@@ -2630,11 +2630,14 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     message(svg('eye')+'<b>Tôn Ngộ Không</b> phân thân! Chỉ một con là thật · bản sao trúng đòn sẽ hiện nguyên hình sợi lông khỉ',5);
   }
   function wkDown(b,owner){
+    // v10.77: phần thưởng có đồ Hoàn hảo — túi đầy thì Ngộ Không chưa chịu thua (còn 1 máu), dọn túi rồi đánh tiếp
+    if(!player.bag.includes(null)){b.hp=Math.max(1,Math.round(b.max*.05));b.dead=false;if(time>(b.fullMsg||0)){b.fullMsg=time+5;bossSpeak&&bossSpeak(b,'Túi ngươi đầy rồi, lấy gì đựng quà của lão Tôn? Ha ha!',3.2);message(svg('bag')+'Túi đồ đầy · dọn một ô trống để nhận quà khi hạ Tôn Ngộ Không',5);}return;}
     const M=MON[b.type];b.dead=true;b.deadAt=time;b.respawn=1e18;b.atk=null;b.burn=null;b.leap=null;b.cast=null;
     for(const k of b.kids||[])if(!k.dead){k.hp=0;addDown(k,'');}
     burst(b.x,b.y-M.h*.4,'#ffd060',40,240);shake(10);LH_Audio.play('boss');message(svg('check')+'Đã hạ '+M.name);
-    op({t:'wkHa'}).then(r=>{if(r&&r.rubies){floater(b.x,b.y-M.h-30,'+'+r.rubies,'#ff9ab8',16,'ruby');message(svg('heart')+`Hạ Tôn Ngộ Không · nhận ${r.rubies} hồng ngọc`,6);}window.GameUI?.refresh();},
-      e=>message(svg('close')+'Chưa nhận được thưởng ('+esc(String(e&&e.message||e))+')',4));
+    op({t:'wkHa'}).then(r=>{const d=r&&r.item&&Player.info(r.item),Q=Player.RAR.p||{};if(r&&r.rubies)floater(b.x,b.y-M.h-30,'+'+r.rubies,'#ff9ab8',16,'ruby');if(d){floater(hero.x,hero.y-96,'+ '+d.name+' \u00b7 Hoàn hảo',Q.color||'#c0a0ff',15);LH_Audio.play('rare');}
+        message(svg('heart')+`Hạ Tôn Ngộ Không · nhận ${r&&r.rubies?r.rubies+' hồng ngọc':''}${r&&r.rubies&&d?' và ':''}${d?'<b>'+esc(d.name)+' · Hoàn hảo</b> (đã vào túi đồ)':''}`,7);window.GameUI?.refresh();},
+      e=>message(svg('close')+'Chưa nhận được thưởng ('+esc(String(e&&e.message||e))+')',5));
     void owner;
   }
   // nói chuyện với Tôn Ngộ Không dưới núi
