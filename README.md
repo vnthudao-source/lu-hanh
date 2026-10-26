@@ -27,6 +27,7 @@ Game và trang chủ có hai ngôn ngữ, **chung một máy chủ, chung tài k
 - Thêm chữ mới vào game: chạy `node tools/i18n-extract.mjs` → `tools/i18n/vi-segments.json` liệt kê mọi đoạn chữ; đoạn nào chưa có trong `en.json` thì thêm bản dịch vào `en-extra.json` (hướng dẫn dịch: `tools/i18n/HUONG-DAN-DICH.md`).
 - Sheet: thêm cột `ten_en` (hoặc `mo_ta_en`, … — tên cột gốc + `_en`) cạnh cột tiếng Việt, game tự dùng ở chế độ English, không cần build lại.
 - Trang chủ (`blogspot/trang-chu-theme.xml`): từ điển riêng nằm trong đoạn script đầu `<head>` (lấy từ `tools/i18n/home-en.json`); bài viết và tên người chơi giữ nguyên.
+- Hai bộ dịch không được chạy chồng nhau (v10.80): theme Blogspot áp cho mọi trang, kể cả trang game. Game đánh dấu `<body data-lh-root data-noi18n>` để bộ dịch của theme bỏ qua; theme cũng tự bỏ qua `/p/lu-hanh.html`. Trước v10.80 hai bộ dịch cùng sửa chữ game, gặp chữ như "Sa mạc" (theme dịch thành "Sa mạc · Desert", vẫn còn chữ gốc) thì dịch lặp vô tận → bấm bản đồ nhỏ là đơ trang.
 
 ## Chợ phiên (trang riêng)
 

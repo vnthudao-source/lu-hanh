@@ -1,4 +1,4 @@
-/*! Lữ Hành v10.79 · khởi động · https://github.com/vnthudao-source/lu-hanh */
+/*! Lữ Hành v10.80 · khởi động · https://github.com/vnthudao-source/lu-hanh */
 /* ================= NGÔN NGỮ (v10.78): tiếng Việt / English =================
    Mã nguồn giữ nguyên chữ tiếng Việt. Ở chế độ English, chữ được đổi lúc hiện ra màn hình:
    - Chữ trong trang (DOM): MutationObserver đổi từng nút chữ + thuộc tính title / placeholder / aria-label / alt.
@@ -61,7 +61,11 @@ window.LH_I18N=window.LH_I18N||(()=>{
   }
   // ----- DOM
   const ATTRS=['title','placeholder','aria-label','alt'];let done=new WeakMap();
-  const skipEl=el=>!!(el&&el.closest&&el.closest('script,style,textarea,input,[contenteditable],[data-noi18n]'));
+  // v10.80: data-noi18n trên <body> (kèm data-lh-root) chỉ để script song ngữ của theme Blogspot bỏ qua trang game \u{2014} bộ dịch của game vẫn dịch bên trong
+  const skipEl=el=>!!(el&&el.closest&&el.closest('script,style,textarea,input,[contenteditable],[data-noi18n]:not([data-lh-root])'));
+  // v10.80: theme trang chủ cũng có bộ dịch riêng chạy trên mọi trang. Hai bộ dịch cùng sửa chữ game \u{2192} vòng lặp vô tận
+  // ("Sa mạc" \u{2192} "Sa mạc \u{b7} Desert" \u{2192} "Sa mạc \u{b7} Desert \u{b7} Desert"\u{2026}), bấm bản đồ nhỏ là đơ. Đánh dấu <body> để theme không đụng vào trang game.
+  const fenceHome=()=>{try{const b=document.body;if(b&&!b.hasAttribute('data-lh-root')){b.setAttribute('data-lh-root','');b.setAttribute('data-noi18n','');}}catch(e){}};
   // v10.79: chống giành giật \u{2014} nút chữ bị mã game ghi lại liên tục (>20 lần / giây) thì thôi dịch nút đó, không để hai bên ghi qua ghi lại làm đơ
   let hot=new WeakMap(),hotT=0;
   function fixText(node){const v=node.data;if(done.get(node)===v)return;const parent=node.parentNode;if(!parent||skipEl(parent))return;
@@ -83,8 +87,9 @@ window.LH_I18N=window.LH_I18N||(()=>{
   let obs=null;
   function startDom(){
     if(obs||!EN||typeof MutationObserver==='undefined')return;
+    fenceHome();
     const go=()=>{
-      try{document.documentElement.lang='en';}catch(e){}
+      fenceHome();try{document.documentElement.lang='en';}catch(e){}
       walk(document.body);paintLang(document.body);
       // v10.79: cầu chì \u{2014} bản dịch tốn quá 250 ms trong 1 giây (vòng lặp với mã khác) thì tạm dừng 3 giây, ghi vào Tình trạng, không để trang đơ
       let spent=0,win=0,trips=0;
@@ -261,7 +266,7 @@ window.LH_Loader=window.LH_Loader||(()=>{
 })();
 ;/* ================= KHỞI ĐỘNG: hiện màn hình chờ ngay, tải CSS + JS của game có đếm phần trăm ================= */
 (function(){
-  var me=document.currentScript,base=(me&&me.src||'').replace(/[^\/]*$/,''),FILES={"css":{"name":"lu-hanh.css","size":57714},"js":{"name":"lu-hanh.js","size":387168},"game":{"name":"lu-hanh-game.js","size":471454}};
+  var me=document.currentScript,base=(me&&me.src||'').replace(/[^\/]*$/,''),FILES={"css":{"name":"lu-hanh.css","size":57714},"js":{"name":"lu-hanh.js","size":387346},"game":{"name":"lu-hanh-game.js","size":471454}};
   window.LH_BASE=window.LH_BASE||base;
   // v10.32: mở sẵn kết nối tới máy chủ Apps Script và kho ảnh Drive (đỡ vài trăm ms bắt tay TLS trên điện thoại)
   ['https://script.google.com','https://script.googleusercontent.com','https://lh3.googleusercontent.com'].forEach(function(h){try{var l=document.createElement('link');l.rel='preconnect';l.href=h;if(!/lh3/.test(h))l.crossOrigin='';document.head.appendChild(l);}catch(e){}});

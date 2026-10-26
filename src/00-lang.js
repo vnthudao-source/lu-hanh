@@ -60,7 +60,11 @@ window.LH_I18N=window.LH_I18N||(()=>{
   }
   // ----- DOM
   const ATTRS=['title','placeholder','aria-label','alt'];let done=new WeakMap();
-  const skipEl=el=>!!(el&&el.closest&&el.closest('script,style,textarea,input,[contenteditable],[data-noi18n]'));
+  // v10.80: data-noi18n trên <body> (kèm data-lh-root) chỉ để script song ngữ của theme Blogspot bỏ qua trang game — bộ dịch của game vẫn dịch bên trong
+  const skipEl=el=>!!(el&&el.closest&&el.closest('script,style,textarea,input,[contenteditable],[data-noi18n]:not([data-lh-root])'));
+  // v10.80: theme trang chủ cũng có bộ dịch riêng chạy trên mọi trang. Hai bộ dịch cùng sửa chữ game → vòng lặp vô tận
+  // ("Sa mạc" → "Sa mạc · Desert" → "Sa mạc · Desert · Desert"…), bấm bản đồ nhỏ là đơ. Đánh dấu <body> để theme không đụng vào trang game.
+  const fenceHome=()=>{try{const b=document.body;if(b&&!b.hasAttribute('data-lh-root')){b.setAttribute('data-lh-root','');b.setAttribute('data-noi18n','');}}catch(e){}};
   // v10.79: chống giành giật — nút chữ bị mã game ghi lại liên tục (>20 lần / giây) thì thôi dịch nút đó, không để hai bên ghi qua ghi lại làm đơ
   let hot=new WeakMap(),hotT=0;
   function fixText(node){const v=node.data;if(done.get(node)===v)return;const parent=node.parentNode;if(!parent||skipEl(parent))return;
@@ -82,8 +86,9 @@ window.LH_I18N=window.LH_I18N||(()=>{
   let obs=null;
   function startDom(){
     if(obs||!EN||typeof MutationObserver==='undefined')return;
+    fenceHome();
     const go=()=>{
-      try{document.documentElement.lang='en';}catch(e){}
+      fenceHome();try{document.documentElement.lang='en';}catch(e){}
       walk(document.body);paintLang(document.body);
       // v10.79: cầu chì — bản dịch tốn quá 250 ms trong 1 giây (vòng lặp với mã khác) thì tạm dừng 3 giây, ghi vào Tình trạng, không để trang đơ
       let spent=0,win=0,trips=0;
