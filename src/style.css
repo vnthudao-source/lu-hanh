@@ -159,7 +159,7 @@ button.primary:hover{background:linear-gradient(#b8533a,#8a3320)}
 @media(max-width:760px){.card-head{align-items:flex-start}.card-head .ttl{flex-wrap:wrap;min-width:0;flex:1}.shop-tabs button{white-space:nowrap}.equipment-slot{min-height:50px;aspect-ratio:auto}.shop-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.enh{grid-template-columns:1fr}.enh-list{grid-template-columns:repeat(7,minmax(0,1fr))}.stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tile .nm{font-size:11.5px}.sel-bar button{font-size:12px;padding:7px 8px}.shop-tabs button{padding:7px 8px;font-size:12px}.purse{gap:6px;padding:5px 7px}}
 /* ---------- v7: cổng vào, phẩm chất, trùm, lính, chợ ---------- */
 .portal{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:14px;background:radial-gradient(circle at 50% 20%,#2c4a36,#0d1a13 70%);overflow:auto}
-.portal-card{width:min(440px,100%);background:#1c2e23f2;border:1px solid #ab956a77;border-radius:18px;padding:20px 18px;box-shadow:0 20px 60px #000a}
+.portal-card{position:relative;width:min(440px,100%);background:#1c2e23f2;border:1px solid #ab956a77;border-radius:18px;padding:20px 18px;box-shadow:0 20px 60px #000a}
 .plogo{text-align:center;margin-bottom:14px}.plogo-img{display:block;max-width:220px;max-height:90px;margin:0 auto;object-fit:contain}
 img.icon.pic{object-fit:contain}
 .avatar .pf-img{position:absolute;inset:3px;width:calc(100% - 6px);height:calc(100% - 6px);border-radius:50%;object-fit:cover;pointer-events:none}
@@ -468,3 +468,7 @@ button.fx-vang{color:#ffe08a}button.fx-cau-vong{color:#ffb0ff}button.fx-lua{colo
 
 /* v10.66: chọn chế độ đồ họa trong bảng Tình trạng */
 .dg-perf{display:inline-flex;flex-wrap:wrap;gap:4px}.dg-perf button{padding:3px 8px;font-size:11px;border-radius:7px;background:#1b2a24;border:1px solid #b5ba9855;color:#d8d0b8}.dg-perf button.on{background:#3a5a46;color:#fff3c4;border-color:#9fe8a8}
+
+/* v10.78: nút đổi ngôn ngữ ở cổng đăng nhập */
+.plang{position:absolute;top:10px;right:10px;padding:4px 10px;border-radius:999px;border:1px solid #ab956a99;background:#0d1712cc;color:#f3e6c4;font:600 12px/1.4 system-ui;cursor:pointer;z-index:2}
+.plang:hover{background:#2a3f31}

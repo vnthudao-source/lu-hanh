@@ -18,6 +18,16 @@ Dán nội dung `blogspot/nhung-vao-blogspot.html` vào bài viết ở chế đ
 
 `window.LH_API` là URL Web App (đuôi `/exec`), đã điền sẵn máy chủ Việt Nam. Để trống thì game chạy ngoại tuyến, lưu trên trình duyệt (`dist/lu-hanh-offline.html` để thử).
 
+## Tiếng Anh (v10.78)
+
+Game và trang chủ có hai ngôn ngữ, **chung một máy chủ, chung tài khoản**. Mã nguồn vẫn viết tiếng Việt; ở chế độ English chữ được đổi lúc hiện ra màn hình (`src/00-lang.js`), luật chơi và dữ liệu không đổi.
+
+- Chọn ngôn ngữ: thêm `?lang=en` / `?lang=vi` vào đường dẫn game, hoặc bấm nút **English / Tiếng Việt** (menu trong game, cổng đăng nhập, trang chủ). Lựa chọn được nhớ trên trình duyệt (`lh-lang`).
+- Từ điển: `tools/i18n/en.json` (bản dịch tự động, giữ nguyên tên riêng đất và người) + `tools/i18n/en-extra.json` (sửa tay, đè lên). Build ra `dist/lang-en.js`, chỉ tải khi chơi tiếng Anh.
+- Thêm chữ mới vào game: chạy `node tools/i18n-extract.mjs` → `tools/i18n/vi-segments.json` liệt kê mọi đoạn chữ; đoạn nào chưa có trong `en.json` thì thêm bản dịch vào `en-extra.json` (hướng dẫn dịch: `tools/i18n/HUONG-DAN-DICH.md`).
+- Sheet: thêm cột `ten_en` (hoặc `mo_ta_en`, … — tên cột gốc + `_en`) cạnh cột tiếng Việt, game tự dùng ở chế độ English, không cần build lại.
+- Trang chủ (`blogspot/trang-chu-theme.xml`): từ điển riêng nằm trong đoạn script đầu `<head>` (lấy từ `tools/i18n/home-en.json`); bài viết và tên người chơi giữ nguyên.
+
 ## Chợ phiên (trang riêng)
 
 Trên Blogspot tạo **Trang** mới, đường dẫn `cho-phien`, dán `blogspot/cho-phien.html` (chế độ HTML). Trang này dùng chung tài khoản và máy chủ với game: ký gửi đồ Hoàn hảo, Huyền thoại, Thần, mua đồ, mua nhân vật người khác làm lính đi theo, nhận tiền bán hàng.

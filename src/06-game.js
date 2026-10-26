@@ -2950,7 +2950,7 @@ fx.push({kind:'ring',x:m.x+m.facing*(M.boss?20:40),y:m.y,r0:10,r1:M.boss?reach:7
     const placed=[];
     for(const e of [...bots,...World.npcs,...(AN&&AN.map===World.id?[AN]:[]),...(DUCK&&DUCK.map===World.id?[DUCK]:[]),...(VIT&&VIT.duck?[VIT.duck]:[]),...(WK&&WK.map===World.id&&WK.bub?[WK.bub]:[]),...(OB&&OB.map===World.id&&OB.bub?[OB.bub]:[]),...monsters.filter(m=>m.say)]){if(!e.say||time>e.say.until||(e.dead&&!e.say.mon))continue;const t=e.say.text;ctx.save();ctx.font='600 13px system-ui';
       // v10.54: câu dài tự xuống dòng (tối đa 240 px một dòng)
-      const lines=[];{let cur='';for(const wd of t.split(' ')){const nx=cur?cur+' '+wd:wd;if(cur&&ctx.measureText(nx).width>240){lines.push(cur);cur=wd;}else cur=nx;}if(cur)lines.push(cur);}
+      const lines=[];{let cur='';for(const wd of LH_T(t).split(' ')){const nx=cur?cur+' '+wd:wd;if(cur&&ctx.measureText(nx).width>240){lines.push(cur);cur=wd;}else cur=nx;}if(cur)lines.push(cur);}
       const w=Math.min(260,Math.max(...lines.map(l=>ctx.measureText(l).width))+20),h=9+lines.length*17,a=Math.min(1,(e.say.until-time)*3);
       let y;if(e.say.mon){const M=MON[e.type],MT=Math.max(M.h,(LH_BOSS.top||{})[e.type]||0);y=e.y-MT-46-h;}else y=e.data?e.y-128-seatOf(e.data.equipment):e.y-(e===AN?84:e.duckling?62:(e.sayH||108)); // v10.34: dân làng, con gái cũng nói
       if(!e.say.mon)y-=h-26;

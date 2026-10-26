@@ -66,7 +66,7 @@ const Net={
 const LH_DIAG=(()=>{
   const K='lh-diag',st={err:[],net:[]};try{Object.assign(st,JSON.parse(localStorage.getItem(K)||'{}'));}catch(e){}
   const save=()=>{try{localStorage.setItem(K,JSON.stringify(st));}catch(e){}};
-  const t=()=>new Date().toLocaleTimeString('vi-VN');
+  const t=()=>new Date().toLocaleTimeString(LH_I18N.loc);
   return {
     error(e,where){const m=String(e&&e.message||e).slice(0,160),s=String(e&&e.stack||'').split('\n').slice(0,3).join(' | ').slice(0,300);st.err.unshift({t:t(),where,m,s});st.err=st.err.slice(0,8);save();},
     net(a,err){st.net.unshift({t:t(),a,err:err||''});st.net=st.net.slice(0,8);save();},

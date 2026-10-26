@@ -11,7 +11,7 @@ const root=path.resolve(path.dirname(new URL(import.meta.url).pathname),'..');
 const rd=f=>fs.readFileSync(path.join(root,f),'utf8'),wr=(f,s)=>{fs.writeFileSync(path.join(root,f),s);console.log(f.padEnd(24),s.length);};
 const V=rd('VERSION').trim();
 const API='https://script.google.com/macros/s/AKfycbwEUXIQSLK1t6FXNDDD18lbJGNomqhMAzcwh55N_uzKbUL19LaxvieMyhLpzrB06VfzgA/exec';
-const GAME=['00-loader.js','01-data.js','01-data-vung.js','01-data-canbang.js','02-core.js','03-net.js','03-audio.js','03-img.js','04-art.js','04-boss.js','04-boss-cao.js','04-boss-thoai.js','04-world.js','04-looks.js','05-player.js','06-game.js','07-tro-choi.js','07-ui.js','08-portal.js'];
+const GAME=['00-lang.js','00-loader.js','01-data.js','01-data-vung.js','01-data-canbang.js','02-core.js','03-net.js','03-audio.js','03-img.js','04-art.js','04-boss.js','04-boss-cao.js','04-boss-thoai.js','04-world.js','04-looks.js','05-player.js','06-game.js','07-tro-choi.js','07-ui.js','08-portal.js'];
 const CHO=['cho/cho.js'];
 // CSS: gắn mọi luật vào khung gốc (#lu-hanh, #cho-phien) để giao diện Blogspot không đè được (nút, chữ, ô nhập)
 function scope(src,id){
@@ -33,7 +33,7 @@ const safe=t=>t.replace(/[^\x00-\x7f]/gu,ch=>/[\p{L}\p{M}\p{N}]/u.test(ch)?ch:'\
 const banner=name=>`/*! Lữ Hành ${V} · ${name} · https://github.com/vnthudao-source/lu-hanh */\n`;
 const inject=(body,probe)=>`(function(){if(document.getElementById('${probe}'))return;document.body.insertAdjacentHTML('beforeend',${safe(JSON.stringify(body))});})();\n`;
 const page=(title,css,body,js,api)=>`<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="game-version" content="${V}"><title>${title}</title><style>\n${css}</style></head><body>\n${body}<script>${cfgJs(api)}</script>\n${js.map(s=>`<script>\n${s}</script>\n`).join('')}</body></html>\n`;
-const cfgJs=api=>`window.LH_API='${api}';window.LH_CHO='https://www.ikyna.com/p/cho-phien.html';window.LH_GAME='https://www.ikyna.com/';`;
+const cfgJs=api=>`window.LH_API='${api}';window.LH_CHO='https://www.ikyna.com/p/cho-phien.html';window.LH_GAME='https://www.ikyna.com/';window.LH_LANG_CDN='https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@ban-${V.replace(/^v/,'')}/dist/';`;
 // ---- bản đồ (thư mục maps/): bản đồ đầu nằm sẵn trong game; bản đồ khác là gói dist/maps/<mã>.js = dữ liệu maps/<mã>.json + hình vẽ maps/<mã>.art.js
 const MAP0='thanh-moc',mapIds=fs.readdirSync(path.join(root,'maps')).filter(f=>f.endsWith('.json')).map(f=>f.slice(0,-5));
 const mapOf=id=>JSON.parse(rd('maps/'+id+'.json'));
@@ -51,6 +51,9 @@ for(const id of mapIds){const d=mapOf(id);if(d.id!==id)throw Error('maps/'+id+'.
   if(id===MAP0)continue;for(const m of d.monsters||[])monPack[m.type]=monPack[m.type]||id;
   wr('dist/maps/'+id+'.js',await mini(packOf(id),'maps/'+id));}
 const mapJs=ids=>`window.LH_MAP_CDN='https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@ban-${V.replace(/^v/,'')}/dist/maps/';window.LH_MON_PACK=${JSON.stringify(monPack)};`+'window.LH_MAPS=window.LH_MAPS||{};'+ids.map(id=>id===MAP0?`window.LH_MAPS[${JSON.stringify(id)}]=${JSON.stringify(mapOf(id))};`:packOf(id)).join('\n');
+// ---- v10.78: từ điển tiếng Anh (tools/i18n/en.json) → dist/lang-en.js, chỉ tải khi chơi ở chế độ English
+const EN_DICT=Object.assign(JSON.parse(rd('tools/i18n/en.json')),JSON.parse(rd('tools/i18n/en-extra.json'))); // en-extra.json: sửa tay, đè lên bản dịch tự động
+const langJs=`window.LH_LANG_EN=${JSON.stringify(EN_DICT)};window.LH_I18N&&LH_I18N.load(window.LH_LANG_EN);`;
 // ---- game
 const body=rd('src/body.html').replaceAll('{{VERSION}}',V),css=rootCss('#lu-hanh','hidden')+scope(rd('src/style.css'),'#lu-hanh');
 const gameJs=ids=>GAME.flatMap(f=>f==='04-art.js'?[safe(rd('src/'+f)),safe(rd('src/04-gen.js')),safe(mapJs(ids))]:[safe(rd('src/'+f))]);
@@ -63,10 +66,11 @@ wr('dist/lu-hanh.css',banner('Làng Thanh Mộc')+miniCss(css));
 wr('dist/lu-hanh.js',safe(await mini(banner('Làng Thanh Mộc · cổng vào')+inject(body,'portal')+coreJs.map(s=>';'+s).join('\n'),'lu-hanh.js')));
 wr('dist/lu-hanh-game.js',safe(await mini(banner('Làng Thanh Mộc · trong game')+lateJs.map(s=>';'+s).join('\n')+';window.LH_GAME_LOADED&&window.LH_GAME_LOADED();','lu-hanh-game.js')));
 wr('dist/lu-hanh.html',page(`Lữ Hành - iKyNa`,css,body,js,API));
-wr('dist/lu-hanh-offline.html',page(`Lữ Hành ${V} · thử ngoại tuyến`,css,body,jsAll,''));
+wr('dist/lu-hanh-offline.html',page(`Lữ Hành ${V} · thử ngoại tuyến`,css,body,[safe(langJs),...jsAll],''));
+wr('dist/lang-en.js',banner('English')+safe(langJs));
 // file khởi động: hiện màn hình chờ, tải CSS + JS có đếm phần trăm
 const B=n=>Buffer.byteLength(rd('dist/'+n),'utf8');
-wr('dist/lu-hanh-boot.js',banner('khởi động')+safe(rd('src/00-loader.js'))+';'+safe(rd('src/boot.js')).replace('@@FILES@@',JSON.stringify({css:{name:'lu-hanh.css',size:B('lu-hanh.css')},js:{name:'lu-hanh.js',size:B('lu-hanh.js')},game:{name:'lu-hanh-game.js',size:B('lu-hanh-game.js')}})));
+wr('dist/lu-hanh-boot.js',banner('khởi động')+safe(rd('src/00-lang.js'))+';'+safe(rd('src/00-loader.js'))+';'+safe(rd('src/boot.js')).replace('@@FILES@@',JSON.stringify({css:{name:'lu-hanh.css',size:B('lu-hanh.css')},js:{name:'lu-hanh.js',size:B('lu-hanh.js')},game:{name:'lu-hanh-game.js',size:B('lu-hanh-game.js')}})));
 // ---- Chợ phiên (dùng chung bộ biểu tượng của game)
 const sprite=body.match(/<svg style="position:absolute;width:0[\s\S]*?<\/svg>/)[0];
 const choBody=rd('src/cho/body.html').replace('<div id="cho-phien">','<div id="cho-phien">\n'+sprite),choCss=rootCss('#cho-phien','auto')+scope(rd('src/cho/cho.css'),'#cho-phien'),choJs=CHO.map(f=>safe(rd('src/'+f)));

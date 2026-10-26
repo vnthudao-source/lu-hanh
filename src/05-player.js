@@ -48,6 +48,7 @@ const Player=(()=>{
   const parseBonus=(s,k=1)=>{const o={};String(s||'').split(/[,;]/).forEach(p=>{const [kk,v]=p.split(':').map(x=>x&&x.trim());if(kk&&ADD[kk]&&Number.isFinite(+v))o[kk]=Math.round(+v*k*10)/10;});return o;};
   const clear=o=>{for(const k of Object.keys(o))delete o[k];};
   function load(data){
+    if(typeof LH_I18N!=='undefined')LH_I18N.addRows(data); // v10.78: cột ten_en… trên Sheet → bản tiếng Anh
     [CFG,RAR,ADD,items,SHOPS,SETS,MON,QUESTS,MERCS,WEAPONS,QUIZ,TUONG].forEach(clear);
     for(const r of data.vu_khi||[])WEAPONS[r.loai]={name:r.ten,dmg:num(r.sat_thuong,100)/100,range:num(r.tam_danh,80),spread:num(r.lan_rong),dur:Math.max(.15,num(r.toc_danh_ms,500)/1000),mana:num(r.mana,100)/100,cd:num(r.hoi_chieu,100)/100,passive:num(r.noi_tai,12)};ENH.length=0;
     for(const r of data.cau_hinh||[])CFG[r.khoa]=num(r.gia_tri,r.gia_tri);

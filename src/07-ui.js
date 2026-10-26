@@ -539,7 +539,7 @@ window.startUI=(session)=>{
   let napSel=null;
   function showTopup(){
     const C=Player.CFG,list=Player.TOPUPS,G=list.find(g=>g.id===napSel)||null,user=window.LH_USER||'';
-    const fmt=v=>Number(v).toLocaleString('vi-VN');
+    const fmt=v=>Number(v).toLocaleString(LH_I18N.loc);
     const tiles=list.map(g=>`<button class="tile${napSel===g.id?' sel':''}" data-nap="${g.id}"><span class="ti" style="color:#ff6fb5">${svg('orb')}</span><b class="nm">${esc(g.name)}</b><span class="chips">${g.ruby?`<span class="chip">${ruby(g.ruby)}</span>`:''}${g.gold?`<span class="chip">${coins(g.gold*10000)}</span>`:''}</span>${g.desc?`<small>${esc(g.desc)}</small>`:''}<span class="price">${fmt(g.vnd)} đ</span></button>`).join('');
     let qr='';
     if(G){const info=String(C.nap_noi_dung||'Ikyna {goi} {tai_khoan}').replace('{goi}',G.name.replace(/^Gói\s*/i,'Goi ')).replace('{tai_khoan}',user).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').trim();
