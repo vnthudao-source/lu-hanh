@@ -1226,7 +1226,7 @@ window.startGame=(session)=>{
   let TGM=null,tgBanner=null;
   const TG_NAMES=['Kiếm khách Hắc Y','Lãng khách Vô Danh','Hồng Y nữ hiệp','Cuồng đao Tứ Hải','Thiết quyền Bắc Sơn','Bạch Y thư sinh','Độc cô Kiếm Khách','Thanh Phong hiệp nữ','Phi đao Lạc Việt','Hắc Hổ đại hán','Ngọc Diện công tử','Lục Lâm hảo hán','Tiêu Dao lãng tử','Băng Tâm tiên tử','Hỏa Long võ sĩ','Kim Đao bộ đầu','Tử Vân kiếm khách','Lam Y nữ hiệp','Trường Thương tráng sĩ','Bích Hải đạo nhân','Vân Mộng tiên cô','Thiết Huyết hiệp sĩ','Hoàng Sơn cư sĩ','Song Kiếm thiếu hiệp','Lôi Hỏa đao khách','Nguyệt Ảnh sát thủ','Đồng Tiền nữ hiệp'];
   function tgBannerSet(html){if(!tgBanner){tgBanner=document.createElement('div');tgBanner.className='ev-banner tg-banner';document.getElementById('lu-hanh').appendChild(tgBanner);tgBanner.addEventListener('click',ev=>{const b=ev.target.closest('[data-tg]');if(!b)return;if(b.dataset.tg==='leave')tgLeave();else if(b.dataset.tg==='result'&&TGM&&TGM.result)window.GameUI?.tgResult(TGM.result,TGM);});}
-    if(html==null){tgBanner.remove();tgBanner=null;return;}if(tgBanner.innerHTML!==html)tgBanner.innerHTML=html;}
+    if(html==null){tgBanner.remove();tgBanner=null;return;}if(tgBanner._h!==html){tgBanner._h=html;tgBanner.innerHTML=html;}}
   const mmss=ms=>{const s=Math.max(0,Math.ceil(ms/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
   const tgK=k=>{const E=TGM&&TGM.E,p=E&&E.id==='the'?'tg_the_gioi_':'tg_bac_';return Number(CFG[p+k]);};
   const tgN=E=>Math.max(2,Math.min(30,Number(CFG[E.id==='loi'?'tg_loi_dai_so_nguoi':'tg_'+(E.id==='bac'?'bac':'the_gioi')+'_so_nguoi'])||E.team||10));

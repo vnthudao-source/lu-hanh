@@ -14,6 +14,9 @@ const seg=new Map(); // đoạn → {n, files:Set}
 function add(raw,file){
   if(!VI.test(raw))return;
   let s=raw.replace(/&[a-z#0-9]+;/gi,m=>ENT[m.toLowerCase()]??' ');
+  // v10.79: chữ trong thuộc tính title / aria-label / placeholder / alt (trước đây bị bỏ khi tách thẻ HTML)
+  for(const m of s.matchAll(/\b(?:title|aria-label|placeholder|alt)\s*=\s*(["'])([^"'<>]*?)\1/g))if(m[2]&&!/\$\{/.test(m[2]))add(m[2],file);
+  for(const m of s.matchAll(/\b(?:title|aria-label|placeholder|alt)\s*=\s*(["'])([^"'<>]*?)\$\{/g))if(m[2])add(m[2],file);
   // tách theo thẻ HTML, xuống dòng
   for(let part of s.split(/<[^>]*>|\n|\{\w+\}/)){
     // bỏ dấu câu / ký hiệu / số ở hai đầu

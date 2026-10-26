@@ -42,7 +42,7 @@ window.startUI=(session)=>{
     if(d.slot==='book')o.push(chip('book','Sách bậc '+(Player.bookBac(it)+1)+' · '+['Thanh Mộc','Cổ Loa','Thăng Long','Hoa Lư','Phú Xuân'][Player.bookBac(it)],'#e4cc8d'));
     if(d.slot==='mount'){const need=Player.mountNeed(it),have=Player.derive(p).main.cmd;o.push(chip('flag','Cần '+need+' Mệnh lệnh',need>have?'#ff9a8a':'#ffe0a0'));}
     if(d.grip==='two')o.push(chip('hand2','Hai tay'));
-    const W=d.slot==='hand'&&Player.WEAPONS[d.kind];if(W)o.push(chip('eye','Tầm '+W.range,'#bfe3ff'),chip('speed','Đánh '+String(W.dur).replace('.',',')+' giây','#bfe3ff'),chip('sword','Sát thương '+Math.round(W.dmg*100)+'%','#bfe3ff'),chip('orb','Mana '+Math.round(W.mana*100)+'% · hồi chiêu '+Math.round(W.cd*100)+'%','#bfe3ff'));
+    const W=d.slot==='hand'&&Player.WEAPONS[d.kind];if(W)o.push(chip('eye','Tầm '+W.range,'#bfe3ff'),chip('speed','Đánh '+(LH_I18N.EN?String(W.dur):String(W.dur).replace('.',','))+' giây','#bfe3ff'),chip('sword','Sát thương '+Math.round(W.dmg*100)+'%','#bfe3ff'),chip('orb','Mana '+Math.round(W.mana*100)+'% · hồi chiêu '+Math.round(W.cd*100)+'%','#bfe3ff'));
     if(Player.isRanged(d.kind))o.push(chip('aim','Chính xác '+Player.aimAcc(it)+'% (khóa mục tiêu)','#ffb49a'),chip('spark','x2 +'+(Number(Player.CFG.cung_no_x2)||15)+'%','#ffb49a'));
     if(d.beast)o.push(chip('spark',Player.BEASTS[d.beast].skill,'#ffe0a0'));
     for(const [k,v] of Object.entries(it.add||{}))o.push(`<i class="ch add">${addLine(k,v)}</i>`);
@@ -88,7 +88,7 @@ window.startUI=(session)=>{
   }
   function refresh(){
     const D=game.HD,S=D.tot;
-    const txt=(sel,v)=>{const e=$(sel);v=String(v);if(e&&e.textContent!==v)e.textContent=v;},wid=(sel,v)=>{const e=$(sel);v=v.toFixed(1)+'%';if(e&&e.style.width!==v)e.style.width=v;}; // v10.66: chỉ ghi DOM khi đổi
+    const txt=(sel,v)=>{const e=$(sel);v=LH_T(String(v));if(e&&e.textContent!==v)e.textContent=v;},wid=(sel,v)=>{const e=$(sel);v=v.toFixed(1)+'%';if(e&&e.style.width!==v)e.style.width=v;}; // v10.66: chỉ ghi DOM khi đổi
     txt('#playerName',p.name);txt('#levelBadge','Lv. '+p.level);
     const need=Player.expNeed(p.level),maxed=p.level>=Player.maxLevel(),pct=maxed?100:Math.min(100,(p.exp||0)/need*100),dash=pct.toFixed(1)+' 100';
     if(lastExp!==dash){lastExp=dash;$('#expArc').setAttribute('stroke-dasharray',dash);$('#avatarBtn').title=maxed?'Cấp tối đa':`Kinh nghiệm ${p.exp||0} / ${need}`;}

@@ -53,6 +53,26 @@ for(const id of mapIds){const d=mapOf(id);if(d.id!==id)throw Error('maps/'+id+'.
 const mapJs=ids=>`window.LH_MAP_CDN='https://cdn.jsdelivr.net/gh/vnthudao-source/lu-hanh@ban-${V.replace(/^v/,'')}/dist/maps/';window.LH_MON_PACK=${JSON.stringify(monPack)};`+'window.LH_MAPS=window.LH_MAPS||{};'+ids.map(id=>id===MAP0?`window.LH_MAPS[${JSON.stringify(id)}]=${JSON.stringify(mapOf(id))};`:packOf(id)).join('\n');
 // ---- v10.78: từ điển tiếng Anh (tools/i18n/en.json) → dist/lang-en.js, chỉ tải khi chơi ở chế độ English
 const EN_DICT=Object.assign(JSON.parse(rd('tools/i18n/en.json')),JSON.parse(rd('tools/i18n/en-extra.json'))); // en-extra.json: sửa tay, đè lên bản dịch tự động
+// v10.79: chuẩn hoá từ điển để dịch lại lần nữa không đổi (trước đây "Ngộ Không" → "Ngộ No", "Vạn Thắng" → "Vạn Win" khi một chữ bị dịch hai lần)
+// 1) tên riêng tiếng Việt còn nằm trong bản dịch (vd "Ngộ Không") thành mục giữ nguyên · 2) tên trong bản dịch mà từ điển có bản dịch riêng thì dịch luôn cho thống nhất
+{
+  const VI=/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i,LET=/[\p{L}\p{M}]/u;
+  const fw=s=>{const m=/^[\p{L}\p{M}]+/u.exec(s);return m?m[0]:'';};
+  const index=()=>{const by=new Map();for(const k of Object.keys(EN_DICT)){if(!VI.test(k))continue;const w=fw(k);if(!w)continue;(by.get(w)||by.set(w,[]).get(w)).push(k);}for(const a of by.values())a.sort((x,y)=>y.length-x.length);return by;};
+  const trOnce=(s,by)=>{let o='',i=0;while(i<s.length){const ch=s[i];if(LET.test(ch)&&(i===0||!LET.test(s[i-1]))){const w=fw(s.slice(i,i+40)),c=by.get(w);let hit=null;if(c)for(const k of c){if(s.startsWith(k,i)&&!LET.test(s[i+k.length]||'')){hit=k;break;}}if(hit){o+=EN_DICT[hit];i+=hit.length;continue;}o+=w;i+=w.length;continue;}o+=ch;i++;}return o.replace(/ {2,}/g,' ').replace(/ ([,.!?])/g,'$1');};
+  const W='[A-ZĐÀ-ỸÁÉÍÓÚÝ][\\p{Ll}\\p{M}]*';
+  const RUN=new RegExp(W+'(?: '+W+')*','gu');
+  let added=0;
+  for(const v of Object.values(EN_DICT)){if(!VI.test(v))continue;for(let m of v.match(RUN)||[]){
+    const ws=m.split(' ');while(ws.length&&!VI.test(ws[0])&&/^[A-Z][a-z]+$/.test(ws[0])&&!/^(Thanh|Long|Tinh|Ma|Lam|Kim|Phong|Son|Sơn|Hai|Ba|An|Tam|Cha|Na|Ca)$/.test(ws[0]))ws.shift();
+    while(ws.length&&!VI.test(ws[ws.length-1])&&/^[A-Z][a-z]+$/.test(ws[ws.length-1])&&/^(Village|Citadel|Set|Bow|Gloves|Boots|Helmet|Spear|Sword|Saber|Shield|Banner|Robe|Armor|Cloak|Staff|Mace|Lair|Field|Forest|River|Mountain|Gate|Palace|Temple|Arena|Book|Ring|Fist|Hat|Pants|Shoes|Wings|Elephant|Horse|Tiger)$/.test(ws[ws.length-1]))ws.pop();
+    const run=ws.join(' ');if(run&&VI.test(run)&&!(run in EN_DICT)&&run.split(' ').length>=2){EN_DICT[run]=run;added++;}}}
+  let by=index(),fixed=0;
+  for(let pass=0;pass<4;pass++){let ch=0;for(const [k,v] of Object.entries(EN_DICT)){if(!VI.test(v)||k===v)continue;const n=trOnce(v,by);if(n!==v){EN_DICT[k]=n;ch++;}}fixed+=ch;if(!ch)break;}
+  const bad=Object.entries(EN_DICT).filter(([k,v])=>VI.test(v)&&k!==v&&trOnce(v,by)!==v);
+  console.log('từ điển EN:',Object.keys(EN_DICT).length,'mục · thêm',added,'tên riêng giữ nguyên · thống nhất',fixed,'bản dịch · còn lệch',bad.length);
+  if(bad.length)console.log(bad.slice(0,5));
+}
 const langJs=`window.LH_LANG_EN=${JSON.stringify(EN_DICT)};window.LH_I18N&&LH_I18N.load(window.LH_LANG_EN);`;
 // ---- game
 const body=rd('src/body.html').replaceAll('{{VERSION}}',V),css=rootCss('#lu-hanh','hidden')+scope(rd('src/style.css'),'#lu-hanh');

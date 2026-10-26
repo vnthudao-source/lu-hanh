@@ -1,4 +1,4 @@
-/*! Lữ Hành v10.78 · khởi động · https://github.com/vnthudao-source/lu-hanh */
+/*! Lữ Hành v10.79 · khởi động · https://github.com/vnthudao-source/lu-hanh */
 /* ================= NGÔN NGỮ (v10.78): tiếng Việt / English =================
    Mã nguồn giữ nguyên chữ tiếng Việt. Ở chế độ English, chữ được đổi lúc hiện ra màn hình:
    - Chữ trong trang (DOM): MutationObserver đổi từng nút chữ + thuộc tính title / placeholder / aria-label / alt.
@@ -19,7 +19,7 @@ window.LH_I18N=window.LH_I18N||(()=>{
   }catch(e){}
   if(lang!=='en')lang='vi';
   const EN=lang==='en';
-  const dict=new Map(),byFirst=new Map(),cache=new Map();let ready=false;const waiters=[];
+  const dict=new Map(),byFirst=new Map(),cache=new Map(),outs=new Set();let ready=false;const waiters=[]; // outs: chuỗi đã là bản dịch \u{2192} không dịch lần nữa
   const firstWord=s=>{const m=/^[\p{L}\p{M}]+/u.exec(s);return m?m[0]:'';};
   // Chữ không dấu (Nam, Mua, Voi\u{2026}): chỉ đổi khi đứng một mình (bỏ số, dấu câu hai bên)
   const ascii=new Map();
@@ -37,6 +37,7 @@ window.LH_I18N=window.LH_I18N||(()=>{
     if(!EN||typeof s!=='string'||!s)return s;
     if(!VI.test(s)){if(!ascii.size||s.length>40)return s;const m=core(s),a=ascii.get(m[2]);return a?m[1]+a+m[3]:s;}
     const c=cache.get(s);if(c!==undefined)return c;
+    if(outs.has(s))return s;
     let out;
     const t=s.trim(),whole=dict.get(t);
     if(whole!==undefined)out=s.replace(t,()=>whole);
@@ -55,13 +56,20 @@ window.LH_I18N=window.LH_I18N||(()=>{
     }
     if(out!==s)out=out.replace(/ {2,}/g,' ').replace(/ ([,.!?])/g,'$1');
     if(cache.size>6000)cache.clear();
+    if(out!==s){if(outs.size>6000)outs.clear();outs.add(out);}
     cache.set(s,out);return out;
   }
   // ----- DOM
   const ATTRS=['title','placeholder','aria-label','alt'];let done=new WeakMap();
   const skipEl=el=>!!(el&&el.closest&&el.closest('script,style,textarea,input,[contenteditable],[data-noi18n]'));
-  function fixText(node){const v=node.data;if(done.get(node)===v)return;const parent=node.parentNode;if(!parent||skipEl(parent))return;const o=tr(v);done.set(node,o);if(o!==v)node.data=o;}
-  function fixAttrs(el){if(skipEl(el))return;for(const a of ATTRS){const v=el.getAttribute(a);if(v&&VI.test(v)){const o=tr(v);if(o!==v)el.setAttribute(a,o);}}
+  // v10.79: chống giành giật \u{2014} nút chữ bị mã game ghi lại liên tục (>20 lần / giây) thì thôi dịch nút đó, không để hai bên ghi qua ghi lại làm đơ
+  let hot=new WeakMap(),hotT=0;
+  function fixText(node){const v=node.data;if(done.get(node)===v)return;const parent=node.parentNode;if(!parent||skipEl(parent))return;
+    const now=performance.now();if(now-hotT>1000){hot=new WeakMap();hotT=now;}const c=(hot.get(node)||0)+1;hot.set(node,c);if(c>20)return;
+    const o=tr(v);done.set(node,o);if(o!==v)node.data=o;}
+  function diag(m){try{if(window.LH_DIAG)LH_DIAG.error(m,'ngôn ngữ');else console.warn('[LH_I18N]',m);}catch(e){}}
+  let attrDone=new WeakMap();
+  function fixAttrs(el){if(skipEl(el))return;for(const a of ATTRS){const v=el.getAttribute(a);if(v&&VI.test(v)){let D=attrDone.get(el);if(D&&D[a]===v)continue;{const now=performance.now();if(now-hotT>1000){hot=new WeakMap();hotT=now;}const c=(hot.get(el)||0)+1;hot.set(el,c);if(c>20)continue;}const o=tr(v);if(!D)attrDone.set(el,D={});D[a]=o;if(o!==v)el.setAttribute(a,o);}}
     if(el.tagName==='INPUT'&&/^(button|submit|reset)$/i.test(el.type)&&VI.test(el.value)){const o=tr(el.value);if(o!==el.value)el.value=o;}}
   function walk(root){
     if(!root)return;
@@ -78,12 +86,20 @@ window.LH_I18N=window.LH_I18N||(()=>{
     const go=()=>{
       try{document.documentElement.lang='en';}catch(e){}
       walk(document.body);paintLang(document.body);
-      obs=new MutationObserver(list=>{for(const m of list){
-        if(m.type==='characterData'){if(want(m.target.data))fixText(m.target);}
-        else if(m.type==='attributes'){if(m.target.nodeType===1)fixAttrs(m.target);}
-        else for(const a of m.addedNodes){walk(a);if(a.nodeType===1){if(a.matches&&a.matches('[data-lh-lang]'))paintLang(a.parentNode);else paintLang(a);}}
-      }});
-      obs.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTRS.concat(['value'])});
+      // v10.79: cầu chì \u{2014} bản dịch tốn quá 250 ms trong 1 giây (vòng lặp với mã khác) thì tạm dừng 3 giây, ghi vào Tình trạng, không để trang đơ
+      let spent=0,win=0,trips=0;
+      const OPT={subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTRS.concat(['value'])};
+      obs=new MutationObserver(list=>{const t0=performance.now();if(t0-win>1000){win=t0;spent=0;}
+        for(const m of list){
+          if(m.type==='characterData'){if(want(m.target.data))fixText(m.target);}
+          else if(m.type==='attributes'){if(m.target.nodeType===1)fixAttrs(m.target);}
+          else for(const a of m.addedNodes){walk(a);if(a.nodeType===1){if(a.matches&&a.matches('[data-lh-lang]'))paintLang(a.parentNode);else paintLang(a);}}
+        }
+        spent+=performance.now()-t0;
+        if(spent>250){obs.disconnect();trips++;diag('Dịch chữ quá tải ('+Math.round(spent)+' ms/giây, lần '+trips+') \u{b7} tạm dừng 3 giây');spent=0;
+          setTimeout(()=>{done=new WeakMap();attrDone=new WeakMap();walk(document.body);obs.observe(document.body,OPT);},3000);}
+      });
+      obs.observe(document.body,OPT);
     };
     if(document.body)go();else document.addEventListener('DOMContentLoaded',go);
   }
@@ -100,13 +116,13 @@ window.LH_I18N=window.LH_I18N||(()=>{
   // Vẽ / đặt chữ không qua bản dịch (tên người chơi do người chơi tự đặt)
   function raw(fn){rawDepth++;try{return fn();}finally{rawDepth--;}}
   // ----- Từ điển
-  function load(obj){if(obj)for(const k in obj)put(k,obj[k]);ready=true;done=new WeakMap();if(document.body&&EN)walk(document.body);while(waiters.length)waiters.shift()();}
+  function load(obj){if(obj)for(const k in obj)put(k,obj[k]);ready=true;done=new WeakMap();attrDone=new WeakMap();if(document.body&&EN)walk(document.body);while(waiters.length)waiters.shift()();}
   // Bảng Sheet: cột X_en đứng cạnh cột X (ten_en, mo_ta_en, ten_bo_en\u{2026})
   function addRows(data){
     if(!EN||!data)return;
     let n0=dict.size;for(const k in data){const rows=data[k];if(!Array.isArray(rows))continue;
       for(const r of rows){if(!r||typeof r!=='object')continue;for(const c in r){if(c.endsWith('_en')&&r[c]){const base=r[c.slice(0,-3)];if(base)put(base,r[c]);}}}}
-    if(dict.size!==n0){done=new WeakMap();if(document.body)walk(document.body);}
+    if(dict.size!==n0){done=new WeakMap();attrDone=new WeakMap();if(document.body)walk(document.body);}
   }
   function set(l){
     l=l==='en'?'en':'vi';try{localStorage.setItem('lh-lang',l);}catch(e){}
@@ -245,7 +261,7 @@ window.LH_Loader=window.LH_Loader||(()=>{
 })();
 ;/* ================= KHỞI ĐỘNG: hiện màn hình chờ ngay, tải CSS + JS của game có đếm phần trăm ================= */
 (function(){
-  var me=document.currentScript,base=(me&&me.src||'').replace(/[^\/]*$/,''),FILES={"css":{"name":"lu-hanh.css","size":57714},"js":{"name":"lu-hanh.js","size":386334},"game":{"name":"lu-hanh-game.js","size":471420}};
+  var me=document.currentScript,base=(me&&me.src||'').replace(/[^\/]*$/,''),FILES={"css":{"name":"lu-hanh.css","size":57714},"js":{"name":"lu-hanh.js","size":387168},"game":{"name":"lu-hanh-game.js","size":471454}};
   window.LH_BASE=window.LH_BASE||base;
   // v10.32: mở sẵn kết nối tới máy chủ Apps Script và kho ảnh Drive (đỡ vài trăm ms bắt tay TLS trên điện thoại)
   ['https://script.google.com','https://script.googleusercontent.com','https://lh3.googleusercontent.com'].forEach(function(h){try{var l=document.createElement('link');l.rel='preconnect';l.href=h;if(!/lh3/.test(h))l.crossOrigin='';document.head.appendChild(l);}catch(e){}});
